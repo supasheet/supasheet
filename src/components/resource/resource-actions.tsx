@@ -120,7 +120,7 @@ export function ResourceActions({
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={handleImport} disabled={!importLink}>
               <UploadIcon />
-              Import CSV
+              Import data
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => downloadTemplate(resource, columnsSchema)}

@@ -3,46 +3,96 @@ import type { ColumnSchema } from "#/lib/database-meta.types"
 
 export const IMPORT_BATCH_SIZE = 500
 
-export interface ParsedCSV {
+export const IMPORT_FILE_ACCEPT =
+  ".csv,.tsv,.json,text/csv,text/tab-separated-values,application/json"
+
+export interface ParsedData {
   headers: string[]
   rows: Record<string, string>[]
 }
 
-export function parseCSV(text: string): ParsedCSV {
-  const lines = text.split(/\r?\n/).filter((l) => l.trim())
-  if (lines.length < 2) return { headers: [], rows: [] }
+export function parseDelimited(text: string, delimiter = ","): ParsedData {
+  const records: string[][] = []
+  let record: string[] = []
+  let current = ""
+  let inQuotes = false
 
-  const parseRow = (line: string): string[] => {
-    const result: string[] = []
-    let current = ""
-    let inQuotes = false
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i]
-      if (ch === '"') {
-        if (inQuotes && line[i + 1] === '"') {
-          current += '"'
-          i++
-        } else {
-          inQuotes = !inQuotes
-        }
-      } else if (ch === "," && !inQuotes) {
-        result.push(current)
-        current = ""
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+    if (ch === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        current += '"'
+        i++
       } else {
-        current += ch
+        inQuotes = !inQuotes
       }
+    } else if (ch === delimiter && !inQuotes) {
+      record.push(current)
+      current = ""
+    } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
+      if (ch === "\r" && text[i + 1] === "\n") i++
+      record.push(current)
+      records.push(record)
+      record = []
+      current = ""
+    } else {
+      current += ch
     }
-    result.push(current)
-    return result
+  }
+  if (current !== "" || record.length > 0) {
+    record.push(current)
+    records.push(record)
   }
 
-  const headers = parseRow(lines[0])
-  const rows = lines.slice(1).map((line) => {
-    const values = parseRow(line)
-    return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? ""]))
-  })
+  const nonEmpty = records.filter((r) => r.some((cell) => cell.trim() !== ""))
+  if (nonEmpty.length < 2) return { headers: [], rows: [] }
+
+  const headers = nonEmpty[0]
+  const rows = nonEmpty
+    .slice(1)
+    .map((values) =>
+      Object.fromEntries(headers.map((h, i) => [h, values[i] ?? ""]))
+    )
 
   return { headers, rows }
+}
+
+export function parseJSON(text: string): ParsedData {
+  const data: unknown = JSON.parse(text)
+  const items = Array.isArray(data) ? data : [data]
+
+  const headers: string[] = []
+  const seen = new Set<string>()
+  const rows = items
+    .filter(
+      (item): item is Record<string, unknown> =>
+        typeof item === "object" && item !== null && !Array.isArray(item)
+    )
+    .map((item) =>
+      Object.fromEntries(
+        Object.entries(item).map(([key, value]) => {
+          if (!seen.has(key)) {
+            seen.add(key)
+            headers.push(key)
+          }
+          if (value === null || value === undefined) return [key, ""]
+          if (typeof value === "object") return [key, JSON.stringify(value)]
+          return [key, String(value)]
+        })
+      )
+    )
+
+  if (rows.length === 0) return { headers: [], rows: [] }
+  return { headers, rows }
+}
+
+export async function parseImportFile(file: File): Promise<ParsedData> {
+  const text = await file.text()
+  const ext = file.name.split(".").pop()?.toLowerCase()
+
+  if (ext === "json") return parseJSON(text)
+  if (ext === "tsv") return parseDelimited(text, "\t")
+  return parseDelimited(text, ",")
 }
 
 export function matchHeaders(
@@ -67,7 +117,7 @@ export function coerceImportRow(
     matchedHeaders
       .map((h) => {
         const col = columnMap.get(h.toLowerCase())
-        return [h, coerceColumnValue(rawRow[h], col)] as [string, unknown]
+        return [h, coerceColumnValue(rawRow[h] ?? "", col)] as [string, unknown]
       })
       .filter(([, v]) => v !== null && v !== undefined)
   )

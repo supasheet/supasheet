@@ -5,7 +5,13 @@ import type { Table } from "@tanstack/react-table"
 import { DownloadIcon } from "lucide-react"
 
 import { Button } from "#/components/ui/button"
-import { exportTableToCSV } from "#/lib/export"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "#/components/ui/dropdown-menu"
+import { EXPORT_FORMATS, exportTable } from "#/lib/export"
 
 import { DataTableColumnVisibility } from "./data-table-column-visibility"
 import { DataTableFilter } from "./data-table-filter"
@@ -52,19 +58,32 @@ export function DataTableExportButton<TData>({
 }) {
   const onlySelected = table.getSelectedRowModel().rows.length > 0
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={() =>
-        exportTableToCSV(table, {
-          filename,
-          excludeColumns,
-          onlySelected,
-        })
-      }
-    >
-      <DownloadIcon className="size-4" />
-      Export
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="outline" size="sm">
+            <DownloadIcon className="size-4" />
+            Export
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end">
+        {EXPORT_FORMATS.map(({ format, label }) => (
+          <DropdownMenuItem
+            key={format}
+            onClick={() =>
+              exportTable(table, {
+                format,
+                filename,
+                excludeColumns,
+                onlySelected,
+              })
+            }
+          >
+            Export as {label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

@@ -25,12 +25,13 @@ import {
 import { useIsMobile } from "#/hooks/use-mobile"
 import {
   IMPORT_BATCH_SIZE,
+  IMPORT_FILE_ACCEPT,
   buildColumnMap,
   coerceImportRow,
   matchHeaders,
-  parseCSV,
+  parseImportFile,
 } from "#/lib/import"
-import type { ParsedCSV } from "#/lib/import"
+import type { ParsedData } from "#/lib/import"
 import {
   columnsSchemaQueryOptions,
   insertBulkResourceMutationOptions,
@@ -78,7 +79,7 @@ function ResourceImportSheetBody({
     columnsSchemaQueryOptions(schema as never, resource as never)
   )
 
-  const [parsed, setParsed] = React.useState<ParsedCSV | null>(null)
+  const [parsed, setParsed] = React.useState<ParsedData | null>(null)
   const [filename, setFilename] = React.useState("")
   const [progress, setProgress] = React.useState(0)
   const [importing, setImporting] = React.useState(false)
@@ -118,9 +119,12 @@ function ResourceImportSheetBody({
     setDone(false)
     setErrors([])
     setProgress(0)
-    const reader = new FileReader()
-    reader.onload = (e) => setParsed(parseCSV(e.target?.result as string))
-    reader.readAsText(file)
+    parseImportFile(file)
+      .then(setParsed)
+      .catch(() => {
+        setFilename("")
+        toast.error(`Could not parse ${file.name}`)
+      })
   }
 
   function handleDrop(e: React.DragEvent) {
@@ -190,11 +194,11 @@ function ResourceImportSheetBody({
   return (
     <>
       <SheetHeader className="border-b p-4 pr-10">
-        <SheetTitle>Import CSV</SheetTitle>
+        <SheetTitle>Import data</SheetTitle>
         <SheetDescription>
-          Upload a CSV file to import records into{" "}
+          Upload a CSV, TSV, or JSON file to import records into{" "}
           <strong className="text-foreground">{resource}</strong>. Column
-          headers must match table column names.
+          headers (or JSON keys) must match table column names.
         </SheetDescription>
       </SheetHeader>
 
@@ -208,7 +212,7 @@ function ResourceImportSheetBody({
             <UploadIcon className="text-muted-foreground size-8" />
             <div className="text-sm">
               <span className="text-muted-foreground">
-                Drag & drop a CSV file here, or{" "}
+                Drag & drop a file here, or{" "}
               </span>
               <button
                 type="button"
@@ -218,11 +222,13 @@ function ResourceImportSheetBody({
                 browse
               </button>
             </div>
-            <p className="text-muted-foreground text-xs">Supports .csv files</p>
+            <p className="text-muted-foreground text-xs">
+              Supports .csv, .tsv, and .json files
+            </p>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".csv,text/csv"
+              accept={IMPORT_FILE_ACCEPT}
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0]
