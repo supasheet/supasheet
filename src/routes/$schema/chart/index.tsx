@@ -1,9 +1,11 @@
+import { Suspense } from "react"
+
 import { createFileRoute, useRouter } from "@tanstack/react-router"
 import type { ErrorComponentProps } from "@tanstack/react-router"
 
 import { AlertCircleIcon, BarChartIcon } from "lucide-react"
 
-import { ChartWidget } from "#/components/chart/chart-widget"
+import { ChartSkeleton, ChartWidget } from "#/components/chart/chart-widget"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { Button } from "#/components/ui/button"
 import {
@@ -109,7 +111,9 @@ function RouteComponent() {
       <DefaultHeader breadcrumbs={[{ title: "Chart" }]} />
       <div className="mx-auto grid max-w-6xl gap-2.5 p-4 md:grid-cols-2 lg:grid-cols-4">
         {charts.map((chart) => (
-          <ChartWidget key={chart.view_name} chart={chart} />
+          <Suspense key={chart.view_name} fallback={<ChartSkeleton />}>
+            <ChartWidget chart={chart} />
+          </Suspense>
         ))}
       </div>
     </div>

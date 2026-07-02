@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { Search } from "lucide-react"
 
@@ -25,7 +25,7 @@ import type { DatabaseSchemas } from "#/lib/database-meta.types"
 import { widgetDataQueryOptions } from "#/lib/supabase/data/dashboard"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
-function Table2Skeleton() {
+export function Table2Skeleton() {
   return (
     <Card className="col-span-1 md:col-span-2 lg:col-span-4">
       <CardHeader>
@@ -54,11 +54,9 @@ export function Table2Widget<S extends DatabaseSchemas>({
   widget: DashboardWidgetSchema<S>
 }) {
   const [searchTerm, setSearchTerm] = useState("")
-  const { data, isPending } = useQuery(
+  const { data } = useSuspenseQuery(
     widgetDataQueryOptions(widget.schema, widget.view_name)
   )
-
-  if (isPending) return <Table2Skeleton />
 
   if (!data || data.length === 0) {
     return (

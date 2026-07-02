@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { Skeleton } from "#/components/ui/skeleton"
 import type { DatabaseSchemas } from "#/lib/database-meta.types"
@@ -11,7 +11,7 @@ import { LineChartWidget } from "./line-chart"
 import { PieChartWidget } from "./pie-chart"
 import { RadarChartWidget } from "./radar-chart"
 
-function ChartSkeleton() {
+export function ChartSkeleton() {
   return (
     <div className="col-span-2 rounded-xl border bg-card p-6">
       <div className="mb-4 flex items-center justify-between">
@@ -30,7 +30,7 @@ export function ChartWidget<S extends DatabaseSchemas>({
 }: {
   chart: ChartSchema<S>
 }) {
-  const { data, isPending } = useQuery(
+  const { data } = useSuspenseQuery(
     chartDataQueryOptions(chart.schema, chart.view_name)
   )
 
@@ -41,8 +41,6 @@ export function ChartWidget<S extends DatabaseSchemas>({
     type: chart.type,
     chart_type: chart.chart_type,
   }
-
-  if (isPending) return <ChartSkeleton />
 
   switch (chart.chart_type) {
     case "area":

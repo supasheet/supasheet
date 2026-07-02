@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 import {
   Card,
@@ -12,7 +12,7 @@ import type { DatabaseSchemas } from "#/lib/database-meta.types"
 import { widgetDataQueryOptions } from "#/lib/supabase/data/dashboard"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
-function Card2Skeleton() {
+export function Card2Skeleton() {
   return (
     <Card>
       <CardHeader>
@@ -40,11 +40,9 @@ export function Card2<S extends DatabaseSchemas>({
 }: {
   widget: DashboardWidgetSchema<S>
 }) {
-  const { data, isPending } = useQuery(
+  const { data } = useSuspenseQuery(
     widgetDataQueryOptions(widget.schema, widget.view_name)
   )
-
-  if (isPending) return <Card2Skeleton />
 
   const widgetData = data?.[0]
   if (!widgetData) return null
