@@ -567,8 +567,6 @@ export const deleteResourceMutationOptions = <S extends DatabaseSchemas>(
     },
   })
 
-// Quote a value for use inside a PostgREST `or` filter string, where bare
-// values containing `,`, `.`, `:` or parens would break parsing.
 const toPostgrestLiteral = (val: unknown): string => {
   if (typeof val === "string") {
     return `"${val.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`
@@ -612,8 +610,6 @@ export const deleteBulkResourceMutationOptions = <S extends DatabaseSchemas>(
       const { error } = await query
       if (error) throw error
 
-      // Verify the delete (hard or soft) actually took effect by checking
-      // whether any row is still visible. If so, RLS denied the operation.
       const { count, error: checkError } = await checkQuery
       if (checkError) throw checkError
       if (count && count > 0) {

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
 import {
+  FileAudioIcon,
   FileIcon,
   FileTextIcon,
   ImageIcon,
@@ -28,6 +29,8 @@ import { cn } from "#/lib/utils"
 
 import { FileActionsMenu } from "./file-actions-menu"
 
+const MAX_TEXT_PREVIEW_BYTES = 1024 * 1024
+
 interface FilePreviewSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -53,6 +56,14 @@ export function FilePreviewSheet({
   const mime: string = file?.metadata?.mimetype ?? ""
   const isImage = mime.startsWith("image/")
   const isVideo = mime.startsWith("video/")
+  const isAudio = mime.startsWith("audio/")
+  const isPdf = mime === "application/pdf"
+  const isText = mime.startsWith("text/") || mime === "application/json"
+
+  const size = file?.metadata?.size
+  // Only fetch text content for reasonably small files
+  const isTextPreviewable = isText && (size ?? 0) <= MAX_TEXT_PREVIEW_BYTES
+  const hasPreview = isImage || isVideo || isAudio || isPdf || isTextPreviewable
 
   const segments = filePath.split("/").filter(Boolean)
   const fileName = segments[segments.length - 1]
@@ -64,17 +75,28 @@ export function FilePreviewSheet({
       isPublic
         ? Promise.resolve(getPublicUrl(bucketId, filePath))
         : createSignedUrl(bucketId, filePath),
-    enabled: (isImage || isVideo) && !!file,
+    enabled: hasPreview && !!file,
     staleTime: 1000 * 50 * 60,
   })
 
-  const size = file?.metadata?.size
+  const { data: textContent } = useQuery({
+    queryKey: ["storage", "preview-text", bucketId, filePath],
+    queryFn: async () => {
+      const res = await fetch(previewUrl!)
+      if (!res.ok) throw new Error("Failed to load file content")
+      return res.text()
+    },
+    enabled: isTextPreviewable && !!previewUrl,
+    staleTime: 1000 * 50 * 60,
+  })
 
   const fileIconEl = isImage ? (
     <ImageIcon className="size-12 text-blue-500 opacity-50" />
   ) : isVideo ? (
     <VideoIcon className="size-12 text-purple-400 opacity-50" />
-  ) : mime.startsWith("text/") ? (
+  ) : isAudio ? (
+    <FileAudioIcon className="size-12 text-amber-400 opacity-50" />
+  ) : isText || isPdf ? (
     <FileTextIcon className="size-12 text-green-400 opacity-50" />
   ) : (
     <FileIcon className="size-12 text-muted-foreground opacity-50" />
@@ -130,6 +152,19 @@ export function FilePreviewSheet({
             />
           ) : isVideo && previewUrl ? (
             <video src={previewUrl} controls className="max-h-72 max-w-full" />
+          ) : isAudio && previewUrl ? (
+            <div className="flex w-full flex-col items-center gap-4 p-8">
+              {fileIconEl}
+              <audio src={previewUrl} controls className="w-full" />
+            </div>
+          ) : isPdf && previewUrl ? (
+            <iframe src={previewUrl} title={fileName} className="h-72 w-full" />
+          ) : isTextPreviewable && textContent !== undefined ? (
+            <pre className="h-72 w-full overflow-auto p-4 font-mono text-xs whitespace-pre-wrap">
+              {textContent}
+            </pre>
+          ) : hasPreview ? (
+            <Skeleton className="h-full min-h-48 w-full" />
           ) : (
             <div className="flex flex-col items-center gap-2 p-8 text-center">
               {fileIconEl}
