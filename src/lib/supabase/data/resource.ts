@@ -567,6 +567,63 @@ export const deleteResourceMutationOptions = <S extends DatabaseSchemas>(
     },
   })
 
+// Quote a value for use inside a PostgREST `or` filter string, where bare
+// values containing `,`, `.`, `:` or parens would break parsing.
+const toPostgrestLiteral = (val: unknown): string => {
+  if (typeof val === "string") {
+    return `"${val.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`
+  }
+  return String(val)
+}
+
+export const deleteBulkResourceMutationOptions = <S extends DatabaseSchemas>(
+  schema: S,
+  resource: DatabaseTables<S> | DatabaseViews<S>
+) =>
+  mutationOptions({
+    mutationFn: async (pks: Record<string, unknown>[]) => {
+      if (pks.length === 0) return
+      const keys = Object.keys(pks[0])
+
+      let query = supabase.schema(schema).from(resource).delete()
+      let checkQuery = supabase
+        .schema(schema)
+        .from(resource)
+        .select("*", { head: true, count: "exact" })
+
+      if (keys.length === 1) {
+        const col = keys[0]
+        const values = pks.map((pk) => pk[col])
+        query = query.in(col as never, values)
+        checkQuery = checkQuery.in(col as never, values)
+      } else {
+        const orFilter = pks
+          .map(
+            (pk) =>
+              `and(${keys
+                .map((col) => `${col}.eq.${toPostgrestLiteral(pk[col])}`)
+                .join(",")})`
+          )
+          .join(",")
+        query = query.or(orFilter)
+        checkQuery = checkQuery.or(orFilter)
+      }
+
+      const { error } = await query
+      if (error) throw error
+
+      // Verify the delete (hard or soft) actually took effect by checking
+      // whether any row is still visible. If so, RLS denied the operation.
+      const { count, error: checkError } = await checkQuery
+      if (checkError) throw checkError
+      if (count && count > 0) {
+        throw new Error(
+          "Delete failed: you may not have permission to delete some records"
+        )
+      }
+    },
+  })
+
 export type ResourceAuditLog = {
   id: string
   created_at: string

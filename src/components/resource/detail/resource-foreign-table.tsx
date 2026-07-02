@@ -32,7 +32,7 @@ import type {
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import {
-  deleteResourceMutationOptions,
+  deleteBulkResourceMutationOptions,
   foreignTableDataQueryOptions,
   insertBulkResourceMutationOptions,
 } from "#/lib/supabase/data/resource"
@@ -112,8 +112,8 @@ export function ResourceForeignTable({
   const totalCount = hasParentValue ? (queryResult?.count ?? 0) : 0
   const pageCount = Math.max(1, Math.ceil(totalCount / pagination.pageSize))
 
-  const { mutateAsync: deleteRow } = useMutation(
-    deleteResourceMutationOptions(schema, table)
+  const { mutateAsync: deleteRows } = useMutation(
+    deleteBulkResourceMutationOptions(schema, table)
   )
   const { mutateAsync: insertBulkRows } = useMutation(
     insertBulkResourceMutationOptions(schema, table)
@@ -155,13 +155,12 @@ export function ResourceForeignTable({
 
   const handleDelete = async (rows: Record<string, unknown>[]) => {
     try {
-      await Promise.all(
-        rows.map((row) => {
-          const pk = Object.fromEntries(
+      await deleteRows(
+        rows.map((row) =>
+          Object.fromEntries(
             primaryKeys.map((key) => [key.name, row[key.name]])
           )
-          return deleteRow(pk)
-        })
+        )
       )
       queryClient.invalidateQueries({
         queryKey: ["supasheet", "resource-data", schema, table],

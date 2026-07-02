@@ -23,7 +23,7 @@ import type {
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import {
-  deleteResourceMutationOptions,
+  deleteBulkResourceMutationOptions,
   insertBulkResourceMutationOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -75,8 +75,8 @@ export function ResourceList({
   const canDelete = useHasPermission(`${schema}.${resource}:delete`)
   const canInsert = useHasPermission(`${schema}.${resource}:insert`)
 
-  const { mutateAsync: deleteRow } = useMutation(
-    deleteResourceMutationOptions(schema, resource)
+  const { mutateAsync: deleteRows } = useMutation(
+    deleteBulkResourceMutationOptions(schema, resource)
   )
   const { mutateAsync: insertBulkRows } = useMutation(
     insertBulkResourceMutationOptions(schema, resource)
@@ -118,13 +118,12 @@ export function ResourceList({
 
   const handleDelete = async (rows: Record<string, unknown>[]) => {
     try {
-      await Promise.all(
-        rows.map((row) => {
-          const pk = Object.fromEntries(
+      await deleteRows(
+        rows.map((row) =>
+          Object.fromEntries(
             primaryKeys.map((key) => [key.name, row[key.name]])
           )
-          return deleteRow(pk)
-        })
+        )
       )
       queryClient.invalidateQueries({
         queryKey: ["supasheet", "resource-data", schema, resource],
