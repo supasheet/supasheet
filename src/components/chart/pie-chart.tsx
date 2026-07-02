@@ -28,7 +28,7 @@ export function PieChartWidget({
   data,
 }: {
   chartMeta: ChartMeta
-  data: Record<string, any>[] | null
+  data: Record<string, unknown>[] | null
 }) {
   if (!data || data.length === 0) {
     return (

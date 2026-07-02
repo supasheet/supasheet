@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react"
 
 import { CircleUserRoundIcon, XIcon } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "#/components/ui/button"
 import { useFileUpload } from "#/hooks/use-file-upload"
@@ -104,6 +105,7 @@ export function AvatarField({ columnMetadata, columnSchema }: FileFieldProps) {
         field.handleChange(null)
       } catch (error) {
         console.error("Failed to delete avatar:", error)
+        toast.error("Failed to delete avatar")
       }
     },
     [field]

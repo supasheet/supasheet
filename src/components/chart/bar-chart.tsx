@@ -28,7 +28,7 @@ export function BarChartWidget({
   data,
 }: {
   chartMeta: ChartMeta
-  data: Record<string, any>[] | null
+  data: Record<string, unknown>[] | null
 }) {
   if (!data || data.length === 0) {
     return (
@@ -76,7 +76,7 @@ export function BarChartWidget({
   })
 
   const chartData = data.map((item) => {
-    const processed: Record<string, any> = { [xAxisKey]: item[xAxisKey] }
+    const processed: Record<string, unknown> = { [xAxisKey]: item[xAxisKey] }
     keys.forEach((key) => {
       processed[key] = Number(item[key]) || 0
     })

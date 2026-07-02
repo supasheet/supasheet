@@ -60,6 +60,9 @@ export const widgetDataQueryOptions = <S extends DatabaseSchemas>(
         .select("*")
       if (error) throw error
 
+      // Widget cards read typed fields (value/label/percent/icon) directly and
+      // do arithmetic on them, so `any` is intentional here — unlike the
+      // chart/report data paths whose consumers narrow via Number()/String().
       return (data ?? []) as Record<string, any>[]
     },
     staleTime: 1000 * 60 * 5,

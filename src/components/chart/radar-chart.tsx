@@ -28,7 +28,7 @@ export function RadarChartWidget({
   data,
 }: {
   chartMeta: ChartMeta
-  data: Record<string, any>[] | null
+  data: Record<string, unknown>[] | null
 }) {
   if (!data || data.length === 0) {
     return (
@@ -76,7 +76,7 @@ export function RadarChartWidget({
   })
 
   const chartData = data.map((item) => {
-    const processed: Record<string, any> = { [axisKey]: item[axisKey] }
+    const processed: Record<string, unknown> = { [axisKey]: item[axisKey] }
     keys.forEach((key) => {
       processed[key] = Number(item[key]) || 0
     })

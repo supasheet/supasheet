@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react"
 
 import { AlertCircleIcon, FileUpIcon, XIcon } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "#/components/ui/button"
 import { useFileUpload } from "#/hooks/use-file-upload"
@@ -133,6 +134,7 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
         }
       } catch (error) {
         console.error("Failed to delete file:", error)
+        toast.error("Failed to delete file")
       }
     },
     [field]

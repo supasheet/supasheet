@@ -65,8 +65,10 @@ export function ResourceNewForm({
       let inserted: Record<string, unknown> | null = null
       try {
         inserted = await insertRow(payload)
-      } catch (error: any) {
-        toast.error(error?.message || "An error occurred")
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "An error occurred"
+        )
         console.error(error)
         return
       }
