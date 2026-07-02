@@ -279,6 +279,7 @@ function RouteComponent() {
           data={data}
           resourceSchema={resourceSchema}
           currentView={calendarView}
+          columnsSchema={columnsSchema ?? []}
         />
       </div>
       <Outlet />

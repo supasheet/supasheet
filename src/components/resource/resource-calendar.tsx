@@ -19,7 +19,11 @@ import {
 } from "#/components/ui/event-calendar"
 import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
 import { useHasPermission } from "#/hooks/use-permissions"
-import type { CalendarLayout, ResourceSchema } from "#/lib/database-meta.types"
+import type {
+  CalendarLayout,
+  ColumnSchema,
+  ResourceSchema,
+} from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { getPkValue } from "#/lib/fields"
 import {
@@ -60,6 +64,14 @@ export interface ResourceCalendarProps {
   data: IEvent[]
   resourceSchema: ResourceSchema
   currentView: CalendarLayout
+  columnsSchema?: ColumnSchema[]
+}
+
+function formatSlotValue(format: string | undefined, slot: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0")
+  const date = `${slot.getFullYear()}-${pad(slot.getMonth() + 1)}-${pad(slot.getDate())}`
+  if (format === "date") return date
+  return `${date}T${pad(slot.getHours())}:${pad(slot.getMinutes())}`
 }
 
 export function ResourceCalendar({
@@ -67,6 +79,7 @@ export function ResourceCalendar({
   data,
   resourceSchema,
   currentView,
+  columnsSchema = [],
 }: ResourceCalendarProps) {
   const schema = resourceSchema.schema ?? ""
   const resource = resourceSchema.name ?? ""
@@ -124,9 +137,14 @@ export function ResourceCalendar({
   }) {
     const start = new Date(startDate)
     start.setHours(hour, minute)
+    const startCol = columnsSchema.find((c) => c.name === startDateField)
+    const defaults = startDateField
+      ? { [startDateField]: formatSlotValue(startCol?.format, start) }
+      : undefined
     void navigate({
       to: "/$schema/resource/$resource/new",
       params: { schema, resource },
+      search: defaults ? { defaults } : undefined,
     })
   }
 
