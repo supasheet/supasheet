@@ -1570,7 +1570,10 @@ function MonthEventBadge({
         tabIndex={0}
         className={eventBadgeClasses}
         onKeyDown={handleKeyDown}
-        onClick={() => onEventClick?.(event)}
+        onClick={(e) => {
+          e.stopPropagation()
+          onEventClick?.(event)
+        }}
       >
         <div className="flex items-center gap-1.5 truncate">
           {!["middle", "last"].includes(position) &&
@@ -1674,7 +1677,7 @@ function DayCell({
   events: IEvent[]
   eventPositions: Record<string, number>
 }) {
-  const { setSelectedDate, onViewUpdate } = useEventCalendar()
+  const { setSelectedDate, onViewUpdate, onAddEvent } = useEventCalendar()
 
   const { day, currentMonth, date } = cell
 
@@ -1684,7 +1687,8 @@ function DayCell({
   )
   const isSunday = date.getDay() === 0
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
     setSelectedDate(date)
     onViewUpdate?.("day")
   }
@@ -1694,8 +1698,14 @@ function DayCell({
       <div
         className={cn(
           "flex h-full flex-col gap-1 border-t border-l py-1.5 lg:pt-1 lg:pb-2",
-          isSunday && "border-l-0"
+          isSunday && "border-l-0",
+          onAddEvent && "cursor-pointer transition-colors hover:bg-accent/30"
         )}
+        onClick={
+          onAddEvent
+            ? () => onAddEvent({ startDate: date, hour: 0, minute: 0 })
+            : undefined
+        }
       >
         <button
           onClick={handleClick}
@@ -1745,6 +1755,7 @@ function DayCell({
               "h-4.5 px-1.5 text-xs font-semibold text-muted-foreground",
               !currentMonth && "opacity-50"
             )}
+            onClick={(e) => e.stopPropagation()}
           >
             <span className="sm:hidden">
               +{cellEvents.length - MAX_VISIBLE_EVENTS}
