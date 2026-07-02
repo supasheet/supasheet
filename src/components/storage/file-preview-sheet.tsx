@@ -20,6 +20,8 @@ import {
 } from "#/components/ui/sheet"
 import { Skeleton } from "#/components/ui/skeleton"
 import { useIsMobile } from "#/hooks/use-mobile"
+import { formatFileSize } from "#/lib/files"
+import { formatDate } from "#/lib/format"
 import { createSignedUrl, getPublicUrl } from "#/lib/supabase/data/storage"
 import type { FileObject } from "#/lib/supabase/data/storage"
 import { cn } from "#/lib/utils"
@@ -34,21 +36,6 @@ interface FilePreviewSheetProps {
   file: FileObject | null
   filePath: string
   onSuccess?: () => void
-}
-
-function formatSize(bytes: number | undefined) {
-  if (bytes === undefined || bytes === null) return "—"
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-function formatDate(value: string | undefined) {
-  if (!value) return "—"
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value))
 }
 
 export function FilePreviewSheet({
@@ -84,7 +71,7 @@ export function FilePreviewSheet({
   const size = file?.metadata?.size
 
   const fileIconEl = isImage ? (
-    <ImageIcon className="size-12 text-blue-400 opacity-50" />
+    <ImageIcon className="size-12 text-blue-500 opacity-50" />
   ) : isVideo ? (
     <VideoIcon className="size-12 text-purple-400 opacity-50" />
   ) : mime.startsWith("text/") ? (
@@ -159,7 +146,7 @@ export function FilePreviewSheet({
           <div className="flex justify-between">
             <span className="text-muted-foreground">Size</span>
             {file ? (
-              <span>{formatSize(size)}</span>
+              <span>{size === undefined ? "—" : formatFileSize(size)}</span>
             ) : (
               <Skeleton className="h-4 w-16" />
             )}
@@ -167,7 +154,14 @@ export function FilePreviewSheet({
           <div className="flex justify-between">
             <span className="text-muted-foreground">Modified</span>
             {file ? (
-              <span>{formatDate(file.updated_at ?? undefined)}</span>
+              <span>
+                {file.updated_at
+                  ? formatDate(file.updated_at, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
+                  : "—"}
+              </span>
             ) : (
               <Skeleton className="h-4 w-28" />
             )}
@@ -175,7 +169,14 @@ export function FilePreviewSheet({
           <div className="flex justify-between">
             <span className="text-muted-foreground">Created</span>
             {file ? (
-              <span>{formatDate(file.created_at ?? undefined)}</span>
+              <span>
+                {file.created_at
+                  ? formatDate(file.created_at, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
+                  : "—"}
+              </span>
             ) : (
               <Skeleton className="h-4 w-28" />
             )}

@@ -10,6 +10,7 @@ import { Checkbox } from "#/components/ui/checkbox"
 import { getColumnMetadata } from "#/lib/columns"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import type { Database } from "#/lib/database.types"
+import { formatDate } from "#/lib/format"
 
 export type User = Database["supasheet"]["Tables"]["users"]["Row"]
 
@@ -135,9 +136,7 @@ export function getUsersTableColumns({
           return <span className="text-sm text-muted-foreground">—</span>
         return (
           <span className="text-sm text-muted-foreground">
-            {new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-              new Date(value)
-            )}
+            {formatDate(value, { dateStyle: "medium" })}
           </span>
         )
       },
@@ -157,9 +156,7 @@ export function getUsersTableColumns({
           return <span className="text-sm text-muted-foreground">—</span>
         return (
           <span className="text-sm text-muted-foreground">
-            {new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-              new Date(value)
-            )}
+            {formatDate(value, { dateStyle: "medium" })}
           </span>
         )
       },

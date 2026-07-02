@@ -5,12 +5,16 @@ export function formatDate(
   if (!date) return ""
 
   try {
-    return new Intl.DateTimeFormat("en-US", {
-      month: opts.month ?? "long",
-      day: opts.day ?? "numeric",
-      year: opts.year ?? "numeric",
-      ...opts,
-    }).format(new Date(date))
+    const options: Intl.DateTimeFormatOptions =
+      opts.dateStyle || opts.timeStyle
+        ? opts
+        : {
+            month: opts.month ?? "long",
+            day: opts.day ?? "numeric",
+            year: opts.year ?? "numeric",
+            ...opts,
+          }
+    return new Intl.DateTimeFormat("en-US", options).format(new Date(date))
   } catch (err) {
     console.error(err)
     return ""

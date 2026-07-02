@@ -10,6 +10,7 @@ import { Checkbox } from "#/components/ui/checkbox"
 import { getColumnMetadata } from "#/lib/columns"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import type { Database } from "#/lib/database.types"
+import { formatDate } from "#/lib/format"
 
 export type AuditLog = Database["supasheet"]["Tables"]["audit_logs"]["Row"]
 
@@ -78,10 +79,7 @@ export function getAuditLogsTableColumns({
         const value = row.getValue<string>("created_at")
         return (
           <span className="text-sm text-muted-foreground">
-            {new Intl.DateTimeFormat("en-US", {
-              dateStyle: "medium",
-              timeStyle: "short",
-            }).format(new Date(value))}
+            {formatDate(value, { dateStyle: "medium", timeStyle: "short" })}
           </span>
         )
       },

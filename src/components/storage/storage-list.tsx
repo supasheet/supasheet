@@ -24,6 +24,8 @@ import {
   TableHeader,
   TableRow,
 } from "#/components/ui/table"
+import { formatFileSize } from "#/lib/files"
+import { formatDate } from "#/lib/format"
 import type { FileObject } from "#/lib/supabase/data/storage"
 
 import { FileActionsMenu } from "./file-actions-menu"
@@ -49,21 +51,6 @@ function fileIcon(item: FileObject) {
   if (mime.startsWith("text/"))
     return <FileTextIcon className="size-4 text-green-500" />
   return <FileIcon className="size-4 text-muted-foreground" />
-}
-
-function formatSize(bytes: number | undefined) {
-  if (bytes === undefined || bytes === null) return "—"
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-function formatDate(value: string | undefined) {
-  if (!value) return "—"
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value))
 }
 
 export function StorageList({
@@ -159,10 +146,15 @@ export function StorageList({
                 )}
               </TableCell>
               <TableCell className="text-muted-foreground tabular-nums">
-                {isFolder ? "—" : formatSize(size)}
+                {isFolder ? "—" : size === undefined ? "—" : formatFileSize(size)}
               </TableCell>
               <TableCell className="hidden text-muted-foreground md:table-cell">
-                {formatDate(updatedAt)}
+                {updatedAt
+                  ? formatDate(updatedAt, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
+                  : "—"}
               </TableCell>
               <TableCell>
                 <FileActionsMenu
