@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
-import { ResourceGrid } from "#/components/resource/resource-grid"
+import { ResourceCardGrid } from "#/components/resource/resource-grid"
 import {
   Card,
   CardDescription,
@@ -179,7 +179,7 @@ function RouteComponent() {
               No tables or views found in this schema.
             </p>
           ) : (
-            <ResourceGrid resources={resources} />
+            <ResourceCardGrid resources={resources} />
           )}
         </section>
       </div>

@@ -1,7 +1,7 @@
 import { ResourceCard } from "./resource-card"
 import type { Resource } from "./resource-card"
 
-export function ResourceGrid({ resources }: { resources: Resource[] }) {
+export function ResourceCardGrid({ resources }: { resources: Resource[] }) {
   const hasGroups = resources.some((r) => r.meta?.group)
 
   if (!hasGroups) {

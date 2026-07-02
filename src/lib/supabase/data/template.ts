@@ -23,16 +23,12 @@ export const templatesQueryOptions = (schema: DatabaseSchemas) =>
   queryOptions({
     queryKey: ["supasheet", "templates", schema],
     queryFn: async () => {
-      const { data, error } = (await (supabase.schema("supasheet") as any).rpc(
-        "get_templates",
-        { p_schema: schema }
-      )) as {
-        data: Array<{ name: string; schema: string; comment: string | null }>
-        error: unknown
-      }
+      const { data, error } = await supabase
+        .schema("supasheet")
+        .rpc("get_templates", { p_schema: schema })
       if (error) throw error
 
-      return (data ?? []).map((template) => {
+      return data.map((template) => {
         const meta = (
           template.comment ? JSON.parse(template.comment) : {}
         ) as TemplateMeta
@@ -101,14 +97,13 @@ export const applyTemplateMutationOptions = mutationOptions({
     templateName: string
     targetTable: string
   }) => {
-    const { data, error } = (await (supabase.schema("supasheet") as any).rpc(
-      "apply_template",
-      {
+    const { data, error } = await supabase
+      .schema("supasheet")
+      .rpc("apply_template", {
         p_schema: schema,
         p_template_name: templateName,
         p_target_table: targetTable,
-      }
-    )) as { data: number; error: unknown }
+      })
     if (error) throw error
     return data
   },

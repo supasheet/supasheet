@@ -2,6 +2,7 @@ import { useState } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
+import { useRouter } from "@tanstack/react-router"
 import { CircleAlertIcon, UserIcon, XIcon } from "lucide-react"
 import { toast } from "sonner"
 
@@ -30,6 +31,7 @@ export function ProfileAvatarCard() {
   const user = useUser()
   const authUser = useAuthUser()
   const queryClient = useQueryClient()
+  const router = useRouter()
   const [pendingFile, setPendingFile] = useState<FileWithPreview | null>(null)
 
   const [
@@ -56,8 +58,11 @@ export function ProfileAvatarCard() {
 
   const { mutate: saveAvatar, isPending: isSaving } = useMutation({
     ...uploadAccountAvatarMutationOptions(authUser!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supasheet", "account"] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["supasheet", "user", authUser!.id],
+      })
+      await router.invalidate()
       setPendingFile(null)
       toast.success("Avatar updated")
     },
@@ -70,8 +75,11 @@ export function ProfileAvatarCard() {
 
   const { mutate: removeAvatar, isPending: isRemoving } = useMutation({
     ...removeAccountAvatarMutationOptions(authUser!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supasheet", "account"] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["supasheet", "user", authUser!.id],
+      })
+      await router.invalidate()
       toast.success("Avatar removed")
     },
     onError: (err) => {

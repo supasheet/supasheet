@@ -698,7 +698,7 @@ export const relatedTablesSchemaQueryOptions = <S extends DatabaseSchemas>(
           schema_name: schema,
           table_name: id,
         })
-      if (error) return []
+      if (error) throw error
       return data as unknown as (TableSchema & { columns: ColumnSchema[] })[]
     },
     staleTime: 1000 * 60 * 5,

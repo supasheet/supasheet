@@ -169,6 +169,3 @@ export function ForeignTableSheet({
     </Sheet>
   )
 }
-
-/** @deprecated use ForeignTableSheet */
-export const ForeignTableDialog = ForeignTableSheet

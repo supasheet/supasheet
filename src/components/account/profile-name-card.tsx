@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useForm } from "@tanstack/react-form"
+import { useRouter } from "@tanstack/react-router"
 
 import { toast } from "sonner"
 
@@ -22,11 +23,15 @@ export function ProfileNameCard() {
   const user = useUser()
   const authUser = useAuthUser()
   const queryClient = useQueryClient()
+  const router = useRouter()
 
   const { mutateAsync: saveName } = useMutation({
     ...updateAccountNameMutationOptions(authUser!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supasheet", "account"] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["supasheet", "user", authUser!.id],
+      })
+      await router.invalidate()
       toast.success("Name updated")
     },
     onError: (err) => {
