@@ -178,9 +178,22 @@ begin
 end;
 $$;
 
+-- create_notification is invoked only from SECURITY DEFINER triggers (e.g.
+-- trg_user_roles_notify and the per-schema *_notify triggers), which run as the
+-- function owner and therefore retain the right to call it. It must never be
+-- reachable by client roles: any authenticated user granted execute could call
+-- it directly via PostgREST and inject arbitrary notifications (spoofed
+-- titles/bodies/links) to any user. Revoke every client-reachable role,
+-- including the default PUBLIC grant; only server-only service_role keeps it.
+revoke
+execute on function supasheet.create_notification (text, text, text, uuid[], jsonb, text)
+from
+  public,
+  anon,
+  authenticated;
+
 grant
-execute on function supasheet.create_notification (text, text, text, uuid[], jsonb, text) to authenticated,
-service_role;
+execute on function supasheet.create_notification (text, text, text, uuid[], jsonb, text) to service_role;
 
 -- ─────────────────────────────────────────────
 -- Resolver helpers
@@ -197,9 +210,20 @@ set
     where role = p_role
 $$;
 
+-- Resolver used only inside SECURITY DEFINER notification triggers, which run
+-- as the owner and keep the right to call it. Exposing it to client roles lets
+-- any authenticated user enumerate the members of any role (e.g. all admin user
+-- ids) via PostgREST, bypassing user_roles RLS. Revoke every client-reachable
+-- role, including the default PUBLIC grant; only server-only service_role keeps it.
+revoke
+execute on function supasheet.get_users_with_role (supasheet.app_role)
+from
+  public,
+  anon,
+  authenticated;
+
 grant
-execute on function supasheet.get_users_with_role (supasheet.app_role) to authenticated,
-service_role;
+execute on function supasheet.get_users_with_role (supasheet.app_role) to service_role;
 
 -- All users who hold a role that grants the given permission.
 create or replace function supasheet.get_users_with_permission (p_permission supasheet.app_permission) returns uuid[] language sql stable security definer
@@ -211,9 +235,20 @@ set
     where rp.permission = p_permission
 $$;
 
+-- Resolver used only inside SECURITY DEFINER notification triggers, which run
+-- as the owner and keep the right to call it. Exposing it to client roles lets
+-- any authenticated user enumerate the holders of any permission via PostgREST,
+-- bypassing user_roles/role_permissions RLS. Revoke every client-reachable role,
+-- including the default PUBLIC grant; only server-only service_role keeps it.
+revoke
+execute on function supasheet.get_users_with_permission (supasheet.app_permission)
+from
+  public,
+  anon,
+  authenticated;
+
 grant
-execute on function supasheet.get_users_with_permission (supasheet.app_permission) to authenticated,
-service_role;
+execute on function supasheet.get_users_with_permission (supasheet.app_permission) to service_role;
 
 -- ─────────────────────────────────────────────
 -- Convenience helpers used by the UI
