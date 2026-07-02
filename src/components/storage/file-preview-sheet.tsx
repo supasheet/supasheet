@@ -31,6 +31,35 @@ import { FileActionsMenu } from "./file-actions-menu"
 
 const MAX_TEXT_PREVIEW_BYTES = 1024 * 1024
 
+// prettier-ignore
+const IMAGE_EXTS = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "avif", "bmp", "ico"])
+const VIDEO_EXTS = new Set(["mp4", "webm", "mov", "mkv", "avi", "m4v"])
+const AUDIO_EXTS = new Set(["mp3", "wav", "ogg", "m4a", "flac", "aac"])
+// prettier-ignore
+const TEXT_EXTS = new Set(["txt", "md", "markdown", "json", "csv", "tsv", "log", "xml", "yml", "yaml", "html", "css", "js", "ts", "jsx", "tsx", "sql", "sh", "toml", "ini", "env"])
+
+type PreviewKind = "image" | "video" | "audio" | "pdf" | "text" | null
+
+// Supabase Storage defaults the content type to text/plain when an upload
+// doesn't set one, so the stored mimetype can't be trusted on its own —
+// prefer the file extension and only fall back to the mimetype.
+function getPreviewKind(fileName: string, mime: string): PreviewKind {
+  const ext = fileName.includes(".")
+    ? fileName.split(".").pop()!.toLowerCase()
+    : ""
+  if (IMAGE_EXTS.has(ext)) return "image"
+  if (VIDEO_EXTS.has(ext)) return "video"
+  if (AUDIO_EXTS.has(ext)) return "audio"
+  if (ext === "pdf") return "pdf"
+  if (TEXT_EXTS.has(ext)) return "text"
+  if (mime.startsWith("image/")) return "image"
+  if (mime.startsWith("video/")) return "video"
+  if (mime.startsWith("audio/")) return "audio"
+  if (mime === "application/pdf") return "pdf"
+  if (mime.startsWith("text/") || mime === "application/json") return "text"
+  return null
+}
+
 interface FilePreviewSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -53,21 +82,22 @@ export function FilePreviewSheet({
   const isMobile = useIsMobile()
   const side = isMobile ? "bottom" : "right"
 
+  const segments = filePath.split("/").filter(Boolean)
+  const fileName = segments[segments.length - 1]
+  const currentPath = segments.slice(0, -1)
+
   const mime: string = file?.metadata?.mimetype ?? ""
-  const isImage = mime.startsWith("image/")
-  const isVideo = mime.startsWith("video/")
-  const isAudio = mime.startsWith("audio/")
-  const isPdf = mime === "application/pdf"
-  const isText = mime.startsWith("text/") || mime === "application/json"
+  const kind = getPreviewKind(fileName, mime)
+  const isImage = kind === "image"
+  const isVideo = kind === "video"
+  const isAudio = kind === "audio"
+  const isPdf = kind === "pdf"
+  const isText = kind === "text"
 
   const size = file?.metadata?.size
   // Only fetch text content for reasonably small files
   const isTextPreviewable = isText && (size ?? 0) <= MAX_TEXT_PREVIEW_BYTES
   const hasPreview = isImage || isVideo || isAudio || isPdf || isTextPreviewable
-
-  const segments = filePath.split("/").filter(Boolean)
-  const fileName = segments[segments.length - 1]
-  const currentPath = segments.slice(0, -1)
 
   const { data: previewUrl } = useQuery({
     queryKey: ["storage", "preview-url", bucketId, filePath],
@@ -84,7 +114,10 @@ export function FilePreviewSheet({
     queryFn: async () => {
       const res = await fetch(previewUrl!)
       if (!res.ok) throw new Error("Failed to load file content")
-      return res.text()
+      const text = await res.text()
+      // Backstop for binary files mislabeled as text: invalid UTF-8
+      // decodes to replacement characters
+      return text.includes("�") ? null : text
     },
     enabled: isTextPreviewable && !!previewUrl,
     staleTime: 1000 * 50 * 60,
@@ -159,11 +192,12 @@ export function FilePreviewSheet({
             </div>
           ) : isPdf && previewUrl ? (
             <iframe src={previewUrl} title={fileName} className="h-72 w-full" />
-          ) : isTextPreviewable && textContent !== undefined ? (
+          ) : isTextPreviewable && typeof textContent === "string" ? (
             <pre className="h-72 w-full overflow-auto p-4 font-mono text-xs whitespace-pre-wrap">
               {textContent}
             </pre>
-          ) : hasPreview ? (
+          ) : hasPreview &&
+            (!previewUrl || (isTextPreviewable && textContent === undefined)) ? (
             <Skeleton className="h-full min-h-48 w-full" />
           ) : (
             <div className="flex flex-col items-center gap-2 p-8 text-center">
