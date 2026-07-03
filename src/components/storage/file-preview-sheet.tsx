@@ -197,7 +197,8 @@ export function FilePreviewSheet({
               {textContent}
             </pre>
           ) : hasPreview &&
-            (!previewUrl || (isTextPreviewable && textContent === undefined)) ? (
+            (!previewUrl ||
+              (isTextPreviewable && textContent === undefined)) ? (
             <Skeleton className="h-full min-h-48 w-full" />
           ) : (
             <div className="flex flex-col items-center gap-2 p-8 text-center">

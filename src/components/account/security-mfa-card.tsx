@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { useForm } from "@tanstack/react-form"
+
 import {
   ScanQrCodeIcon,
   ShieldCheckIcon,
@@ -252,7 +253,9 @@ export function SecurityMfaCard() {
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(e) =>
-                            field.handleChange(e.target.value.replace(/\D/g, ""))
+                            field.handleChange(
+                              e.target.value.replace(/\D/g, "")
+                            )
                           }
                           className="font-mono tracking-widest"
                         />
@@ -275,9 +278,7 @@ export function SecurityMfaCard() {
                     >
                       Back
                     </Button>
-                    <verifyForm.Subscribe
-                      selector={(s) => s.values.code}
-                    >
+                    <verifyForm.Subscribe selector={(s) => s.values.code}>
                       {(code) => (
                         <Button
                           type="submit"

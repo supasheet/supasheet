@@ -146,7 +146,11 @@ export function StorageList({
                 )}
               </TableCell>
               <TableCell className="text-muted-foreground tabular-nums">
-                {isFolder ? "—" : size === undefined ? "—" : formatFileSize(size)}
+                {isFolder
+                  ? "—"
+                  : size === undefined
+                    ? "—"
+                    : formatFileSize(size)}
               </TableCell>
               <TableCell className="hidden text-muted-foreground md:table-cell">
                 {updatedAt

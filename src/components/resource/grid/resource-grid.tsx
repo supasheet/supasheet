@@ -58,11 +58,11 @@ export function ResourceGrid({
     ) as TableMetadata
     const selectColumns = tableMeta.query?.select
     const visibleColumnsSchema = selectColumns
-      ? (selectColumns
+      ? selectColumns
           .map((name) =>
             columnsSchema.find((col) => (col.name ?? col.id) === name)
           )
-          .filter(Boolean))
+          .filter(Boolean)
       : columnsSchema
     return getResourceGridColumns({
       columnsSchema: visibleColumnsSchema,
