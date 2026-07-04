@@ -2752,9 +2752,9 @@ execute function demo.trg_invoices_notify ();
 -- independently of supabase/seed.sql (on conflict do nothing, so it
 -- is also safe to run after supabase/seed.sql has already created
 -- these same users):
---   b73eb03e-fb7a-424d-84ff-18e2791ce0b8  superadmin@supasheet.dev (x-admin)
---   b73eb03e-fb7a-424d-84ff-18e2791ce0b1  user1@supasheet.dev (user)
---   b73eb03e-fb7a-424d-84ff-18e2791ce0b4  user@supasheet.dev (user)
+--   b73eb03e-fb7a-424d-84ff-18e2791ce0b8  superadmin@supasheet.app (x-admin)
+--   b73eb03e-fb7a-424d-84ff-18e2791ce0b1  user1@supasheet.app (user)
+--   b73eb03e-fb7a-424d-84ff-18e2791ce0b4  user@supasheet.app (user)
 -- ================================================================
 ----------------------------------------------------------------
 -- Demo users
@@ -2802,7 +2802,7 @@ values
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
     'authenticated',
     'authenticated',
-    'superadmin@supasheet.dev',
+    'superadmin@supasheet.app',
     '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
     '2024-04-20 08:38:00.860548+00',
     null,
@@ -2815,7 +2815,7 @@ values
     null,
     '2024-04-20 08:38:00.93864+00',
     '{"provider": "email", "providers": ["email"]}',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b8", "email": "superadmin@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b8", "email": "superadmin@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
     '2024-04-20 08:38:00.942809+00',
@@ -2838,7 +2838,7 @@ values
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
     'authenticated',
     'authenticated',
-    'user@supasheet.dev',
+    'user@supasheet.app',
     '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
     '2024-04-20 08:38:00.860548+00',
     null,
@@ -2851,7 +2851,7 @@ values
     null,
     '2024-04-20 08:38:00.93864+00',
     '{"provider": "email", "providers": ["email"]}',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
     '2024-04-20 08:38:00.942809+00',
@@ -2874,7 +2874,7 @@ values
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
     'authenticated',
     'authenticated',
-    'user1@supasheet.dev',
+    'user1@supasheet.app',
     '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
     '2024-04-20 08:38:00.860548+00',
     null,
@@ -2887,7 +2887,7 @@ values
     null,
     '2024-04-20 08:38:00.93864+00',
     '{"provider": "email", "providers": ["email"]}',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
     '2024-04-20 08:38:00.942809+00',
@@ -2922,7 +2922,7 @@ values
   (
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b8", "email": "superadmin@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b8", "email": "superadmin@supasheet.app", "email_verified": false, "phone_verified": false}',
     'email',
     '2024-04-20 08:20:34.46275+00',
     '2024-04-20 08:20:34.462773+00',
@@ -2932,7 +2932,7 @@ values
   (
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.app", "email_verified": false, "phone_verified": false}',
     'email',
     '2024-04-20 08:20:34.46275+00',
     '2024-04-20 08:20:34.462773+00',
@@ -2942,7 +2942,7 @@ values
   (
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
-    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.dev", "email_verified": false, "phone_verified": false}',
+    '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.app", "email_verified": false, "phone_verified": false}',
     'email',
     '2024-04-20 08:20:34.46275+00',
     '2024-04-20 08:20:34.462773+00',
@@ -3089,6 +3089,261 @@ values
     'Inbound lead from referral, discovery call scheduled.',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
     current_timestamp - interval '12 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000006',
+    'Copper Kettle Coffee Roasters',
+    'https://copperkettle.example.com',
+    'hello@copperkettle.example.com',
+    '+1-503-555-0106',
+    'Food & Beverage',
+    'active',
+    '21 Roast House Lane',
+    'Portland',
+    'USA',
+    array['ecommerce', 'retainer'],
+    '#b45309',
+    'Runs seasonal campaigns; loves fast turnarounds.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '320 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000007',
+    'Vantage Legal',
+    'https://vantagelegal.example.com',
+    'office@vantagelegal.example.com',
+    '+1-303-555-0107',
+    'Legal',
+    'active',
+    '900 Capitol Ave, Suite 410',
+    'Denver',
+    'USA',
+    array['enterprise'],
+    '#334155',
+    'Strict review process — allow extra time for approvals.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '280 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000008',
+    'Aurora Travel Co',
+    'https://auroratravel.example.com',
+    'team@auroratravel.example.com',
+    '+354-555-0108',
+    'Travel & Hospitality',
+    'active',
+    '3 Harborfront',
+    'Reykjavik',
+    'Iceland',
+    array['international', 'priority'],
+    '#06b6d4',
+    'Booking app is their flagship investment this year.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '150 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000009',
+    'Pixelforge Games',
+    'https://pixelforge.example.com',
+    'studio@pixelforge.example.com',
+    '+1-512-555-0109',
+    'Gaming',
+    'active',
+    '77 Arcade Blvd',
+    'Austin',
+    'USA',
+    array['startup'],
+    '#8b5cf6',
+    'Indie studio gearing up for a fall title launch.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '95 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000010',
+    'Meridian Logistics',
+    'https://meridianlogistics.example.com',
+    'info@meridianlogistics.example.com',
+    '+31-10-555-0110',
+    'Logistics',
+    'active',
+    'Havenstraat 12',
+    'Rotterdam',
+    'Netherlands',
+    array['enterprise', 'international'],
+    '#0f766e',
+    'Fleet dashboard scoped after a successful pilot.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '60 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000011',
+    'Juniper & Sage',
+    'https://juniperandsage.example.com',
+    'hi@juniperandsage.example.com',
+    '+1-604-555-0111',
+    'E-commerce',
+    'lead',
+    null,
+    'Vancouver',
+    'Canada',
+    array['ecommerce'],
+    '#16a34a',
+    'Met at the spring trade show; wants a store redesign quote.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '30 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000012',
+    'Halcyon Fitness',
+    'https://halcyonfitness.example.com',
+    'hello@halcyonfitness.example.com',
+    '+1-305-555-0112',
+    'Health & Fitness',
+    'lead',
+    '450 Ocean Drive',
+    'Miami',
+    'USA',
+    array['mobile'],
+    '#f43f5e',
+    'Exploring a member app; budget conversation pending.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '21 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000013',
+    'Northwind Analytics',
+    'https://northwindanalytics.example.com',
+    'contact@northwindanalytics.example.com',
+    '+44-20-555-0113',
+    'Data & Analytics',
+    'lead',
+    '1 Finsbury Square',
+    'London',
+    'United Kingdom',
+    array['fintech', 'international'],
+    '#2563eb',
+    'Wants a rebrand ahead of their Series B announcement.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '18 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000014',
+    'Terra Verde Landscaping',
+    'https://terraverde.example.com',
+    'office@terraverde.example.com',
+    '+1-916-555-0114',
+    'Landscaping',
+    'lead',
+    '88 Garden Way',
+    'Sacramento',
+    'USA',
+    array['smb'],
+    '#65a30d',
+    'Referral from Greenfield Retail; needs a simple brochure site.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '7 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000015',
+    'Cobalt Insurance',
+    'https://cobaltinsurance.example.com',
+    'digital@cobaltinsurance.example.com',
+    '+1-860-555-0115',
+    'Insurance',
+    'on_hold',
+    '200 Constitution Plaza',
+    'Hartford',
+    'USA',
+    array['enterprise', 'compliance'],
+    '#1d4ed8',
+    'Claims redesign paused during their vendor security review.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '140 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000016',
+    'Lumen Energy',
+    'https://lumenenergy.example.com',
+    'web@lumenenergy.example.com',
+    '+1-713-555-0116',
+    'Energy',
+    'on_hold',
+    '1200 Smith Street',
+    'Houston',
+    'USA',
+    array['enterprise'],
+    '#f59e0b',
+    'Portal work paused after leadership change.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '110 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000017',
+    'Papercrane Press',
+    'https://papercranepress.example.com',
+    'editors@papercranepress.example.com',
+    '+61-3-555-0117',
+    'Publishing',
+    'churned',
+    '5 Laneway Court',
+    'Melbourne',
+    'Australia',
+    array['international'],
+    '#9333ea',
+    'Storefront delivered; moved maintenance in-house.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '420 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000018',
+    'Quartz Hotels',
+    'https://quartzhotels.example.com',
+    'reservations@quartzhotels.example.com',
+    '+971-4-555-0118',
+    'Hospitality',
+    'churned',
+    'Marina Walk 9',
+    'Dubai',
+    'UAE',
+    array['international'],
+    '#64748b',
+    'Booking widget shipped; group was acquired last winter.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '520 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000019',
+    'Fairway Sports',
+    'https://fairwaysports.example.com',
+    'support@fairwaysports.example.com',
+    '+1-816-555-0119',
+    'Sporting Goods',
+    'churned',
+    '34 Stadium Parkway',
+    'Kansas City',
+    'USA',
+    array['retail'],
+    '#dc2626',
+    'Audit completed; chose an off-the-shelf platform.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '240 days'
+  ),
+  (
+    'c1a00000-0000-0000-0000-000000000020',
+    'Brightside Daycare',
+    'https://brightsidedaycare.example.com',
+    'admin@brightsidedaycare.example.com',
+    '+1-614-555-0120',
+    'Education',
+    'churned',
+    '12 Sunny Lane',
+    'Columbus',
+    'USA',
+    array['smb'],
+    '#fbbf24',
+    'Enrollment site cancelled mid-build due to funding.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '180 days'
   );
 
 ----------------------------------------------------------------
@@ -3221,6 +3476,174 @@ values
     current_date - interval '9 months',
     85.00,
     '#a855f7'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000009',
+    null,
+    'ea000000-0000-0000-0000-000000000002',
+    'Ava Thompson',
+    'ava@northstar.studio',
+    '+1-415-555-0209',
+    'Frontend Engineer',
+    'engineering',
+    'active',
+    current_date - interval '20 months',
+    115.00,
+    '#0ea5e9'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000010',
+    null,
+    'ea000000-0000-0000-0000-000000000002',
+    'Noah Kim',
+    'noah@northstar.studio',
+    '+1-415-555-0210',
+    'Backend Engineer',
+    'engineering',
+    'active',
+    current_date - interval '30 months',
+    125.00,
+    '#0ea5e9'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000011',
+    null,
+    'ea000000-0000-0000-0000-000000000002',
+    'Elena Petrova',
+    'elena@northstar.studio',
+    '+1-415-555-0211',
+    'DevOps Engineer',
+    'engineering',
+    'active',
+    current_date - interval '14 months',
+    135.00,
+    '#0ea5e9'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000012',
+    null,
+    'ea000000-0000-0000-0000-000000000004',
+    'Marcus Webb',
+    'marcus@northstar.studio',
+    '+1-415-555-0212',
+    'QA Engineer',
+    'engineering',
+    'active',
+    current_date - interval '10 months',
+    95.00,
+    '#0ea5e9'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000013',
+    null,
+    'ea000000-0000-0000-0000-000000000003',
+    'Ines Duarte',
+    'ines@northstar.studio',
+    '+1-415-555-0213',
+    'Visual Designer',
+    'design',
+    'active',
+    current_date - interval '26 months',
+    105.00,
+    '#f97316'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000014',
+    null,
+    'ea000000-0000-0000-0000-000000000003',
+    'Leo Nakamura',
+    'leo@northstar.studio',
+    '+1-415-555-0214',
+    'UX Researcher',
+    'design',
+    'active',
+    current_date - interval '8 months',
+    115.00,
+    '#f97316'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000015',
+    null,
+    'ea000000-0000-0000-0000-000000000001',
+    'Harper Quinn',
+    'harper@northstar.studio',
+    '+1-415-555-0215',
+    'Product Manager',
+    'product',
+    'active',
+    current_date - interval '3 years',
+    145.00,
+    '#6366f1'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000016',
+    null,
+    'ea000000-0000-0000-0000-000000000015',
+    'Omar Haddad',
+    'omar@northstar.studio',
+    '+1-415-555-0216',
+    'Product Analyst',
+    'product',
+    'active',
+    current_date - interval '7 months',
+    90.00,
+    '#6366f1'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000017',
+    null,
+    'ea000000-0000-0000-0000-000000000006',
+    'Sofia Rossi',
+    'sofia@northstar.studio',
+    '+1-415-555-0217',
+    'Content Strategist',
+    'marketing',
+    'active',
+    current_date - interval '16 months',
+    95.00,
+    '#eab308'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000018',
+    null,
+    'ea000000-0000-0000-0000-000000000006',
+    'Ben Carter',
+    'ben@northstar.studio',
+    '+1-415-555-0218',
+    'SEO Specialist',
+    'marketing',
+    'on_leave',
+    current_date - interval '13 months',
+    90.00,
+    '#eab308'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000019',
+    null,
+    'ea000000-0000-0000-0000-000000000007',
+    'Grace Osei',
+    'grace@northstar.studio',
+    '+1-415-555-0219',
+    'Account Manager',
+    'sales',
+    'active',
+    current_date - interval '22 months',
+    100.00,
+    '#22c55e'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000020',
+    null,
+    'ea000000-0000-0000-0000-000000000002',
+    'Felix Wagner',
+    'felix@northstar.studio',
+    '+1-415-555-0220',
+    'Junior Engineer',
+    'engineering',
+    'offboarded',
+    current_date - interval '2 years',
+    75.00,
+    '#0ea5e9'
   );
 
 ----------------------------------------------------------------
@@ -3329,6 +3752,261 @@ values
     '#6366f1',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
     current_timestamp - interval '121 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000006',
+    'Copper Kettle — E-commerce Store',
+    'c1a00000-0000-0000-0000-000000000006',
+    'ea000000-0000-0000-0000-000000000009',
+    'New online store with subscriptions and wholesale ordering.',
+    'active',
+    'high',
+    32000.00,
+    current_date - interval '40 days',
+    current_date + interval '30 days',
+    55,
+    array['ecommerce', 'web'],
+    '#b45309',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '41 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000007',
+    'Vantage Legal — Client Portal',
+    'c1a00000-0000-0000-0000-000000000007',
+    'ea000000-0000-0000-0000-000000000004',
+    'Secure portal for case status, documents, and billing.',
+    'active',
+    'medium',
+    54000.00,
+    current_date - interval '25 days',
+    current_date + interval '60 days',
+    30,
+    array['web-app', 'portal'],
+    '#334155',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '26 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000008',
+    'Aurora Travel — Booking App',
+    'c1a00000-0000-0000-0000-000000000008',
+    'ea000000-0000-0000-0000-000000000002',
+    'Cross-platform mobile app for tours and flight add-ons.',
+    'active',
+    'critical',
+    95000.00,
+    current_date - interval '70 days',
+    current_date + interval '45 days',
+    48,
+    array['mobile', 'booking'],
+    '#06b6d4',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '71 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000009',
+    'Pixelforge — Launch Marketing Site',
+    'c1a00000-0000-0000-0000-000000000009',
+    'ea000000-0000-0000-0000-000000000009',
+    'Teaser site and press kit for the fall title launch.',
+    'active',
+    'medium',
+    21000.00,
+    current_date - interval '15 days',
+    current_date + interval '40 days',
+    20,
+    array['web', 'marketing'],
+    '#8b5cf6',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '16 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000010',
+    'Meridian — Fleet Tracking Dashboard',
+    'c1a00000-0000-0000-0000-000000000010',
+    'ea000000-0000-0000-0000-000000000010',
+    'Real-time fleet map, alerts, and delivery analytics.',
+    'planning',
+    'high',
+    88000.00,
+    current_date + interval '5 days',
+    current_date + interval '120 days',
+    0,
+    array['dashboard', 'analytics'],
+    '#0f766e',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '9 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000011',
+    'Northwind — Analytics Rebrand',
+    'c1a00000-0000-0000-0000-000000000013',
+    'ea000000-0000-0000-0000-000000000003',
+    'Full rebrand ahead of the Series B announcement.',
+    'planning',
+    'medium',
+    18000.00,
+    current_date + interval '14 days',
+    current_date + interval '75 days',
+    0,
+    array['branding'],
+    '#2563eb',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '6 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000012',
+    'Halcyon — Member App Discovery',
+    'c1a00000-0000-0000-0000-000000000012',
+    'ea000000-0000-0000-0000-000000000015',
+    'Discovery sprint to scope a member-facing fitness app.',
+    'planning',
+    'low',
+    12000.00,
+    current_date + interval '20 days',
+    current_date + interval '90 days',
+    0,
+    array['mobile', 'discovery'],
+    '#f43f5e',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '4 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000013',
+    'Cobalt — Claims Intake Redesign',
+    'c1a00000-0000-0000-0000-000000000015',
+    'ea000000-0000-0000-0000-000000000005',
+    'Redesign of the claims intake flow for policyholders.',
+    'on_hold',
+    'medium',
+    46000.00,
+    current_date - interval '50 days',
+    current_date + interval '80 days',
+    15,
+    array['ux', 'insurance'],
+    '#1d4ed8',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '51 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000014',
+    'Copper Kettle — Loyalty Program',
+    'c1a00000-0000-0000-0000-000000000006',
+    'ea000000-0000-0000-0000-000000000015',
+    'Points and rewards program integrated with the store.',
+    'completed',
+    'medium',
+    24000.00,
+    current_date - interval '150 days',
+    current_date - interval '60 days',
+    100,
+    array['ecommerce', 'loyalty'],
+    '#b45309',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '151 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000015',
+    'Vantage Legal — Brand Identity',
+    'c1a00000-0000-0000-0000-000000000007',
+    'ea000000-0000-0000-0000-000000000003',
+    'Conservative-but-modern identity for the firm.',
+    'completed',
+    'low',
+    15000.00,
+    current_date - interval '200 days',
+    current_date - interval '140 days',
+    100,
+    array['branding'],
+    '#334155',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '201 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000016',
+    'Quartz Hotels — Booking Widget',
+    'c1a00000-0000-0000-0000-000000000018',
+    'ea000000-0000-0000-0000-000000000004',
+    'Embeddable room-booking widget for the hotel group sites.',
+    'completed',
+    'high',
+    38000.00,
+    current_date - interval '260 days',
+    current_date - interval '170 days',
+    100,
+    array['web', 'booking'],
+    '#64748b',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '261 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000017',
+    'Papercrane — Digital Storefront',
+    'c1a00000-0000-0000-0000-000000000017',
+    'ea000000-0000-0000-0000-000000000002',
+    'Direct-to-reader storefront with print-on-demand fulfilment.',
+    'completed',
+    'medium',
+    42000.00,
+    current_date - interval '320 days',
+    current_date - interval '210 days',
+    100,
+    array['ecommerce'],
+    '#9333ea',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '321 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000018',
+    'Fairway Sports — Commerce Audit',
+    'c1a00000-0000-0000-0000-000000000019',
+    'ea000000-0000-0000-0000-000000000016',
+    'Conversion and platform audit of the existing online store.',
+    'completed',
+    'low',
+    9000.00,
+    current_date - interval '120 days',
+    current_date - interval '90 days',
+    100,
+    array['audit', 'ecommerce'],
+    '#dc2626',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '121 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000019',
+    'Lumen Energy — Customer Portal',
+    'c1a00000-0000-0000-0000-000000000016',
+    'ea000000-0000-0000-0000-000000000010',
+    'Self-service billing and usage portal for customers.',
+    'cancelled',
+    'medium',
+    60000.00,
+    current_date - interval '100 days',
+    current_date - interval '30 days',
+    10,
+    array['portal'],
+    '#f59e0b',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '101 days'
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000020',
+    'Brightside — Enrollment Site',
+    'c1a00000-0000-0000-0000-000000000020',
+    'ea000000-0000-0000-0000-000000000013',
+    'Parent-facing enrollment and waitlist site.',
+    'cancelled',
+    'low',
+    14000.00,
+    current_date - interval '90 days',
+    current_date - interval '45 days',
+    5,
+    array['web'],
+    '#fbbf24',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '91 days'
   );
 
 ----------------------------------------------------------------
@@ -3407,6 +4085,216 @@ values
     'ea000000-0000-0000-0000-000000000008',
     'Coordinator',
     20
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000006',
+    'ea000000-0000-0000-0000-000000000009',
+    'Frontend Engineer',
+    60
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000006',
+    'ea000000-0000-0000-0000-000000000013',
+    'Designer',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000006',
+    'ea000000-0000-0000-0000-000000000019',
+    'Account Manager',
+    10
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000007',
+    'ea000000-0000-0000-0000-000000000004',
+    'Tech Lead',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000007',
+    'ea000000-0000-0000-0000-000000000010',
+    'Backend Engineer',
+    60
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000007',
+    'ea000000-0000-0000-0000-000000000014',
+    'UX Researcher',
+    20
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000008',
+    'ea000000-0000-0000-0000-000000000002',
+    'Tech Lead',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000008',
+    'ea000000-0000-0000-0000-000000000009',
+    'Frontend Engineer',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000008',
+    'ea000000-0000-0000-0000-000000000011',
+    'DevOps Engineer',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000009',
+    'ea000000-0000-0000-0000-000000000009',
+    'Engineer',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000009',
+    'ea000000-0000-0000-0000-000000000017',
+    'Content Strategist',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000010',
+    'ea000000-0000-0000-0000-000000000010',
+    'Backend Lead',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000010',
+    'ea000000-0000-0000-0000-000000000011',
+    'DevOps Engineer',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000010',
+    'ea000000-0000-0000-0000-000000000016',
+    'Product Analyst',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000011',
+    'ea000000-0000-0000-0000-000000000003',
+    'Design Lead',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000011',
+    'ea000000-0000-0000-0000-000000000013',
+    'Designer',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000012',
+    'ea000000-0000-0000-0000-000000000015',
+    'Product Lead',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000012',
+    'ea000000-0000-0000-0000-000000000014',
+    'UX Researcher',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000013',
+    'ea000000-0000-0000-0000-000000000005',
+    'Designer',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000013',
+    'ea000000-0000-0000-0000-000000000012',
+    'QA Engineer',
+    20
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000014',
+    'ea000000-0000-0000-0000-000000000015',
+    'Product Lead',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000014',
+    'ea000000-0000-0000-0000-000000000009',
+    'Engineer',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000015',
+    'ea000000-0000-0000-0000-000000000003',
+    'Design Lead',
+    50
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000015',
+    'ea000000-0000-0000-0000-000000000013',
+    'Designer',
+    60
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000016',
+    'ea000000-0000-0000-0000-000000000004',
+    'Tech Lead',
+    60
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000016',
+    'ea000000-0000-0000-0000-000000000012',
+    'QA Engineer',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000017',
+    'ea000000-0000-0000-0000-000000000002',
+    'Tech Lead',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000017',
+    'ea000000-0000-0000-0000-000000000010',
+    'Backend Engineer',
+    70
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000017',
+    'ea000000-0000-0000-0000-000000000013',
+    'Designer',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000018',
+    'ea000000-0000-0000-0000-000000000016',
+    'Analyst',
+    60
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000018',
+    'ea000000-0000-0000-0000-000000000019',
+    'Account Manager',
+    20
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000019',
+    'ea000000-0000-0000-0000-000000000010',
+    'Backend Engineer',
+    30
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000019',
+    'ea000000-0000-0000-0000-000000000011',
+    'DevOps Engineer',
+    20
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000020',
+    'ea000000-0000-0000-0000-000000000013',
+    'Designer',
+    40
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000020',
+    'ea000000-0000-0000-0000-000000000009',
+    'Engineer',
+    30
   );
 
 ----------------------------------------------------------------
@@ -3476,6 +4364,177 @@ values
     current_date + interval '15 days',
     'pending',
     1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000007',
+    'ec000000-0000-0000-0000-000000000003',
+    'Architecture Approved',
+    'Technical architecture reviewed with client security team.',
+    current_date + interval '40 days',
+    'pending',
+    2
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000008',
+    'ec000000-0000-0000-0000-000000000003',
+    'Private Beta',
+    'Portal live for a pilot group of patients.',
+    current_date + interval '100 days',
+    'pending',
+    3
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000009',
+    'ec000000-0000-0000-0000-000000000006',
+    'Catalog Import',
+    'All products, variants, and imagery migrated.',
+    current_date - interval '20 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000010',
+    'ec000000-0000-0000-0000-000000000006',
+    'Checkout Flow',
+    'Cart, payment, and subscription checkout complete.',
+    current_date + interval '5 days',
+    'in_progress',
+    2
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000011',
+    'ec000000-0000-0000-0000-000000000006',
+    'Store Launch',
+    'Public launch with the fall seasonal campaign.',
+    current_date + interval '30 days',
+    'pending',
+    3
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000012',
+    'ec000000-0000-0000-0000-000000000007',
+    'Requirements Workshop',
+    'Partners aligned on portal scope and phasing.',
+    current_date - interval '10 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000013',
+    'ec000000-0000-0000-0000-000000000007',
+    'Portal MVP',
+    'Case status and document sharing usable end to end.',
+    current_date + interval '25 days',
+    'in_progress',
+    2
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000014',
+    'ec000000-0000-0000-0000-000000000008',
+    'Booking Engine Integration',
+    'Availability and pricing feeds wired into the app.',
+    current_date - interval '15 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000015',
+    'ec000000-0000-0000-0000-000000000008',
+    'Beta Release',
+    'TestFlight / Play beta for the travel-agent group.',
+    current_date + interval '10 days',
+    'in_progress',
+    2
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000016',
+    'ec000000-0000-0000-0000-000000000008',
+    'App Store Launch',
+    'Public release in both stores.',
+    current_date + interval '45 days',
+    'pending',
+    3
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000017',
+    'ec000000-0000-0000-0000-000000000009',
+    'Content Freeze',
+    'All launch copy and press assets finalized.',
+    current_date + interval '15 days',
+    'pending',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000018',
+    'ec000000-0000-0000-0000-000000000010',
+    'Pilot Requirements',
+    'Fleet pilot learnings turned into a scoped backlog.',
+    current_date + interval '20 days',
+    'pending',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000019',
+    'ec000000-0000-0000-0000-000000000013',
+    'Wireframes Review',
+    'Intake wireframes reviewed with claims leadership.',
+    current_date - interval '30 days',
+    'missed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000020',
+    'ec000000-0000-0000-0000-000000000014',
+    'Program Launch',
+    'Loyalty program live for all store customers.',
+    current_date - interval '60 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000021',
+    'ec000000-0000-0000-0000-000000000015',
+    'Identity Delivered',
+    'Logo system, palette, and templates handed off.',
+    current_date - interval '140 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000022',
+    'ec000000-0000-0000-0000-000000000016',
+    'Widget Live',
+    'Booking widget embedded across all hotel sites.',
+    current_date - interval '170 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000023',
+    'ec000000-0000-0000-0000-000000000017',
+    'Storefront Launch',
+    'Direct-to-reader store open with full backlist.',
+    current_date - interval '210 days',
+    'completed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000024',
+    'ec000000-0000-0000-0000-000000000019',
+    'Discovery Complete',
+    'Portal discovery — project cancelled before build.',
+    current_date - interval '45 days',
+    'missed',
+    1
+  ),
+  (
+    '5e000000-0000-0000-0000-000000000025',
+    'ec000000-0000-0000-0000-000000000002',
+    'Rollout Assets',
+    'Stationery, social kits, and template rollout.',
+    current_date + interval '30 days',
+    'pending',
+    3
   );
 
 ----------------------------------------------------------------
@@ -3757,6 +4816,618 @@ values
     array['internal'],
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
     current_timestamp - interval '100 days'
+  ),
+  -- Copper Kettle — E-commerce Store
+  (
+    'a5000000-0000-0000-0000-00000000000f',
+    'ec000000-0000-0000-0000-000000000006',
+    '5e000000-0000-0000-0000-000000000010',
+    null,
+    'ea000000-0000-0000-0000-000000000009',
+    'Build checkout flow',
+    'Cart, one-time purchase, and subscription checkout.',
+    'in_progress',
+    'high',
+    null,
+    24,
+    current_date + interval '4 days',
+    null,
+    array['frontend', 'ecommerce'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '14 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000010',
+    'ec000000-0000-0000-0000-000000000006',
+    '5e000000-0000-0000-0000-000000000010',
+    'a5000000-0000-0000-0000-00000000000f',
+    'ea000000-0000-0000-0000-000000000009',
+    'Integrate payment provider',
+    'Sub-step of the checkout build.',
+    'in_progress',
+    'high',
+    null,
+    10,
+    current_date + interval '3 days',
+    null,
+    array['payments'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '12 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000011',
+    'ec000000-0000-0000-0000-000000000006',
+    '5e000000-0000-0000-0000-000000000010',
+    'a5000000-0000-0000-0000-00000000000f',
+    'ea000000-0000-0000-0000-000000000012',
+    'Checkout QA test pass',
+    'Sub-step of the checkout build.',
+    'todo',
+    'medium',
+    null,
+    8,
+    current_date + interval '6 days',
+    null,
+    array['qa'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '10 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000012',
+    'ec000000-0000-0000-0000-000000000006',
+    '5e000000-0000-0000-0000-000000000009',
+    null,
+    'ea000000-0000-0000-0000-000000000010',
+    'Import product catalog',
+    'Migrate products, variants, and imagery from the old store.',
+    'done',
+    'medium',
+    null,
+    12,
+    current_date - interval '22 days',
+    current_timestamp - interval '21 days',
+    array['data'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '35 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000013',
+    'ec000000-0000-0000-0000-000000000006',
+    '5e000000-0000-0000-0000-000000000011',
+    null,
+    'ea000000-0000-0000-0000-000000000017',
+    'Write launch announcement',
+    'Email and social copy for the store launch.',
+    'todo',
+    'low',
+    null,
+    4,
+    current_date + interval '25 days',
+    null,
+    array['marketing'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '5 days'
+  ),
+  -- Vantage Legal — Client Portal
+  (
+    'a5000000-0000-0000-0000-000000000014',
+    'ec000000-0000-0000-0000-000000000007',
+    '5e000000-0000-0000-0000-000000000013',
+    null,
+    'ea000000-0000-0000-0000-000000000010',
+    'Model case data schema',
+    'Cases, parties, matters, and billing entities.',
+    'in_progress',
+    'high',
+    null,
+    16,
+    current_date + interval '7 days',
+    null,
+    array['backend'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '15 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000015',
+    'ec000000-0000-0000-0000-000000000007',
+    '5e000000-0000-0000-0000-000000000013',
+    null,
+    'ea000000-0000-0000-0000-000000000004',
+    'Set up document upload service',
+    'Secure upload with virus scanning and retention rules.',
+    'in_review',
+    'medium',
+    null,
+    12,
+    current_date + interval '5 days',
+    null,
+    array['backend', 'security'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '11 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000016',
+    'ec000000-0000-0000-0000-000000000007',
+    '5e000000-0000-0000-0000-000000000013',
+    null,
+    'ea000000-0000-0000-0000-000000000014',
+    'Usability test intake flow',
+    'Five moderated sessions with client-side paralegals.',
+    'todo',
+    'medium',
+    null,
+    8,
+    current_date + interval '18 days',
+    null,
+    array['research'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '8 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000017',
+    'ec000000-0000-0000-0000-000000000007',
+    '5e000000-0000-0000-0000-000000000012',
+    null,
+    'ea000000-0000-0000-0000-000000000014',
+    'Interview paralegal team',
+    'Understand current intake and document workflows.',
+    'done',
+    'medium',
+    null,
+    6,
+    current_date - interval '12 days',
+    current_timestamp - interval '11 days',
+    array['research'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '22 days'
+  ),
+  -- Aurora Travel — Booking App
+  (
+    'a5000000-0000-0000-0000-000000000018',
+    'ec000000-0000-0000-0000-000000000008',
+    '5e000000-0000-0000-0000-000000000015',
+    null,
+    'ea000000-0000-0000-0000-000000000009',
+    'Build seat selection screen',
+    'Interactive seat map with real-time availability.',
+    'in_progress',
+    'critical',
+    null,
+    20,
+    current_date + interval '6 days',
+    null,
+    array['mobile', 'frontend'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '13 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000019',
+    'ec000000-0000-0000-0000-000000000008',
+    '5e000000-0000-0000-0000-000000000015',
+    null,
+    'ea000000-0000-0000-0000-000000000011',
+    'Load test booking API',
+    'Simulate peak-season booking traffic.',
+    'blocked',
+    'high',
+    'Waiting on staging environment capacity increase.',
+    10,
+    current_date + interval '9 days',
+    null,
+    array['devops'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '10 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001a',
+    'ec000000-0000-0000-0000-000000000008',
+    '5e000000-0000-0000-0000-000000000014',
+    null,
+    'ea000000-0000-0000-0000-000000000010',
+    'Integrate flight availability feed',
+    'Normalize the partner airline availability feed.',
+    'done',
+    'critical',
+    null,
+    30,
+    current_date - interval '16 days',
+    current_timestamp - interval '15 days',
+    array['backend', 'integration'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '45 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001b',
+    'ec000000-0000-0000-0000-000000000008',
+    '5e000000-0000-0000-0000-000000000016',
+    null,
+    'ea000000-0000-0000-0000-000000000017',
+    'Draft app store listing copy',
+    'Store descriptions, keywords, and screenshots plan.',
+    'todo',
+    'low',
+    null,
+    4,
+    current_date + interval '35 days',
+    null,
+    array['marketing'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '3 days'
+  ),
+  -- Pixelforge — Launch Marketing Site
+  (
+    'a5000000-0000-0000-0000-00000000001c',
+    'ec000000-0000-0000-0000-000000000009',
+    '5e000000-0000-0000-0000-000000000017',
+    null,
+    'ea000000-0000-0000-0000-000000000013',
+    'Design press kit page',
+    'Downloadable art, logos, and fact sheet layout.',
+    'in_progress',
+    'medium',
+    null,
+    10,
+    current_date + interval '8 days',
+    null,
+    array['design'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '9 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001d',
+    'ec000000-0000-0000-0000-000000000009',
+    '5e000000-0000-0000-0000-000000000017',
+    null,
+    'ea000000-0000-0000-0000-000000000017',
+    'Write studio story page',
+    'Founding story and team profiles for the site.',
+    'todo',
+    'medium',
+    null,
+    6,
+    current_date + interval '12 days',
+    null,
+    array['content'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '6 days'
+  ),
+  -- Meridian — Fleet Tracking Dashboard
+  (
+    'a5000000-0000-0000-0000-00000000001e',
+    'ec000000-0000-0000-0000-000000000010',
+    '5e000000-0000-0000-0000-000000000018',
+    null,
+    'ea000000-0000-0000-0000-000000000016',
+    'Compile pilot feedback report',
+    'Synthesize dispatcher interviews from the pilot.',
+    'in_progress',
+    'high',
+    null,
+    12,
+    current_date + interval '10 days',
+    null,
+    array['research'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '7 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001f',
+    'ec000000-0000-0000-0000-000000000010',
+    '5e000000-0000-0000-0000-000000000018',
+    null,
+    'ea000000-0000-0000-0000-000000000010',
+    'Evaluate mapping providers',
+    'Cost and latency comparison for live fleet maps.',
+    'todo',
+    'medium',
+    null,
+    8,
+    current_date + interval '16 days',
+    null,
+    array['architecture'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '4 days'
+  ),
+  -- Northwind — Analytics Rebrand
+  (
+    'a5000000-0000-0000-0000-000000000020',
+    'ec000000-0000-0000-0000-000000000011',
+    null,
+    null,
+    'ea000000-0000-0000-0000-000000000013',
+    'Moodboard exploration',
+    'Three visual directions ahead of the kickoff.',
+    'todo',
+    'medium',
+    null,
+    8,
+    current_date + interval '18 days',
+    null,
+    array['branding'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '2 days'
+  ),
+  -- Halcyon — Member App Discovery
+  (
+    'a5000000-0000-0000-0000-000000000021',
+    'ec000000-0000-0000-0000-000000000012',
+    null,
+    null,
+    'ea000000-0000-0000-0000-000000000014',
+    'Plan member interviews',
+    'Recruit and schedule 8 gym members for discovery calls.',
+    'todo',
+    'low',
+    null,
+    6,
+    current_date + interval '24 days',
+    null,
+    array['research'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '2 days'
+  ),
+  -- Cobalt — Claims Intake Redesign (on hold)
+  (
+    'a5000000-0000-0000-0000-000000000022',
+    'ec000000-0000-0000-0000-000000000013',
+    '5e000000-0000-0000-0000-000000000019',
+    null,
+    'ea000000-0000-0000-0000-000000000005',
+    'Claims intake wireframes',
+    'End-to-end intake flow wireframes for review.',
+    'blocked',
+    'medium',
+    'Client security review paused all vendor work.',
+    14,
+    current_date + interval '40 days',
+    null,
+    array['ux'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '40 days'
+  ),
+  -- Copper Kettle — Loyalty Program (completed)
+  (
+    'a5000000-0000-0000-0000-000000000023',
+    'ec000000-0000-0000-0000-000000000014',
+    '5e000000-0000-0000-0000-000000000020',
+    null,
+    'ea000000-0000-0000-0000-000000000009',
+    'Build points redemption flow',
+    'Earn and redeem points at checkout.',
+    'done',
+    'medium',
+    null,
+    18,
+    current_date - interval '65 days',
+    current_timestamp - interval '63 days',
+    array['ecommerce'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '95 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000024',
+    'ec000000-0000-0000-0000-000000000014',
+    '5e000000-0000-0000-0000-000000000020',
+    null,
+    'ea000000-0000-0000-0000-000000000012',
+    'Regression test loyalty rules',
+    'Full pass on earn rates, tiers, and expiry rules.',
+    'done',
+    'medium',
+    null,
+    8,
+    current_date - interval '61 days',
+    current_timestamp - interval '60 days',
+    array['qa'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '80 days'
+  ),
+  -- Vantage Legal — Brand Identity (completed)
+  (
+    'a5000000-0000-0000-0000-000000000025',
+    'ec000000-0000-0000-0000-000000000015',
+    '5e000000-0000-0000-0000-000000000021',
+    null,
+    'ea000000-0000-0000-0000-000000000013',
+    'Deliver final logo package',
+    'All lockups, favicons, and usage guidance.',
+    'done',
+    'medium',
+    null,
+    10,
+    current_date - interval '142 days',
+    current_timestamp - interval '141 days',
+    array['branding'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '170 days'
+  ),
+  -- Quartz Hotels — Booking Widget (completed)
+  (
+    'a5000000-0000-0000-0000-000000000026',
+    'ec000000-0000-0000-0000-000000000016',
+    '5e000000-0000-0000-0000-000000000022',
+    null,
+    'ea000000-0000-0000-0000-000000000004',
+    'Harden availability caching',
+    'Cache invalidation for room availability spikes.',
+    'done',
+    'high',
+    null,
+    12,
+    current_date - interval '172 days',
+    current_timestamp - interval '171 days',
+    array['backend', 'performance'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '210 days'
+  ),
+  -- Papercrane — Digital Storefront (completed)
+  (
+    'a5000000-0000-0000-0000-000000000027',
+    'ec000000-0000-0000-0000-000000000017',
+    '5e000000-0000-0000-0000-000000000023',
+    null,
+    'ea000000-0000-0000-0000-000000000010',
+    'Migrate order history',
+    'Import legacy orders into the new storefront.',
+    'done',
+    'medium',
+    null,
+    16,
+    current_date - interval '212 days',
+    current_timestamp - interval '211 days',
+    array['data'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '250 days'
+  ),
+  -- Fairway Sports — Commerce Audit (completed)
+  (
+    'a5000000-0000-0000-0000-000000000028',
+    'ec000000-0000-0000-0000-000000000018',
+    null,
+    null,
+    'ea000000-0000-0000-0000-000000000016',
+    'Analyze checkout funnel drop-off',
+    'Quantify abandonment by step across 90 days of data.',
+    'done',
+    'medium',
+    null,
+    10,
+    current_date - interval '100 days',
+    current_timestamp - interval '98 days',
+    array['analytics'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '115 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000029',
+    'ec000000-0000-0000-0000-000000000018',
+    null,
+    null,
+    'ea000000-0000-0000-0000-000000000016',
+    'Present audit findings',
+    'Executive readout with prioritized recommendations.',
+    'done',
+    'low',
+    null,
+    4,
+    current_date - interval '92 days',
+    current_timestamp - interval '91 days',
+    array['audit'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '105 days'
+  ),
+  -- Lumen Energy — Customer Portal (cancelled)
+  (
+    'a5000000-0000-0000-0000-00000000002a',
+    'ec000000-0000-0000-0000-000000000019',
+    '5e000000-0000-0000-0000-000000000024',
+    null,
+    'ea000000-0000-0000-0000-000000000011',
+    'Provision portal infrastructure',
+    'Environments and CI ahead of the build phase.',
+    'cancelled',
+    'medium',
+    null,
+    20,
+    null,
+    null,
+    array['devops'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_timestamp - interval '90 days'
+  ),
+  -- Brightside — Enrollment Site (cancelled)
+  (
+    'a5000000-0000-0000-0000-00000000002b',
+    'ec000000-0000-0000-0000-000000000020',
+    null,
+    null,
+    'ea000000-0000-0000-0000-000000000013',
+    'Enrollment form design',
+    'Multi-step enrollment and waitlist form.',
+    'cancelled',
+    'low',
+    null,
+    8,
+    null,
+    null,
+    array['design'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '80 days'
+  ),
+  -- Blue Harbor — Brand Refresh (extra rollout work)
+  (
+    'a5000000-0000-0000-0000-00000000002c',
+    'ec000000-0000-0000-0000-000000000002',
+    '5e000000-0000-0000-0000-000000000025',
+    null,
+    'ea000000-0000-0000-0000-000000000013',
+    'Design social media kit',
+    'Profile, cover, and post templates in the new identity.',
+    'todo',
+    'medium',
+    null,
+    8,
+    current_date + interval '22 days',
+    null,
+    array['branding'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1',
+    current_timestamp - interval '3 days'
+  ),
+  -- Nimbus Health — Patient Portal (extra planning work)
+  (
+    'a5000000-0000-0000-0000-00000000002d',
+    'ec000000-0000-0000-0000-000000000003',
+    '5e000000-0000-0000-0000-000000000007',
+    null,
+    'ea000000-0000-0000-0000-000000000011',
+    'Draft infrastructure security baseline',
+    'Encryption, audit logging, and access review baseline.',
+    'todo',
+    'critical',
+    null,
+    10,
+    current_date + interval '30 days',
+    null,
+    array['security'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '2 days'
+  ),
+  -- Acme Robotics — Website Relaunch (extra review work)
+  (
+    'a5000000-0000-0000-0000-00000000002e',
+    'ec000000-0000-0000-0000-000000000001',
+    '5e000000-0000-0000-0000-000000000003',
+    null,
+    'ea000000-0000-0000-0000-000000000012',
+    'Cross-browser QA sweep',
+    'Full regression across supported browsers before launch.',
+    'in_review',
+    'high',
+    null,
+    10,
+    current_date + interval '14 days',
+    null,
+    array['qa'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '4 days'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000002f',
+    'ec000000-0000-0000-0000-000000000001',
+    '5e000000-0000-0000-0000-000000000003',
+    null,
+    'ea000000-0000-0000-0000-000000000017',
+    'Prepare launch blog post',
+    'Case-study style announcement for the relaunch.',
+    'todo',
+    'low',
+    null,
+    4,
+    current_date + interval '16 days',
+    null,
+    array['content'],
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8',
+    current_timestamp - interval '2 days'
   );
 
 ----------------------------------------------------------------
@@ -3828,6 +5499,214 @@ values
     array['healthcare', 'concept'],
     '#22c55e',
     4
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000014',
+    'c1a00000-0000-0000-0000-000000000006',
+    'Copper Kettle Loyalty Program',
+    'A points-and-rewards program woven into the coffee subscription experience.',
+    'product_design',
+    'https://northstar.studio/work/copper-kettle-loyalty',
+    true,
+    current_date - interval '55 days',
+    array['ecommerce', 'loyalty'],
+    '#b45309',
+    5
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000015',
+    'c1a00000-0000-0000-0000-000000000007',
+    'Vantage Legal Identity',
+    'A conservative-but-modern identity system for a growing law firm.',
+    'branding',
+    'https://northstar.studio/work/vantage-legal',
+    true,
+    current_date - interval '135 days',
+    array['branding', 'identity'],
+    '#334155',
+    6
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000016',
+    'c1a00000-0000-0000-0000-000000000018',
+    'Quartz Hotels Booking Widget',
+    'An embeddable booking widget serving a multi-property hotel group.',
+    'web',
+    'https://quartzhotels.example.com',
+    true,
+    current_date - interval '165 days',
+    array['web', 'booking'],
+    '#64748b',
+    7
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000017',
+    'c1a00000-0000-0000-0000-000000000017',
+    'Papercrane Digital Storefront',
+    'A direct-to-reader storefront with print-on-demand fulfilment.',
+    'web',
+    'https://papercranepress.example.com',
+    true,
+    current_date - interval '205 days',
+    array['ecommerce', 'publishing'],
+    '#9333ea',
+    8
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000018',
+    'c1a00000-0000-0000-0000-000000000019',
+    'Fairway Sports Commerce Audit',
+    'A conversion audit that reshaped an online sporting goods business.',
+    'marketing',
+    null,
+    true,
+    current_date - interval '85 days',
+    array['audit', 'analytics'],
+    '#dc2626',
+    9
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000001',
+    'Acme Robotics Launch Campaign',
+    'Product launch campaign spanning email, social, and landing pages.',
+    'marketing',
+    'https://northstar.studio/work/acme-launch',
+    true,
+    current_date - interval '300 days',
+    array['campaign'],
+    '#f97316',
+    10
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000008',
+    'c1a00000-0000-0000-0000-000000000008',
+    'Aurora Travel Booking App',
+    'Work-in-progress case study for the cross-platform booking app.',
+    'mobile',
+    null,
+    false,
+    null,
+    array['mobile', 'travel'],
+    '#06b6d4',
+    11
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000002',
+    'Blue Harbor Editorial Design',
+    'Editorial layouts and art direction for a media publisher.',
+    'branding',
+    null,
+    true,
+    current_date - interval '90 days',
+    array['editorial'],
+    '#0ea5e9',
+    12
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000003',
+    'Nimbus Health Design Sprint',
+    'A one-week design sprint that de-risked the patient portal concept.',
+    'product_design',
+    null,
+    true,
+    current_date - interval '70 days',
+    array['healthcare', 'sprint'],
+    '#22c55e',
+    13
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000009',
+    'c1a00000-0000-0000-0000-000000000009',
+    'Pixelforge Teaser Site',
+    'A cinematic teaser site counting down to the fall title launch.',
+    'web',
+    'https://pixelforge.example.com',
+    true,
+    current_date - interval '40 days',
+    array['gaming', 'launch'],
+    '#8b5cf6',
+    14
+  ),
+  (
+    'ec000000-0000-0000-0000-000000000010',
+    'c1a00000-0000-0000-0000-000000000010',
+    'Meridian Pilot Dashboard Concept',
+    'Concept frames from the fleet tracking pilot — publish after launch.',
+    'product_design',
+    null,
+    false,
+    null,
+    array['dashboard', 'concept'],
+    '#0f766e',
+    15
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000012',
+    'Halcyon Fitness App Concept',
+    'Early member-app concepts from the discovery pitch.',
+    'mobile',
+    null,
+    false,
+    null,
+    array['fitness', 'concept'],
+    '#f43f5e',
+    16
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000016',
+    'Lumen Energy Design Explorations',
+    'Portal design explorations — engagement ended before build.',
+    'product_design',
+    null,
+    false,
+    null,
+    array['portal', 'concept'],
+    '#f59e0b',
+    17
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000011',
+    'Juniper & Sage Store Concept',
+    'Pitch concept for a botanical e-commerce experience.',
+    'web',
+    null,
+    false,
+    null,
+    array['ecommerce', 'pitch'],
+    '#16a34a',
+    18
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000004',
+    'Greenfield Retail POS Concept',
+    'In-store POS interface concepts from the rollout programme.',
+    'product_design',
+    null,
+    true,
+    current_date - interval '100 days',
+    array['retail', 'pos'],
+    '#eab308',
+    19
+  ),
+  (
+    null,
+    'c1a00000-0000-0000-0000-000000000013',
+    'Northwind Analytics Pitch',
+    'The rebrand pitch deck that won the Series B engagement.',
+    'marketing',
+    null,
+    true,
+    current_date - interval '10 days',
+    array['pitch', 'branding'],
+    '#2563eb',
+    20
   );
 
 ----------------------------------------------------------------
@@ -3915,6 +5794,139 @@ values
     100.00,
     'hour',
     '#6366f1'
+  );
+
+insert into
+  demo.services (
+    id,
+    name,
+    description,
+    category,
+    default_rate,
+    unit,
+    is_active,
+    color
+  )
+values
+  (
+    '5ec00000-0000-0000-0000-000000000009',
+    'SEO Audit',
+    'Technical and content SEO review with an action plan.',
+    'marketing',
+    1500.00,
+    'project',
+    true,
+    '#eab308'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000010',
+    'Mobile App Development',
+    'Native and cross-platform mobile engineering.',
+    'development',
+    145.00,
+    'hour',
+    true,
+    '#0ea5e9'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000011',
+    'DevOps Retainer',
+    'Infrastructure, CI/CD, and on-call support.',
+    'support',
+    1800.00,
+    'month',
+    true,
+    '#6366f1'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000012',
+    'Copywriting',
+    'Web, product, and campaign copy.',
+    'marketing',
+    95.00,
+    'hour',
+    true,
+    '#eab308'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000013',
+    'Analytics Setup',
+    'Tracking plan, dashboards, and event instrumentation.',
+    'consulting',
+    1200.00,
+    'project',
+    true,
+    '#a855f7'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000014',
+    'Design System Build',
+    'Component library, tokens, and documentation — fixed scope.',
+    'design',
+    8000.00,
+    'project',
+    true,
+    '#f97316'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000015',
+    'Workshop Facilitation',
+    'Discovery, design sprint, and alignment workshops.',
+    'consulting',
+    160.00,
+    'hour',
+    true,
+    '#a855f7'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000016',
+    'API Integration',
+    'Third-party API and data feed integration work.',
+    'development',
+    135.00,
+    'hour',
+    true,
+    '#0ea5e9'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000017',
+    'Performance Audit',
+    'Core Web Vitals and backend latency review.',
+    'development',
+    1600.00,
+    'project',
+    true,
+    '#0ea5e9'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000018',
+    'Accessibility Review',
+    'WCAG 2.1 AA audit with remediation guidance.',
+    'consulting',
+    1400.00,
+    'project',
+    true,
+    '#a855f7'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000019',
+    'Email Campaign Setup',
+    'Retired offering — folded into Content Strategy.',
+    'marketing',
+    900.00,
+    'project',
+    false,
+    '#eab308'
+  ),
+  (
+    '5ec00000-0000-0000-0000-000000000020',
+    'Print Design',
+    'Retired offering — no longer accepting print work.',
+    'design',
+    105.00,
+    'hour',
+    false,
+    '#f97316'
   );
 
 ----------------------------------------------------------------
@@ -4006,6 +6018,222 @@ values
     null,
     'Discovery workshop deposit.',
     'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000007',
+    'c1a00000-0000-0000-0000-000000000006',
+    'ec000000-0000-0000-0000-000000000014',
+    'paid',
+    current_date - interval '140 days',
+    current_date - interval '110 days',
+    8,
+    current_timestamp - interval '108 days',
+    'Loyalty program — final invoice.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000008',
+    'c1a00000-0000-0000-0000-000000000007',
+    'ec000000-0000-0000-0000-000000000015',
+    'paid',
+    current_date - interval '135 days',
+    current_date - interval '105 days',
+    6.5,
+    current_timestamp - interval '104 days',
+    'Brand identity — fixed fee.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000009',
+    'c1a00000-0000-0000-0000-000000000018',
+    'ec000000-0000-0000-0000-000000000016',
+    'paid',
+    current_date - interval '165 days',
+    current_date - interval '135 days',
+    0,
+    current_timestamp - interval '130 days',
+    'Booking widget delivery.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000010',
+    'c1a00000-0000-0000-0000-000000000017',
+    'ec000000-0000-0000-0000-000000000017',
+    'paid',
+    current_date - interval '205 days',
+    current_date - interval '175 days',
+    10,
+    current_timestamp - interval '172 days',
+    'Storefront launch balance.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000011',
+    'c1a00000-0000-0000-0000-000000000019',
+    'ec000000-0000-0000-0000-000000000018',
+    'paid',
+    current_date - interval '84 days',
+    current_date - interval '54 days',
+    0,
+    current_timestamp - interval '50 days',
+    'Commerce audit engagement.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000012',
+    'c1a00000-0000-0000-0000-000000000006',
+    'ec000000-0000-0000-0000-000000000006',
+    'paid',
+    current_date - interval '63 days',
+    current_date - interval '33 days',
+    8,
+    current_timestamp - interval '30 days',
+    'E-commerce build — sprint 1.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000013',
+    'c1a00000-0000-0000-0000-000000000008',
+    'ec000000-0000-0000-0000-000000000008',
+    'paid',
+    current_date - interval '56 days',
+    current_date - interval '26 days',
+    0,
+    current_timestamp - interval '20 days',
+    'Booking app — milestone 1.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000014',
+    'c1a00000-0000-0000-0000-000000000007',
+    'ec000000-0000-0000-0000-000000000007',
+    'paid',
+    current_date - interval '49 days',
+    current_date - interval '19 days',
+    6.5,
+    current_timestamp - interval '15 days',
+    'Client portal — discovery phase.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000015',
+    'c1a00000-0000-0000-0000-000000000010',
+    'ec000000-0000-0000-0000-000000000010',
+    'paid',
+    current_date - interval '42 days',
+    current_date - interval '12 days',
+    0,
+    current_timestamp - interval '8 days',
+    'Fleet dashboard pilot review.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000016',
+    'c1a00000-0000-0000-0000-000000000006',
+    'ec000000-0000-0000-0000-000000000006',
+    'sent',
+    current_date - interval '28 days',
+    current_date + interval '2 days',
+    8,
+    null,
+    'E-commerce build — sprint 2.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000017',
+    'c1a00000-0000-0000-0000-000000000008',
+    'ec000000-0000-0000-0000-000000000008',
+    'sent',
+    current_date - interval '21 days',
+    current_date + interval '9 days',
+    0,
+    null,
+    'Booking app — milestone 2.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000018',
+    'c1a00000-0000-0000-0000-000000000009',
+    'ec000000-0000-0000-0000-000000000009',
+    'sent',
+    current_date - interval '14 days',
+    current_date + interval '16 days',
+    8,
+    null,
+    'Marketing site — first sprint.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000019',
+    'c1a00000-0000-0000-0000-000000000007',
+    'ec000000-0000-0000-0000-000000000007',
+    'sent',
+    current_date - interval '7 days',
+    current_date + interval '23 days',
+    6.5,
+    null,
+    'Client portal — sprint 1.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000020',
+    'c1a00000-0000-0000-0000-000000000002',
+    'ec000000-0000-0000-0000-000000000002',
+    'overdue',
+    current_date - interval '45 days',
+    current_date - interval '15 days',
+    6.5,
+    null,
+    'Style guide milestone.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b1'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000021',
+    'c1a00000-0000-0000-0000-000000000015',
+    'ec000000-0000-0000-0000-000000000013',
+    'overdue',
+    current_date - interval '60 days',
+    current_date - interval '30 days',
+    0,
+    null,
+    'Claims redesign — phase 1 (project on hold).',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000022',
+    'c1a00000-0000-0000-0000-000000000012',
+    null,
+    'draft',
+    current_date - interval '1 day',
+    current_date + interval '29 days',
+    0,
+    null,
+    'Member app discovery proposal.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000023',
+    'c1a00000-0000-0000-0000-000000000013',
+    'ec000000-0000-0000-0000-000000000011',
+    'draft',
+    current_date,
+    current_date + interval '30 days',
+    0,
+    null,
+    'Rebrand kickoff deposit.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b8'
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000024',
+    'c1a00000-0000-0000-0000-000000000016',
+    'ec000000-0000-0000-0000-000000000019',
+    'void',
+    current_date - interval '75 days',
+    current_date - interval '45 days',
+    0,
+    null,
+    'Voided after the portal project was cancelled.',
+    'b73eb03e-fb7a-424d-84ff-18e2791ce0b4'
   );
 
 ----------------------------------------------------------------
@@ -4097,6 +6325,272 @@ values
     '5ec00000-0000-0000-0000-000000000001',
     'Discovery Workshop',
     10,
+    150.00,
+    1
+  ),
+  -- ffa...007 (Copper Kettle loyalty, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000007',
+    '5ec00000-0000-0000-0000-000000000003',
+    'Frontend Development',
+    40,
+    140.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000007',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    20,
+    120.00,
+    2
+  ),
+  -- ffa...008 (Vantage identity, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000008',
+    '5ec00000-0000-0000-0000-000000000007',
+    'Brand Identity Package',
+    1,
+    2500.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000008',
+    '5ec00000-0000-0000-0000-000000000012',
+    'Copywriting',
+    10,
+    95.00,
+    2
+  ),
+  -- ffa...009 (Quartz widget, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000009',
+    '5ec00000-0000-0000-0000-000000000004',
+    'Backend Development',
+    60,
+    150.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000009',
+    '5ec00000-0000-0000-0000-000000000005',
+    'QA Testing',
+    20,
+    90.00,
+    2
+  ),
+  -- ffa...010 (Papercrane storefront, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000010',
+    '5ec00000-0000-0000-0000-000000000003',
+    'Frontend Development',
+    80,
+    140.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000010',
+    '5ec00000-0000-0000-0000-000000000004',
+    'Backend Development',
+    50,
+    150.00,
+    2
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000010',
+    '5ec00000-0000-0000-0000-000000000005',
+    'QA Testing',
+    15,
+    90.00,
+    3
+  ),
+  -- ffa...011 (Fairway audit, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000011',
+    '5ec00000-0000-0000-0000-000000000013',
+    'Analytics Setup',
+    1,
+    1200.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000011',
+    '5ec00000-0000-0000-0000-000000000009',
+    'SEO Audit',
+    1,
+    1500.00,
+    2
+  ),
+  -- ffa...012 (Copper Kettle store sprint 1, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000012',
+    '5ec00000-0000-0000-0000-000000000003',
+    'Frontend Development',
+    40,
+    140.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000012',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    15,
+    120.00,
+    2
+  ),
+  -- ffa...013 (Aurora milestone 1, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000013',
+    '5ec00000-0000-0000-0000-000000000010',
+    'Mobile App Development',
+    50,
+    145.00,
+    1
+  ),
+  -- ffa...014 (Vantage portal discovery, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000014',
+    '5ec00000-0000-0000-0000-000000000001',
+    'Discovery Workshop',
+    16,
+    150.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000014',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    10,
+    120.00,
+    2
+  ),
+  -- ffa...015 (Meridian pilot review, paid)
+  (
+    'ffa00000-0000-0000-0000-000000000015',
+    '5ec00000-0000-0000-0000-000000000015',
+    'Workshop Facilitation',
+    12,
+    160.00,
+    1
+  ),
+  -- ffa...016 (Copper Kettle store sprint 2, sent)
+  (
+    'ffa00000-0000-0000-0000-000000000016',
+    '5ec00000-0000-0000-0000-000000000003',
+    'Frontend Development',
+    45,
+    140.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000016',
+    '5ec00000-0000-0000-0000-000000000005',
+    'QA Testing',
+    12,
+    90.00,
+    2
+  ),
+  -- ffa...017 (Aurora milestone 2, sent)
+  (
+    'ffa00000-0000-0000-0000-000000000017',
+    '5ec00000-0000-0000-0000-000000000010',
+    'Mobile App Development',
+    60,
+    145.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000017',
+    '5ec00000-0000-0000-0000-000000000016',
+    'API Integration',
+    20,
+    135.00,
+    2
+  ),
+  -- ffa...018 (Pixelforge sprint 1, sent)
+  (
+    'ffa00000-0000-0000-0000-000000000018',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    25,
+    120.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000018',
+    '5ec00000-0000-0000-0000-000000000012',
+    'Copywriting',
+    12,
+    95.00,
+    2
+  ),
+  -- ffa...019 (Vantage portal sprint 1, sent)
+  (
+    'ffa00000-0000-0000-0000-000000000019',
+    '5ec00000-0000-0000-0000-000000000004',
+    'Backend Development',
+    30,
+    150.00,
+    1
+  ),
+  -- ffa...020 (Blue Harbor style guide, overdue)
+  (
+    'ffa00000-0000-0000-0000-000000000020',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    30,
+    120.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000020',
+    '5ec00000-0000-0000-0000-000000000012',
+    'Copywriting',
+    8,
+    95.00,
+    2
+  ),
+  -- ffa...021 (Cobalt phase 1, overdue)
+  (
+    'ffa00000-0000-0000-0000-000000000021',
+    '5ec00000-0000-0000-0000-000000000002',
+    'UI/UX Design',
+    24,
+    120.00,
+    1
+  ),
+  (
+    'ffa00000-0000-0000-0000-000000000021',
+    '5ec00000-0000-0000-0000-000000000001',
+    'Discovery Workshop',
+    6,
+    150.00,
+    2
+  ),
+  -- ffa...022 (Halcyon proposal, draft)
+  (
+    'ffa00000-0000-0000-0000-000000000022',
+    '5ec00000-0000-0000-0000-000000000001',
+    'Discovery Workshop',
+    12,
+    150.00,
+    1
+  ),
+  -- ffa...023 (Northwind deposit, draft)
+  (
+    'ffa00000-0000-0000-0000-000000000023',
+    '5ec00000-0000-0000-0000-000000000007',
+    'Brand Identity Package',
+    1,
+    2500.00,
+    1
+  ),
+  -- ffa...024 (Lumen, void)
+  (
+    'ffa00000-0000-0000-0000-000000000024',
+    '5ec00000-0000-0000-0000-000000000004',
+    'Backend Development',
+    20,
     150.00,
     1
   );
@@ -4217,6 +6711,222 @@ values
     7200,
     false,
     'Internal tooling — non-billable.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000000f',
+    'ea000000-0000-0000-0000-000000000009',
+    current_date - interval '6 days',
+    21600,
+    true,
+    'Checkout flow scaffolding.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000000f',
+    'ea000000-0000-0000-0000-000000000009',
+    current_date - interval '4 days',
+    18000,
+    true,
+    'Cart state handling.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000010',
+    'ea000000-0000-0000-0000-000000000009',
+    current_date - interval '2 days',
+    10800,
+    true,
+    'Payment provider sandbox integration.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000012',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '23 days',
+    14400,
+    true,
+    'Catalog import script.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000012',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '21 days',
+    7200,
+    true,
+    'Import cleanup and dedupe.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000014',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '5 days',
+    14400,
+    true,
+    'Case schema draft.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000015',
+    'ea000000-0000-0000-0000-000000000004',
+    current_date - interval '8 days',
+    10800,
+    true,
+    'Upload service setup.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000015',
+    'ea000000-0000-0000-0000-000000000004',
+    current_date - interval '6 days',
+    7200,
+    true,
+    'Virus scan hook.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000017',
+    'ea000000-0000-0000-0000-000000000014',
+    current_date - interval '13 days',
+    9000,
+    true,
+    'Paralegal interviews.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000018',
+    'ea000000-0000-0000-0000-000000000009',
+    current_date - interval '3 days',
+    21600,
+    true,
+    'Seat map rendering.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000019',
+    'ea000000-0000-0000-0000-000000000011',
+    current_date - interval '10 days',
+    7200,
+    true,
+    'Load test scripts — blocked midway.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001a',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '18 days',
+    25200,
+    true,
+    'Availability feed integration.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001a',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '16 days',
+    14400,
+    true,
+    'Feed edge cases and retries.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001c',
+    'ea000000-0000-0000-0000-000000000013',
+    current_date - interval '7 days',
+    12600,
+    true,
+    'Press kit layout.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001e',
+    'ea000000-0000-0000-0000-000000000016',
+    current_date - interval '9 days',
+    10800,
+    true,
+    'Pilot feedback synthesis.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000001f',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '1 day',
+    5400,
+    true,
+    'Mapping provider comparison matrix.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000020',
+    'ea000000-0000-0000-0000-000000000013',
+    current_date - interval '2 days',
+    5400,
+    false,
+    'Moodboard pulls — pre-kickoff research.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000022',
+    'ea000000-0000-0000-0000-000000000005',
+    current_date - interval '35 days',
+    12600,
+    true,
+    'Intake wireframes v1.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000023',
+    'ea000000-0000-0000-0000-000000000009',
+    current_date - interval '66 days',
+    21600,
+    true,
+    'Redemption flow build.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000024',
+    'ea000000-0000-0000-0000-000000000012',
+    current_date - interval '61 days',
+    14400,
+    true,
+    'Loyalty regression pass.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000025',
+    'ea000000-0000-0000-0000-000000000013',
+    current_date - interval '143 days',
+    18000,
+    true,
+    'Logo package production.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000026',
+    'ea000000-0000-0000-0000-000000000004',
+    current_date - interval '173 days',
+    16200,
+    true,
+    'Caching hardening.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000027',
+    'ea000000-0000-0000-0000-000000000010',
+    current_date - interval '213 days',
+    21600,
+    true,
+    'Order history migration.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000028',
+    'ea000000-0000-0000-0000-000000000016',
+    current_date - interval '100 days',
+    18000,
+    true,
+    'Funnel analysis deep-dive.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000029',
+    'ea000000-0000-0000-0000-000000000016',
+    current_date - interval '92 days',
+    7200,
+    true,
+    'Findings deck and readout.'
+  ),
+  (
+    'a5000000-0000-0000-0000-00000000002e',
+    'ea000000-0000-0000-0000-000000000012',
+    current_date - interval '3 days',
+    12600,
+    true,
+    'Browser matrix regression run.'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000009',
+    'ea000000-0000-0000-0000-000000000002',
+    current_date - interval '4 days',
+    10800,
+    true,
+    'Compliance workshop facilitation.'
   );
 
 select
