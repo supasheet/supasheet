@@ -34,7 +34,6 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
   relatedTablesSchemaQueryOptions,
-  resolveResourceSchema,
 } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
@@ -49,27 +48,22 @@ export const Route = createFileRoute(
       ? hasPermission && hasPrivilege
       : hasPrivilege
     if (!canSelect) throw notFound()
+    const tableSchema = isTableSchema(context.resourceSchema) ? context.resourceSchema : null;
+    if(!tableSchema) throw notFound()
+    return { tableSchema, resourceSchema: undefined }
   },
   loader: async ({ context, params }) => {
     const { schema, resource } = params
-    const [{ resourceSchema, columnsSchema }, relatedTablesSchema] =
-      await Promise.all([
-        resolveResourceSchema(context.queryClient, schema, resource),
-        context.queryClient.ensureQueryData(
-          relatedTablesSchemaQueryOptions(schema, resource)
-        ),
-      ])
-    if (!resourceSchema) throw notFound()
-    if (!columnsSchema?.length) throw notFound()
+    const relatedTablesSchema = await context.queryClient.ensureQueryData(
+      relatedTablesSchemaQueryOptions(schema, resource)
+    )
 
-    const primaryKeys = isTableSchema(resourceSchema)
-      ? (resourceSchema.primary_keys ?? [])
-      : []
-    if (primaryKeys.length === 0) throw notFound()
+    const primaryKeys = context.tableSchema.primary_keys ?? [];
+    if (primaryKeys?.length === 0) throw notFound()
     const pkName = primaryKeys[0].name
 
     const metaJoins = (
-      JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
+      JSON.parse(context.tableSchema.comment ?? "{}") as TableMetadata
     ).query?.join
     const classification = classifyRelationships(
       schema,
@@ -79,8 +73,6 @@ export const Route = createFileRoute(
     )
 
     return {
-      resourceSchema,
-      columnsSchema,
       pkName,
       primaryKeys,
       ...classification,
@@ -213,15 +205,15 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
   const {
-    resourceSchema,
     oneToOneRelationships,
     oneToManyRelationships,
     manyToManyRelationships,
   } = Route.useLoaderData()
+  const { tableSchema } = Route.useRouteContext()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const tableMeta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
+  const tableMeta = JSON.parse(tableSchema.comment ?? "{}") as TableMetadata
   const actualResource =
     (tableMeta as UpdatableViewMetadata).based_on ?? resource
   const resourceDisplayName = tableMeta.name ?? formatTitle(resource)

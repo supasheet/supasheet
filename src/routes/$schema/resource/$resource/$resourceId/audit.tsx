@@ -13,8 +13,8 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
   resourceAuditLogsQueryOptions,
-  tableSchemaQueryOptions,
 } from "#/lib/supabase/data/resource"
+import { isTableSchema } from "#/lib/database-meta.types"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/audit"
@@ -24,18 +24,14 @@ export const Route = createFileRoute(
       (p) => p.permission === `${schema}.${resource}:audit`
     )
     if (!hasAudit) throw notFound()
+    const tableSchema = isTableSchema(context.resourceSchema) ? context.resourceSchema : null;
+    if(!tableSchema) throw notFound()
+    return { tableSchema }
   },
   loader: async ({ context, params: { schema, resource, resourceId } }) => {
-    const [tableSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        tableSchemaQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        resourceAuditLogsQueryOptions(schema, resource, resourceId)
-      ),
-    ])
-
-    return { tableSchema }
+    context.queryClient.ensureQueryData(
+      resourceAuditLogsQueryOptions(schema, resource, resourceId)
+    )
   },
   head: ({ params }) => ({
     meta: [
@@ -98,7 +94,7 @@ function AuditTimelineBody() {
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const { tableSchema } = Route.useLoaderData()
+  const { tableSchema } = Route.useRouteContext()
   const resourceTitle = tableSchema?.comment
     ? (() => {
         try {

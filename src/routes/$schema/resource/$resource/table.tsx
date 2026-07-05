@@ -37,7 +37,6 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
-  resolveResourceSchema,
   resourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -88,16 +87,8 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
   }) => {
     const { schema, resource } = params
 
-    const { resourceSchema, columnsSchema } = await resolveResourceSchema(
-      context.queryClient,
-      schema,
-      resource
-    )
-    if (!resourceSchema) throw notFound()
-    if (!columnsSchema?.length) throw notFound()
-
     const metaData = JSON.parse(
-      resourceSchema?.comment ?? "{}"
+      context.resourceSchema?.comment ?? "{}"
     ) as TableMetadata
     context.queryClient.ensureQueryData(
       resourceDataQueryOptions(
@@ -111,7 +102,6 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
         filters
       )
     )
-    return { columnsSchema, resourceSchema }
   },
   head: ({ params }) => ({
     meta: [
@@ -197,7 +187,7 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
   const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
-  const { resourceSchema, columnsSchema = [] } = Route.useLoaderData()
+  const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = useMemo(
     () =>

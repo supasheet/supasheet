@@ -1,5 +1,4 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
-import type { QueryClient } from "@tanstack/react-query"
 
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
@@ -11,78 +10,11 @@ import type {
   DatabaseViews,
   TableMetadata,
   TableSchema,
-  UpdatableViewMetadata,
   ViewMetadata,
   ViewSchema,
 } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
 import { applyFilters } from "#/lib/supabase/filter"
-
-export async function resolveResourceSchema(
-  queryClient: QueryClient,
-  schema: DatabaseSchemas,
-  resource: string
-): Promise<{
-  resourceSchema: TableSchema | ViewSchema | null
-  columnsSchema: ColumnSchema[] | null
-}> {
-  const r = resource as DatabaseTables<typeof schema>
-
-  let [resolvedTableSchema, columnsSchema] = await Promise.all([
-    queryClient.ensureQueryData(tableSchemaQueryOptions(schema, r)),
-    queryClient.ensureQueryData(columnsSchemaQueryOptions(schema, r)),
-  ])
-
-  const viewSchema = !resolvedTableSchema
-    ? await queryClient.ensureQueryData(viewSchemaQueryOptions(schema, r))
-    : null
-
-  if (viewSchema) {
-    const viewMetadata = JSON.parse(
-      viewSchema.comment ?? "{}"
-    ) as UpdatableViewMetadata
-    if (viewMetadata.based_on) {
-      const [tableSchema, resolvedColumnsSchema] = await Promise.all([
-        queryClient.ensureQueryData(
-          tableSchemaQueryOptions(schema, viewMetadata.based_on)
-        ),
-        queryClient.ensureQueryData(
-          columnsSchemaQueryOptions(schema, viewMetadata.based_on)
-        ),
-      ])
-      if (tableSchema) {
-        const resolvedPrimaryKeys = tableSchema.primary_keys
-
-        if (resolvedPrimaryKeys?.length === 1) {
-          const pkExposed = columnsSchema?.some(
-            (c) => c.name === resolvedPrimaryKeys[0].name
-          )
-          if (!pkExposed) {
-            return { resourceSchema: null, columnsSchema: null }
-          }
-          resolvedTableSchema = {
-            ...tableSchema,
-            name: viewSchema.name,
-            comment: viewSchema.comment ?? null,
-            primary_keys: resolvedPrimaryKeys,
-          }
-        }
-
-        if (resolvedColumnsSchema && columnsSchema) {
-          const resourceColumnNames = new Set(columnsSchema.map((c) => c.name))
-          columnsSchema = resolvedColumnsSchema.filter((c) =>
-            resourceColumnNames.has(c.name)
-          )
-        }
-      }
-    }
-  }
-
-  return {
-    resourceSchema: resolvedTableSchema ?? viewSchema,
-    columnsSchema,
-  }
-}
 
 export const navItemsQueryOptions = (schema: DatabaseSchemas) =>
   queryOptions({

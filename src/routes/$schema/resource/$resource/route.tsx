@@ -44,18 +44,19 @@ export const Route = createFileRoute("/$schema/resource/$resource")({
           viewSchemaQueryOptions(schema, resource)
         )
       : null
-
+    let baseTable = resource;
     if (viewSchema) {
       const viewMetadata = JSON.parse(
         viewSchema.comment ?? "{}"
       ) as UpdatableViewMetadata
-      if (viewMetadata.based_on) {
+      baseTable = viewMetadata.based_on;
+      if (baseTable) {
         const [tableSchema, resolvedColumnsSchema] = await Promise.all([
           context.queryClient.ensureQueryData(
-            tableSchemaQueryOptions(schema, viewMetadata.based_on)
+            tableSchemaQueryOptions(schema, baseTable)
           ),
           context.queryClient.ensureQueryData(
-            columnsSchemaQueryOptions(schema, viewMetadata.based_on)
+            columnsSchemaQueryOptions(schema, baseTable)
           ),
         ])
         if (tableSchema) {
@@ -90,7 +91,7 @@ export const Route = createFileRoute("/$schema/resource/$resource")({
     if (!resourceSchema) throw notFound()
     if (!columnsSchema?.length) throw notFound()
 
-    return { privileges, resourceSchema, columnsSchema }
+    return { privileges, resourceSchema, columnsSchema, baseTable }
   },
   component: RouteComponent,
 })

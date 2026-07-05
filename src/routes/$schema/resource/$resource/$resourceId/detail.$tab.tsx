@@ -11,7 +11,6 @@ import {
   resourcePrivilegesQueryOptions,
   singleForeignTableDataQueryOptions,
   singleResourceDataQueryOptions,
-  tableSchemaQueryOptions,
 } from "#/lib/supabase/data/resource"
 
 const parentRoute = getRouteApi(
@@ -23,16 +22,11 @@ export const Route = createFileRoute(
 )({
   loader: async ({ context, params }) => {
     const { schema, resource, resourceId, tab } = params
-    const [tableSchema, relatedTablesSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        tableSchemaQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        relatedTablesSchemaQueryOptions(schema, resource)
-      ),
-    ])
+    const relatedTablesSchema = await context.queryClient.ensureQueryData(
+      relatedTablesSchemaQueryOptions(schema, resource)
+    )
     const metaJoins = (
-      JSON.parse(tableSchema?.comment ?? "{}") as TableMetadata
+      JSON.parse(context.tableSchema?.comment ?? "{}") as TableMetadata
     ).query?.join
     const classification = classifyRelationships(
       schema,
@@ -42,7 +36,7 @@ export const Route = createFileRoute(
     )
 
     const allowedTabs = (
-      JSON.parse(tableSchema?.comment ?? "{}") as TableMetadata
+      JSON.parse(context.tableSchema?.comment ?? "{}") as TableMetadata
     ).tabs
     if (allowedTabs && !allowedTabs.includes(tab)) throw notFound()
 
@@ -50,7 +44,7 @@ export const Route = createFileRoute(
       (r) => r.__embedKey === tab
     )
     if (oneToOne) {
-      const primaryKeys = tableSchema?.primary_keys ?? []
+      const primaryKeys = context.tableSchema?.primary_keys ?? []
       const pkName = primaryKeys[0]?.name ?? "id"
       const pk = { [pkName]: resourceId }
       const parent = await context.queryClient.ensureQueryData(
@@ -72,7 +66,7 @@ export const Route = createFileRoute(
       classification.manyToManyRelationships.find((r) => r.name === tab)
     if (!many) throw notFound()
 
-    const primaryKeys = tableSchema?.primary_keys ?? []
+    const primaryKeys = context.tableSchema?.primary_keys ?? []
     const pkName = primaryKeys[0]?.name ?? "id"
     const pk = { [pkName]: resourceId }
     await context.queryClient.ensureQueryData(

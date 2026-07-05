@@ -23,17 +23,11 @@ import {
   EmptyTitle,
 } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
-import type {
-  TableMetadata,
-  UpdatableViewMetadata,
-} from "#/lib/database-meta.types"
+import { isTableSchema } from "#/lib/database-meta.types"
+import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  columnsSchemaQueryOptions,
-  tableSchemaQueryOptions,
-  viewSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { viewSchemaQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/new")({
   validateSearch: (
@@ -74,84 +68,17 @@ export const Route = createFileRoute("/$schema/resource/$resource/new")({
     if (!canInsert) throw notFound()
   },
   loader: async ({ context, params: { schema, resource } }) => {
-    let [tableSchema, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        tableSchemaQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        columnsSchemaQueryOptions(schema, resource)
-      ),
-    ])
-    if (!columnsSchema) throw notFound()
+    const { resourceSchema, columnsSchema, baseTable } = context
+    if (!isTableSchema(resourceSchema)) throw notFound()
 
-    let comment: string | null = tableSchema?.comment ?? null
-    let primaryKeys = tableSchema?.primary_keys ?? null
-
-    if (!tableSchema) {
+    if (baseTable !== resource) {
       const viewSchema = await context.queryClient.ensureQueryData(
         viewSchemaQueryOptions(schema, resource)
       )
-
       if (!viewSchema?.is_updatable) throw notFound()
-
-      const viewMetadata = JSON.parse(
-        viewSchema.comment ?? "{}"
-      ) as UpdatableViewMetadata
-      if (!viewMetadata.based_on) throw notFound()
-
-      const [resolvedTableSchema, resolvedColumnsSchema] = await Promise.all([
-        context.queryClient.ensureQueryData(
-          tableSchemaQueryOptions(schema, viewMetadata.based_on)
-        ),
-        context.queryClient.ensureQueryData(
-          columnsSchemaQueryOptions(schema, viewMetadata.based_on)
-        ),
-      ])
-
-      tableSchema = resolvedTableSchema
-      if (!tableSchema) throw notFound()
-
-      comment = viewSchema.comment ?? null
-      primaryKeys = tableSchema.primary_keys
-
-      if (primaryKeys?.length === 1) {
-        const pkExposed = columnsSchema.some(
-          (c) => c.name === primaryKeys![0].name
-        )
-        if (!pkExposed) {
-          const uniqueCol = columnsSchema.find((c) => c.is_unique && c.name)
-          if (uniqueCol?.name) {
-            primaryKeys = [
-              {
-                name: uniqueCol.name,
-                schema: tableSchema.schema,
-                table_id: tableSchema.id,
-                table_name: tableSchema.name,
-              },
-            ]
-          } else {
-            throw notFound()
-          }
-        }
-      }
-
-      if (resolvedColumnsSchema) {
-        const resourceColumnNames = new Set(columnsSchema.map((c) => c.name))
-        columnsSchema = resolvedColumnsSchema.filter((c) =>
-          resourceColumnNames.has(c.name)
-        )
-      }
     }
 
-    return {
-      columnsSchema,
-      tableSchema: {
-        ...tableSchema,
-        name: resource,
-        comment,
-        primary_keys: primaryKeys,
-      },
-    }
+    return { columnsSchema, tableSchema: resourceSchema }
   },
   head: ({ params }) => ({
     meta: [

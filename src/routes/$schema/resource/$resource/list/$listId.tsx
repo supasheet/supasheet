@@ -36,7 +36,6 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
-  resolveResourceSchema,
   resourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -89,15 +88,7 @@ export const Route = createFileRoute(
   }) => {
     const { schema, resource, listId } = params
 
-    const { resourceSchema, columnsSchema } = await resolveResourceSchema(
-      context.queryClient,
-      schema,
-      resource
-    )
-    if (!resourceSchema) throw notFound()
-    if (!columnsSchema?.length) throw notFound()
-
-    const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
+    const meta = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
     const listView = meta.views?.find(
       (item) => item.id === listId && item.type === "list"
     ) as ListView | undefined
@@ -116,7 +107,7 @@ export const Route = createFileRoute(
       )
     )
 
-    return { columnsSchema, resourceSchema, listView }
+    return { listView }
   },
   head: ({ params }) => ({
     meta: [
@@ -221,7 +212,8 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
   const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
-  const { resourceSchema, columnsSchema = [], listView } = Route.useLoaderData()
+  const { listView } = Route.useLoaderData()
+  const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
   const metaItems = meta.views ?? []

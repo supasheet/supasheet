@@ -34,7 +34,6 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
-  resolveResourceSchema,
   resourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -62,14 +61,7 @@ export const Route = createFileRoute(
   loader: async ({ context, params }) => {
     const { schema, resource, calendarId } = params
 
-    const { resourceSchema, columnsSchema } = await resolveResourceSchema(
-      context.queryClient,
-      schema,
-      resource
-    )
-    if (!resourceSchema) throw notFound()
-
-    const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
+    const meta = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
     const calendarView = meta.views?.find(
       (item): item is CalendarLayout =>
         item.id === calendarId && item.type === "calendar"
@@ -80,7 +72,7 @@ export const Route = createFileRoute(
       resourceDataQueryOptions(schema, resource, meta.query)
     )
 
-    return { calendarView, resourceSchema, columnsSchema }
+    return { calendarView }
   },
   head: ({ params }) => ({
     meta: [{ title: pageTitle(`Calendar | ${formatTitle(params.resource)}`) }],
@@ -210,10 +202,12 @@ function RouteComponent() {
   const { schema, resource } = Route.useParams()
   const { view } = Route.useSearch()
   const {
-    calendarView,
-    resourceSchema,
-    columnsSchema = [],
+    calendarView
   } = Route.useLoaderData()
+  const {
+    resourceSchema,
+    columnsSchema
+  } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
   const { data: resourceData } = useSuspenseQuery(
