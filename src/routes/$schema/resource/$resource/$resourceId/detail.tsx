@@ -65,7 +65,8 @@ export const Route = createFileRoute(
     const primaryKeys = isTableSchema(resourceSchema)
       ? (resourceSchema.primary_keys ?? [])
       : []
-    const pkName = primaryKeys[0]?.name ?? "id"
+    if (primaryKeys.length === 0) throw notFound()
+    const pkName = primaryKeys[0].name
 
     const metaJoins = (
       JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
