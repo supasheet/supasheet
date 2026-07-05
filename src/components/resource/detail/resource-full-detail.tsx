@@ -39,7 +39,7 @@ export function ResourceFullDetail({
       resourceSchema.comment ?? "{}"
     ) as TableMetadata
     const availableNames = new Set(
-      columnsSchema.map((c) => (c.name as string) ?? c.id ?? "")
+      columnsSchema.map((c) => (c.name) ?? c.id ?? "")
     )
     const plan = buildLayoutPlan(
       tableMeta.fields?.sections,
@@ -47,7 +47,7 @@ export function ResourceFullDetail({
       "read"
     )
     const byName = new Map(
-      columnsSchema.map((c) => [(c.name as string) ?? c.id ?? "", c])
+      columnsSchema.map((c) => [(c.name) ?? c.id ?? "", c])
     )
     const progress = columnsSchema
       .map((col) => {
@@ -58,7 +58,7 @@ export function ResourceFullDetail({
       .filter((x): x is { col: ColumnSchema; meta: EnumColumnMetadata } =>
         Boolean(x)
       )
-    const progressNames = new Set(progress.map(({ col }) => col.name as string))
+    const progressNames = new Set(progress.map(({ col }) => col.name))
     const filtered = plan
       ? {
           ...plan,
@@ -82,8 +82,8 @@ export function ResourceFullDetail({
       const col = colByName.get(key.name)
       if (!col) return null
       return {
-        name: col.name as string,
-        value: String(record[col.name as string] ?? ""),
+        name: col.name,
+        value: String(record[col.name] ?? ""),
       }
     })
     .filter((p): p is { name: string; value: string } => Boolean(p))
@@ -96,7 +96,7 @@ export function ResourceFullDetail({
             <ResourceProgressField
               key={col.id}
               column={col}
-              value={(record[col.name as string] as string | null) ?? null}
+              value={(record[col.name] as string | null) ?? null}
               enumMeta={meta}
             />
           ))}

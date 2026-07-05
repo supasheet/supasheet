@@ -51,7 +51,7 @@ export function getRolePermissionsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "id")
+        columnsSchema.find((col) => col.name === "id") as ColumnSchema
       ),
     },
     {
@@ -64,7 +64,7 @@ export function getRolePermissionsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "role")
+        columnsSchema.find((col) => col.name === "role") as ColumnSchema
       ),
     },
     {
@@ -77,7 +77,7 @@ export function getRolePermissionsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "permission")
+        columnsSchema.find((col) => col.name === "permission") as ColumnSchema
       ),
     },
   ]

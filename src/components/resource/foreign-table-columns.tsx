@@ -18,7 +18,7 @@ export function foreignTableColumns({
 
     return {
       id: c.name,
-      accessorKey: c.name as string,
+      accessorKey: c.name,
       header: () => <div className="truncate select-none">{meta.name}</div>,
       cell: ({ row }) => {
         const cell = getColumnCell(c)
@@ -32,7 +32,7 @@ export function foreignTableColumns({
               }}
             >
               {JSON.stringify(
-                row.original?.[c.name as keyof ResourceDataSchema],
+                row.original?.[c.name],
                 null,
                 2
               )}
@@ -47,7 +47,7 @@ export function foreignTableColumns({
               setRecord(row.original)
             }}
           >
-            {row.original[c.name as keyof ResourceDataSchema] as string}
+            {row.original[c.name] as string}
           </div>
         )
       },

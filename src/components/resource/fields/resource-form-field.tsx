@@ -81,7 +81,7 @@ export function ResourceFormField<S extends DatabaseSchemas>({
     ? (JSON.parse(tableSchema.comment) as TableMetadata)
     : ({} as TableMetadata)
 
-  const name = columnSchema.name as string
+  const name = columnSchema.name
 
   return (
     <form.AppField key={columnSchema.id} name={name}>

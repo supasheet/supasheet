@@ -35,7 +35,7 @@ export function ResourceDetailView({
   if (Object.keys(singleResourceData).length === 0) return null
   const detailColumns =
     columnsSchema?.filter((column) => {
-      const name = column.name as string
+      const name = column.name
       return !getMetaFields(resourceSchema).includes(name)
     }) ?? []
 
@@ -57,7 +57,7 @@ export function ResourceDetailView({
       <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
         {detailColumns.map((column) => {
           const value =
-            singleResourceData?.[column.name as keyof typeof singleResourceData]
+            singleResourceData?.[column.name]
 
           const columnMetadata = getColumnMetadata(tableSchema, column)
           const span = getColumnFieldSpan(column, tableSchema)

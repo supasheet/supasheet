@@ -49,7 +49,7 @@ export function ResourceProgressField({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{formatTitle(column.name as string)}</CardTitle>
+        <CardTitle>{formatTitle(column.name)}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-start">

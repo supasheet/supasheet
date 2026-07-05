@@ -81,7 +81,7 @@ export function getResourceTableColumns({
         .map((name) =>
           columnsSchema.find((col) => (col.name ?? col.id) === name)
         )
-        .filter(Boolean)
+        .filter((col) => col !== undefined)
     : columnsSchema
 
   for (const col of visibleColumns) {

@@ -53,7 +53,7 @@ export const ResourceRowCell = memo(function ({
     [tableSchema?.relationships, columnSchema.name]
   )
 
-  const value = row.original?.[columnSchema.name as keyof ResourceDataSchema]
+  const value = row.original?.[columnSchema.name]
 
   if (joinConfig) {
     const embedKey = joinConfig.alias ?? joinConfig.table

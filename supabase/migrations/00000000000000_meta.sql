@@ -11,8 +11,8 @@ service_role;
 create materialized view if not exists supasheet.tables as
 select
   c.oid::int8 as id,
-  nc.nspname as schema,
-  c.relname as name,
+  nc.nspname::text as schema,
+  c.relname::text as name,
   c.relrowsecurity as rls_enabled,
   c.relforcerowsecurity as rls_forced,
   case
@@ -159,11 +159,11 @@ create materialized view if not exists supasheet.columns as
 -- Adapted from information_schema.columns
 select
   c.oid::int8 as table_id,
-  nc.nspname as schema,
-  c.relname as "table",
+  nc.nspname::text as schema,
+  c.relname::text as "table",
   (c.oid || '.' || a.attnum) as id,
   a.attnum as ordinal_position,
-  a.attname as "name",
+  a.attname::text as "name",
   case
     when a.atthasdef then pg_get_expr(ad.adbin, ad.adrelid)
     else null
@@ -182,9 +182,9 @@ select
       else 'USER-DEFINED'
     end
   end as data_type,
-  t.typname as actual_type,
-  COALESCE(bt.typname, t.typname) as format,
-  COALESCE(nbt.nspname, nt.nspname) as format_schema,
+  t.typname::text as actual_type,
+  COALESCE(bt.typname, t.typname)::text as format,
+  COALESCE(nbt.nspname, nt.nspname)::text as format_schema,
   a.attidentity in ('a', 'd') as is_identity,
   case a.attidentity
     when 'a' then 'ALWAYS'
@@ -323,8 +323,8 @@ create index on supasheet.columns (name);
 create materialized view if not exists supasheet.views as
 select
   c.oid::int8 as id,
-  n.nspname as schema,
-  c.relname as name,
+  n.nspname::text as schema,
+  c.relname::text as name,
   -- See definition of information_schema.views
   (pg_relation_is_updatable (c.oid, false) & 20) = 20 as is_updatable,
   obj_description(c.oid) as comment
@@ -380,8 +380,8 @@ create index on supasheet.views (schema);
 create materialized view if not exists supasheet.materialized_views as
 select
   c.oid::int8 as id,
-  n.nspname as schema,
-  c.relname as name,
+  n.nspname::text as schema,
+  c.relname::text as name,
   c.relispopulated as is_populated,
   obj_description(c.oid) as comment
 from

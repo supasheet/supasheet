@@ -67,7 +67,7 @@ export function getAuditLogsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "id")
+        columnsSchema.find((col) => col.name === "id") as ColumnSchema
       ),
     },
     {
@@ -85,7 +85,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "created_at")
+        columnsSchema.find((col) => col.name === "created_at") as ColumnSchema
       ),
     },
     {
@@ -107,7 +107,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "operation")
+        columnsSchema.find((col) => col.name === "operation") as ColumnSchema
       ),
     },
     {
@@ -122,7 +122,7 @@ export function getAuditLogsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "schema_name")
+        columnsSchema.find((col) => col.name === "schema_name") as ColumnSchema
       ),
     },
     {
@@ -135,7 +135,7 @@ export function getAuditLogsTableColumns({
       ),
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "table_name")
+        columnsSchema.find((col) => col.name === "table_name") as ColumnSchema
       ),
     },
     {
@@ -153,7 +153,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "record_id")
+        columnsSchema.find((col) => col.name === "record_id") as ColumnSchema
       ),
     },
     {
@@ -169,7 +169,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "role")
+        columnsSchema.find((col) => col.name === "role") as ColumnSchema
       ),
     },
     {
@@ -187,7 +187,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "user_type")
+        columnsSchema.find((col) => col.name === "user_type") as ColumnSchema
       ),
     },
     {
@@ -208,7 +208,7 @@ export function getAuditLogsTableColumns({
       },
       meta: getColumnMetadata(
         null,
-        columnsSchema.find((col) => col.name === "is_error")
+        columnsSchema.find((col) => col.name === "is_error") as ColumnSchema
       ),
     },
   ]

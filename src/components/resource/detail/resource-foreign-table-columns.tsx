@@ -83,7 +83,7 @@ export function getResourceForeignTableColumns({
 
       return {
         id: c.name,
-        accessorKey: c.name as string,
+        accessorKey: c.name,
         header: () => (
           <div className="truncate select-none">{formatTitle(meta.name)}</div>
         ),

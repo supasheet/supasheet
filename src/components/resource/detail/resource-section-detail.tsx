@@ -62,7 +62,7 @@ export function ResourceSectionDetail({
   const body = (
     <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
       {cols.map((column) => {
-        const value = record[column.name as keyof typeof record]
+        const value = record[column.name]
         const columnMetadata = getColumnMetadata(tableSchema, column)
         const span = getColumnFieldSpan(column, tableSchema)
 

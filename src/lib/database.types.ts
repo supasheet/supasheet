@@ -348,14 +348,14 @@ export type Database = {
     Views: {
       columns: {
         Row: {
-          actual_type: unknown
+          actual_type: string | null
           check: string | null
           comment: string | null
           data_type: string | null
           default_value: string | null
           enums: Json | null
-          format: unknown
-          format_schema: unknown
+          format: string | null
+          format_schema: string | null
           id: string | null
           identity_generation: string | null
           is_generated: boolean | null
@@ -363,10 +363,10 @@ export type Database = {
           is_nullable: boolean | null
           is_unique: boolean | null
           is_updatable: boolean | null
-          name: unknown
+          name: string | null
           ordinal_position: number | null
-          schema: unknown
-          table: unknown
+          schema: string | null
+          table: string | null
           table_id: number | null
         }
         Relationships: []
@@ -376,8 +376,8 @@ export type Database = {
           comment: string | null
           id: number | null
           is_populated: boolean | null
-          name: unknown
-          schema: unknown
+          name: string | null
+          schema: string | null
         }
         Relationships: []
       }
@@ -388,13 +388,13 @@ export type Database = {
           dead_rows_estimate: number | null
           id: number | null
           live_rows_estimate: number | null
-          name: unknown
+          name: string | null
           primary_keys: Json | null
           relationships: Json | null
           replica_identity: string | null
           rls_enabled: boolean | null
           rls_forced: boolean | null
-          schema: unknown
+          schema: string | null
           size: string | null
         }
         Relationships: []
@@ -404,8 +404,8 @@ export type Database = {
           comment: string | null
           id: number | null
           is_updatable: boolean | null
-          name: unknown
-          schema: unknown
+          name: string | null
+          schema: string | null
         }
         Relationships: []
       }
@@ -479,14 +479,14 @@ export type Database = {
       get_columns: {
         Args: { action?: string; schema_name?: string; table_name?: string }
         Returns: {
-          actual_type: unknown
+          actual_type: string | null
           check: string | null
           comment: string | null
           data_type: string | null
           default_value: string | null
           enums: Json | null
-          format: unknown
-          format_schema: unknown
+          format: string | null
+          format_schema: string | null
           id: string | null
           identity_generation: string | null
           is_generated: boolean | null
@@ -494,10 +494,10 @@ export type Database = {
           is_nullable: boolean | null
           is_unique: boolean | null
           is_updatable: boolean | null
-          name: unknown
+          name: string | null
           ordinal_position: number | null
-          schema: unknown
-          table: unknown
+          schema: string | null
+          table: string | null
           table_id: number | null
         }[]
         SetofOptions: {
@@ -529,8 +529,8 @@ export type Database = {
           comment: string | null
           id: number | null
           is_populated: boolean | null
-          name: unknown
-          schema: unknown
+          name: string | null
+          schema: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -602,13 +602,13 @@ export type Database = {
           dead_rows_estimate: number | null
           id: number | null
           live_rows_estimate: number | null
-          name: unknown
+          name: string | null
           primary_keys: Json | null
           relationships: Json | null
           replica_identity: string | null
           rls_enabled: boolean | null
           rls_forced: boolean | null
-          schema: unknown
+          schema: string | null
           size: string | null
         }[]
         SetofOptions: {
@@ -642,8 +642,8 @@ export type Database = {
           comment: string | null
           id: number | null
           is_updatable: boolean | null
-          name: unknown
-          schema: unknown
+          name: string | null
+          schema: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -853,3 +853,4 @@ export const Constants = {
     },
   },
 } as const
+

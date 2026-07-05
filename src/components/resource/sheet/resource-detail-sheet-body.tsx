@@ -8,7 +8,7 @@ import { Label } from "#/components/ui/label"
 import { Separator } from "#/components/ui/separator"
 import { useHasPermission } from "#/hooks/use-permissions"
 import { getColumnMetadata } from "#/lib/columns"
-import type { ColumnSchema, ResourceSchema } from "#/lib/database-meta.types"
+import type { ResourceSchema } from "#/lib/database-meta.types"
 import { getMetaFields } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import type { AppPermission } from "#/lib/supabase/data/core"
@@ -72,14 +72,14 @@ export function ResourceDetailSheetBody({
   const detailColumns = columnsSchema.filter(
     (col) =>
       !getMetaFields(tableSchema as ResourceSchema | null).includes(
-        col.name as string
+        col.name
       )
   )
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
       {detailColumns.map((column, index) => {
-        const value = record[column.name as string]
+        const value = record[column.name]
         const columnMetadata = getColumnMetadata(tableSchema, column)
 
         return (

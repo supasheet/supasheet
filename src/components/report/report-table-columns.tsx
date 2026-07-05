@@ -16,14 +16,14 @@ export function getReportTableColumns(columnsSchema: ColumnSchema[]) {
 
     return {
       id: col.name ?? col.id,
-      accessorKey: col.name as string,
+      accessorKey: col.name,
       header: ({
         column,
       }: {
         column: Column<Record<string, unknown>, unknown>
       }) => <DataTableColumnHeader column={column} title={meta.name} />,
       cell: ({ row }: { row: Row<Record<string, unknown>> }) => {
-        const value = row.getValue(col.name as string)
+        const value = row.getValue(col.name)
         return (
           <span className="text-sm text-muted-foreground">
             {formatCellValue(value)}

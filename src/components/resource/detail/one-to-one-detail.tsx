@@ -64,7 +64,7 @@ export function OneToOneDetail({
     <ResourceFullDetail
       resourceSchema={{
         ...oneToOne,
-        name: oneToOne.__embedKey,
+        name: oneToOne.__embedKey as never,
       }}
       columnsSchema={oneToOne.columns ?? []}
       record={embedded}

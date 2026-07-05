@@ -258,10 +258,10 @@ export const viewSchemaQueryOptions = <S extends DatabaseSchemas>(
             view_name: id,
           })
         if (matViewError) return null
-        return matViewData[0] ?? null
+        return (matViewData[0] ?? null) as unknown as ViewSchema<S> | null
       }
 
-      return viewData[0] ?? null
+      return (viewData[0] ?? null) as unknown as ViewSchema<S> | null
     },
     staleTime: 1000 * 60 * 5,
   })
