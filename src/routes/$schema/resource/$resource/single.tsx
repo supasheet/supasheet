@@ -12,6 +12,7 @@ import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceNewForm } from "#/components/resource/resource-new-form"
+import { ResourceSingle } from "#/components/resource/resource-single"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"
 import { Button } from "#/components/ui/button"
 import { Card, CardContent, CardHeader } from "#/components/ui/card"
@@ -23,14 +24,11 @@ import {
   EmptyTitle,
 } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
-import type { TableMetadata } from "#/lib/database-meta.types"
+import type { ViewMetadata } from "#/lib/database-meta.types"
+import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  columnsSchemaQueryOptions,
-  resourceDataQueryOptions,
-  tableSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/single")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
@@ -44,25 +42,16 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
     if (!canSelect) throw notFound()
   },
   loader: async ({ context, params: { schema, resource } }) => {
-    const [tableSchema, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        tableSchemaQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        columnsSchemaQueryOptions(schema, resource)
-      ),
-    ])
-    if (!tableSchema || !columnsSchema?.length) throw notFound()
     context.queryClient.ensureQueryData(
       resourceDataQueryOptions(schema, resource, undefined, 1, 1)
     )
-    return { tableSchema, columnsSchema }
+    return { resourceSchema: context.resourceSchema }
   },
   head: ({ params, loaderData }) => {
     const meta = loaderData
       ? (JSON.parse(
-          (loaderData.tableSchema as { comment?: string }).comment ?? "{}"
-        ) as TableMetadata)
+          (loaderData.resourceSchema as { comment?: string }).comment ?? "{}"
+        ) as ViewMetadata)
       : {}
     const name = meta.name ?? formatTitle(params.resource)
     return { meta: [{ title: pageTitle(`${name}`) }] }
@@ -184,11 +173,13 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
 
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
-  const { tableSchema, columnsSchema } = Route.useLoaderData()
+  const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const resourceDisplayName =
-    (JSON.parse(tableSchema?.comment ?? "{}") as TableMetadata).name ??
+    (JSON.parse(resourceSchema?.comment ?? "{}") as ViewMetadata).name ??
     formatTitle(resource)
+
+  const tableSchema = isTableSchema(resourceSchema) ? resourceSchema : null
 
   const primaryKeys = tableSchema?.primary_keys ?? []
 
@@ -202,19 +193,27 @@ function RouteComponent() {
       <DefaultHeader breadcrumbs={[{ title: resourceDisplayName }]} />
       <div className="flex flex-1 flex-col">
         <div className="mx-auto w-full max-w-7xl px-4 py-4">
-          {record ? (
-            <ResourceUpdateForm
-              columnsSchema={columnsSchema}
-              primaryKeys={primaryKeys}
-              record={record}
-              tableSchema={tableSchema}
-              saveOnly
-            />
+          {tableSchema ? (
+            record ? (
+              <ResourceUpdateForm
+                columnsSchema={columnsSchema}
+                primaryKeys={primaryKeys}
+                record={record}
+                tableSchema={tableSchema}
+                saveOnly
+              />
+            ) : (
+              <ResourceNewForm
+                columnsSchema={columnsSchema}
+                tableSchema={tableSchema}
+                saveOnly
+              />
+            )
           ) : (
-            <ResourceNewForm
+            <ResourceSingle
+              resourceSchema={resourceSchema}
               columnsSchema={columnsSchema}
-              tableSchema={tableSchema}
-              saveOnly
+              record={record}
             />
           )}
         </div>
