@@ -58,7 +58,7 @@ export const Route = createFileRoute("/$schema/template/$template/")({
     sortId: search.sortId,
     sortDesc: search.sortDesc ?? false,
     page: search.page ?? 1,
-    pageSize: search.pageSize ?? 10,
+    pageSize: search.pageSize ?? 20,
     filters: search.filters ?? [],
   }),
   loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({

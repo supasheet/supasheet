@@ -70,7 +70,7 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
       sortId: search.sortId,
       sortDesc: search.sortDesc ?? false,
       page: search.page ?? 1,
-      pageSize: search.pageSize ?? 10,
+      pageSize: search.pageSize ?? 20,
       filters,
     }
   },

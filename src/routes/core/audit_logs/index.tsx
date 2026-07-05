@@ -26,7 +26,7 @@ export const Route = createFileRoute("/core/audit_logs/")({
     sortId: search.sortId,
     sortDesc: search.sortDesc ?? true,
     page: search.page ?? 1,
-    pageSize: search.pageSize ?? 10,
+    pageSize: search.pageSize ?? 20,
     filters: search.filters ?? [],
   }),
   loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({

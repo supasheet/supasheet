@@ -42,7 +42,7 @@ export function useDataTable<TData, TValue>({
   meta,
 }: UseDataTableOptions<TData, TValue>) {
   const sorting = state?.sorting ?? []
-  const pagination = state?.pagination ?? { pageIndex: 0, pageSize: 10 }
+  const pagination = state?.pagination ?? { pageIndex: 0, pageSize: 20 }
   const columnFilters = state?.columnFilters ?? []
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})

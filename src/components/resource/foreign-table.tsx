@@ -53,7 +53,7 @@ export function ForeignTableSheet({
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 20,
   })
 
   const [sorting, setSorting] = useState<SortingState>([])
