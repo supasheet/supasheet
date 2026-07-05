@@ -51,37 +51,20 @@ export async function resolveResourceSchema(
         ),
       ])
       if (tableSchema) {
-        let resolvedPrimaryKeys = tableSchema.primary_keys
+        const resolvedPrimaryKeys = tableSchema.primary_keys
 
         if (resolvedPrimaryKeys?.length === 1) {
           const pkExposed = columnsSchema?.some(
-            (c) => c.name === resolvedPrimaryKeys![0].name
+            (c) => c.name === resolvedPrimaryKeys[0].name
           )
           if (!pkExposed) {
-            const uniqueCol = columnsSchema?.find((c) => c.is_unique && c.name)
-            if (uniqueCol?.name) {
-              resolvedPrimaryKeys = [
-                {
-                  name: uniqueCol.name,
-                  schema: tableSchema.schema,
-                  table_id: tableSchema.id,
-                  table_name: tableSchema.name,
-                },
-              ]
-              resolvedTableSchema = {
-                ...tableSchema,
-                name: viewSchema.name,
-                comment: viewSchema.comment ?? null,
-                primary_keys: resolvedPrimaryKeys,
-              }
-            }
-          } else {
-            resolvedTableSchema = {
-              ...tableSchema,
-              name: viewSchema.name,
-              comment: viewSchema.comment ?? null,
-              primary_keys: resolvedPrimaryKeys,
-            }
+            return { resourceSchema: null, columnsSchema: null }
+          }
+          resolvedTableSchema = {
+            ...tableSchema,
+            name: viewSchema.name,
+            comment: viewSchema.comment ?? null,
+            primary_keys: resolvedPrimaryKeys,
           }
         }
 
