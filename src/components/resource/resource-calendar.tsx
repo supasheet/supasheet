@@ -139,7 +139,12 @@ export function ResourceCalendar({
     start.setHours(hour, minute)
     const startCol = columnsSchema.find((c) => c.name === startDateField)
     const defaults = startDateField
-      ? { [startDateField]: formatSlotValue(startCol?.format ?? undefined, start) }
+      ? {
+          [startDateField]: formatSlotValue(
+            startCol?.format ?? undefined,
+            start
+          ),
+        }
       : undefined
     void navigate({
       to: "/$schema/resource/$resource/new",

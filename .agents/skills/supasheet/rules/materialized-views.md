@@ -49,10 +49,10 @@ The comment can alternatively use the resource shape (`{"icon": ..., "display": 
 
 ## Two different refreshes — don't confuse them
 
-| Command | Refreshes |
-|---|---|
-| `select supasheet.refresh_metadata();` | the **catalog** (which resources exist, their comments/columns) |
-| `refresh materialized view [concurrently] app.revenue_rollup;` | the **data** inside your matview |
+| Command                                                        | Refreshes                                                       |
+| -------------------------------------------------------------- | --------------------------------------------------------------- |
+| `select supasheet.refresh_metadata();`                         | the **catalog** (which resources exist, their comments/columns) |
+| `refresh materialized view [concurrently] app.revenue_rollup;` | the **data** inside your matview                                |
 
 Creating a matview needs both (catalog once, data on your schedule). `concurrently` avoids locking readers but requires the unique index above.
 
@@ -64,5 +64,6 @@ Schedule data refreshes with `pg_cron` if available, or trigger them from applic
 
 ```sql
 drop materialized view if exists app.revenue_rollup cascade;
+
 -- then recreate everything above
 ```

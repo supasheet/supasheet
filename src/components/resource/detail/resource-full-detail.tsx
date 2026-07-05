@@ -39,16 +39,14 @@ export function ResourceFullDetail({
       resourceSchema.comment ?? "{}"
     ) as TableMetadata
     const availableNames = new Set(
-      columnsSchema.map((c) => (c.name) ?? c.id ?? "")
+      columnsSchema.map((c) => c.name ?? c.id ?? "")
     )
     const plan = buildLayoutPlan(
       tableMeta.fields?.sections,
       availableNames,
       "read"
     )
-    const byName = new Map(
-      columnsSchema.map((c) => [(c.name) ?? c.id ?? "", c])
-    )
+    const byName = new Map(columnsSchema.map((c) => [c.name ?? c.id ?? "", c]))
     const progress = columnsSchema
       .map((col) => {
         const meta = JSON.parse(col.comment ?? "{}") as EnumColumnMetadata

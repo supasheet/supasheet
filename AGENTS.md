@@ -73,7 +73,7 @@ alias (not `@/`).
   - `$schema/` — dynamic schema module: `resource/$resource/` (list, `new`,
     `update/`, `detail/`, `kanban/`, `calendar/`, `gallery/`, `report`),
     `dashboard/`, `chart/`, `report/$report/`, `sql-editor/$snippet/`
-- `supabase/` — `migrations/` (ordered SQL), `functions/` (admin-* Deno edge
+- `supabase/` — `migrations/` (ordered SQL), `functions/` (admin-\* Deno edge
   functions for user operations), `examples/` (seed SQL)
 
 ## Data fetching pattern (routes)

@@ -6,19 +6,27 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
 
 ```jsonc
 {
-  "display": "block",            // "block" = show in sidebar, "none" = hidden (URL/inline only)
-  "name": "Tickets",             // override display name
+  "display": "block", // "block" = show in sidebar, "none" = hidden (URL/inline only)
+  "name": "Tickets", // override display name
   "description": "...",
-  "icon": "Ticket",              // Lucide React icon name
-  "group": "Support",            // sidebar grouping
-  "singleton": false,            // true = settings-style single record
-  "inline_form": false,          // true = editable section on parent detail page (junction/line-item tables)
-  "primary_view": "kanban",      // id of default view (omit = sheet/table view)
-  "views": [ /* ViewLayout[] */ ],
-  "filter_presets": [ /* FilterPreset[] */ ],
-  "fields": { /* see Fields */ },
-  "query": { /* see Query */ },
-  "tabs": ["tasks", "invoices"]  // allowlist of related-table tabs on the detail page
+  "icon": "Ticket", // Lucide React icon name
+  "group": "Support", // sidebar grouping
+  "singleton": false, // true = settings-style single record
+  "inline_form": false, // true = editable section on parent detail page (junction/line-item tables)
+  "primary_view": "kanban", // id of default view (omit = sheet/table view)
+  "views": [
+    /* ViewLayout[] */
+  ],
+  "filter_presets": [
+    /* FilterPreset[] */
+  ],
+  "fields": {
+    /* see Fields */
+  },
+  "query": {
+    /* see Query */
+  },
+  "tabs": ["tasks", "invoices"], // allowlist of related-table tabs on the detail page
 }
 ```
 
@@ -26,13 +34,13 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
 
 Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table) view always exists. Column hints name columns of this table.
 
-| type | required | optional |
-|---|---|---|
-| `kanban` | `group` (enum col), `title` | `description`, `badge`, `date` |
-| `calendar` | `title`, `start_date` | `end_date`, `badge` |
-| `gallery` | `cover` (FILE/AVATAR col), `title` | `description`, `badge` |
-| `list` | `title` | `description`, `field_1`, `field_2` |
-| `tree` | `parent` (self-FK col), `title` | `secondary` |
+| type       | required                           | optional                            |
+| ---------- | ---------------------------------- | ----------------------------------- |
+| `kanban`   | `group` (enum col), `title`        | `description`, `badge`, `date`      |
+| `calendar` | `title`, `start_date`              | `end_date`, `badge`                 |
+| `gallery`  | `cover` (FILE/AVATAR col), `title` | `description`, `badge`              |
+| `list`     | `title`                            | `description`, `field_1`, `field_2` |
+| `tree`     | `parent` (self-FK col), `title`    | `secondary`                         |
 
 ```json
 "views": [
@@ -139,8 +147,15 @@ A simple single-table view (subset of columns, no joins/aggregates) is auto-upda
 
 ```sql
 create view app.ticket_triage
-with (security_invoker = true) as
-select id, title, status, priority from app.tickets;
+with
+  (security_invoker = true) as
+select
+  id,
+  title,
+  status,
+  priority
+from
+  app.tickets;
 
 comment on view app.ticket_triage is '{"based_on": "tickets", "name": "Triage", "description": "Status and priority only"}';
 ```

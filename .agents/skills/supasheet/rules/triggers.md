@@ -18,17 +18,12 @@ Four standard trigger families in Supasheet, in order of frequency:
 One per event, calling the shared `supasheet.audit_trigger_function()`. **DELETE must be BEFORE; INSERT/UPDATE are AFTER**:
 
 ```sql
-create trigger audit_app_tickets_insert
-after insert on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_app_tickets_insert after insert on app.tickets for each row execute function supasheet.audit_trigger_function ();
 
-create trigger audit_app_tickets_update
-after update on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_app_tickets_update after
+update on app.tickets for each row execute function supasheet.audit_trigger_function ();
 
-create trigger audit_app_tickets_delete
-before delete on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_app_tickets_delete before delete on app.tickets for each row execute function supasheet.audit_trigger_function ();
 ```
 
 - Naming: `audit_<schema>_<table>_<event>` (or `audit_<table>_<event>`).
@@ -92,13 +87,11 @@ for each row execute function app.trg_order_items_recalc ();
 Built-ins ready to attach:
 
 ```sql
-create trigger tickets_updated_at
-before update on app.tickets
-for each row execute function supasheet.set_updated_at ();
+create trigger tickets_updated_at before
+update on app.tickets for each row execute function supasheet.set_updated_at ();
 
-create trigger tickets_updated_by
-before update on app.tickets
-for each row execute function supasheet.set_updated_by ();
+create trigger tickets_updated_by before
+update on app.tickets for each row execute function supasheet.set_updated_by ();
 ```
 
 ## General rules

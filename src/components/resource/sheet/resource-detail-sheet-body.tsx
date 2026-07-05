@@ -71,9 +71,7 @@ export function ResourceDetailSheetBody({
 
   const detailColumns = columnsSchema.filter(
     (col) =>
-      !getMetaFields(tableSchema as ResourceSchema | null).includes(
-        col.name
-      )
+      !getMetaFields(tableSchema as ResourceSchema | null).includes(col.name)
   )
 
   return (

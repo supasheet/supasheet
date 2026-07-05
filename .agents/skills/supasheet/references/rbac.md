@@ -31,8 +31,11 @@ Enum values must be committed before first use — put all `alter type` statemen
 
 ```sql
 begin;
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:select';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:insert';
+
 -- use `add value if not exists` when re-runnable migrations matter
 commit;
 ```
@@ -42,53 +45,77 @@ commit;
 Grants gate the operation at the SQL level; RLS + `has_permission` gate it per-user. Both are required.
 
 ```sql
-revoke all on table app.tickets from public, anon, authenticated, service_role;
-grant select, insert, update, delete on table app.tickets to authenticated;
+revoke all on table app.tickets
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to authenticated;
 
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated
-  using (supasheet.has_permission ('app.tickets:select'));
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (supasheet.has_permission ('app.tickets:select'));
 
 create policy tickets_insert on app.tickets for insert to authenticated
-  with check (supasheet.has_permission ('app.tickets:insert'));
+with
+  check (supasheet.has_permission ('app.tickets:insert'));
 
-create policy tickets_update on app.tickets for update to authenticated
-  using (supasheet.has_permission ('app.tickets:update'))
-  with check (supasheet.has_permission ('app.tickets:update'));
+create policy tickets_update on app.tickets for
+update to authenticated using (supasheet.has_permission ('app.tickets:update'))
+with
+  check (supasheet.has_permission ('app.tickets:update'));
 
-create policy tickets_delete on app.tickets for delete to authenticated
-  using (supasheet.has_permission ('app.tickets:delete'));
+create policy tickets_delete on app.tickets for delete to authenticated using (supasheet.has_permission ('app.tickets:delete'));
 ```
 
 Owner-scoped variant — combine permission with ownership:
 
 ```sql
-using (user_id = auth.uid () and supasheet.has_permission ('app.tickets:select'))
+using (
+  user_id = auth.uid ()
+  and supasheet.has_permission ('app.tickets:select')
+)
 ```
 
 ## Seeding
 
 ```sql
 -- grant permissions to roles
-insert into supasheet.role_permissions (role, permission) values
-  ('x-admin', 'app.tickets:select'), ('x-admin', 'app.tickets:insert'),
-  ('x-admin', 'app.tickets:update'), ('x-admin', 'app.tickets:delete'),
-  ('user', 'app.tickets:select'), ('user', 'app.tickets:insert')
-on conflict (role, permission) do nothing;
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'app.tickets:select'),
+  ('x-admin', 'app.tickets:insert'),
+  ('x-admin', 'app.tickets:update'),
+  ('x-admin', 'app.tickets:delete'),
+  ('user', 'app.tickets:select'),
+  ('user', 'app.tickets:insert') on conflict (role, permission) do nothing;
 
 -- assign roles to users
-insert into supasheet.user_roles (user_id, role)
-values ('<user-uuid>', 'admin')
-on conflict (user_id, role) do nothing;
+insert into
+  supasheet.user_roles (user_id, role)
+values
+  ('<user-uuid>', 'admin') on conflict (user_id, role) do nothing;
 ```
 
 ## Custom roles
 
 ```sql
 begin;
+
 alter type supasheet.app_role add value if not exists 'manager';
+
 commit;
+
 -- then seed role_permissions for 'manager'
 ```
 

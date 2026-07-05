@@ -25,22 +25,43 @@ id | key text unique | value jsonb | description text | is_public boolean
 ## Setting values
 
 ```sql
-insert into supasheet.configs (key, value, description, is_public)
+insert into
+  supasheet.configs (key, value, description, is_public)
 values
-  ('app.name', '"Acme Ops"', 'Application display name', true),
-  ('app.description', '"Internal operations console"', 'Shown on the sign-in page', true)
-on conflict (key) do update
-  set value = excluded.value,
-      description = excluded.description,
-      is_public = excluded.is_public;
+  (
+    'app.name',
+    '"Acme Ops"',
+    'Application display name',
+    true
+  ),
+  (
+    'app.description',
+    '"Internal operations console"',
+    'Shown on the sign-in page',
+    true
+  ) on conflict (key) do
+update
+set
+  value = excluded.value,
+  description = excluded.description,
+  is_public = excluded.is_public;
 ```
 
 `value` is jsonb — strings must be JSON-encoded (`'"Acme Ops"'`), and structured values are fine:
 
 ```sql
-insert into supasheet.configs (key, value, description, is_public)
-values ('app.features', '{"exports": true, "beta_charts": false}', 'Feature flags', false)
-on conflict (key) do update set value = excluded.value;
+insert into
+  supasheet.configs (key, value, description, is_public)
+values
+  (
+    'app.features',
+    '{"exports": true, "beta_charts": false}',
+    'Feature flags',
+    false
+  ) on conflict (key) do
+update
+set
+  value = excluded.value;
 ```
 
 ## Module settings tables vs configs

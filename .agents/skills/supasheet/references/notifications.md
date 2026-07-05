@@ -20,8 +20,8 @@ Execution is granted only to `service_role`, so it **must** be called from a `se
 ### Recipient resolvers (also security definer, service_role-only)
 
 ```sql
-supasheet.get_users_with_role('admin')                      -- returns uuid[]
-supasheet.get_users_with_permission('app.tickets:update')   -- returns uuid[]
+supasheet.get_users_with_role ('admin') -- returns uuid[]
+supasheet.get_users_with_permission ('app.tickets:update') -- returns uuid[]
 ```
 
 ## Canonical trigger pattern

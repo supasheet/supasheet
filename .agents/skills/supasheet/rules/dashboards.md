@@ -14,14 +14,14 @@ A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "d
 
 ## Widget contracts (exact required columns)
 
-| widget_type | Renders | Required columns |
-|---|---|---|
-| `card_1` | single metric | `value` (number), `icon` (lucide slug, kebab-case), `label` (string) |
-| `card_2` | comparison | `primary`, `secondary` (numbers), `primary_label`, `secondary_label` (strings) |
-| `card_3` | metric + percent | `value` (number), `percent` (0–100) |
-| `card_4` | progress | `current` (subset), `total`, `segments` (JSON array of `{label, value}`) |
-| `table_1` | flat list | any flat columns, `order by` + `limit 10` |
-| `table_2` | aggregated table | grouped/joined query with computed columns, `limit 10` |
+| widget_type | Renders          | Required columns                                                               |
+| ----------- | ---------------- | ------------------------------------------------------------------------------ |
+| `card_1`    | single metric    | `value` (number), `icon` (lucide slug, kebab-case), `label` (string)           |
+| `card_2`    | comparison       | `primary`, `secondary` (numbers), `primary_label`, `secondary_label` (strings) |
+| `card_3`    | metric + percent | `value` (number), `percent` (0–100)                                            |
+| `card_4`    | progress         | `current` (subset), `total`, `segments` (JSON array of `{label, value}`)       |
+| `table_1`   | flat list        | any flat columns, `order by` + `limit 10`                                      |
+| `table_2`   | aggregated table | grouped/joined query with computed columns, `limit 10`                         |
 
 ## Starter SQL per type
 
@@ -75,21 +75,38 @@ limit 10;
 alter type supasheet.app_permission add value if not exists 'app.open_tickets_count:select';
 
 create view app.open_tickets_count
-with (security_invoker = true) as
-select count(*) as value, 'ticket' as icon, 'open tickets' as label
-from app.tickets where status = 'open';
+with
+  (security_invoker = true) as
+select
+  count(*) as value,
+  'ticket' as icon,
+  'open tickets' as label
+from
+  app.tickets
+where
+  status = 'open';
 
-revoke all on app.open_tickets_count from public, anon, authenticated, service_role;
-grant select on app.open_tickets_count to authenticated;
+revoke all on app.open_tickets_count
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+grant
+select
+  on app.open_tickets_count to authenticated;
 
 comment on view app.open_tickets_count is '{"type": "dashboard_widget", "name": "Open Tickets", "description": "Tickets currently open", "widget_type": "card_1"}';
 
-insert into supasheet.role_permissions (role, permission) values
+insert into
+  supasheet.role_permissions (role, permission)
+values
   ('x-admin', 'app.open_tickets_count:select'),
-  ('user', 'app.open_tickets_count:select')
-on conflict (role, permission) do nothing;
+  ('user', 'app.open_tickets_count:select') on conflict (role, permission) do nothing;
 
-select supasheet.refresh_metadata ();
+select
+  supasheet.refresh_metadata ();
 ```
 
 ## Rules

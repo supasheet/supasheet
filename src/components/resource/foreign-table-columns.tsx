@@ -31,11 +31,7 @@ export function foreignTableColumns({
                 setRecord(row.original)
               }}
             >
-              {JSON.stringify(
-                row.original?.[c.name],
-                null,
-                2
-              )}
+              {JSON.stringify(row.original?.[c.name], null, 2)}
             </pre>
           )
         }

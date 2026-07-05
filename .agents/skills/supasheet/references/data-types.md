@@ -20,18 +20,18 @@ create domain supasheet.AVATAR as supasheet.FILE_OBJECT;
 create domain supasheet.RICH_TEXT as text;
 ```
 
-| Type | Underlying | UI behavior |
-|---|---|---|
-| `supasheet.EMAIL` | text | validated, clickable `mailto:` |
-| `supasheet.TEL` | text | clickable `tel:`, intl formatting |
-| `supasheet.URL` | text | clickable link, opens new tab |
-| `supasheet.RICH_TEXT` | text | WYSIWYG editor (Lexical) |
-| `supasheet.RATING` | real (0–5) | interactive star input |
-| `supasheet.PERCENTAGE` | real | progress bar, rendered "75%" |
-| `supasheet.DURATION` | bigint (milliseconds) | human-readable "2h 30m", duration picker |
-| `supasheet.COLOR` | varchar(16) | color picker, hex `#RRGGBB` |
-| `supasheet.FILE` | `FILE_OBJECT[]` | drag-drop multi-file upload |
-| `supasheet.AVATAR` | single `FILE_OBJECT` | single image, circular avatar preview |
+| Type                   | Underlying            | UI behavior                              |
+| ---------------------- | --------------------- | ---------------------------------------- |
+| `supasheet.EMAIL`      | text                  | validated, clickable `mailto:`           |
+| `supasheet.TEL`        | text                  | clickable `tel:`, intl formatting        |
+| `supasheet.URL`        | text                  | clickable link, opens new tab            |
+| `supasheet.RICH_TEXT`  | text                  | WYSIWYG editor (Lexical)                 |
+| `supasheet.RATING`     | real (0–5)            | interactive star input                   |
+| `supasheet.PERCENTAGE` | real                  | progress bar, rendered "75%"             |
+| `supasheet.DURATION`   | bigint (milliseconds) | human-readable "2h 30m", duration picker |
+| `supasheet.COLOR`      | varchar(16)           | color picker, hex `#RRGGBB`              |
+| `supasheet.FILE`       | `FILE_OBJECT[]`       | drag-drop multi-file upload              |
+| `supasheet.AVATAR`     | single `FILE_OBJECT`  | single image, circular avatar preview    |
 
 `FILE_OBJECT` stores `{ name, type, size, url, last_modified }`. `FILE` is an **array** of those; `AVATAR` is a **single** one. Files land in the `uploads` bucket (see `storage.md`).
 
@@ -55,7 +55,9 @@ comment on column app.tickets.title is '{"name": "Ticket Title", "description": 
 
 ```sql
 comment on column app.tickets.attachments is '{"accept": "*", "maxFiles": 20}';
+
 comment on column app.clients.logo is '{"accept": "image/*", "maxSize": 2097152}';
+
 comment on column app.docs.contract is '{"accept": ".pdf", "maxSize": 10485760, "maxFiles": 1}';
 ```
 
@@ -65,6 +67,7 @@ comment on column app.docs.contract is '{"accept": ".pdf", "maxSize": 10485760, 
 
 ```sql
 comment on column app.team_members.avatar is '{"accept":"image/*"}';
+
 comment on column app.authors.avatar is '{"maxSize": 2097152}';
 ```
 
@@ -88,14 +91,14 @@ Variants: `default` | `secondary` | `success` | `warning` | `destructive` | `inf
 
 ## Byte-size constants
 
-| Size | Bytes |
-|---|---|
-| 1 MB | 1048576 |
-| 2 MB | 2097152 |
-| 5 MB | 5242880 |
-| 10 MB | 10485760 |
-| 25 MB | 26214400 |
-| 50 MB | 52428800 |
+| Size   | Bytes     |
+| ------ | --------- |
+| 1 MB   | 1048576   |
+| 2 MB   | 2097152   |
+| 5 MB   | 5242880   |
+| 10 MB  | 10485760  |
+| 25 MB  | 26214400  |
+| 50 MB  | 52428800  |
 | 100 MB | 104857600 |
 
 ## Authoritative sources

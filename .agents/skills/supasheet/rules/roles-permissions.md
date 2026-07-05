@@ -16,18 +16,20 @@ Authorization is DB-backed: `supasheet.app_role` + `supasheet.app_permission` en
 
 Format: `"<schema>.<resource>:<action>"`.
 
-| Action | Applies to | Grants access to |
-|---|---|---|
-| `select` | tables, views, matviews | reading; also controls sidebar/dashboard/chart/report discovery |
-| `insert` / `update` / `delete` | tables, updatable views | writes |
-| `audit` | tables | the per-record Audit tab |
-| `comment` | tables | reading + posting record comments |
+| Action                         | Applies to              | Grants access to                                                |
+| ------------------------------ | ----------------------- | --------------------------------------------------------------- |
+| `select`                       | tables, views, matviews | reading; also controls sidebar/dashboard/chart/report discovery |
+| `insert` / `update` / `delete` | tables, updatable views | writes                                                          |
+| `audit`                        | tables                  | the per-record Audit tab                                        |
+| `comment`                      | tables                  | reading + posting record comments                               |
 
 Adding values — always `if not exists`, always in a committed transaction **before** any statement uses them:
 
 ```sql
 begin;
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:select';
+
 -- ...
 commit;
 ```
@@ -36,21 +38,26 @@ commit;
 
 Every resource is invisible until a role holds its `:select`. Conventional split:
 
-| Resource kind | x-admin | user |
-|---|---|---|
-| Table | select, insert, update, delete, audit, comment | select, insert, update, comment (usually no delete/audit) |
-| Junction table | select, insert, delete | select, insert, delete |
-| Singleton | select, insert, update | select (update if end-users may edit) |
-| Widget/chart/report view | select | select |
-| Replica users view | select | select |
+| Resource kind            | x-admin                                        | user                                                      |
+| ------------------------ | ---------------------------------------------- | --------------------------------------------------------- |
+| Table                    | select, insert, update, delete, audit, comment | select, insert, update, comment (usually no delete/audit) |
+| Junction table           | select, insert, delete                         | select, insert, delete                                    |
+| Singleton                | select, insert, update                         | select (update if end-users may edit)                     |
+| Widget/chart/report view | select                                         | select                                                    |
+| Replica users view       | select                                         | select                                                    |
 
 ```sql
-insert into supasheet.role_permissions (role, permission) values
-  ('x-admin', 'app.tickets:select'), ('x-admin', 'app.tickets:insert'),
-  ('x-admin', 'app.tickets:update'), ('x-admin', 'app.tickets:delete'),
-  ('x-admin', 'app.tickets:audit'),  ('x-admin', 'app.tickets:comment'),
-  ('user', 'app.tickets:select'),    ('user', 'app.tickets:insert')
-on conflict (role, permission) do nothing;
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'app.tickets:select'),
+  ('x-admin', 'app.tickets:insert'),
+  ('x-admin', 'app.tickets:update'),
+  ('x-admin', 'app.tickets:delete'),
+  ('x-admin', 'app.tickets:audit'),
+  ('x-admin', 'app.tickets:comment'),
+  ('user', 'app.tickets:select'),
+  ('user', 'app.tickets:insert') on conflict (role, permission) do nothing;
 ```
 
 Revoking = deleting the row from `role_permissions` (or via the Roles UI).
@@ -62,13 +69,16 @@ Built-in: `user` (default on sign-up, no permissions), `admin` (empty middle tie
 ```sql
 -- custom role (committed block)
 begin;
+
 alter type supasheet.app_role add value if not exists 'manager';
+
 commit;
 
 -- assign (users may hold multiple roles)
-insert into supasheet.user_roles (user_id, role)
-values ('<user-uuid>', 'manager')
-on conflict (user_id, role) do nothing;
+insert into
+  supasheet.user_roles (user_id, role)
+values
+  ('<user-uuid>', 'manager') on conflict (user_id, role) do nothing;
 ```
 
 Change the default sign-up role by `create or replace`-ing `supasheet.new_account_created_setup()`.

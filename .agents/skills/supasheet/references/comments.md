@@ -9,10 +9,11 @@ Threaded comments on any record, stored centrally in `supasheet.comments` (`sche
 alter type supasheet.app_permission add value if not exists 'app.tickets:comment';
 
 -- 2. Seed roles that may read AND post comments
-insert into supasheet.role_permissions (role, permission) values
+insert into
+  supasheet.role_permissions (role, permission)
+values
   ('user', 'app.tickets:comment'),
-  ('x-admin', 'app.tickets:comment')
-on conflict (role, permission) do nothing;
+  ('x-admin', 'app.tickets:comment') on conflict (role, permission) do nothing;
 ```
 
 That's it. A Comments link appears automatically at `/$schema/resource/$resource/$id/comment` for permission holders. Nothing goes in the table comment JSON.

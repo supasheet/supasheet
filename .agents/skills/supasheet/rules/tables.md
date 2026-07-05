@@ -29,12 +29,19 @@ Every table gets the full six-action set (views get only what applies):
 
 ```sql
 begin;
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:select';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:insert';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:update';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:delete';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:audit';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:comment';
+
 commit;
 ```
 
@@ -53,9 +60,19 @@ Postgres cannot use an enum value in the transaction that added it — the expli
 ## 3–5. Grants
 
 ```sql
-revoke all on table app.tickets from public, anon, authenticated, service_role;
+revoke all on table app.tickets
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
 
-grant select, insert, update, delete on table app.tickets to authenticated;
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to authenticated;
 ```
 
 - Junction tables: `grant select, insert, delete` (no update).
@@ -70,18 +87,20 @@ One policy per operation, named `<table>_<action>` (demo style) or `<table>_<act
 ```sql
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated
-  using (supasheet.has_permission ('app.tickets:select'));
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (supasheet.has_permission ('app.tickets:select'));
 
 create policy tickets_insert on app.tickets for insert to authenticated
-  with check (supasheet.has_permission ('app.tickets:insert'));
+with
+  check (supasheet.has_permission ('app.tickets:insert'));
 
-create policy tickets_update on app.tickets for update to authenticated
-  using (supasheet.has_permission ('app.tickets:update'))
-  with check (supasheet.has_permission ('app.tickets:update'));
+create policy tickets_update on app.tickets for
+update to authenticated using (supasheet.has_permission ('app.tickets:update'))
+with
+  check (supasheet.has_permission ('app.tickets:update'));
 
-create policy tickets_delete on app.tickets for delete to authenticated
-  using (supasheet.has_permission ('app.tickets:delete'));
+create policy tickets_delete on app.tickets for delete to authenticated using (supasheet.has_permission ('app.tickets:delete'));
 ```
 
 Owner-scoped rows: `using (user_id = auth.uid () and supasheet.has_permission (...))`. See `rules/policies.md` for clause rules.
@@ -92,7 +111,9 @@ Index every FK column, every enum/status column used in filters, and the default
 
 ```sql
 create index idx_app_tickets_user_id on app.tickets (user_id);
+
 create index idx_app_tickets_status on app.tickets (status);
+
 create index idx_app_tickets_created_at on app.tickets (created_at desc);
 ```
 

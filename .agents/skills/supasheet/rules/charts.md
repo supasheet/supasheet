@@ -15,13 +15,13 @@ A chart = a view whose comment is `{"type": "chart", "name": ..., "description":
 
 ## Chart contracts (exact column shapes)
 
-| chart_type | Columns |
-|---|---|
-| `pie` | exactly two: `label` (slice name), `value` (numeric size) |
-| `bar` | `label` (x-axis category) + one or more numeric series |
-| `line` | `date` (formatted period string) + one or more numeric series |
-| `area` | same as line: `date` + one or more numeric series |
-| `radar` | `metric` (axis name) + one or more numeric series |
+| chart_type | Columns                                                       |
+| ---------- | ------------------------------------------------------------- |
+| `pie`      | exactly two: `label` (slice name), `value` (numeric size)     |
+| `bar`      | `label` (x-axis category) + one or more numeric series        |
+| `line`     | `date` (formatted period string) + one or more numeric series |
+| `area`     | same as line: `date` + one or more numeric series             |
+| `radar`    | `metric` (axis name) + one or more numeric series             |
 
 Series column names become legend labels.
 

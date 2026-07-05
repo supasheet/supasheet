@@ -27,8 +27,11 @@ Every feature follows the same migration shape. Order matters.
 3. **Add permission enum values in a committed block** — enum values must commit before they can be used:
    ```sql
    begin;
+   
    alter type supasheet.app_permission add value if not exists '<schema>.<resource>:select';
+   
    alter type supasheet.app_permission add value if not exists '<schema>.<resource>:insert';
+   
    -- ...update/delete/audit/comment as needed, one per resource
    commit;
    ```
@@ -56,33 +59,33 @@ Every feature follows the same migration shape. Order matters.
 
 One rule file per feature area, mirroring how Supasheet organizes a schema (tables, views, materialized views, types, dashboard, chart, report) plus the cross-cutting core areas (roles, storage, configuration). Load the one matching what you're adding.
 
-| Rule | Covers |
-|---|---|
-| [rules/tables.md](rules/tables.md) | Creating/altering tables: order of operations, grants, RLS set, constraints, indexes, FKs |
-| [rules/views.md](rules/views.md) | Plain views, updatable `based_on` table views, replica views for cross-schema joins |
-| [rules/materialized-views.md](rules/materialized-views.md) | Matviews as resources/reports; catalog vs data refresh |
-| [rules/types.md](rules/types.md) | Custom enums, committed-transaction rule, enum badge comments, domain usage |
-| [rules/dashboards.md](rules/dashboards.md) | Widget contracts card_1..card_4 / table_1 / table_2 with starter SQL |
-| [rules/charts.md](rules/charts.md) | Chart contracts pie/bar/line/area/radar, date formatting, starter SQL |
-| [rules/reports.md](rules/reports.md) | Report views: denormalized, select-only, exportable |
-| [rules/templates.md](rules/templates.md) | Template views: bulk-insert payloads applied via supasheet.apply_template |
-| [rules/policies.md](rules/policies.md) | RLS authoring: clauses per command, permissive vs restrictive, performance |
-| [rules/triggers.md](rules/triggers.md) | Audit, notification, business (rollup), and maintenance triggers |
-| [rules/roles-permissions.md](rules/roles-permissions.md) | Permission format, seeding matrix, custom roles |
-| [rules/storage.md](rules/storage.md) | FILE/AVATAR columns, uploads bucket paths, custom buckets |
-| [rules/configuration.md](rules/configuration.md) | supasheet.configs key-value settings |
+| Rule                                                       | Covers                                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [rules/tables.md](rules/tables.md)                         | Creating/altering tables: order of operations, grants, RLS set, constraints, indexes, FKs |
+| [rules/views.md](rules/views.md)                           | Plain views, updatable `based_on` table views, replica views for cross-schema joins       |
+| [rules/materialized-views.md](rules/materialized-views.md) | Matviews as resources/reports; catalog vs data refresh                                    |
+| [rules/types.md](rules/types.md)                           | Custom enums, committed-transaction rule, enum badge comments, domain usage               |
+| [rules/dashboards.md](rules/dashboards.md)                 | Widget contracts card_1..card_4 / table_1 / table_2 with starter SQL                      |
+| [rules/charts.md](rules/charts.md)                         | Chart contracts pie/bar/line/area/radar, date formatting, starter SQL                     |
+| [rules/reports.md](rules/reports.md)                       | Report views: denormalized, select-only, exportable                                       |
+| [rules/templates.md](rules/templates.md)                   | Template views: bulk-insert payloads applied via supasheet.apply_template                 |
+| [rules/policies.md](rules/policies.md)                     | RLS authoring: clauses per command, permissive vs restrictive, performance                |
+| [rules/triggers.md](rules/triggers.md)                     | Audit, notification, business (rollup), and maintenance triggers                          |
+| [rules/roles-permissions.md](rules/roles-permissions.md)   | Permission format, seeding matrix, custom roles                                           |
+| [rules/storage.md](rules/storage.md)                       | FILE/AVATAR columns, uploads bucket paths, custom buckets                                 |
+| [rules/configuration.md](rules/configuration.md)           | supasheet.configs key-value settings                                                      |
 
 ## References (deep dives)
 
-| Priority | File | When to load |
-|---|---|---|
-| High | [references/new-resource.md](references/new-resource.md) | New table, module, or schema — the full end-to-end worked example |
-| High | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs, based_on |
-| High | [references/data-types.md](references/data-types.md) | Domain type definitions and all column comment options |
-| Medium | [references/rbac.md](references/rbac.md) | RBAC architecture: enums, tables, helper functions, bootstrap |
-| Medium | [references/notifications.md](references/notifications.md) | create_notification internals, recipient resolvers, full trigger examples |
-| Medium | [references/audit-logs.md](references/audit-logs.md) | audit_logs schema, TG_ARGV PK arg, global vs per-record permissions |
-| Low | [references/comments.md](references/comments.md) | Per-record comments enablement and comment-notify pairing |
+| Priority | File                                                         | When to load                                                                                                 |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| High     | [references/new-resource.md](references/new-resource.md)     | New table, module, or schema — the full end-to-end worked example                                            |
+| High     | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs, based_on |
+| High     | [references/data-types.md](references/data-types.md)         | Domain type definitions and all column comment options                                                       |
+| Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: enums, tables, helper functions, bootstrap                                                |
+| Medium   | [references/notifications.md](references/notifications.md)   | create_notification internals, recipient resolvers, full trigger examples                                    |
+| Medium   | [references/audit-logs.md](references/audit-logs.md)         | audit_logs schema, TG_ARGV PK arg, global vs per-record permissions                                          |
+| Low      | [references/comments.md](references/comments.md)             | Per-record comments enablement and comment-notify pairing                                                    |
 
 ## Canonical In-Repo Examples
 

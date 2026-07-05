@@ -27,14 +27,19 @@ Postgres cannot use an enum value in the same transaction that added it, so wrap
 ```sql
 begin;
 
-create type app.ticket_status as enum('open', 'in_progress', 'resolved', 'closed');
+create type app.ticket_status as enum ('open', 'in_progress', 'resolved', 'closed');
 
 -- One permission value per resource+action. Actions: select/insert/update/delete/audit/comment.
 alter type supasheet.app_permission add value if not exists 'app.tickets:select';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:insert';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:update';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:delete';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:audit';
+
 alter type supasheet.app_permission add value if not exists 'app.tickets:comment';
 
 -- Views (reports/widgets/charts) only need :select
@@ -51,13 +56,25 @@ commit;
 PostgREST resolves joins within a single schema, so FKs to `supasheet.users` cannot be embedded directly. Create a same-name replica view in your schema. The FK constraints still reference the real table — a FK can never target a view.
 
 ```sql
-create or replace view app.users
-with (security_invoker = true) as
-select * from supasheet.users;
+create
+or replace view app.users
+with
+  (security_invoker = true) as
+select
+  *
+from
+  supasheet.users;
 
-revoke all on app.users from public, anon, authenticated, service_role;
+revoke all on app.users
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
 
-grant select on app.users to authenticated;
+grant
+select
+  on app.users to authenticated;
 ```
 
 Apply the same pattern for any other cross-schema table you need to join/lookup.
@@ -102,9 +119,19 @@ comment on column app.tickets.attachment is '{"accept": "*", "maxFiles": 5}';
 ## 5. Grants (revoke first, then grant exactly what's needed)
 
 ```sql
-revoke all on table app.tickets from public, anon, authenticated, service_role;
+revoke all on table app.tickets
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
 
-grant select, insert, update, delete on table app.tickets to authenticated;
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to authenticated;
 ```
 
 Variants: junction tables get `select, insert, delete` (no update); singletons get `select, insert, update` (no delete); report/widget/chart views get `select` only.
@@ -116,18 +143,20 @@ Every policy checks `supasheet.has_permission()`. Add `user_id = auth.uid() and 
 ```sql
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated
-  using (supasheet.has_permission ('app.tickets:select'));
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (supasheet.has_permission ('app.tickets:select'));
 
 create policy tickets_insert on app.tickets for insert to authenticated
-  with check (supasheet.has_permission ('app.tickets:insert'));
+with
+  check (supasheet.has_permission ('app.tickets:insert'));
 
-create policy tickets_update on app.tickets for update to authenticated
-  using (supasheet.has_permission ('app.tickets:update'))
-  with check (supasheet.has_permission ('app.tickets:update'));
+create policy tickets_update on app.tickets for
+update to authenticated using (supasheet.has_permission ('app.tickets:update'))
+with
+  check (supasheet.has_permission ('app.tickets:update'));
 
-create policy tickets_delete on app.tickets for delete to authenticated
-  using (supasheet.has_permission ('app.tickets:delete'));
+create policy tickets_delete on app.tickets for delete to authenticated using (supasheet.has_permission ('app.tickets:delete'));
 ```
 
 ## 7. Indexes
@@ -136,7 +165,9 @@ Index FK columns, filtered columns (status/enums), and default-sort columns.
 
 ```sql
 create index idx_app_tickets_user_id on app.tickets (user_id);
+
 create index idx_app_tickets_status on app.tickets (status);
+
 create index idx_app_tickets_created_at on app.tickets (created_at desc);
 ```
 
@@ -151,7 +182,9 @@ create index idx_app_tickets_created_at on app.tickets (created_at desc);
 Nothing is visible until a role holds the permission. `x-admin` conventionally gets everything; `user` gets a reduced set (typically no delete/audit).
 
 ```sql
-insert into supasheet.role_permissions (role, permission) values
+insert into
+  supasheet.role_permissions (role, permission)
+values
   ('x-admin', 'app.tickets:select'),
   ('x-admin', 'app.tickets:insert'),
   ('x-admin', 'app.tickets:update'),
@@ -163,8 +196,7 @@ insert into supasheet.role_permissions (role, permission) values
   ('user', 'app.tickets:insert'),
   ('user', 'app.tickets:update'),
   ('user', 'app.tickets:comment'),
-  ('user', 'app.users:select')
-on conflict (role, permission) do nothing;
+  ('user', 'app.users:select') on conflict (role, permission) do nothing;
 ```
 
 ## 10. Refresh the metadata catalog (always last)
@@ -172,7 +204,8 @@ on conflict (role, permission) do nothing;
 `supasheet.tables/columns/views/materialized_views` are materialized views. They do NOT refresh automatically — every migration that touches DDL, comments, or enums must end with:
 
 ```sql
-select supasheet.refresh_metadata ();
+select
+  supasheet.refresh_metadata ();
 ```
 
 ## 11. Expose the schema to PostgREST
@@ -225,7 +258,7 @@ Grant `select, insert, update` only (no delete permission, no delete grant). The
 
 ### Materialized view resource
 
-Same comment shape as tables, `:select` only. Needs a unique index for `refresh materialized view concurrently`. Remember: `supasheet.refresh_metadata()` refreshes the *catalog*; `refresh materialized view app.my_mv` refreshes the *data*.
+Same comment shape as tables, `:select` only. Needs a unique index for `refresh materialized view concurrently`. Remember: `supasheet.refresh_metadata()` refreshes the _catalog_; `refresh materialized view app.my_mv` refreshes the _data_.
 
 ## Authoritative sources
 

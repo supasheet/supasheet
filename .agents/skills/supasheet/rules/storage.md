@@ -15,11 +15,13 @@ requires:
 Files uploaded via a `supasheet.FILE` or `supasheet.AVATAR` column go to the `uploads` bucket at `uploads/<schema>/<table>/<column>/<filename>`. Access is derived from the owning table's permissions automatically (`:select` to read, `:insert` to upload, etc.). The complete work for a file column:
 
 ```sql
-alter table app.tickets add column attachments supasheet.file;
+alter table app.tickets
+add column attachments supasheet.file;
 
 comment on column app.tickets.attachments is '{"accept": "*", "maxFiles": 10, "maxSize": 10485760}';
 
-select supasheet.refresh_metadata ();
+select
+  supasheet.refresh_metadata ();
 ```
 
 - `supasheet.FILE` = array of `{name, type, size, url, last_modified}` (multi-file); `supasheet.AVATAR` = single object rendered as a circular avatar.
@@ -28,11 +30,11 @@ select supasheet.refresh_metadata ();
 
 ## Pre-configured buckets
 
-| Bucket | Access |
-|---|---|
-| `uploads` | permission-gated per table/column (above) |
-| `public` | read anyone; write any authenticated; update/delete owner |
-| `personal` | owner-only everything |
+| Bucket     | Access                                                    |
+| ---------- | --------------------------------------------------------- |
+| `uploads`  | permission-gated per table/column (above)                 |
+| `public`   | read anyone; write any authenticated; update/delete owner |
+| `personal` | owner-only everything                                     |
 
 Any bucket a user can SELECT appears in the file browser at `/storage/$bucketId`.
 

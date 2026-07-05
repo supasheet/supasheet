@@ -18,8 +18,10 @@ A report = a view whose comment is `{"type": "report", "name": ..., "description
 -- committed enum block:
 alter type supasheet.app_permission add value if not exists 'app.tickets_report:select';
 
-create or replace view app.tickets_report
-with (security_invoker = true) as
+create
+or replace view app.tickets_report
+with
+  (security_invoker = true) as
 select
   t.id,
   t.title,
@@ -27,22 +29,35 @@ select
   u.name as owner,
   count(c.id) as comment_count,
   t.created_at
-from app.tickets t
-  left join app.users u on u.id = t.user_id          -- replica view, not supasheet.users
+from
+  app.tickets t
+  left join app.users u on u.id = t.user_id -- replica view, not supasheet.users
   left join app.ticket_comments c on c.ticket_id = t.id
-group by t.id, u.name;
+group by
+  t.id,
+  u.name;
 
-revoke all on app.tickets_report from public, anon, authenticated, service_role;
-grant select on app.tickets_report to authenticated;
+revoke all on app.tickets_report
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+grant
+select
+  on app.tickets_report to authenticated;
 
 comment on view app.tickets_report is '{"type": "report", "name": "Tickets Report", "description": "Tickets with owner and comment rollups"}';
 
-insert into supasheet.role_permissions (role, permission) values
+insert into
+  supasheet.role_permissions (role, permission)
+values
   ('x-admin', 'app.tickets_report:select'),
-  ('user', 'app.tickets_report:select')
-on conflict (role, permission) do nothing;
+  ('user', 'app.tickets_report:select') on conflict (role, permission) do nothing;
 
-select supasheet.refresh_metadata ();
+select
+  supasheet.refresh_metadata ();
 ```
 
 ## Rules

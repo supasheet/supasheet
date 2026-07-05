@@ -42,8 +42,7 @@ export function ResourceMetadataView({
       </CardHeader>
       <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
         {metadataColumns.map((column) => {
-          const value =
-            singleResourceData?.[column.name]
+          const value = singleResourceData?.[column.name]
 
           const columnMetadata = getColumnMetadata(tableSchema, column)
           const span = getColumnFieldSpan(column, tableSchema)

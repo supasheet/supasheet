@@ -9,17 +9,12 @@ Row-level change history via the generic `supasheet.audit_trigger_function()`. E
 INSERT/UPDATE fire `AFTER`; DELETE must fire `BEFORE` (so the row still exists when captured):
 
 ```sql
-create trigger audit_tickets_insert
-after insert on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_tickets_insert after insert on app.tickets for each row execute function supasheet.audit_trigger_function ();
 
-create trigger audit_tickets_update
-after update on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_tickets_update after
+update on app.tickets for each row execute function supasheet.audit_trigger_function ();
 
-create trigger audit_tickets_delete
-before delete on app.tickets
-for each row execute function supasheet.audit_trigger_function ();
+create trigger audit_tickets_delete before delete on app.tickets for each row execute function supasheet.audit_trigger_function ();
 ```
 
 If the primary key column is not `id`, pass its name as a trigger argument (read via `TG_ARGV[0]`):
@@ -37,9 +32,10 @@ The per-record Audit tab (`/$schema/resource/$resource/$id/audit`) appears only 
 alter type supasheet.app_permission add value if not exists 'app.tickets:audit';
 
 -- seed
-insert into supasheet.role_permissions (role, permission) values
-  ('x-admin', 'app.tickets:audit')
-on conflict (role, permission) do nothing;
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'app.tickets:audit') on conflict (role, permission) do nothing;
 ```
 
 Nothing needs declaring in the table comment — the Audit link is permission-driven.

@@ -18,8 +18,9 @@ Define enums **in your module's schema**, named after the column they back:
 ```sql
 begin;
 
-create type app.ticket_status as enum('open', 'in_progress', 'resolved', 'closed');
-create type app.priority_level as enum('low', 'medium', 'high', 'critical');
+create type app.ticket_status as enum ('open', 'in_progress', 'resolved', 'closed');
+
+create type app.priority_level as enum ('low', 'medium', 'high', 'critical');
 
 commit;
 ```

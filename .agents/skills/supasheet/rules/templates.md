@@ -16,7 +16,9 @@ A template = a view whose comment is `{"type": "template", ...}`. Its rows are a
 ## How apply works (the contract)
 
 ```sql
-select supasheet.apply_template ('<schema>', '<template_view>', '<target_table>');
+select
+  supasheet.apply_template ('<schema>', '<template_view>', '<target_table>');
+
 -- returns the number of rows inserted
 ```
 

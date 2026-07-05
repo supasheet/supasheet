@@ -12,12 +12,12 @@ requires:
 
 Views serve four roles in Supasheet, all driven by their comment JSON:
 
-| Role | Comment `type` | Permissions needed |
-|---|---|---|
-| Feature view (dashboard widget / chart / report / template) | `dashboard_widget` / `chart` / `report` / `template` | `:select` only |
-| Updatable table view (restricted slice of a table) | none — has `"based_on"` key | `:select/:insert/:update/:delete` |
-| Replica view (cross-schema embed fix) | none | `:select` only |
-| Plain resource view (read-only listing) | none | `:select` only |
+| Role                                                        | Comment `type`                                       | Permissions needed                |
+| ----------------------------------------------------------- | ---------------------------------------------------- | --------------------------------- |
+| Feature view (dashboard widget / chart / report / template) | `dashboard_widget` / `chart` / `report` / `template` | `:select` only                    |
+| Updatable table view (restricted slice of a table)          | none — has `"based_on"` key                          | `:select/:insert/:update/:delete` |
+| Replica view (cross-schema embed fix)                       | none                                                 | `:select` only                    |
+| Plain resource view (read-only listing)                     | none                                                 | `:select` only                    |
 
 ## Canonical creation pattern
 
@@ -51,14 +51,31 @@ A view over a subset of a table's columns acts as a full sub-resource (own permi
 
 ```sql
 create view app.ticket_triage
-with (security_invoker = true) as
-select id, title, status, priority from app.tickets;
+with
+  (security_invoker = true) as
+select
+  id,
+  title,
+  status,
+  priority
+from
+  app.tickets;
 
-revoke all on app.ticket_triage from public, anon, authenticated, service_role;
-grant select, update on app.ticket_triage to authenticated;
+revoke all on app.ticket_triage
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+grant
+select
+,
+update on app.ticket_triage to authenticated;
 
 -- permissions: add the actions this view should expose
 alter type supasheet.app_permission add value if not exists 'app.ticket_triage:select';
+
 alter type supasheet.app_permission add value if not exists 'app.ticket_triage:update';
 
 comment on view app.ticket_triage is '{"based_on": "tickets", "name": "Triage", "description": "Status and priority only"}';
@@ -77,12 +94,26 @@ Requirements for the app to treat it as a resource:
 PostgREST embeds only within one schema. For every cross-schema FK target you want to join/lookup (most commonly `supasheet.users`), create a same-name replica in your schema:
 
 ```sql
-create or replace view app.users
-with (security_invoker = true) as
-select * from supasheet.users;
+create
+or replace view app.users
+with
+  (security_invoker = true) as
+select
+  *
+from
+  supasheet.users;
 
-revoke all on app.users from public, anon, authenticated, service_role;
-grant select on app.users to authenticated;
+revoke all on app.users
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+grant
+select
+  on app.users to authenticated;
+
 -- plus 'app.users:select' permission value + role_permissions seed
 ```
 
