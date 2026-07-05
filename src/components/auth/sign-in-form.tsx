@@ -33,16 +33,8 @@ export function SignInForm() {
   const safeRedirect =
     redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : "/"
 
-  const hasCustomSupabaseUrl =
-    typeof window !== "undefined" && !!localStorage.getItem("supabase-url")
-
   const form = useForm({
-    defaultValues: hasCustomSupabaseUrl
-      ? { email: "", password: "" }
-      : {
-          email: import.meta.env.VITE_DEFAULT_SIGN_IN_EMAIL ?? "",
-          password: import.meta.env.VITE_DEFAULT_SIGN_IN_PASSWORD ?? "",
-        },
+    defaultValues: { email: "", password: "" },
     onSubmit: async ({ value }) => {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: value.email,
