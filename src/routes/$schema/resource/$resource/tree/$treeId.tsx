@@ -31,9 +31,7 @@ import type { TableMetadata, TreeLayout } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/tree/$treeId"
@@ -51,7 +49,9 @@ export const Route = createFileRoute(
   loader: async ({ context, params }) => {
     const { schema, resource, treeId } = params
 
-    const meta = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
+    const meta = JSON.parse(
+      context.resourceSchema.comment ?? "{}"
+    ) as TableMetadata
     const treeView = meta.views?.find(
       (item): item is TreeLayout => item.id === treeId && item.type === "tree"
     )

@@ -9,12 +9,10 @@ import { HistoryIcon } from "lucide-react"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceAuditTimeline } from "#/components/resource/audit/resource-audit-timeline"
 import { Skeleton } from "#/components/ui/skeleton"
+import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceAuditLogsQueryOptions,
-} from "#/lib/supabase/data/resource"
-import { isTableSchema } from "#/lib/database-meta.types"
+import { resourceAuditLogsQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/audit"
@@ -24,8 +22,10 @@ export const Route = createFileRoute(
       (p) => p.permission === `${schema}.${resource}:audit`
     )
     if (!hasAudit) throw notFound()
-    const tableSchema = isTableSchema(context.resourceSchema) ? context.resourceSchema : null;
-    if(!tableSchema) throw notFound()
+    const tableSchema = isTableSchema(context.resourceSchema)
+      ? context.resourceSchema
+      : null
+    if (!tableSchema) throw notFound()
     return { tableSchema }
   },
   loader: async ({ context, params: { schema, resource, resourceId } }) => {

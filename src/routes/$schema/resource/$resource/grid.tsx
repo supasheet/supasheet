@@ -33,9 +33,7 @@ import { useHasPermission } from "#/hooks/use-permissions"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/grid")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
@@ -84,7 +82,9 @@ export const Route = createFileRoute("/$schema/resource/$resource/grid")({
   }) => {
     const { schema, resource } = params
 
-    const metaData = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
+    const metaData = JSON.parse(
+      context.resourceSchema.comment ?? "{}"
+    ) as TableMetadata
     context.queryClient.ensureQueryData(
       resourceDataQueryOptions(
         schema,

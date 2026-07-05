@@ -25,6 +25,7 @@ Every feature follows the same migration shape. Order matters.
 1. **Create a migration** — `supabase/migrations/<YYYYMMDDHHMMSS>_<name>.sql`.
 2. **Create the schema** (one Postgres schema per domain) and `grant usage on schema <s> to authenticated;`.
 3. **Add permission enum values in a committed block** — enum values must commit before they can be used:
+
    ```sql
    begin;
    
@@ -35,6 +36,7 @@ Every feature follows the same migration shape. Order matters.
    -- ...update/delete/audit/comment as needed, one per resource
    commit;
    ```
+
 4. **Create tables/views** using Supasheet domain types (`supasheet.EMAIL`, `supasheet.FILE`, …) with JSON `COMMENT`s.
 5. **Lock down grants** — `revoke all ... from public, anon, authenticated, service_role;` then `grant` exactly the intended operations to `authenticated`.
 6. **Enable RLS** and add policies gated by `supasheet.has_permission('<schema>.<table>:<action>')`.

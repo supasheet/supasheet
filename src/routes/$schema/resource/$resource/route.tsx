@@ -44,12 +44,12 @@ export const Route = createFileRoute("/$schema/resource/$resource")({
           viewSchemaQueryOptions(schema, resource)
         )
       : null
-    let baseTable = resource;
+    let baseTable = resource
     if (viewSchema) {
       const viewMetadata = JSON.parse(
         viewSchema.comment ?? "{}"
       ) as UpdatableViewMetadata
-      baseTable = viewMetadata.based_on;
+      baseTable = viewMetadata.based_on
       if (baseTable) {
         const [tableSchema, resolvedColumnsSchema] = await Promise.all([
           context.queryClient.ensureQueryData(

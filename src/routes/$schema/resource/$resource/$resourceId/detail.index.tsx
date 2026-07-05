@@ -5,9 +5,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { ResourceFullDetail } from "#/components/resource/detail/resource-full-detail"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"
 import { useHasPermission } from "#/hooks/use-permissions"
-import {
-  singleResourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { singleResourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 const parentRoute = getRouteApi(
   "/$schema/resource/$resource/$resourceId/detail"
@@ -32,8 +30,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const { pkName, primaryKeys } =
-    parentRoute.useLoaderData()
+  const { pkName, primaryKeys } = parentRoute.useLoaderData()
   const { tableSchema, columnsSchema } = Route.useRouteContext()
 
   const pk = { [pkName]: resourceId }

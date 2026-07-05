@@ -30,9 +30,7 @@ import type { GalleryLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/gallery/$galleryId"
@@ -50,7 +48,9 @@ export const Route = createFileRoute(
   loader: async ({ context, params }) => {
     const { schema, resource, galleryId } = params
 
-    const meta = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
+    const meta = JSON.parse(
+      context.resourceSchema.comment ?? "{}"
+    ) as TableMetadata
     const galleryView = meta.views?.find(
       (item): item is GalleryLayout =>
         item.id === galleryId && item.type === "gallery"
@@ -180,13 +180,8 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
-  const {
-    galleryView
-  } = Route.useLoaderData()
-  const {
-    resourceSchema,
-    columnsSchema
-  } = Route.useRouteContext()
+  const { galleryView } = Route.useLoaderData()
+  const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
   const { data: resourceData } = useSuspenseQuery(

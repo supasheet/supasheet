@@ -33,9 +33,7 @@ import type { CalendarLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/calendar/$calendarId"
@@ -61,7 +59,9 @@ export const Route = createFileRoute(
   loader: async ({ context, params }) => {
     const { schema, resource, calendarId } = params
 
-    const meta = JSON.parse(context.resourceSchema.comment ?? "{}") as TableMetadata
+    const meta = JSON.parse(
+      context.resourceSchema.comment ?? "{}"
+    ) as TableMetadata
     const calendarView = meta.views?.find(
       (item): item is CalendarLayout =>
         item.id === calendarId && item.type === "calendar"
@@ -201,13 +201,8 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
   const { view } = Route.useSearch()
-  const {
-    calendarView
-  } = Route.useLoaderData()
-  const {
-    resourceSchema,
-    columnsSchema
-  } = Route.useRouteContext()
+  const { calendarView } = Route.useLoaderData()
+  const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
   const { data: resourceData } = useSuspenseQuery(

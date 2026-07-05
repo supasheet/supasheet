@@ -32,9 +32,7 @@ import type {
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  relatedTablesSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { relatedTablesSchemaQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/detail"
@@ -48,8 +46,10 @@ export const Route = createFileRoute(
       ? hasPermission && hasPrivilege
       : hasPrivilege
     if (!canSelect) throw notFound()
-    const tableSchema = isTableSchema(context.resourceSchema) ? context.resourceSchema : null;
-    if(!tableSchema) throw notFound()
+    const tableSchema = isTableSchema(context.resourceSchema)
+      ? context.resourceSchema
+      : null
+    if (!tableSchema) throw notFound()
     return { tableSchema, resourceSchema: undefined }
   },
   loader: async ({ context, params }) => {
@@ -58,7 +58,7 @@ export const Route = createFileRoute(
       relatedTablesSchemaQueryOptions(schema, resource)
     )
 
-    const primaryKeys = context.tableSchema.primary_keys ?? [];
+    const primaryKeys = context.tableSchema.primary_keys ?? []
     if (primaryKeys?.length === 0) throw notFound()
     const pkName = primaryKeys[0].name
 

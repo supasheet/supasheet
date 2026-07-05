@@ -9,12 +9,10 @@ import { MessageSquareIcon } from "lucide-react"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceComments } from "#/components/resource/comments/resource-comments"
 import { Skeleton } from "#/components/ui/skeleton"
+import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import {
-  resourceCommentsQueryOptions,
-} from "#/lib/supabase/data/resource"
-import { isTableSchema } from "#/lib/database-meta.types"
+import { resourceCommentsQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/comment"
@@ -24,8 +22,10 @@ export const Route = createFileRoute(
       (p) => p.permission === `${schema}.${resource}:comment`
     )
     if (!hasComment) throw notFound()
-    const tableSchema = isTableSchema(context.resourceSchema) ? context.resourceSchema : null;
-    if(!tableSchema) throw notFound()
+    const tableSchema = isTableSchema(context.resourceSchema)
+      ? context.resourceSchema
+      : null
+    if (!tableSchema) throw notFound()
     return { tableSchema }
   },
   loader: async ({ context, params: { schema, resource, resourceId } }) => {
