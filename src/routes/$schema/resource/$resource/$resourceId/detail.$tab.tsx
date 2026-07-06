@@ -2,11 +2,13 @@ import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router"
 
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 
+import { addEmbedKeys } from "#/components/resource/detail/add-embed-keys"
 import { classifyRelationships } from "#/components/resource/detail/classify-relationships"
 import { ResourceDetailTab } from "#/components/resource/detail/resource-detail-tab"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import {
+  columnsSchemaQueryOptions,
   relatedTablesSchemaQueryOptions,
   resourcePrivilegesQueryOptions,
   singleForeignTableDataQueryOptions,
@@ -25,24 +27,34 @@ export const Route = createFileRoute(
     const relatedTablesSchema = await context.queryClient.ensureQueryData(
       relatedTablesSchemaQueryOptions(schema, resource)
     )
-    const metaJoins = (
-      JSON.parse(context.tableSchema?.comment ?? "{}") as TableMetadata
-    ).query?.join
-    const classification = classifyRelationships(
+    const tableMeta = JSON.parse(
+      context.tableSchema?.comment ?? "{}"
+    ) as TableMetadata
+    const metaJoins = tableMeta.query?.join
+
+    const allowedTabs = tableMeta.tabs
+    if (allowedTabs && !allowedTabs.includes(tab)) throw notFound()
+
+    const embeddedTables = addEmbedKeys(
       schema,
       resource,
       relatedTablesSchema,
       metaJoins
     )
+    const activeTable = embeddedTables.find((t) => t.__embedKey === tab)
+    if (!activeTable) throw notFound()
 
-    const allowedTabs = (
-      JSON.parse(context.tableSchema?.comment ?? "{}") as TableMetadata
-    ).tabs
-    if (allowedTabs && !allowedTabs.includes(tab)) throw notFound()
-
-    const oneToOne = classification.oneToOneRelationships.find(
-      (r) => r.__embedKey === tab
+    const columnsSchema = await context.queryClient.ensureQueryData(
+      columnsSchemaQueryOptions(activeTable.schema, activeTable.name)
     )
+    const classification = classifyRelationships(
+      schema,
+      resource,
+      activeTable,
+      columnsSchema
+    )
+
+    const oneToOne = classification.oneToOneRelationships[0]
     if (oneToOne) {
       const primaryKeys = context.tableSchema?.primary_keys ?? []
       const pkName = primaryKeys[0]?.name ?? "id"
@@ -58,12 +70,12 @@ export const Route = createFileRoute(
           })
         )
       }
-      return
+      return classification
     }
 
     const many =
-      classification.oneToManyRelationships.find((r) => r.name === tab) ??
-      classification.manyToManyRelationships.find((r) => r.name === tab)
+      classification.oneToManyRelationships[0] ??
+      classification.manyToManyRelationships[0]
     if (!many) throw notFound()
 
     const primaryKeys = context.tableSchema?.primary_keys ?? []
@@ -72,25 +84,25 @@ export const Route = createFileRoute(
     await context.queryClient.ensureQueryData(
       singleResourceDataQueryOptions(schema, resource, pk)
     )
+
+    return classification
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { schema, resource, resourceId, tab } = Route.useParams()
+  const { schema, resource, resourceId } = Route.useParams()
   const {
     oneToOneRelationships,
     oneToManyRelationships,
     manyToManyRelationships,
-    pkName,
-  } = parentRoute.useLoaderData()
+  } = Route.useLoaderData()
+  const { pkName } = parentRoute.useLoaderData()
 
   const pk = { [pkName]: resourceId }
 
-  const oneToOne = oneToOneRelationships.find((r) => r.__embedKey === tab)
-  const many =
-    oneToManyRelationships.find((r) => r.name === tab) ??
-    manyToManyRelationships.find((r) => r.name === tab)
+  const oneToOne = oneToOneRelationships[0]
+  const many = oneToManyRelationships[0] ?? manyToManyRelationships[0]
 
   const { data: record } = useSuspenseQuery(
     singleResourceDataQueryOptions(schema, resource, pk)

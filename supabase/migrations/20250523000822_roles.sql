@@ -284,7 +284,10 @@ values
 insert into
   supasheet.role_permissions (role, permission)
 values
-  ('x-admin', 'supasheet.role_permissions:select_all');
+  (
+    'x-admin',
+    'supasheet.role_permissions:select_all'
+  );
 
 insert into
   supasheet.role_permissions (role, permission)

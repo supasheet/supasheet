@@ -289,6 +289,8 @@ authenticated;
 ----------------------------------------------------------------
 -- Function: supasheet.get_related_tables
 ----------------------------------------------------------------
+drop function if exists supasheet.get_related_tables (text, text);
+
 create or replace function supasheet.get_related_tables (schema_name text, table_name text) RETURNS table (
   id bigint,
   schema text,
@@ -302,8 +304,7 @@ create or replace function supasheet.get_related_tables (schema_name text, table
   dead_rows_estimate int8,
   comment text,
   primary_keys jsonb,
-  relationships jsonb,
-  columns supasheet.columns[]
+  relationships jsonb
 ) LANGUAGE sql SECURITY DEFINER
 set
   search_path = '' as $$
@@ -320,13 +321,7 @@ set
         t.dead_rows_estimate,
         t.comment,
         t.primary_keys,
-        t.relationships,
-        ARRAY(
-            SELECT c
-            FROM supasheet.columns c
-            WHERE c.table_id = t.id
-            ORDER BY c.ordinal_position::int
-        ) AS columns
+        t.relationships
     FROM supasheet.tables t
     INNER JOIN supasheet.role_permissions rp
         ON rp.permission::text = t.schema || '.' || t.name || ':select'

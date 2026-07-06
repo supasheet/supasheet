@@ -12,7 +12,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router"
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
-import { classifyRelationships } from "#/components/resource/detail/classify-relationships"
+import { addEmbedKeys } from "#/components/resource/detail/add-embed-keys"
 import { ResourceRecordActions } from "#/components/resource/resource-record-actions"
 import { Button } from "#/components/ui/button"
 import { Card, CardContent, CardHeader } from "#/components/ui/card"
@@ -65,7 +65,7 @@ export const Route = createFileRoute(
     const metaJoins = (
       JSON.parse(context.tableSchema.comment ?? "{}") as TableMetadata
     ).query?.join
-    const classification = classifyRelationships(
+    const embeddedTables = addEmbedKeys(
       schema,
       resource,
       relatedTablesSchema,
@@ -75,7 +75,7 @@ export const Route = createFileRoute(
     return {
       pkName,
       primaryKeys,
-      ...classification,
+      embeddedTables,
     }
   },
   head: ({ params }) => ({
@@ -204,11 +204,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const {
-    oneToOneRelationships,
-    oneToManyRelationships,
-    manyToManyRelationships,
-  } = Route.useLoaderData()
+  const { embeddedTables } = Route.useLoaderData()
   const { tableSchema } = Route.useRouteContext()
   const location = useLocation()
   const navigate = useNavigate()
@@ -231,20 +227,10 @@ function RouteComponent() {
 
   const allTabs: { id: string; label: string; path: string }[] = [
     { id: MAIN_TAB, label: "Detail", path: basePath },
-    ...oneToOneRelationships.map((r) => ({
+    ...embeddedTables.map((r) => ({
       id: r.__embedKey,
       label: formatTitle(r.__embedKey),
       path: `${basePath}/${r.__embedKey}`,
-    })),
-    ...oneToManyRelationships.map((r) => ({
-      id: r.name ?? "",
-      label: formatTitle(r.name as string),
-      path: `${basePath}/${r.name ?? ""}`,
-    })),
-    ...manyToManyRelationships.map((r) => ({
-      id: r.name ?? "",
-      label: formatTitle(r.name as string),
-      path: `${basePath}/${r.name ?? ""}`,
     })),
   ]
 

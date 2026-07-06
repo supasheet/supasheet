@@ -562,7 +562,6 @@ export type Database = {
         Args: { schema_name: string; table_name: string }
         Returns: {
           bytes: number
-          columns: unknown[]
           comment: string
           dead_rows_estimate: number
           id: number
@@ -864,4 +863,3 @@ export const Constants = {
     },
   },
 } as const
-
