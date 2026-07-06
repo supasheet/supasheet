@@ -130,6 +130,25 @@ add value 'demo.team_members:audit';
 alter type supasheet.app_permission
 add value 'demo.team_members:comment';
 
+-- Team member details (1:1 HR profile extension)
+alter type supasheet.app_permission
+add value 'demo.team_member_details:select';
+
+alter type supasheet.app_permission
+add value 'demo.team_member_details:insert';
+
+alter type supasheet.app_permission
+add value 'demo.team_member_details:update';
+
+alter type supasheet.app_permission
+add value 'demo.team_member_details:delete';
+
+alter type supasheet.app_permission
+add value 'demo.team_member_details:audit';
+
+alter type supasheet.app_permission
+add value 'demo.team_member_details:comment';
+
 -- Projects
 alter type supasheet.app_permission
 add value 'demo.projects:select';
@@ -642,6 +661,85 @@ with
 
 create policy team_members_delete on demo.team_members for delete to authenticated using (
   supasheet.has_permission ('demo.team_members:delete')
+);
+
+----------------------------------------------------------------
+-- Team member details (1:1 HR profile extension — a unique,
+-- not-null FK to team_members keeps sensitive/rarely-needed data
+-- off the main directory record; the UI renders it as a single
+-- embedded record on the team member's detail page, not a list)
+----------------------------------------------------------------
+create table demo.team_member_details (
+  id uuid primary key default extensions.uuid_generate_v4 (),
+  team_member_id uuid not null references demo.team_members (id) on delete cascade,
+  date_of_birth date,
+  national_id varchar(100),
+  tax_id varchar(100),
+  address text,
+  emergency_contact_name varchar(255),
+  emergency_contact_phone supasheet.TEL,
+  bank_name varchar(255),
+  bank_account_number varchar(100),
+  notes text,
+  created_at timestamptz default current_timestamp,
+  updated_at timestamptz default current_timestamp,
+  unique (team_member_id)
+);
+
+comment on table demo.team_member_details is '{
+    "icon": "IdCard",
+    "display": "none",
+    "fields": {
+        "sections": [
+            {"id": "identity", "title": "Identity", "fields": ["team_member_id", "date_of_birth", "national_id", "tax_id", "address"]},
+            {"id": "emergency", "title": "Emergency Contact", "fields": ["emergency_contact_name", "emergency_contact_phone"]},
+            {"id": "banking", "title": "Banking", "fields": ["bank_name", "bank_account_number"]},
+            {"id": "extras", "title": "Notes", "collapsible": true, "fields": ["notes"]}
+        ]
+    },
+    "query": {
+        "join": [{"table": "team_members", "on": "team_member_id", "columns": ["name", "job_title", "avatar"]}]
+    }
+}';
+
+revoke all on table demo.team_member_details
+from
+  authenticated,
+  service_role;
+
+grant
+select
+,
+  insert,
+update,
+delete on table demo.team_member_details to authenticated;
+
+alter table demo.team_member_details enable row level security;
+
+create policy team_member_details_select on demo.team_member_details for
+select
+  to authenticated using (
+    supasheet.has_permission ('demo.team_member_details:select')
+  );
+
+create policy team_member_details_insert on demo.team_member_details for insert to authenticated
+with
+  check (
+    supasheet.has_permission ('demo.team_member_details:insert')
+  );
+
+create policy team_member_details_update on demo.team_member_details
+for update
+  to authenticated using (
+    supasheet.has_permission ('demo.team_member_details:update')
+  )
+with
+  check (
+    supasheet.has_permission ('demo.team_member_details:update')
+  );
+
+create policy team_member_details_delete on demo.team_member_details for delete to authenticated using (
+  supasheet.has_permission ('demo.team_member_details:delete')
 );
 
 ----------------------------------------------------------------
@@ -2330,6 +2428,12 @@ values
   ('x-admin', 'demo.team_members:delete'),
   ('x-admin', 'demo.team_members:audit'),
   ('x-admin', 'demo.team_members:comment'),
+  ('x-admin', 'demo.team_member_details:select'),
+  ('x-admin', 'demo.team_member_details:insert'),
+  ('x-admin', 'demo.team_member_details:update'),
+  ('x-admin', 'demo.team_member_details:delete'),
+  ('x-admin', 'demo.team_member_details:audit'),
+  ('x-admin', 'demo.team_member_details:comment'),
   ('x-admin', 'demo.projects:select'),
   ('x-admin', 'demo.projects:insert'),
   ('x-admin', 'demo.projects:update'),
@@ -2485,6 +2589,18 @@ execute function supasheet.audit_trigger_function ();
 
 create trigger audit_demo_team_members_delete
 before delete on demo.team_members for each row
+execute function supasheet.audit_trigger_function ();
+
+create trigger audit_demo_team_member_details_insert
+after insert on demo.team_member_details for each row
+execute function supasheet.audit_trigger_function ();
+
+create trigger audit_demo_team_member_details_update
+after update on demo.team_member_details for each row
+execute function supasheet.audit_trigger_function ();
+
+create trigger audit_demo_team_member_details_delete
+before delete on demo.team_member_details for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_demo_projects_insert
@@ -3644,6 +3760,79 @@ values
     current_date - interval '2 years',
     75.00,
     '#0ea5e9'
+  );
+
+----------------------------------------------------------------
+-- Team member details (1:1 — seeded for only the first five staff
+-- so the UI shows both the linked form and the "add details" state)
+----------------------------------------------------------------
+insert into
+  demo.team_member_details (
+    team_member_id,
+    date_of_birth,
+    national_id,
+    tax_id,
+    address,
+    emergency_contact_name,
+    emergency_contact_phone,
+    bank_name,
+    bank_account_number
+  )
+values
+  (
+    'ea000000-0000-0000-0000-000000000001',
+    '1985-03-14',
+    'SSN-291-04-8821',
+    'TAX-9911-2201',
+    '452 Bryant St, San Francisco, CA',
+    'Raj Sharma',
+    '+1-415-555-0301',
+    'First Republic Bank',
+    '****4821'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000002',
+    '1990-07-22',
+    'SSN-338-19-2201',
+    'TAX-9911-2202',
+    '118 Valencia St, San Francisco, CA',
+    'Mia Lee',
+    '+1-415-555-0302',
+    'Chase Bank',
+    '****7734'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000003',
+    '1992-11-05',
+    'SSN-445-88-1190',
+    'TAX-9911-2203',
+    '77 Mission St, San Francisco, CA',
+    'Diego Rivera',
+    '+1-415-555-0303',
+    'Bank of America',
+    '****2290'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000004',
+    '1994-02-18',
+    'SSN-556-23-4471',
+    'TAX-9911-2204',
+    '900 Folsom St, San Francisco, CA',
+    'Alicia Morgan',
+    '+1-415-555-0304',
+    'Chase Bank',
+    '****1005'
+  ),
+  (
+    'ea000000-0000-0000-0000-000000000005',
+    '1996-09-30',
+    'SSN-667-77-3321',
+    'TAX-9911-2205',
+    '210 King St, San Francisco, CA',
+    'Tommy Chen',
+    '+1-415-555-0305',
+    'Wells Fargo',
+    '****6620'
   );
 
 ----------------------------------------------------------------
