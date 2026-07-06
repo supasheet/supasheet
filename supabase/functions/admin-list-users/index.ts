@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
 
   const denied = await requirePermission(
     req.headers.get("Authorization"),
-    "supasheet.users:select"
+    "supasheet.users:select_all"
   )
   if (denied) return denied
 

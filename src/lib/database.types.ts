@@ -679,6 +679,7 @@ export type Database = {
     Enums: {
       app_permission:
         | "supasheet.users:select"
+        | "supasheet.users:select_all"
         | "supasheet.users:update"
         | "supasheet.users:insert"
         | "supasheet.users:delete"
@@ -686,12 +687,15 @@ export type Database = {
         | "supasheet.users:ban"
         | "supasheet.users:generate_link"
         | "supasheet.user_roles:select"
+        | "supasheet.user_roles:select_all"
         | "supasheet.user_roles:insert"
         | "supasheet.user_roles:delete"
         | "supasheet.role_permissions:select"
+        | "supasheet.role_permissions:select_all"
         | "supasheet.role_permissions:insert"
         | "supasheet.role_permissions:delete"
         | "supasheet.audit_logs:select"
+        | "supasheet.audit_logs:select_all"
         | "supasheet.notifications:select"
         | "supasheet.user_notifications:select"
       app_role: "x-admin" | "admin" | "user"
@@ -826,6 +830,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
@@ -833,6 +840,7 @@ export const Constants = {
     Enums: {
       app_permission: [
         "supasheet.users:select",
+        "supasheet.users:select_all",
         "supasheet.users:update",
         "supasheet.users:insert",
         "supasheet.users:delete",
@@ -840,12 +848,15 @@ export const Constants = {
         "supasheet.users:ban",
         "supasheet.users:generate_link",
         "supasheet.user_roles:select",
+        "supasheet.user_roles:select_all",
         "supasheet.user_roles:insert",
         "supasheet.user_roles:delete",
         "supasheet.role_permissions:select",
+        "supasheet.role_permissions:select_all",
         "supasheet.role_permissions:insert",
         "supasheet.role_permissions:delete",
         "supasheet.audit_logs:select",
+        "supasheet.audit_logs:select_all",
         "supasheet.notifications:select",
         "supasheet.user_notifications:select",
       ],
@@ -853,3 +864,4 @@ export const Constants = {
     },
   },
 } as const
+

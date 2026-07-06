@@ -3,6 +3,7 @@ begin;
 
 create type supasheet.app_permission as enum(
   'supasheet.users:select',
+  'supasheet.users:select_all',
   'supasheet.users:update',
   'supasheet.users:insert',
   'supasheet.users:delete',
@@ -10,9 +11,11 @@ create type supasheet.app_permission as enum(
   'supasheet.users:ban',
   'supasheet.users:generate_link',
   'supasheet.user_roles:select',
+  'supasheet.user_roles:select_all',
   'supasheet.user_roles:insert',
   'supasheet.user_roles:delete',
   'supasheet.role_permissions:select',
+  'supasheet.role_permissions:select_all',
   'supasheet.role_permissions:insert',
   'supasheet.role_permissions:delete'
 );
@@ -136,12 +139,13 @@ select
       select
         auth.uid ()
     ) = user_id
+    and supasheet.has_permission ('supasheet.user_roles:select')
   );
 
 create policy "User can view all user roles" on supasheet.user_roles for
 select
   to authenticated using (
-    supasheet.has_permission ('supasheet.user_roles:select')
+    supasheet.has_permission ('supasheet.user_roles:select_all')
   );
 
 create policy "User can insert user roles" on supasheet.user_roles for insert to authenticated
@@ -161,12 +165,13 @@ select
       select
         (supasheet.has_role (role))
     )
+    and supasheet.has_permission ('supasheet.role_permissions:select')
   );
 
 create policy "User can view all role permissions" on supasheet.role_permissions for
 select
   to authenticated using (
-    supasheet.has_permission ('supasheet.role_permissions:select')
+    supasheet.has_permission ('supasheet.role_permissions:select_all')
   );
 
 create policy "User can insert role permissions" on supasheet.role_permissions for insert to authenticated
@@ -182,7 +187,7 @@ create policy "User can delete role permissions" on supasheet.role_permissions f
 create policy "User can view all users" on supasheet.users for
 select
   to authenticated using (
-    supasheet.has_permission ('supasheet.users:select')
+    supasheet.has_permission ('supasheet.users:select_all')
   );
 
 create policy "User can insert users" on supasheet.users for insert to authenticated
@@ -266,7 +271,37 @@ insert into
 values
   ('x-admin', 'supasheet.role_permissions:delete');
 
--- create or replace function supasheet.new_user_created_setup() 
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'supasheet.users:select_all');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'supasheet.user_roles:select_all');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'supasheet.role_permissions:select_all');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('user', 'supasheet.users:select');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('user', 'supasheet.user_roles:select');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('user', 'supasheet.role_permissions:select');
+
+-- create or replace function supasheet.new_user_created_setup()
 -- returns trigger 
 -- language plpgsql 
 -- as $$

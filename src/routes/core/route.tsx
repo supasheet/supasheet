@@ -15,12 +15,41 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "#/components/ui/sidebar"
+import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { userPermissionsQueryOptions } from "#/lib/supabase/data/core"
-import {
-  resourcesQueryOptions,
-  schemasQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { schemasQueryOptions } from "#/lib/supabase/data/resource"
+
+const CORE_RESOURCES = [
+  {
+    name: "users",
+    id: "users",
+    schema: "supasheet",
+    type: "table" as const,
+    meta: { icon: "UserIcon" } as TableMetadata,
+  },
+  {
+    name: "user_roles",
+    id: "user_roles",
+    schema: "supasheet",
+    type: "table" as const,
+    meta: { icon: "UserCheckIcon" } as TableMetadata,
+  },
+  {
+    name: "role_permissions",
+    id: "role_permissions",
+    schema: "supasheet",
+    type: "table" as const,
+    meta: { icon: "ShieldCheckIcon" } as TableMetadata,
+  },
+  {
+    name: "audit_logs",
+    id: "audit_logs",
+    schema: "supasheet",
+    type: "table" as const,
+    meta: { icon: "ScrollTextIcon" } as TableMetadata,
+  },
+]
 
 export const Route = createFileRoute("/core")({
   beforeLoad: async ({ context }) => {
@@ -34,16 +63,14 @@ export const Route = createFileRoute("/core")({
   loader: async ({ context }) => {
     const schemas =
       await context.queryClient.ensureQueryData(schemasQueryOptions)
-    const resources = await context.queryClient.ensureQueryData(
-      resourcesQueryOptions("supasheet")
-    )
-    return { schemas, resources }
+    return { schemas }
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { schemas, resources = [] } = Route.useLoaderData()
+  const { schemas } = Route.useLoaderData()
+  const resources = CORE_RESOURCES
   const modules = schemas.map((s) => ({
     name: formatTitle(s.schema),
     icon: <DatabaseIcon />,

@@ -41,9 +41,10 @@ export function UsersTable({
   const queryClient = useQueryClient()
   const canDelete = useHasPermission("supasheet.users:delete")
   const canUpdate = useHasPermission("supasheet.users:update")
+  const canViewAll = useHasPermission("supasheet.users:select_all")
   const columns = useMemo(
-    () => getUsersTableColumns({ columnsSchema, canUpdate }),
-    [columnsSchema, canUpdate]
+    () => getUsersTableColumns({ columnsSchema, canUpdate, canViewAll }),
+    [columnsSchema, canUpdate, canViewAll]
   )
   const table = useDataTable({
     columns,

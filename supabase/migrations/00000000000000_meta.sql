@@ -102,12 +102,14 @@ from
 where
   c.relkind in ('r', 'p')
   and not pg_is_other_temp_schema(nc.oid)
+  -- Exclude transient rewrite heaps (pg_temp_<oid>) created in this schema
+  -- while these materialized views refresh themselves
+  and c.relname !~ '^pg_temp_\d+$'
   and nc.nspname not in (
     'vault',
     'supabase_migrations',
     'pg_catalog',
     'realtime',
-    'supasheet',
     'storage',
     'supabase_functions',
     '_realtime',
@@ -269,12 +271,14 @@ from
   and check_constraints.ordinal_position = a.attnum
 where
   not pg_is_other_temp_schema(nc.oid)
+  -- Exclude transient rewrite heaps (pg_temp_<oid>) created in this schema
+  -- while these materialized views refresh themselves
+  and c.relname !~ '^pg_temp_\d+$'
   and nc.nspname not in (
     'vault',
     'supabase_migrations',
     'pg_catalog',
     'realtime',
-    'supasheet',
     'storage',
     'supabase_functions',
     '_realtime',
@@ -339,7 +343,6 @@ where
     'supabase_migrations',
     'pg_catalog',
     'realtime',
-    'supasheet',
     'storage',
     'supabase_functions',
     '_realtime',
@@ -395,7 +398,6 @@ where
     'supabase_migrations',
     'pg_catalog',
     'realtime',
-    'supasheet',
     'storage',
     'supabase_functions',
     '_realtime',

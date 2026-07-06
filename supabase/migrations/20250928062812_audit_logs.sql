@@ -3,6 +3,9 @@ begin;
 alter type supasheet.app_permission
 add value 'supasheet.audit_logs:select';
 
+alter type supasheet.app_permission
+add value 'supasheet.audit_logs:select_all';
+
 commit;
 
 create table if not exists supasheet.audit_logs (
@@ -191,24 +194,29 @@ select
       select
         auth.uid ()
     )
-    or exists (
-      select
-        1
-      from
-        supasheet.user_roles
-      where
-        user_id = (
-          select
-            auth.uid ()
-        )
-        and supasheet.has_permission ('supasheet.audit_logs:select')
-    )
+    and supasheet.has_permission ('supasheet.audit_logs:select')
+  );
+
+create policy "Users can view all audit logs" on supasheet.audit_logs for
+select
+  to authenticated using (
+    supasheet.has_permission ('supasheet.audit_logs:select_all')
   );
 
 insert into
   supasheet.role_permissions (role, permission)
 values
   ('x-admin', 'supasheet.audit_logs:select');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('x-admin', 'supasheet.audit_logs:select_all');
+
+insert into
+  supasheet.role_permissions (role, permission)
+values
+  ('user', 'supasheet.audit_logs:select');
 
 -- ─────────────────────────────────────────────
 -- get_audit_logs

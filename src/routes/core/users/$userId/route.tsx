@@ -21,7 +21,7 @@ export const Route = createFileRoute("/core/users/$userId")({
   beforeLoad: ({ context }) => {
     if (
       !context.permissions?.some(
-        (p) => p.permission === "supasheet.users:select"
+        (p) => p.permission === "supasheet.users:select_all"
       )
     )
       throw notFound()

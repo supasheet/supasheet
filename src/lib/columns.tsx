@@ -138,7 +138,7 @@ export function getColumnCell(columnSchema: ColumnSchema) {
 
 export function getColumnMetadata(
   tableSchema: TableSchema | ViewSchema | null,
-  columnSchema: ColumnSchema
+  columnSchema = {} as ColumnSchema
 ): ColumnFieldMetadata {
   const commentMeta = JSON.parse(columnSchema.comment ?? "{}") as ColumnMetadata
   const commentIconName = commentMeta.icon as

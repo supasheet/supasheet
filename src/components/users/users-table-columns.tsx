@@ -17,9 +17,11 @@ export type User = Database["supasheet"]["Tables"]["users"]["Row"]
 export function getUsersTableColumns({
   columnsSchema,
   canUpdate = false,
+  canViewAll = false,
 }: {
   columnsSchema: ColumnSchema<"supasheet">[]
   canUpdate?: boolean
+  canViewAll?: boolean
 }): ColumnDef<User, unknown>[] {
   return [
     {
@@ -44,25 +46,26 @@ export function getUsersTableColumns({
             onCheckedChange={(checked) => row.toggleSelected(!!checked)}
             aria-label="Select row"
           />
-          {canUpdate ? (
-            <Link
-              to="/core/users/$userId/edit"
-              params={{ userId: row.original.id }}
-              className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <PencilIcon className="size-3" />
-            </Link>
-          ) : (
-            <Link
-              to="/core/users/$userId"
-              params={{ userId: row.original.id }}
-              className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ArrowUpRightIcon className="size-3" />
-            </Link>
-          )}
+          {canViewAll &&
+            (canUpdate ? (
+              <Link
+                to="/core/users/$userId/edit"
+                params={{ userId: row.original.id }}
+                className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <PencilIcon className="size-3" />
+              </Link>
+            ) : (
+              <Link
+                to="/core/users/$userId"
+                params={{ userId: row.original.id }}
+                className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ArrowUpRightIcon className="size-3" />
+              </Link>
+            ))}
         </div>
       ),
       enableSorting: false,
