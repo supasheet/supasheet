@@ -1,3 +1,6 @@
+import type * as LucideIcons from "lucide-react"
+import type { LucideIcon } from "lucide-react"
+
 import { METADATA_COLUMNS } from "#/config/database.config"
 
 import type { Database } from "./database.types"
@@ -5,6 +8,19 @@ import type { Database } from "./database.types"
 export type ResourceDataSchema = Record<string, unknown>
 
 export type DatabaseSchemas = keyof Database
+
+export type ColumnName = string
+
+export type TableAlias = string
+
+// PascalCase names of Lucide icon components, as authored in metadata JSON
+// `icon` fields (e.g. "Activity", "AlertCircle") and looked up against
+// `lucide-react`'s exports at render time.
+export type IconName = {
+  [K in keyof typeof LucideIcons]: (typeof LucideIcons)[K] extends LucideIcon
+    ? K
+    : never
+}[keyof typeof LucideIcons]
 
 export type DatabaseTables<TSchema extends DatabaseSchemas> =
   Database[TSchema] extends { Tables: infer TTables }
@@ -22,7 +38,7 @@ export type DatabaseViews<TSchema extends DatabaseSchemas> =
 export type ColumnSchema<S extends DatabaseSchemas = DatabaseSchemas> =
   Database["supasheet"]["Views"]["columns"]["Row"] & {
     id: string
-    name: string
+    name: ColumnName
     schema: S
     table: DatabaseTables<S> | DatabaseViews<S>
   }
@@ -55,7 +71,9 @@ export function isTableSchema<S extends DatabaseSchemas>(
   return "primary_keys" in schema
 }
 
-export function getMetaFields(resourceSchema: ResourceSchema | null): string[] {
+export function getMetaFields(
+  resourceSchema: ResourceSchema | null
+): ColumnName[] {
   if (!resourceSchema || !isTableSchema(resourceSchema)) return METADATA_COLUMNS
   const meta = resourceSchema.comment
     ? (JSON.parse(resourceSchema.comment) as TableMetadata)
@@ -64,21 +82,21 @@ export function getMetaFields(resourceSchema: ResourceSchema | null): string[] {
 }
 
 export type PrimaryKey = {
-  name: string
-  schema: string
+  name: ColumnName
+  schema: DatabaseSchemas
   table_id: number
-  table_name: string
+  table_name: DatabaseTables<DatabaseSchemas>
 }
 
 export type Relationship = {
   id: number
-  source_schema: DatabaseSchemas
   constraint_name: string
+  source_schema: DatabaseSchemas
   source_table_name: DatabaseTables<DatabaseSchemas>
-  target_table_name: DatabaseTables<DatabaseSchemas>
-  source_column_name: string
-  target_column_name: string
+  source_column_name: ColumnName
   target_table_schema: DatabaseSchemas
+  target_table_name: DatabaseTables<DatabaseSchemas>
+  target_column_name: ColumnName
 }
 
 export type PaginatedData<T> = {
@@ -91,7 +109,7 @@ export type PaginatedData<T> = {
 export type FormMode = "create" | "update" | "read"
 
 export type FieldCondition = {
-  id: string
+  id: ColumnName
   operator: string // e.g. eq, neq, lt, lte, gt, gte, like, ilike, is, in, not.ilike, not.is, not.in
   value: string | string[]
 }
@@ -103,13 +121,13 @@ export type FieldBehavior = {
 }
 
 export type LookupFillRule = {
-  target: string // local form field to populate
-  source: string // column from the lookup target table
+  target: ColumnName // local form field to populate
+  source: ColumnName // column from the lookup target table
 }
 
 export type LookupFilterRule = {
-  on: string // local field to watch
-  column: string // lookup target column to match against
+  on: ColumnName // local field to watch
+  column: ColumnName // lookup target column to match against
 }
 
 export type LookupConfig = {
@@ -117,40 +135,42 @@ export type LookupConfig = {
   filter?: LookupFilterRule[]
 }
 
-export type FieldSectionFields = string[] | Partial<Record<FormMode, string[]>>
+export type FieldSectionFields =
+  | ColumnName[]
+  | Partial<Record<FormMode, ColumnName[]>>
 
 export type FieldSection = {
   id: string
   title: string
   description?: string
-  icon?: string
+  icon?: IconName
   fields: FieldSectionFields
   collapsible?: boolean
 }
 
 export type FilterRule = {
-  id: string
+  id: ColumnName
   value: string | string[]
   operator: string
 }
 
 export type SortRule = {
-  id: string
+  id: ColumnName
   desc: boolean
 }
 
 export type JoinClause = {
   table: string
   on: string
-  alias?: string
-  columns: string[]
+  alias?: TableAlias
+  columns: ColumnName[]
 }
 
 export type QueryConfig = {
   sort?: SortRule[]
   filter?: FilterRule[]
   join?: JoinClause[]
-  select?: string[]
+  select?: ColumnName[]
 }
 
 type BaseViewLayout = {
@@ -161,42 +181,42 @@ type BaseViewLayout = {
 
 export type KanbanLayout = BaseViewLayout & {
   type: "kanban"
-  group?: string
-  title?: string
-  description?: string
-  badge?: string
-  date?: string
+  group?: ColumnName
+  title?: ColumnName
+  description?: ColumnName
+  badge?: ColumnName
+  date?: ColumnName
 }
 
 export type CalendarLayout = BaseViewLayout & {
   type: "calendar"
-  title?: string
-  start_date?: string
-  end_date?: string
-  badge?: string
+  title?: ColumnName
+  start_date?: ColumnName
+  end_date?: ColumnName
+  badge?: ColumnName
 }
 
 export type GalleryLayout = BaseViewLayout & {
   type: "gallery"
-  cover?: string
-  title?: string
-  description?: string
-  badge?: string
+  cover?: ColumnName
+  title?: ColumnName
+  description?: ColumnName
+  badge?: ColumnName
 }
 
 export type ListLayout = BaseViewLayout & {
   type: "list"
-  title?: string
-  description?: string
-  field_1?: string
-  field_2?: string
+  title?: ColumnName
+  description?: ColumnName
+  field_1?: ColumnName
+  field_2?: ColumnName
 }
 
 export type TreeLayout = BaseViewLayout & {
   type: "tree"
-  parent: string
-  title: string
-  secondary?: string
+  parent: ColumnName
+  title: ColumnName
+  secondary?: ColumnName
 }
 
 export type ViewLayout =
@@ -212,29 +232,29 @@ export type FilterPreset = {
   id: string
   name: string
   description?: string
-  icon?: string
+  icon?: IconName
   filters: FilterRule[]
 }
 
 // Valid for both tables and views
 export type FieldsConfig = {
   sections?: FieldSection[]
-  metadata?: string[]
+  metadata?: ColumnName[]
 }
 
 // Table-only: includes form-specific options
 export type TableFieldsConfig = FieldsConfig & {
-  quick_create?: string[]
-  duplicated?: string[]
-  behavior?: Record<string, FieldBehavior>
-  lookups?: Record<string, LookupConfig>
+  quick_create?: ColumnName[]
+  duplicated?: ColumnName[]
+  behavior?: Record<ColumnName, FieldBehavior>
+  lookups?: Record<ColumnName, LookupConfig>
 }
 
 type BaseResourceMetadata = {
   display?: "block" | "none"
   name?: string
   description?: string
-  icon?: string
+  icon?: IconName
   group?: string
   singleton?: boolean
   primary_view?: string
@@ -246,7 +266,7 @@ type BaseResourceMetadata = {
 export type TableMetadata = BaseResourceMetadata & {
   inline_form?: boolean
   query?: QueryConfig
-  tabs?: string[]
+  tabs?: TableAlias[]
   fields?: TableFieldsConfig
 }
 
@@ -259,14 +279,14 @@ export type ViewMetadata = BaseResourceMetadata
 export type ColumnMetadata = {
   name?: string
   description?: string
-  icon?: string
+  icon?: IconName
 }
 
 export type EnumColumnMetadata = ColumnMetadata & {
   progress?: boolean
   enums?: {
     [key: string]: {
-      icon?: string
+      icon?: IconName
       variant:
         | "default"
         | "secondary"

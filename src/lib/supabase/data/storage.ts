@@ -2,6 +2,7 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
 import type { FileObject, SearchOptions } from "@supabase/storage-js"
 
+import type { IconName } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
 
 export type { FileObject }
@@ -19,17 +20,22 @@ export const storageBucketsQueryOptions = queryOptions({
     const { data, error } = await supabase.storage.listBuckets()
     if (error) throw error
 
-    return (data ?? []).map((bucket) => ({
-      name: bucket.name,
-      id: bucket.id,
-      schema: "storage",
-      type: "table" as const,
-      meta: {
-        label: bucket.name,
-        icon: bucket.public ? "FolderOpenIcon" : "FolderLockIcon",
-      },
-      isPublic: bucket.public,
-    }))
+    return (data ?? []).map((bucket) => {
+      const icon: IconName = bucket.public
+        ? "FolderOpenIcon"
+        : "FolderLockIcon"
+      return {
+        name: bucket.name,
+        id: bucket.id,
+        schema: "storage",
+        type: "table" as const,
+        meta: {
+          label: bucket.name,
+          icon,
+        },
+        isPublic: bucket.public,
+      }
+    })
   },
   staleTime: 1000 * 60 * 5,
 })

@@ -76,10 +76,7 @@ function ResourceMenuItem({
   const icon = (
     <LucideIconComponent
       iconName={
-        (item.meta?.icon ||
-          (item.type === "table"
-            ? "Table2"
-            : "Eye")) as keyof typeof LucideIcons
+        item.meta?.icon || (item.type === "table" ? "Table2" : "Eye")
       }
     />
   )

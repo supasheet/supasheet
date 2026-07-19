@@ -35,7 +35,7 @@ export function SelectCell({
     return (
       <Badge variant={variant ?? "secondary"}>
         {icon && (
-          <LucideIconComponent iconName={icon as keyof typeof LucideIcons} />
+          <LucideIconComponent iconName={icon} />
         )}
         {value}
       </Badge>
