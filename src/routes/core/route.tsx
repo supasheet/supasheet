@@ -88,6 +88,7 @@ function RouteComponent() {
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
+      className="h-svh overflow-hidden"
     >
       <Sidebar collapsible="offcanvas" variant="inset">
         <SidebarHeader>
@@ -122,8 +123,10 @@ function RouteComponent() {
           <NavUser />
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>
-        <Outlet />
+      <SidebarInset className="overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-auto">
+          <Outlet />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   )

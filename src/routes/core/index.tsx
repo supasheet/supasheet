@@ -1,14 +1,20 @@
 import { Link, createFileRoute } from "@tanstack/react-router"
 
 import {
-  ArrowRightIcon,
   ClipboardListIcon,
   KeyRoundIcon,
+  ShieldCheckIcon,
   ShieldIcon,
   UsersIcon,
 } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "#/components/ui/card"
 import { pageTitle } from "#/lib/page-title"
 
 export const Route = createFileRoute("/core/")({
@@ -45,34 +51,50 @@ const sections = [
 
 function RouteComponent() {
   return (
-    <>
+    <div className="w-full flex-1">
       <DefaultHeader breadcrumbs={[{ title: "Core" }]} />
-      <div className="p-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sections.map((section) => (
-            <Link
-              key={section.url}
-              to={section.url}
-              className="group rounded-xl border bg-card p-5 transition-colors hover:bg-accent"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex flex-col gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg border bg-background text-muted-foreground">
-                    {section.icon}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium">{section.title}</span>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      {section.description}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRightIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-              </div>
-            </Link>
-          ))}
+      <div className="mx-auto max-w-6xl space-y-8 p-6">
+        {/* Core title */}
+        <div className="flex items-center gap-3">
+          <ShieldCheckIcon className="size-6 text-muted-foreground" />
+          <div>
+            <h1 className="text-xl font-semibold capitalize">Core</h1>
+            <p className="text-sm text-muted-foreground">
+              {sections.length} section{sections.length !== 1 ? "s" : ""}
+            </p>
+          </div>
         </div>
+
+        {/* Sections */}
+        <section>
+          <h2 className="mb-3 text-sm font-medium tracking-wide text-muted-foreground uppercase">
+            Sections
+          </h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {sections.map((section) => (
+              <Link key={section.url} to={section.url} className="h-full">
+                <Card className="h-full transition-colors hover:bg-accent/50">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <span className="text-muted-foreground">
+                        {section.icon}
+                      </span>
+                      <div>
+                        <CardTitle className="text-sm">
+                          {section.title}
+                        </CardTitle>
+                        <CardDescription className="mt-0.5 text-xs">
+                          {section.description}
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
-    </>
+    </div>
   )
 }
