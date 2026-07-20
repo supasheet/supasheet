@@ -6,7 +6,7 @@ import { useNavigate } from "@tanstack/react-router"
 
 import * as LucideIcons from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-import { SearchIcon } from "lucide-react"
+import { HomeIcon, SearchIcon } from "lucide-react"
 
 import {
   Command,
@@ -96,6 +96,13 @@ export function QuickSearch({
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Navigation">
+              <CommandItem
+                value="Overview"
+                onSelect={() => handleSelect(`/${schema}`)}
+              >
+                <HomeIcon />
+                <span>Overview</span>
+              </CommandItem>
               {items.map((item) => (
                 <CommandItem
                   key={item.url}
