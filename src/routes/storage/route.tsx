@@ -2,17 +2,19 @@ import { Outlet, createFileRoute } from "@tanstack/react-router"
 
 import { useQuery } from "@tanstack/react-query"
 
-import { ArrowLeftIcon, FolderIcon, HomeIcon } from "lucide-react"
+import { ArrowLeftIcon, FolderIcon } from "lucide-react"
 
 import { NavMain } from "#/components/layouts/nav-main"
 import { NavResources } from "#/components/layouts/nav-resources"
 import { NavSecondary } from "#/components/layouts/nav-secondary"
 import { NavUser } from "#/components/layouts/nav-user"
+import { QuickSearch } from "#/components/layouts/quick-search"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
@@ -55,14 +57,7 @@ function RouteComponent() {
           </div>
         </SidebarHeader>
         <SidebarContent>
-          <NavMain
-            schema="storage"
-            items={[{ title: "Home", url: "/", icon: <HomeIcon /> }]}
-            resourceItems={buckets.map((b) => ({
-              ...b,
-              url: `/storage/${b.id}`,
-            }))}
-          />
+          <NavMain schema="storage" items={[]} />
           {isLoading ? (
             <SidebarGroup className="group-data-[collapsible=icon]:hidden">
               <SidebarGroupLabel>
@@ -84,11 +79,23 @@ function RouteComponent() {
           )}
         </SidebarContent>
         <SidebarFooter>
-          <NavSecondary
-            items={[
-              { title: "Back to Main", url: "/", icon: <ArrowLeftIcon /> },
-            ]}
-          />
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <QuickSearch
+                schema="storage"
+                items={[]}
+                resourceItems={buckets.map((b) => ({
+                  ...b,
+                  url: `/storage/${b.id}`,
+                }))}
+              />
+              <NavSecondary
+                items={[
+                  { title: "Back to Main", url: "/", icon: <ArrowLeftIcon /> },
+                ]}
+              />
+            </SidebarGroupContent>
+          </SidebarGroup>
           <NavUser />
         </SidebarFooter>
       </Sidebar>

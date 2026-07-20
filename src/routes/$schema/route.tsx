@@ -16,7 +16,7 @@ import {
   FileChartColumnIcon,
   FileXIcon,
   FolderIcon,
-  HomeIcon,
+  LayoutDashboardIcon,
   LayoutTemplateIcon,
 } from "lucide-react"
 import { z } from "zod"
@@ -26,6 +26,7 @@ import { NavMain } from "#/components/layouts/nav-main"
 import { NavResources } from "#/components/layouts/nav-resources"
 import { NavSecondary } from "#/components/layouts/nav-secondary"
 import { NavUser } from "#/components/layouts/nav-user"
+import { QuickSearch } from "#/components/layouts/quick-search"
 import { Button } from "#/components/ui/button"
 import {
   Empty,
@@ -38,6 +39,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
@@ -123,7 +126,7 @@ const NAV_TYPE_CONFIG: Record<
   dashboard_widget: {
     title: "Dashboard",
     url: "/dashboard",
-    icon: <HomeIcon />,
+    icon: <LayoutDashboardIcon />,
   },
   chart: { title: "Chart", url: "/chart", icon: <ChartBarIcon /> },
   report: { title: "Report", url: "/report", icon: <FileChartColumnIcon /> },
@@ -184,14 +187,7 @@ function RouteComponent() {
             </div>
           </SidebarHeader>
           <SidebarContent>
-            <NavMain
-              schema={params.schema}
-              items={navMain}
-              resourceItems={resources.map((r) => ({
-                ...r,
-                url: `/${params.schema}/resource/${r.id}`,
-              }))}
-            />
+            <NavMain schema={params.schema} items={navMain} />
             <NavResources
               schema={params.schema + "/resource"}
               items={resources}
@@ -199,11 +195,23 @@ function RouteComponent() {
             />
           </SidebarContent>
           <SidebarFooter>
-            <NavSecondary
-              items={[
-                { title: "Storage", url: "/storage", icon: <FolderIcon /> },
-              ]}
-            />
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <QuickSearch
+                  schema={params.schema}
+                  items={navMain}
+                  resourceItems={resources.map((r) => ({
+                    ...r,
+                    url: `/${params.schema}/resource/${r.id}`,
+                  }))}
+                />
+                <NavSecondary
+                  items={[
+                    { title: "Storage", url: "/storage", icon: <FolderIcon /> },
+                  ]}
+                />
+              </SidebarGroupContent>
+            </SidebarGroup>
             <NavUser />
           </SidebarFooter>
         </Sidebar>

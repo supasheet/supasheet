@@ -1,16 +1,19 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router"
 
-import { DatabaseIcon, FolderIcon, HomeIcon } from "lucide-react"
+import { DatabaseIcon, FolderIcon } from "lucide-react"
 
 import { ModuleSwitcher } from "#/components/layouts/module-switcher"
 import { NavMain } from "#/components/layouts/nav-main"
 import { NavResources } from "#/components/layouts/nav-resources"
 import { NavSecondary } from "#/components/layouts/nav-secondary"
 import { NavUser } from "#/components/layouts/nav-user"
+import { QuickSearch } from "#/components/layouts/quick-search"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
@@ -95,22 +98,27 @@ function RouteComponent() {
           </div>
         </SidebarHeader>
         <SidebarContent>
-          <NavMain
-            schema="core"
-            items={[{ title: "Home", url: "", icon: <HomeIcon /> }]}
-            resourceItems={resources.map((r) => ({
-              ...r,
-              url: `/core/${r.id}`,
-            }))}
-          />
+          <NavMain schema="core" items={[]} />
           <NavResources schema="core" items={resources} />
         </SidebarContent>
         <SidebarFooter>
-          <NavSecondary
-            items={[
-              { title: "Storage", url: "/storage", icon: <FolderIcon /> },
-            ]}
-          />
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <QuickSearch
+                schema="core"
+                items={[]}
+                resourceItems={resources.map((r) => ({
+                  ...r,
+                  url: `/core/${r.id}`,
+                }))}
+              />
+              <NavSecondary
+                items={[
+                  { title: "Storage", url: "/storage", icon: <FolderIcon /> },
+                ]}
+              />
+            </SidebarGroupContent>
+          </SidebarGroup>
           <NavUser />
         </SidebarFooter>
       </Sidebar>

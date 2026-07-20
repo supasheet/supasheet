@@ -2,21 +2,10 @@
 
 import * as React from "react"
 
-import { Link, useLocation, useNavigate } from "@tanstack/react-router"
+import { Link, useLocation } from "@tanstack/react-router"
 
-import * as LucideIcons from "lucide-react"
-import type { LucideIcon } from "lucide-react"
-import { SearchIcon } from "lucide-react"
+import { HomeIcon } from "lucide-react"
 
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "#/components/ui/command"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -24,29 +13,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "#/components/ui/sidebar"
-import { formatTitle } from "#/lib/format"
 
 import { NotificationsBell } from "./notifications-bell"
-
-type ResourceItem = {
-  id: string
-  name: string
-  url: string
-  type: "table" | "view"
-  meta?: { label?: string; icon?: string } | null
-}
-
-function ResourceIcon({ item }: { item: ResourceItem }) {
-  const iconName = (item.meta?.icon ||
-    (item.type === "table" ? "Table2" : "Eye")) as keyof typeof LucideIcons
-  const Icon = LucideIcons[iconName] as LucideIcon
-  return <Icon className="size-4 shrink-0" />
-}
 
 export function NavMain({
   items,
   schema,
-  resourceItems,
 }: {
   schema: string
   items: {
@@ -54,10 +26,7 @@ export function NavMain({
     url: string
     icon?: React.ReactNode
   }[]
-  resourceItems?: ResourceItem[]
 }) {
-  const [open, setOpen] = React.useState(false)
-  const navigate = useNavigate()
   const location = useLocation({
     select: (loc) => ({
       ...loc,
@@ -65,34 +34,18 @@ export function NavMain({
     }),
   })
 
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault()
-        setOpen((prev) => !prev)
-      }
-    }
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [])
-
-  const handleSelect = (url: string) => {
-    setOpen(false)
-    navigate({ to: url as never })
-  }
-
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
-              tooltip="Quick Search"
+              tooltip="Overview"
               className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-              onClick={() => setOpen(true)}
+              render={<Link to={`/${schema}` as never} />}
             >
-              <SearchIcon />
-              <span>Quick Search</span>
+              <HomeIcon />
+              <span>Overview</span>
             </SidebarMenuButton>
             <NotificationsBell />
           </SidebarMenuItem>
@@ -112,46 +65,6 @@ export function NavMain({
           ))}
         </SidebarMenu>
       </SidebarGroupContent>
-
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Quick Search"
-        description="Search sidebar items"
-      >
-        <Command>
-          <CommandInput placeholder="Search..." />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Navigation">
-              {items.map((item) => (
-                <CommandItem
-                  key={item.url}
-                  value={item.title}
-                  onSelect={() => handleSelect(`/${schema}/${item.url}`)}
-                >
-                  {item.icon}
-                  <span>{item.title}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            {resourceItems && resourceItems.length > 0 && (
-              <CommandGroup heading="Resources">
-                {resourceItems.map((item) => (
-                  <CommandItem
-                    key={item.id}
-                    value={formatTitle(item.name)}
-                    onSelect={() => handleSelect(item.url)}
-                  >
-                    <ResourceIcon item={item} />
-                    <span>{formatTitle(item.name)}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
-      </CommandDialog>
     </SidebarGroup>
   )
 }
