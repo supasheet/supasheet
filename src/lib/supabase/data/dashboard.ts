@@ -1,36 +1,32 @@
 import { queryOptions } from "@tanstack/react-query"
 
-import type { DatabaseSchemas, DatabaseViews } from "#/lib/database-meta.types"
+import type {
+  DashboardWidgetMeta,
+  DatabaseSchemas,
+  DatabaseTables,
+  DatabaseViews,
+} from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
-
-export type DashboardWidgetType =
-  | "card_1"
-  | "card_2"
-  | "card_3"
-  | "card_4"
-  | "table_1"
-  | "table_2"
-
-export type DashboardWidgetMeta = {
-  name: string
-  description?: string
-  caption?: string
-  type: "dashboard_widget"
-  widget_type: DashboardWidgetType
-}
 
 export type DashboardWidgetSchema<S extends DatabaseSchemas> = {
   schema: S
   view_name: DatabaseViews<S>
 } & DashboardWidgetMeta
 
-export const dashboardWidgetsQueryOptions = (schema: DatabaseSchemas) =>
+export const dashboardWidgetsQueryOptions = <S extends DatabaseSchemas>(
+  schema: S,
+  resource?: DatabaseTables<S> | DatabaseViews<S>
+) =>
   queryOptions({
-    queryKey: ["supasheet", "dashboard-widgets", schema],
+    queryKey: ["supasheet", "dashboard-widgets", schema, resource ?? null],
     queryFn: async () => {
+      const args: { p_schema?: string; p_resource?: string } = {
+        p_schema: schema,
+        p_resource: resource,
+      }
       const { data, error } = await supabase
         .schema("supasheet")
-        .rpc("get_widgets", { p_schema: schema })
+        .rpc("get_widgets", args)
       if (error) throw error
 
       return data.map((widget) => {

@@ -372,6 +372,18 @@ add value 'demo.upcoming_milestones:select';
 alter type supasheet.app_permission
 add value 'demo.top_clients:select';
 
+alter type supasheet.app_permission
+add value 'demo.client_pipeline:select';
+
+alter type supasheet.app_permission
+add value 'demo.project_progress:select';
+
+alter type supasheet.app_permission
+add value 'demo.outstanding_balance:select';
+
+alter type supasheet.app_permission
+add value 'demo.active_team_members_count:select';
+
 -- Charts
 alter type supasheet.app_permission
 add value 'demo.tasks_by_status_pie:select';
@@ -384,6 +396,18 @@ add value 'demo.revenue_trend_line:select';
 
 alter type supasheet.app_permission
 add value 'demo.team_workload_radar:select';
+
+alter type supasheet.app_permission
+add value 'demo.clients_by_status_pie:select';
+
+alter type supasheet.app_permission
+add value 'demo.projects_by_priority_bar:select';
+
+alter type supasheet.app_permission
+add value 'demo.invoices_by_status_pie:select';
+
+alter type supasheet.app_permission
+add value 'demo.team_by_department_pie:select';
 
 commit;
 
@@ -2265,6 +2289,115 @@ grant
 select
   on demo.top_clients to authenticated;
 
+-- card_2: client pipeline (active vs lead) — shown on the clients resource page
+create or replace view demo.client_pipeline
+with
+  (security_invoker = true) as
+select
+  count(*) filter (
+    where
+      status = 'active'
+  ) as primary,
+  count(*) filter (
+    where
+      status = 'lead'
+  ) as secondary,
+  'Active' as primary_label,
+  'Leads' as secondary_label
+from
+  demo.clients;
+
+revoke all on demo.client_pipeline
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.client_pipeline to authenticated;
+
+-- card_3: project progress (active count + average completion) — shown on the projects resource page
+create or replace view demo.project_progress
+with
+  (security_invoker = true) as
+select
+  count(*) filter (
+    where
+      status = 'active'
+  ) as value,
+  coalesce(
+    round(
+      (
+        avg(progress) filter (
+          where
+            status = 'active'
+        )
+      )::numeric,
+      1
+    ),
+    0
+  ) as percent
+from
+  demo.projects;
+
+revoke all on demo.project_progress
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.project_progress to authenticated;
+
+-- card_1: outstanding invoice balance — shown on the invoices resource page
+create or replace view demo.outstanding_balance
+with
+  (security_invoker = true) as
+select
+  coalesce(
+    sum(total) filter (
+      where
+        status in ('sent', 'overdue')
+    ),
+    0
+  ) as value,
+  'receipt' as icon,
+  'outstanding balance' as label
+from
+  demo.invoices;
+
+revoke all on demo.outstanding_balance
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.outstanding_balance to authenticated;
+
+-- card_1: active team member count — shown on the team_members resource page
+create or replace view demo.active_team_members_count
+with
+  (security_invoker = true) as
+select
+  count(*) filter (
+    where
+      employment_status = 'active'
+  ) as value,
+  'users' as icon,
+  'active team members' as label
+from
+  demo.team_members;
+
+revoke all on demo.active_team_members_count
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.active_team_members_count to authenticated;
+
 comment on view demo.active_projects_count is '{"type": "dashboard_widget", "name": "Active Projects", "description": "Count of projects currently active", "widget_type": "card_1"}';
 
 comment on view demo.task_completion is '{"type": "dashboard_widget", "name": "Task Completion", "description": "Done vs open tasks", "widget_type": "card_2"}';
@@ -2273,11 +2406,19 @@ comment on view demo.revenue_summary is '{"type": "dashboard_widget", "name": "R
 
 comment on view demo.project_health is '{"type": "dashboard_widget", "name": "Project Health", "description": "At-risk open projects breakdown", "widget_type": "card_4"}';
 
-comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1"}';
+comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks"}';
 
 comment on view demo.upcoming_milestones is '{"type": "dashboard_widget", "name": "Upcoming Milestones", "description": "Next 10 milestones due across active projects", "widget_type": "table_1"}';
 
 comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2"}';
+
+comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Active clients vs. new leads", "widget_type": "card_2", "resource": "clients"}';
+
+comment on view demo.project_progress is '{"type": "dashboard_widget", "name": "Project Progress", "description": "Active projects and their average completion", "widget_type": "card_3", "resource": "projects"}';
+
+comment on view demo.outstanding_balance is '{"type": "dashboard_widget", "name": "Outstanding Balance", "description": "Unpaid total across sent and overdue invoices", "widget_type": "card_1", "resource": "invoices"}';
+
+comment on view demo.active_team_members_count is '{"type": "dashboard_widget", "name": "Active Team Members", "description": "Count of staff currently active", "widget_type": "card_1", "resource": "team_members"}';
 
 ----------------------------------------------------------------
 -- Charts
@@ -2401,13 +2542,116 @@ grant
 select
   on demo.team_workload_radar to authenticated;
 
-comment on view demo.tasks_by_status_pie is '{"type": "chart", "name": "Tasks By Status", "description": "Task count grouped by workflow status", "chart_type": "pie"}';
+-- Pie: clients by status — shown on the clients resource page
+create or replace view demo.clients_by_status_pie
+with
+  (security_invoker = true) as
+select
+  status::text as label,
+  count(*) as value
+from
+  demo.clients
+group by
+  status;
+
+revoke all on demo.clients_by_status_pie
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.clients_by_status_pie to authenticated;
+
+-- Bar: projects by priority — shown on the projects resource page
+create or replace view demo.projects_by_priority_bar
+with
+  (security_invoker = true) as
+select
+  priority::text as label,
+  count(*) as total,
+  count(*) filter (
+    where
+      status = 'completed'
+  ) as completed
+from
+  demo.projects
+group by
+  priority
+order by
+  case priority
+    when 'critical' then 1
+    when 'high' then 2
+    when 'medium' then 3
+    when 'low' then 4
+  end;
+
+revoke all on demo.projects_by_priority_bar
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.projects_by_priority_bar to authenticated;
+
+-- Pie: invoices by status — shown on the invoices resource page
+create or replace view demo.invoices_by_status_pie
+with
+  (security_invoker = true) as
+select
+  status::text as label,
+  count(*) as value
+from
+  demo.invoices
+group by
+  status;
+
+revoke all on demo.invoices_by_status_pie
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.invoices_by_status_pie to authenticated;
+
+-- Pie: team by department — shown on the team_members resource page
+create or replace view demo.team_by_department_pie
+with
+  (security_invoker = true) as
+select
+  department::text as label,
+  count(*) as value
+from
+  demo.team_members
+group by
+  department;
+
+revoke all on demo.team_by_department_pie
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.team_by_department_pie to authenticated;
+
+comment on view demo.tasks_by_status_pie is '{"type": "chart", "name": "Tasks By Status", "description": "Task count grouped by workflow status", "chart_type": "pie", "resource": "tasks"}';
 
 comment on view demo.projects_by_client_bar is '{"type": "chart", "name": "Projects By Client", "description": "Top 10 clients by project count", "chart_type": "bar"}';
 
 comment on view demo.revenue_trend_line is '{"type": "chart", "name": "Revenue Trend", "description": "Weekly invoice count and revenue over 8 weeks", "chart_type": "line"}';
 
 comment on view demo.team_workload_radar is '{"type": "chart", "name": "Team Workload", "description": "Task load per department", "chart_type": "radar"}';
+
+comment on view demo.clients_by_status_pie is '{"type": "chart", "name": "Clients By Status", "description": "Distribution of clients across lifecycle stages", "chart_type": "pie", "resource": "clients"}';
+
+comment on view demo.projects_by_priority_bar is '{"type": "chart", "name": "Projects By Priority", "description": "Project counts and completions across priority levels", "chart_type": "bar", "resource": "projects"}';
+
+comment on view demo.invoices_by_status_pie is '{"type": "chart", "name": "Invoices By Status", "description": "Invoice count across lifecycle statuses", "chart_type": "pie", "resource": "invoices"}';
+
+comment on view demo.team_by_department_pie is '{"type": "chart", "name": "Team By Department", "description": "Headcount distribution across departments", "chart_type": "pie", "resource": "team_members"}';
 
 ----------------------------------------------------------------
 -- Role permissions
@@ -2504,10 +2748,18 @@ values
   ('x-admin', 'demo.recent_tasks:select'),
   ('x-admin', 'demo.upcoming_milestones:select'),
   ('x-admin', 'demo.top_clients:select'),
+  ('x-admin', 'demo.client_pipeline:select'),
+  ('x-admin', 'demo.project_progress:select'),
+  ('x-admin', 'demo.outstanding_balance:select'),
+  ('x-admin', 'demo.active_team_members_count:select'),
   ('x-admin', 'demo.tasks_by_status_pie:select'),
   ('x-admin', 'demo.projects_by_client_bar:select'),
   ('x-admin', 'demo.revenue_trend_line:select'),
-  ('x-admin', 'demo.team_workload_radar:select');
+  ('x-admin', 'demo.team_workload_radar:select'),
+  ('x-admin', 'demo.clients_by_status_pie:select'),
+  ('x-admin', 'demo.projects_by_priority_bar:select'),
+  ('x-admin', 'demo.invoices_by_status_pie:select'),
+  ('x-admin', 'demo.team_by_department_pie:select');
 
 -- user: day-to-day delivery work — no deletes, no audit trail, no HR/settings writes
 insert into
@@ -2559,10 +2811,18 @@ values
   ('user', 'demo.recent_tasks:select'),
   ('user', 'demo.upcoming_milestones:select'),
   ('user', 'demo.top_clients:select'),
+  ('user', 'demo.client_pipeline:select'),
+  ('user', 'demo.project_progress:select'),
+  ('user', 'demo.outstanding_balance:select'),
+  ('user', 'demo.active_team_members_count:select'),
   ('user', 'demo.tasks_by_status_pie:select'),
   ('user', 'demo.projects_by_client_bar:select'),
   ('user', 'demo.revenue_trend_line:select'),
-  ('user', 'demo.team_workload_radar:select');
+  ('user', 'demo.team_workload_radar:select'),
+  ('user', 'demo.clients_by_status_pie:select'),
+  ('user', 'demo.projects_by_priority_bar:select'),
+  ('user', 'demo.invoices_by_status_pie:select'),
+  ('user', 'demo.team_by_department_pie:select');
 
 ----------------------------------------------------------------
 -- Audit triggers

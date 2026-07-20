@@ -15,7 +15,7 @@ import {
   ChartTooltipContent,
 } from "#/components/ui/chart"
 import type { ChartConfig } from "#/components/ui/chart"
-import type { ChartMeta } from "#/lib/supabase/data/chart"
+import type { ChartMeta } from "#/lib/database-meta.types"
 
 const CHART_COLORS = [
   "var(--chart-1)",

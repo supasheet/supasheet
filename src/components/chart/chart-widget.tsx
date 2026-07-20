@@ -1,9 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { Skeleton } from "#/components/ui/skeleton"
-import type { DatabaseSchemas } from "#/lib/database-meta.types"
+import type { ChartMeta, DatabaseSchemas } from "#/lib/database-meta.types"
 import { chartDataQueryOptions } from "#/lib/supabase/data/chart"
-import type { ChartMeta, ChartSchema } from "#/lib/supabase/data/chart"
+import type { ChartSchema } from "#/lib/supabase/data/chart"
 
 import { AreaChartWidget } from "./area-chart"
 import { BarChartWidget } from "./bar-chart"

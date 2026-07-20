@@ -1,30 +1,32 @@
 import { queryOptions } from "@tanstack/react-query"
 
-import type { DatabaseSchemas, DatabaseViews } from "#/lib/database-meta.types"
+import type {
+  ChartMeta,
+  DatabaseSchemas,
+  DatabaseTables,
+  DatabaseViews,
+} from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
-
-export type ChartType = "area" | "pie" | "line" | "radar" | "bar"
-
-export type ChartMeta = {
-  name: string
-  description?: string
-  caption?: string
-  type: "chart"
-  chart_type: ChartType
-}
 
 export type ChartSchema<S extends DatabaseSchemas> = {
   schema: S
   view_name: DatabaseViews<S>
 } & ChartMeta
 
-export const chartsQueryOptions = (schema: DatabaseSchemas) =>
+export const chartsQueryOptions = <S extends DatabaseSchemas>(
+  schema: S,
+  resource?: DatabaseTables<S> | DatabaseViews<S>
+) =>
   queryOptions({
-    queryKey: ["supasheet", "charts", schema],
+    queryKey: ["supasheet", "charts", schema, resource ?? null],
     queryFn: async () => {
+      const args: { p_schema?: string; p_resource?: string } = {
+        p_schema: schema,
+        p_resource: resource,
+      }
       const { data, error } = await supabase
         .schema("supasheet")
-        .rpc("get_charts", { p_schema: schema })
+        .rpc("get_charts", args)
       if (error) throw error
 
       return data.map((chart) => {

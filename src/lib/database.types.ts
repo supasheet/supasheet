@@ -467,7 +467,7 @@ export type Database = {
         }[]
       }
       get_charts: {
-        Args: { p_schema?: string }
+        Args: { p_resource?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number
@@ -652,7 +652,7 @@ export type Database = {
         }
       }
       get_widgets: {
-        Args: { p_schema?: string }
+        Args: { p_resource?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number

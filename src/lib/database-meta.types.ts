@@ -276,6 +276,34 @@ export type UpdatableViewMetadata = {
 
 export type ViewMetadata = BaseResourceMetadata
 
+export type DashboardWidgetType =
+  | "card_1"
+  | "card_2"
+  | "card_3"
+  | "card_4"
+  | "table_1"
+  | "table_2"
+
+export type DashboardWidgetMeta = {
+  name: string
+  description?: string
+  caption?: string
+  type: "dashboard_widget"
+  widget_type: DashboardWidgetType
+  resource?: string
+}
+
+export type ChartType = "area" | "pie" | "line" | "radar" | "bar"
+
+export type ChartMeta = {
+  name: string
+  description?: string
+  caption?: string
+  type: "chart"
+  chart_type: ChartType
+  resource?: string
+}
+
 export type ColumnMetadata = {
   name?: string
   description?: string
