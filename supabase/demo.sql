@@ -2406,11 +2406,11 @@ comment on view demo.revenue_summary is '{"type": "dashboard_widget", "name": "R
 
 comment on view demo.project_health is '{"type": "dashboard_widget", "name": "Project Health", "description": "At-risk open projects breakdown", "widget_type": "card_4"}';
 
-comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks"}';
+comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks", "link": "/demo/resource/tasks"}';
 
 comment on view demo.upcoming_milestones is '{"type": "dashboard_widget", "name": "Upcoming Milestones", "description": "Next 10 milestones due across active projects", "widget_type": "table_1"}';
 
-comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2"}';
+comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2", "link": "/demo/resource/clients"}';
 
 comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Active clients vs. new leads", "widget_type": "card_2", "resource": "clients"}';
 

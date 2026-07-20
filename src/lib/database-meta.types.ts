@@ -291,6 +291,7 @@ export type DashboardWidgetMeta = {
   type: "dashboard_widget"
   widget_type: DashboardWidgetType
   resource?: string
+  link?: string
 }
 
 export type ChartType = "area" | "pie" | "line" | "radar" | "bar"

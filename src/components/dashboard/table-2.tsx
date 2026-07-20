@@ -1,8 +1,7 @@
-import { useState } from "react"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 
-import { Search } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 import {
   Card,
@@ -11,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
-import { Input } from "#/components/ui/input"
+import { Button } from "#/components/ui/button"
 import { Skeleton } from "#/components/ui/skeleton"
 import {
   Table,
@@ -34,7 +33,7 @@ export function Table2Skeleton() {
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-4 w-48" />
           </div>
-          <Skeleton className="h-9 w-full sm:max-w-64" />
+          <Skeleton className="h-7 w-24" />
         </div>
       </CardHeader>
       <CardContent>
@@ -53,7 +52,6 @@ export function Table2Widget<S extends DatabaseSchemas>({
 }: {
   widget: DashboardWidgetSchema<S>
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
   const { data } = useSuspenseQuery(
     widgetDataQueryOptions(widget.schema, widget.view_name)
   )
@@ -73,11 +71,6 @@ export function Table2Widget<S extends DatabaseSchemas>({
   }
 
   const columns = Object.keys(data[0])
-  const filteredData = data.filter((row) =>
-    Object.values(row).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  )
 
   return (
     <Card className="col-span-1 md:col-span-2 lg:col-span-4">
@@ -87,15 +80,18 @@ export function Table2Widget<S extends DatabaseSchemas>({
             <CardTitle>{widget.name}</CardTitle>
             <CardDescription>{widget.description}</CardDescription>
           </div>
-          <div className="relative w-full sm:max-w-64">
-            <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
-          </div>
+          {widget.link && (
+            <Button
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              render={<Link to={widget.link as never} />}
+              className="shrink-0"
+            >
+              View All
+              <ArrowRight />
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -112,7 +108,7 @@ export function Table2Widget<S extends DatabaseSchemas>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.slice(0, 10).map((row, index) => (
+              {data.slice(0, 10).map((row, index) => (
                 <TableRow key={index}>
                   {columns.map((column) => (
                     <TableCell key={column}>{row[column] || "-"}</TableCell>
