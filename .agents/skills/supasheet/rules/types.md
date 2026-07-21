@@ -27,7 +27,7 @@ commit;
 
 Rules:
 
-- All enum DDL (creates AND `alter type ... add value`) lives in an explicit `begin; ... commit;` block at the top of the migration — Postgres cannot use an enum value in the transaction that added it. This applies equally to `supasheet.app_permission` additions.
+- All enum DDL (creates AND `alter type ... add value`) lives in an explicit `begin; ... commit;` block at the top of the migration — Postgres cannot use an enum value in the transaction that added it.
 - Extending later: `alter type app.ticket_status add value if not exists 'archived';` (values can only be appended, never removed or reordered without recreating the type).
 - Enum columns get a default: `status app.ticket_status not null default 'open'`.
 - Index enum columns used in filters and kanban grouping.

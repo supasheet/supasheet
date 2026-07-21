@@ -11,11 +11,11 @@ requires:
 
 # Materialized Views
 
-Materialized views are first-class read-only resources: same comment JSON shape as tables/views, discovered via `supasheet.get_materialized_views()`, `:select` permission only. Use them for expensive aggregations (heavy reports, precomputed rollups).
+Materialized views are first-class read-only resources: same comment JSON shape as tables/views, discovered via `supasheet.get_materialized_views()`, a `select` grant only. Use them for expensive aggregations (heavy reports, precomputed rollups).
 
 ## Creation pattern
 
-Materialized views do **not** support `security_invoker` — they store data computed with the creator's rights, and access is controlled purely by grants + the `:select` permission:
+Materialized views do **not** support `security_invoker` — they store data computed with the creator's rights, and access is controlled purely by grants:
 
 ```sql
 create materialized view app.revenue_rollup as
@@ -31,16 +31,9 @@ group by 1;
 create unique index idx_app_revenue_rollup_month on app.revenue_rollup (month);
 
 revoke all on app.revenue_rollup from public, anon, authenticated, service_role;
-grant select on app.revenue_rollup to authenticated;
-
-alter type supasheet.app_permission add value if not exists 'app.revenue_rollup:select';
--- (committed enum block)
+grant select on app.revenue_rollup to "x-admin";
 
 comment on materialized view app.revenue_rollup is '{"type": "report", "name": "Revenue Rollup", "description": "Monthly paid revenue"}';
-
-insert into supasheet.role_permissions (role, permission)
-values ('x-admin', 'app.revenue_rollup:select')
-on conflict (role, permission) do nothing;
 
 select supasheet.refresh_metadata ();
 ```

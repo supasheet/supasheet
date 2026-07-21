@@ -565,14 +565,23 @@ export const resourceAuditLogsQueryOptions = (
   queryOptions({
     queryKey: ["supasheet", "resource-audit-logs", schema, resource, recordId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .schema("supasheet")
-        .rpc("get_audit_logs", {
-          p_schema: schema,
-          p_table: resource,
-          p_record_id: recordId ?? undefined,
-        })
+        .from("audit_logs")
+        .select(
+          "*, ...users(created_by_name:name, created_by_email:email, created_by_picture_url:picture_url)"
+        )
+        .eq("schema_name", schema)
+        .eq("table_name", resource)
+        .order("created_at", { ascending: false })
+
+      if (recordId) {
+        query = query.eq("record_id", recordId)
+      }
+
+      const { data, error } = await query
       if (error) throw error
+
       return (data ?? []) as ResourceAuditLog[]
     },
   })

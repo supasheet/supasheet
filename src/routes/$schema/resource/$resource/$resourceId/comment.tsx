@@ -19,7 +19,7 @@ export const Route = createFileRoute(
 )({
   beforeLoad: ({ context, params: { schema, resource } }) => {
     const hasComment = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:comment`
+      (p) => p.permission === `${schema}.${resource}:select`
     )
     if (!hasComment) throw notFound()
     const tableSchema = isTableSchema(context.resourceSchema)

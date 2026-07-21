@@ -2,8 +2,6 @@ create schema if not exists desk;
 
 grant usage on schema desk to authenticated;
 
-begin;
-
 create type desk.task_status as enum('pending', 'in_progress', 'completed', 'archived');
 
 create type desk.task_priority as enum('low', 'medium', 'high', 'critical');
@@ -17,129 +15,6 @@ create type desk.project_status as enum(
 );
 
 create type desk.project_priority as enum('low', 'medium', 'high', 'critical');
-
--- Task permissions
-alter type supasheet.app_permission
-add value 'desk.tasks:select';
-
-alter type supasheet.app_permission
-add value 'desk.tasks:insert';
-
-alter type supasheet.app_permission
-add value 'desk.tasks:update';
-
-alter type supasheet.app_permission
-add value 'desk.tasks:delete';
-
-alter type supasheet.app_permission
-add value 'desk.tasks:audit';
-
-alter type supasheet.app_permission
-add value 'desk.tasks:comment';
-
-alter type supasheet.app_permission
-add value 'desk.user_tasks:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_report:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_summary:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_completion_rate:select';
-
-alter type supasheet.app_permission
-add value 'desk.tasks_by_status:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_critical_count:select';
-
-alter type supasheet.app_permission
-add value if not exists 'desk.task_list_simple:select';
-
-alter type supasheet.app_permission
-add value if not exists 'desk.active_tasks_simple:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_priority_bar:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_completion_line:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_metrics_radar:select';
-
--- Project permissions
-alter type supasheet.app_permission
-add value 'desk.projects:select';
-
-alter type supasheet.app_permission
-add value 'desk.projects:insert';
-
-alter type supasheet.app_permission
-add value 'desk.projects:update';
-
-alter type supasheet.app_permission
-add value 'desk.projects:delete';
-
-alter type supasheet.app_permission
-add value 'desk.projects:audit';
-
-alter type supasheet.app_permission
-add value 'desk.projects:comment';
-
-alter type supasheet.app_permission
-add value 'desk.project_report:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_summary:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_completion_rate:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_list_simple:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_task_overview:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'desk.project_priority_bar:select';
-
--- Task comment permissions
-alter type supasheet.app_permission
-add value 'desk.task_comments:select';
-
-alter type supasheet.app_permission
-add value 'desk.task_comments:insert';
-
-alter type supasheet.app_permission
-add value 'desk.task_comments:update';
-
-alter type supasheet.app_permission
-add value 'desk.task_comments:delete';
-
-alter type supasheet.app_permission
-add value 'desk.task_comments:audit';
-
-alter type supasheet.app_permission
-add value 'desk.task_comments:comment';
-
-alter type supasheet.app_permission
-add value 'desk.users:select';
-
--- Task history permissions
-alter type supasheet.app_permission
-add value 'desk.tasks_history:select';
-
-commit;
 
 ----------------------------------------------------------------
 -- Projects table (created before tasks so tasks can FK to it)
@@ -368,7 +243,7 @@ select
 ,
   insert,
 update,
-delete on table desk.projects to authenticated;
+delete on table desk.projects to "x-admin";
 
 create index idx_projects_user_id on desk.projects (user_id);
 
@@ -385,7 +260,6 @@ select
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.projects:select')
     and deleted_at is null
   );
 
@@ -396,7 +270,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.projects:insert')
   );
 
 create policy projects_update on desk.projects
@@ -406,7 +279,6 @@ for update
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.projects:update')
     and deleted_at is null
   )
 with
@@ -415,7 +287,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.projects:update')
   );
 
 create policy projects_delete on desk.projects for delete to authenticated using (
@@ -423,7 +294,6 @@ create policy projects_delete on desk.projects for delete to authenticated using
     select
       auth.uid ()
   )
-  and supasheet.has_permission ('desk.projects:delete')
 );
 
 ----------------------------------------------------------------
@@ -742,7 +612,7 @@ select
 ,
   insert,
 update,
-delete on table desk.tasks to authenticated;
+delete on table desk.tasks to "x-admin";
 
 create index idx_tasks_user_id on desk.tasks (user_id);
 
@@ -765,7 +635,6 @@ select
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.tasks:select')
     and deleted_at is null
   );
 
@@ -776,7 +645,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.tasks:insert')
   );
 
 create policy tasks_update on desk.tasks
@@ -786,7 +654,6 @@ for update
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.tasks:update')
     and deleted_at is null
   )
 with
@@ -795,7 +662,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.tasks:update')
   );
 
 create policy tasks_delete on desk.tasks for delete to authenticated using (
@@ -803,7 +669,6 @@ create policy tasks_delete on desk.tasks for delete to authenticated using (
     select
       auth.uid ()
   )
-  and supasheet.has_permission ('desk.tasks:delete')
 );
 
 ----------------------------------------------------------------
@@ -855,7 +720,7 @@ from
 
 grant
 select
-  on table desk.tasks_history to authenticated;
+  on table desk.tasks_history to "x-admin";
 
 create index idx_tasks_history_task_id on desk.tasks_history (task_id);
 
@@ -866,8 +731,7 @@ alter table desk.tasks_history enable row level security;
 create policy tasks_history_select on desk.tasks_history for
 select
   to authenticated using (
-    supasheet.has_permission ('desk.tasks_history:select')
-    and exists (
+    exists (
       select
         1
       from
@@ -880,11 +744,6 @@ select
         )
     )
   );
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks_history:select');
 
 create or replace function desk.tasks_record_history () returns trigger as $$
 begin
@@ -979,7 +838,7 @@ select
 ,
   insert,
 update,
-delete on table desk.task_comments to authenticated;
+delete on table desk.task_comments to "x-admin";
 
 create index idx_task_comments_task_id on desk.task_comments (task_id);
 
@@ -991,8 +850,7 @@ alter table desk.task_comments enable row level security;
 create policy task_comments_select on desk.task_comments for
 select
   to authenticated using (
-    supasheet.has_permission ('desk.task_comments:select')
-    and deleted_at is null
+    deleted_at is null
     and (
       user_id = (
         select
@@ -1016,8 +874,7 @@ select
 create policy task_comments_insert on desk.task_comments for insert to authenticated
 with
   check (
-    supasheet.has_permission ('desk.task_comments:insert')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -1038,8 +895,7 @@ with
 create policy task_comments_update on desk.task_comments
 for update
   to authenticated using (
-    supasheet.has_permission ('desk.task_comments:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -1047,16 +903,14 @@ for update
   )
 with
   check (
-    supasheet.has_permission ('desk.task_comments:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
   );
 
 create policy task_comments_delete on desk.task_comments for delete to authenticated using (
-  supasheet.has_permission ('desk.task_comments:delete')
-  and user_id = (
+  user_id = (
     select
       auth.uid ()
   )
@@ -1082,7 +936,7 @@ from
 
 grant
 select
-  on desk.user_tasks to authenticated;
+  on desk.user_tasks to "x-admin";
 
 create or replace view desk.users
 with
@@ -1099,7 +953,7 @@ from
 
 grant
 select
-  on desk.users to authenticated;
+  on desk.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Reports
@@ -1121,7 +975,7 @@ from
 
 grant
 select
-  on desk.task_report to authenticated;
+  on desk.task_report to "x-admin";
 
 comment on view desk.task_report is '{"type": "report", "name": "Task Report", "description": "Full task list with user details"}';
 
@@ -1165,7 +1019,7 @@ from
 
 grant
 select
-  on desk.project_report to authenticated;
+  on desk.project_report to "x-admin";
 
 comment on view desk.project_report is '{"type": "report", "name": "Project Report", "description": "Projects with task completion summary"}';
 
@@ -1191,7 +1045,7 @@ from
 
 grant
 select
-  on desk.task_summary to authenticated;
+  on desk.task_summary to "x-admin";
 
 -- View for task completion rate (Card2 - split layout)
 create or replace view desk.task_completion_rate
@@ -1218,7 +1072,7 @@ from
 
 grant
 select
-  on desk.task_completion_rate to authenticated;
+  on desk.task_completion_rate to "x-admin";
 
 -- View for completed tasks stats (Card3 - value and percent layout)
 create or replace view desk.tasks_by_status
@@ -1251,7 +1105,7 @@ from
 
 grant
 select
-  on desk.tasks_by_status to authenticated;
+  on desk.tasks_by_status to "x-admin";
 
 -- View for task progress with breakdown (Card4 - progress layout)
 create or replace view desk.task_critical_count
@@ -1309,7 +1163,7 @@ from
 
 grant
 select
-  on desk.task_critical_count to authenticated;
+  on desk.task_critical_count to "x-admin";
 
 comment on view desk.task_summary is '{"type": "dashboard_widget", "name": "Task Summary", "description": "Summary of active tasks", "widget_type": "card_1"}';
 
@@ -1342,7 +1196,7 @@ from
 
 grant
 select
-  on desk.task_list_simple to authenticated;
+  on desk.task_list_simple to "x-admin";
 
 -- Table widget: active tasks by priority
 create or replace view desk.active_tasks_simple
@@ -1374,20 +1228,11 @@ from
 
 grant
 select
-  on desk.active_tasks_simple to authenticated;
+  on desk.active_tasks_simple to "x-admin";
 
 comment on view desk.task_list_simple is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest tasks in the system", "widget_type": "table_1"}';
 
 comment on view desk.active_tasks_simple is '{"type": "dashboard_widget", "name": "Priority Queue", "description": "Active tasks by priority", "widget_type": "table_1"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_completion_rate:select'),
-  ('x-admin', 'desk.tasks_by_status:select'),
-  ('x-admin', 'desk.task_critical_count:select'),
-  ('x-admin', 'desk.task_list_simple:select'),
-  ('x-admin', 'desk.active_tasks_simple:select');
 
 ----------------------------------------------------------------
 -- Dashboard widget views for projects
@@ -1412,7 +1257,7 @@ from
 
 grant
 select
-  on desk.project_summary to authenticated;
+  on desk.project_summary to "x-admin";
 
 -- Card2: completed vs in-progress projects
 create or replace view desk.project_completion_rate
@@ -1439,7 +1284,7 @@ from
 
 grant
 select
-  on desk.project_completion_rate to authenticated;
+  on desk.project_completion_rate to "x-admin";
 
 -- Table1: recent projects (simple)
 create or replace view desk.project_list_simple
@@ -1464,7 +1309,7 @@ from
 
 grant
 select
-  on desk.project_list_simple to authenticated;
+  on desk.project_list_simple to "x-admin";
 
 -- Table2: projects with task breakdown
 create or replace view desk.project_task_overview
@@ -1513,7 +1358,7 @@ from
 
 grant
 select
-  on desk.project_task_overview to authenticated;
+  on desk.project_task_overview to "x-admin";
 
 comment on view desk.project_summary is '{"type": "dashboard_widget", "name": "Active Projects", "description": "Count of active projects", "widget_type": "card_1"}';
 
@@ -1522,14 +1367,6 @@ comment on view desk.project_completion_rate is '{"type": "dashboard_widget", "n
 comment on view desk.project_list_simple is '{"type": "dashboard_widget", "name": "Recent Projects", "description": "Latest projects", "widget_type": "table_1"}';
 
 comment on view desk.project_task_overview is '{"type": "dashboard_widget", "name": "Project Task Breakdown", "description": "Projects with task completion stats", "widget_type": "table_2"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.project_summary:select'),
-  ('x-admin', 'desk.project_completion_rate:select'),
-  ('x-admin', 'desk.project_list_simple:select'),
-  ('x-admin', 'desk.project_task_overview:select');
 
 ----------------------------------------------------------------
 -- Chart views for tasks
@@ -1564,7 +1401,7 @@ from
 
 grant
 select
-  on desk.task_priority_bar to authenticated;
+  on desk.task_priority_bar to "x-admin";
 
 -- Line chart: daily task completion rate
 create or replace view desk.task_completion_line
@@ -1593,7 +1430,7 @@ from
 
 grant
 select
-  on desk.task_completion_line to authenticated;
+  on desk.task_completion_line to "x-admin";
 
 -- Pie chart: task status distribution
 create or replace view desk.task_status_pie
@@ -1614,7 +1451,7 @@ from
 
 grant
 select
-  on desk.task_status_pie to authenticated;
+  on desk.task_status_pie to "x-admin";
 
 -- Radar chart: task metrics by priority
 create or replace view desk.task_metrics_radar
@@ -1644,7 +1481,7 @@ from
 
 grant
 select
-  on desk.task_metrics_radar to authenticated;
+  on desk.task_metrics_radar to "x-admin";
 
 comment on view desk.task_priority_bar is '{"type": "chart", "name": "Task Priority Bar", "description": "Tasks grouped by priority level", "chart_type": "bar"}';
 
@@ -1653,14 +1490,6 @@ comment on view desk.task_completion_line is '{"type": "chart", "name": "Task Co
 comment on view desk.task_status_pie is '{"type": "chart", "name": "Task Status Pie", "description": "Current task status breakdown", "chart_type": "pie"}';
 
 comment on view desk.task_metrics_radar is '{"type": "chart", "name": "Task Metrics Radar", "description": "Task metrics across priorities", "chart_type": "radar"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_priority_bar:select'),
-  ('x-admin', 'desk.task_completion_line:select'),
-  ('x-admin', 'desk.task_status_pie:select'),
-  ('x-admin', 'desk.task_metrics_radar:select');
 
 ----------------------------------------------------------------
 -- Chart views for projects
@@ -1684,7 +1513,7 @@ from
 
 grant
 select
-  on desk.project_status_pie to authenticated;
+  on desk.project_status_pie to "x-admin";
 
 -- Bar chart: projects by priority
 create or replace view desk.project_priority_bar
@@ -1716,135 +1545,11 @@ from
 
 grant
 select
-  on desk.project_priority_bar to authenticated;
+  on desk.project_priority_bar to "x-admin";
 
 comment on view desk.project_status_pie is '{"type": "chart", "name": "Project Status Pie", "description": "Projects grouped by current status", "chart_type": "pie"}';
 
 comment on view desk.project_priority_bar is '{"type": "chart", "name": "Project Priority Bar", "description": "Projects grouped by priority level", "chart_type": "bar"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.project_status_pie:select'),
-  ('x-admin', 'desk.project_priority_bar:select');
-
-----------------------------------------------------------------
--- Role permissions
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:insert');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:update');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:delete');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:audit');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.tasks:comment');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.user_tasks:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_report:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_summary:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:insert');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:update');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:delete');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:audit');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.projects:comment');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.project_report:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:insert');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:update');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:delete');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:audit');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.task_comments:comment');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.users:select');
 
 ----------------------------------------------------------------
 -- Audit triggers for tasks
@@ -1903,7 +1608,7 @@ declare
     v_body       text;
 begin
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('desk.projects:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('desk', 'projects', 'select') || array[new.user_id],
         null
     );
 
@@ -2029,66 +1734,7 @@ execute function desk.trg_task_comments_notify ();
 ----------------------------------------------------------------
 -- Timesheets
 ----------------------------------------------------------------
-begin;
-
 create type desk.timesheet_status as enum('draft', 'submitted', 'approved', 'rejected');
-
--- Timesheet CRUD permissions
-alter type supasheet.app_permission
-add value 'desk.timesheets:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheets:insert';
-
-alter type supasheet.app_permission
-add value 'desk.timesheets:update';
-
-alter type supasheet.app_permission
-add value 'desk.timesheets:delete';
-
-alter type supasheet.app_permission
-add value 'desk.timesheets:audit';
-
-alter type supasheet.app_permission
-add value 'desk.timesheets:comment';
-
--- Dashboard widget permissions
-alter type supasheet.app_permission
-add value 'desk.timesheet_hours_this_week:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_approval_status:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_billable_rate:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_status_breakdown:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_recent_entries:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_top_tasks:select';
-
--- Chart permissions
-alter type supasheet.app_permission
-add value 'desk.timesheet_hours_by_project:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_daily_hours_line:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'desk.timesheet_weekday_radar:select';
-
--- Report permission
-alter type supasheet.app_permission
-add value 'desk.timesheet_report:select';
-
-commit;
 
 create table desk.timesheets (
   id uuid primary key default extensions.uuid_generate_v4 (),
@@ -2296,7 +1942,7 @@ select
 ,
   insert,
 update,
-delete on table desk.timesheets to authenticated;
+delete on table desk.timesheets to "x-admin";
 
 create index idx_timesheets_user_id on desk.timesheets (user_id);
 
@@ -2319,7 +1965,6 @@ select
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.timesheets:select')
     and deleted_at is null
   );
 
@@ -2330,7 +1975,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.timesheets:insert')
   );
 
 create policy timesheets_update on desk.timesheets
@@ -2340,7 +1984,6 @@ for update
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.timesheets:update')
     and deleted_at is null
   )
 with
@@ -2349,7 +1992,6 @@ with
       select
         auth.uid ()
     )
-    and supasheet.has_permission ('desk.timesheets:update')
   );
 
 create policy timesheets_delete on desk.timesheets for delete to authenticated using (
@@ -2357,7 +1999,6 @@ create policy timesheets_delete on desk.timesheets for delete to authenticated u
     select
       auth.uid ()
   )
-  and supasheet.has_permission ('desk.timesheets:delete')
 );
 
 ----------------------------------------------------------------
@@ -2383,7 +2024,7 @@ from
 
 grant
 select
-  on desk.timesheet_hours_this_week to authenticated;
+  on desk.timesheet_hours_this_week to "x-admin";
 
 -- Card2: approved vs pending entries
 create or replace view desk.timesheet_approval_status
@@ -2410,7 +2051,7 @@ from
 
 grant
 select
-  on desk.timesheet_approval_status to authenticated;
+  on desk.timesheet_approval_status to "x-admin";
 
 -- Card3: billable hours with percentage of total
 create or replace view desk.timesheet_billable_rate
@@ -2452,7 +2093,7 @@ from
 
 grant
 select
-  on desk.timesheet_billable_rate to authenticated;
+  on desk.timesheet_billable_rate to "x-admin";
 
 -- Card4: status breakdown with segments
 create or replace view desk.timesheet_status_breakdown
@@ -2503,7 +2144,7 @@ from
 
 grant
 select
-  on desk.timesheet_status_breakdown to authenticated;
+  on desk.timesheet_status_breakdown to "x-admin";
 
 -- Table widget: recent time entries
 create or replace view desk.timesheet_recent_entries
@@ -2528,7 +2169,7 @@ from
 
 grant
 select
-  on desk.timesheet_recent_entries to authenticated;
+  on desk.timesheet_recent_entries to "x-admin";
 
 -- Table widget: top tasks by time logged
 create or replace view desk.timesheet_top_tasks
@@ -2555,7 +2196,7 @@ from
 
 grant
 select
-  on desk.timesheet_top_tasks to authenticated;
+  on desk.timesheet_top_tasks to "x-admin";
 
 comment on view desk.timesheet_hours_this_week is '{"type": "dashboard_widget", "name": "Hours This Week", "description": "Total hours logged in the current week", "widget_type": "card_1"}';
 
@@ -2568,25 +2209,6 @@ comment on view desk.timesheet_status_breakdown is '{"type": "dashboard_widget",
 comment on view desk.timesheet_recent_entries is '{"type": "dashboard_widget", "name": "Recent Time Entries", "description": "Latest timesheet entries", "widget_type": "table_1"}';
 
 comment on view desk.timesheet_top_tasks is '{"type": "dashboard_widget", "name": "Top Tasks by Time", "description": "Tasks with the most logged time", "widget_type": "table_2"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  (
-    'x-admin',
-    'desk.timesheet_hours_this_week:select'
-  ),
-  (
-    'x-admin',
-    'desk.timesheet_approval_status:select'
-  ),
-  ('x-admin', 'desk.timesheet_billable_rate:select'),
-  (
-    'x-admin',
-    'desk.timesheet_status_breakdown:select'
-  ),
-  ('x-admin', 'desk.timesheet_recent_entries:select'),
-  ('x-admin', 'desk.timesheet_top_tasks:select');
 
 ----------------------------------------------------------------
 -- Chart views for timesheets
@@ -2623,7 +2245,7 @@ from
 
 grant
 select
-  on desk.timesheet_hours_by_project to authenticated;
+  on desk.timesheet_hours_by_project to "x-admin";
 
 -- Line chart: daily hours over last 14 days
 create or replace view desk.timesheet_daily_hours_line
@@ -2658,7 +2280,7 @@ from
 
 grant
 select
-  on desk.timesheet_daily_hours_line to authenticated;
+  on desk.timesheet_daily_hours_line to "x-admin";
 
 -- Pie chart: entry count by status
 create or replace view desk.timesheet_status_pie
@@ -2679,7 +2301,7 @@ from
 
 grant
 select
-  on desk.timesheet_status_pie to authenticated;
+  on desk.timesheet_status_pie to "x-admin";
 
 -- Radar chart: hours by day of week
 create or replace view desk.timesheet_weekday_radar
@@ -2721,7 +2343,7 @@ from
 
 grant
 select
-  on desk.timesheet_weekday_radar to authenticated;
+  on desk.timesheet_weekday_radar to "x-admin";
 
 comment on view desk.timesheet_hours_by_project is '{"type": "chart", "name": "Hours by Project", "description": "Total and billable hours grouped by project", "chart_type": "bar"}';
 
@@ -2730,20 +2352,6 @@ comment on view desk.timesheet_daily_hours_line is '{"type": "chart", "name": "D
 comment on view desk.timesheet_status_pie is '{"type": "chart", "name": "Timesheet Status", "description": "Entry count grouped by status", "chart_type": "pie"}';
 
 comment on view desk.timesheet_weekday_radar is '{"type": "chart", "name": "Hours by Weekday", "description": "Total and billable hours per day of the week", "chart_type": "radar"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  (
-    'x-admin',
-    'desk.timesheet_hours_by_project:select'
-  ),
-  (
-    'x-admin',
-    'desk.timesheet_daily_hours_line:select'
-  ),
-  ('x-admin', 'desk.timesheet_status_pie:select'),
-  ('x-admin', 'desk.timesheet_weekday_radar:select');
 
 ----------------------------------------------------------------
 -- Report view for timesheets
@@ -2783,47 +2391,9 @@ from
 
 grant
 select
-  on desk.timesheet_report to authenticated;
+  on desk.timesheet_report to "x-admin";
 
 comment on view desk.timesheet_report is '{"type": "report", "name": "Timesheet Report", "description": "Full time entry detail with user, task, and project context"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheet_report:select');
-
-----------------------------------------------------------------
--- Role permissions for timesheets
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:select');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:insert');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:update');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:delete');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:audit');
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'desk.timesheets:comment');
 
 ----------------------------------------------------------------
 -- Audit triggers for timesheets
@@ -2863,7 +2433,7 @@ begin
             v_title      := 'Timesheet submitted for review';
             v_body       := '"' || new.title || '" was submitted and is awaiting approval.';
             v_recipients := array_remove(
-                supasheet.get_users_with_permission('desk.timesheets:select'),
+                supasheet.get_users_with_table_privilege('desk', 'timesheets', 'select'),
                 null
             );
 

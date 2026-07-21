@@ -3,10 +3,8 @@ create schema if not exists crm;
 grant usage on schema crm to authenticated;
 
 ----------------------------------------------------------------
--- Enums + permissions (must commit before use)
+-- Enums
 ----------------------------------------------------------------
-begin;
-
 create type crm.company_type as enum(
   'customer',
   'prospect',
@@ -46,146 +44,6 @@ create type crm.activity_status as enum(
   'cancelled'
 );
 
--- Companies
-alter type supasheet.app_permission
-add value 'crm.companies:select';
-
-alter type supasheet.app_permission
-add value 'crm.companies:insert';
-
-alter type supasheet.app_permission
-add value 'crm.companies:update';
-
-alter type supasheet.app_permission
-add value 'crm.companies:delete';
-
-alter type supasheet.app_permission
-add value 'crm.companies:audit';
-
-alter type supasheet.app_permission
-add value 'crm.companies:comment';
-
--- Contacts
-alter type supasheet.app_permission
-add value 'crm.contacts:select';
-
-alter type supasheet.app_permission
-add value 'crm.contacts:insert';
-
-alter type supasheet.app_permission
-add value 'crm.contacts:update';
-
-alter type supasheet.app_permission
-add value 'crm.contacts:delete';
-
-alter type supasheet.app_permission
-add value 'crm.contacts:audit';
-
-alter type supasheet.app_permission
-add value 'crm.contacts:comment';
-
--- Contact ↔ Company junction (no :update — junction rows are insert/delete only)
-alter type supasheet.app_permission
-add value 'crm.contact_companies:select';
-
-alter type supasheet.app_permission
-add value 'crm.contact_companies:insert';
-
-alter type supasheet.app_permission
-add value 'crm.contact_companies:delete';
-
-alter type supasheet.app_permission
-add value 'crm.contact_companies:audit';
-
-alter type supasheet.app_permission
-add value 'crm.contact_companies:comment';
-
--- Deals
-alter type supasheet.app_permission
-add value 'crm.deals:select';
-
-alter type supasheet.app_permission
-add value 'crm.deals:insert';
-
-alter type supasheet.app_permission
-add value 'crm.deals:update';
-
-alter type supasheet.app_permission
-add value 'crm.deals:delete';
-
-alter type supasheet.app_permission
-add value 'crm.deals:audit';
-
-alter type supasheet.app_permission
-add value 'crm.deals:comment';
-
--- Activities
-alter type supasheet.app_permission
-add value 'crm.activities:select';
-
-alter type supasheet.app_permission
-add value 'crm.activities:insert';
-
-alter type supasheet.app_permission
-add value 'crm.activities:update';
-
-alter type supasheet.app_permission
-add value 'crm.activities:delete';
-
-alter type supasheet.app_permission
-add value 'crm.activities:audit';
-
-alter type supasheet.app_permission
-add value 'crm.activities:comment';
-
--- Users mirror view (so PostgREST joins from crm.* tables can resolve)
-alter type supasheet.app_permission
-add value 'crm.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'crm.companies_report:select';
-
-alter type supasheet.app_permission
-add value 'crm.contacts_report:select';
-
-alter type supasheet.app_permission
-add value 'crm.deals_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'crm.deal_pipeline_summary:select';
-
-alter type supasheet.app_permission
-add value 'crm.deal_win_rate:select';
-
-alter type supasheet.app_permission
-add value 'crm.pipeline_value:select';
-
-alter type supasheet.app_permission
-add value 'crm.deal_health:select';
-
-alter type supasheet.app_permission
-add value 'crm.recent_deals:select';
-
-alter type supasheet.app_permission
-add value 'crm.top_companies:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'crm.deals_by_stage_pie:select';
-
-alter type supasheet.app_permission
-add value 'crm.deals_by_company_bar:select';
-
-alter type supasheet.app_permission
-add value 'crm.pipeline_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'crm.activity_metrics_radar:select';
-
-commit;
-
 ----------------------------------------------------------------
 -- Users mirror view
 ----------------------------------------------------------------
@@ -204,7 +62,7 @@ from
 
 grant
 select
-  on crm.users to authenticated;
+  on crm.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Companies
@@ -372,7 +230,7 @@ select
 ,
   insert,
 update,
-delete on table crm.companies to authenticated;
+delete on table crm.companies to "x-admin";
 
 create index idx_crm_companies_user_id on crm.companies (user_id);
 
@@ -388,19 +246,19 @@ alter table crm.companies enable row level security;
 
 create policy companies_select on crm.companies for
 select
-  to authenticated using (supasheet.has_permission ('crm.companies:select'));
+  to authenticated using (true);
 
 create policy companies_insert on crm.companies for insert to authenticated
 with
-  check (supasheet.has_permission ('crm.companies:insert'));
+  check (true);
 
 create policy companies_update on crm.companies
 for update
-  to authenticated using (supasheet.has_permission ('crm.companies:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('crm.companies:update'));
+  check (true);
 
-create policy companies_delete on crm.companies for delete to authenticated using (supasheet.has_permission ('crm.companies:delete'));
+create policy companies_delete on crm.companies for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Contacts
@@ -592,7 +450,7 @@ select
 ,
   insert,
 update,
-delete on table crm.contacts to authenticated;
+delete on table crm.contacts to "x-admin";
 
 create index idx_crm_contacts_user_id on crm.contacts (user_id);
 
@@ -608,19 +466,19 @@ alter table crm.contacts enable row level security;
 
 create policy contacts_select on crm.contacts for
 select
-  to authenticated using (supasheet.has_permission ('crm.contacts:select'));
+  to authenticated using (true);
 
 create policy contacts_insert on crm.contacts for insert to authenticated
 with
-  check (supasheet.has_permission ('crm.contacts:insert'));
+  check (true);
 
 create policy contacts_update on crm.contacts
 for update
-  to authenticated using (supasheet.has_permission ('crm.contacts:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('crm.contacts:update'));
+  check (true);
 
-create policy contacts_delete on crm.contacts for delete to authenticated using (supasheet.has_permission ('crm.contacts:delete'));
+create policy contacts_delete on crm.contacts for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Contact ↔ Company junction (many-to-many)
@@ -710,25 +568,19 @@ grant
 select
 ,
   insert,
-  delete on table crm.contact_companies to authenticated;
+  delete on table crm.contact_companies to "x-admin";
 
 alter table crm.contact_companies enable row level security;
 
 create policy contact_companies_select on crm.contact_companies for
 select
-  to authenticated using (
-    supasheet.has_permission ('crm.contact_companies:select')
-  );
+  to authenticated using (true);
 
 create policy contact_companies_insert on crm.contact_companies for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('crm.contact_companies:insert')
-  );
+  check (true);
 
-create policy contact_companies_delete on crm.contact_companies for delete to authenticated using (
-  supasheet.has_permission ('crm.contact_companies:delete')
-);
+create policy contact_companies_delete on crm.contact_companies for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Deals
@@ -950,7 +802,7 @@ select
 ,
   insert,
 update,
-delete on table crm.deals to authenticated;
+delete on table crm.deals to "x-admin";
 
 create index idx_crm_deals_user_id on crm.deals (user_id);
 
@@ -970,19 +822,19 @@ alter table crm.deals enable row level security;
 
 create policy deals_select on crm.deals for
 select
-  to authenticated using (supasheet.has_permission ('crm.deals:select'));
+  to authenticated using (true);
 
 create policy deals_insert on crm.deals for insert to authenticated
 with
-  check (supasheet.has_permission ('crm.deals:insert'));
+  check (true);
 
 create policy deals_update on crm.deals
 for update
-  to authenticated using (supasheet.has_permission ('crm.deals:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('crm.deals:update'));
+  check (true);
 
-create policy deals_delete on crm.deals for delete to authenticated using (supasheet.has_permission ('crm.deals:delete'));
+create policy deals_delete on crm.deals for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Activities
@@ -1179,7 +1031,7 @@ select
 ,
   insert,
 update,
-delete on table crm.activities to authenticated;
+delete on table crm.activities to "x-admin";
 
 create index idx_crm_activities_user_id on crm.activities (user_id);
 
@@ -1199,29 +1051,19 @@ alter table crm.activities enable row level security;
 
 create policy activities_select on crm.activities for
 select
-  to authenticated using (
-    supasheet.has_permission ('crm.activities:select')
-  );
+  to authenticated using (true);
 
 create policy activities_insert on crm.activities for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('crm.activities:insert')
-  );
+  check (true);
 
 create policy activities_update on crm.activities
 for update
-  to authenticated using (
-    supasheet.has_permission ('crm.activities:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('crm.activities:update')
-  );
+  check (true);
 
-create policy activities_delete on crm.activities for delete to authenticated using (
-  supasheet.has_permission ('crm.activities:delete')
-);
+create policy activities_delete on crm.activities for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -1273,7 +1115,7 @@ from
 
 grant
 select
-  on crm.companies_report to authenticated;
+  on crm.companies_report to "x-admin";
 
 comment on view crm.companies_report is '{"type": "report", "name": "Companies Report", "description": "All companies with deal and contact rollups"}';
 
@@ -1322,7 +1164,7 @@ from
 
 grant
 select
-  on crm.contacts_report to authenticated;
+  on crm.contacts_report to "x-admin";
 
 comment on view crm.contacts_report is '{"type": "report", "name": "Contacts Report", "description": "Contacts with primary company and deal stats"}';
 
@@ -1369,7 +1211,7 @@ from
 
 grant
 select
-  on crm.deals_report to authenticated;
+  on crm.deals_report to "x-admin";
 
 comment on view crm.deals_report is '{"type": "report", "name": "Deals Report", "description": "Full deal list with related company, contact, and activity data"}';
 
@@ -1396,7 +1238,7 @@ from
 
 grant
 select
-  on crm.deal_pipeline_summary to authenticated;
+  on crm.deal_pipeline_summary to "x-admin";
 
 -- card_2: won vs lost
 create or replace view crm.deal_win_rate
@@ -1423,7 +1265,7 @@ from
 
 grant
 select
-  on crm.deal_win_rate to authenticated;
+  on crm.deal_win_rate to "x-admin";
 
 -- card_3: pipeline value + win %
 create or replace view crm.pipeline_value
@@ -1465,7 +1307,7 @@ from
 
 grant
 select
-  on crm.pipeline_value to authenticated;
+  on crm.pipeline_value to "x-admin";
 
 -- card_4: deal health (at-risk breakdown)
 create or replace view crm.deal_health
@@ -1530,7 +1372,7 @@ from
 
 grant
 select
-  on crm.deal_health to authenticated;
+  on crm.deal_health to "x-admin";
 
 -- table_1: recent deals
 create or replace view crm.recent_deals
@@ -1555,7 +1397,7 @@ from
 
 grant
 select
-  on crm.recent_deals to authenticated;
+  on crm.recent_deals to "x-admin";
 
 -- table_2: top companies by pipeline value
 create or replace view crm.top_companies
@@ -1585,7 +1427,7 @@ from
 
 grant
 select
-  on crm.top_companies to authenticated;
+  on crm.top_companies to "x-admin";
 
 comment on view crm.deal_pipeline_summary is '{"type": "dashboard_widget", "name": "Open Deals", "description": "Count of deals not yet won or lost", "widget_type": "card_1"}';
 
@@ -1630,7 +1472,7 @@ from
 
 grant
 select
-  on crm.deals_by_stage_pie to authenticated;
+  on crm.deals_by_stage_pie to "x-admin";
 
 -- Bar: deals by company
 create or replace view crm.deals_by_company_bar
@@ -1663,7 +1505,7 @@ from
 
 grant
 select
-  on crm.deals_by_company_bar to authenticated;
+  on crm.deals_by_company_bar to "x-admin";
 
 -- Line: weekly pipeline trend (last 8 weeks)
 create or replace view crm.pipeline_trend_line
@@ -1689,7 +1531,7 @@ from
 
 grant
 select
-  on crm.pipeline_trend_line to authenticated;
+  on crm.pipeline_trend_line to "x-admin";
 
 -- Radar: activity metrics by type
 create or replace view crm.activity_metrics_radar
@@ -1718,7 +1560,7 @@ from
 
 grant
 select
-  on crm.activity_metrics_radar to authenticated;
+  on crm.activity_metrics_radar to "x-admin";
 
 comment on view crm.deals_by_stage_pie is '{"type": "chart", "name": "Deals By Stage", "description": "Deal count grouped by pipeline stage", "chart_type": "pie"}';
 
@@ -1727,56 +1569,6 @@ comment on view crm.deals_by_company_bar is '{"type": "chart", "name": "Deals By
 comment on view crm.pipeline_trend_line is '{"type": "chart", "name": "Pipeline Trend", "description": "Weekly deal count and pipeline value over 8 weeks", "chart_type": "line"}';
 
 comment on view crm.activity_metrics_radar is '{"type": "chart", "name": "Activity Metrics", "description": "Activity counts across types and statuses", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'crm.companies:select'),
-  ('x-admin', 'crm.companies:insert'),
-  ('x-admin', 'crm.companies:update'),
-  ('x-admin', 'crm.companies:delete'),
-  ('x-admin', 'crm.companies:audit'),
-  ('x-admin', 'crm.companies:comment'),
-  ('x-admin', 'crm.contacts:select'),
-  ('x-admin', 'crm.contacts:insert'),
-  ('x-admin', 'crm.contacts:update'),
-  ('x-admin', 'crm.contacts:delete'),
-  ('x-admin', 'crm.contacts:audit'),
-  ('x-admin', 'crm.contacts:comment'),
-  ('x-admin', 'crm.contact_companies:select'),
-  ('x-admin', 'crm.contact_companies:insert'),
-  ('x-admin', 'crm.contact_companies:delete'),
-  ('x-admin', 'crm.contact_companies:audit'),
-  ('x-admin', 'crm.contact_companies:comment'),
-  ('x-admin', 'crm.deals:select'),
-  ('x-admin', 'crm.deals:insert'),
-  ('x-admin', 'crm.deals:update'),
-  ('x-admin', 'crm.deals:delete'),
-  ('x-admin', 'crm.deals:audit'),
-  ('x-admin', 'crm.deals:comment'),
-  ('x-admin', 'crm.activities:select'),
-  ('x-admin', 'crm.activities:insert'),
-  ('x-admin', 'crm.activities:update'),
-  ('x-admin', 'crm.activities:delete'),
-  ('x-admin', 'crm.activities:audit'),
-  ('x-admin', 'crm.activities:comment'),
-  ('x-admin', 'crm.users:select'),
-  ('x-admin', 'crm.companies_report:select'),
-  ('x-admin', 'crm.contacts_report:select'),
-  ('x-admin', 'crm.deals_report:select'),
-  ('x-admin', 'crm.deal_pipeline_summary:select'),
-  ('x-admin', 'crm.deal_win_rate:select'),
-  ('x-admin', 'crm.pipeline_value:select'),
-  ('x-admin', 'crm.deal_health:select'),
-  ('x-admin', 'crm.recent_deals:select'),
-  ('x-admin', 'crm.top_companies:select'),
-  ('x-admin', 'crm.deals_by_stage_pie:select'),
-  ('x-admin', 'crm.deals_by_company_bar:select'),
-  ('x-admin', 'crm.pipeline_trend_line:select'),
-  ('x-admin', 'crm.activity_metrics_radar:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -1849,7 +1641,7 @@ declare
     v_body       text;
 begin
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('crm.companies:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('crm', 'companies', 'select') || array[new.user_id],
         null
     );
 
@@ -1895,7 +1687,7 @@ begin
         v_title := 'New deal';
         v_body  := 'Deal "' || new.title || '" was created.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('crm.deals:select') || array[new.user_id],
+            supasheet.get_users_with_table_privilege('crm', 'deals', 'select') || array[new.user_id],
             null
         );
     elsif new.stage is distinct from old.stage then
@@ -1903,7 +1695,7 @@ begin
         v_title := 'Deal stage updated';
         v_body  := 'Deal "' || new.title || '" moved to ' || new.stage::text || '.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('crm.deals:select') || array[new.user_id],
+            supasheet.get_users_with_table_privilege('crm', 'deals', 'select') || array[new.user_id],
             null
         );
     elsif new.value is distinct from old.value then

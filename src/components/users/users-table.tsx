@@ -14,7 +14,7 @@ import { DataTable } from "#/components/data-table/data-table"
 import { DataTableActionBar } from "#/components/data-table/data-table-action-bar"
 import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
 import { useDataTable } from "#/hooks/use-data-table"
-import { useHasPermission } from "#/hooks/use-permissions"
+import { useHasRole } from "#/hooks/use-permissions"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import { adminDeleteUserMutationOptions } from "#/lib/supabase/data/admin-auth"
 
@@ -39,9 +39,9 @@ export function UsersTable({
   pageCount,
 }: UsersTableProps) {
   const queryClient = useQueryClient()
-  const canDelete = useHasPermission("supasheet.users:delete")
-  const canUpdate = useHasPermission("supasheet.users:update")
-  const canViewAll = useHasPermission("supasheet.users:select_all")
+  const canDelete = useHasRole("x-admin")
+  const canUpdate = useHasRole("x-admin")
+  const canViewAll = useHasRole("x-admin")
   const columns = useMemo(
     () => getUsersTableColumns({ columnsSchema, canUpdate, canViewAll }),
     [columnsSchema, canUpdate, canViewAll]

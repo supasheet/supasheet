@@ -3,171 +3,11 @@ create schema if not exists blog;
 grant usage on schema blog to authenticated;
 
 ----------------------------------------------------------------
--- Enums + permissions (must commit before use)
+-- Enums
 ----------------------------------------------------------------
-begin;
-
 create type blog.post_status as enum('draft', 'scheduled', 'published', 'archived');
 
 create type blog.comment_status as enum('pending', 'approved', 'spam');
-
--- Blog settings (singleton)
-alter type supasheet.app_permission
-add value 'blog.blog_settings:select';
-
-alter type supasheet.app_permission
-add value 'blog.blog_settings:insert';
-
-alter type supasheet.app_permission
-add value 'blog.blog_settings:update';
-
-alter type supasheet.app_permission
-add value 'blog.blog_settings:audit';
-
-alter type supasheet.app_permission
-add value 'blog.blog_settings:comment';
-
--- Authors
-alter type supasheet.app_permission
-add value 'blog.authors:select';
-
-alter type supasheet.app_permission
-add value 'blog.authors:insert';
-
-alter type supasheet.app_permission
-add value 'blog.authors:update';
-
-alter type supasheet.app_permission
-add value 'blog.authors:delete';
-
-alter type supasheet.app_permission
-add value 'blog.authors:audit';
-
-alter type supasheet.app_permission
-add value 'blog.authors:comment';
-
--- Social links
-alter type supasheet.app_permission
-add value 'blog.social_links:select';
-
-alter type supasheet.app_permission
-add value 'blog.social_links:insert';
-
-alter type supasheet.app_permission
-add value 'blog.social_links:update';
-
-alter type supasheet.app_permission
-add value 'blog.social_links:delete';
-
-alter type supasheet.app_permission
-add value 'blog.social_links:audit';
-
-alter type supasheet.app_permission
-add value 'blog.social_links:comment';
-
--- Categories
-alter type supasheet.app_permission
-add value 'blog.categories:select';
-
-alter type supasheet.app_permission
-add value 'blog.categories:insert';
-
-alter type supasheet.app_permission
-add value 'blog.categories:update';
-
-alter type supasheet.app_permission
-add value 'blog.categories:delete';
-
-alter type supasheet.app_permission
-add value 'blog.categories:audit';
-
-alter type supasheet.app_permission
-add value 'blog.categories:comment';
-
--- Posts
-alter type supasheet.app_permission
-add value 'blog.posts:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts:insert';
-
-alter type supasheet.app_permission
-add value 'blog.posts:update';
-
-alter type supasheet.app_permission
-add value 'blog.posts:delete';
-
-alter type supasheet.app_permission
-add value 'blog.posts:audit';
-
-alter type supasheet.app_permission
-add value 'blog.posts:comment';
-
--- Post categories junction (no :update — junction rows are insert/delete only)
-alter type supasheet.app_permission
-add value 'blog.post_categories:select';
-
-alter type supasheet.app_permission
-add value 'blog.post_categories:insert';
-
-alter type supasheet.app_permission
-add value 'blog.post_categories:delete';
-
-alter type supasheet.app_permission
-add value 'blog.post_categories:audit';
-
-alter type supasheet.app_permission
-add value 'blog.post_categories:comment';
-
--- Comments
-alter type supasheet.app_permission
-add value 'blog.comments:select';
-
-alter type supasheet.app_permission
-add value 'blog.comments:insert';
-
-alter type supasheet.app_permission
-add value 'blog.comments:update';
-
-alter type supasheet.app_permission
-add value 'blog.comments:delete';
-
-alter type supasheet.app_permission
-add value 'blog.comments:audit';
-
-alter type supasheet.app_permission
-add value 'blog.comments:comment';
-
--- Users mirror view
-alter type supasheet.app_permission
-add value 'blog.users:select';
-
--- Dashboard / chart / report views
-alter type supasheet.app_permission
-add value 'blog.posts_summary:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts_completion_rate:select';
-
-alter type supasheet.app_permission
-add value 'blog.total_views:select';
-
-alter type supasheet.app_permission
-add value 'blog.recent_posts:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts_per_month_line:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts_by_category_bar:select';
-
-alter type supasheet.app_permission
-add value 'blog.posts_report:select';
-
-commit;
 
 ----------------------------------------------------------------
 -- Blog Settings  (single resource — one row only)
@@ -234,31 +74,23 @@ grant
 select
 ,
   insert,
-update on table blog.blog_settings to authenticated;
+update on table blog.blog_settings to "x-admin";
 
 alter table blog.blog_settings enable row level security;
 
 create policy blog_settings_select on blog.blog_settings for
 select
-  to authenticated using (
-    supasheet.has_permission ('blog.blog_settings:select')
-  );
+  to authenticated using (true);
 
 create policy blog_settings_insert on blog.blog_settings for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('blog.blog_settings:insert')
-  );
+  check (true);
 
 create policy blog_settings_update on blog.blog_settings
 for update
-  to authenticated using (
-    supasheet.has_permission ('blog.blog_settings:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('blog.blog_settings:update')
-  );
+  check (true);
 
 ----------------------------------------------------------------
 -- Users mirror (for Postgrest joins from blog.* tables)
@@ -278,7 +110,7 @@ from
 
 grant
 select
-  on blog.users to authenticated;
+  on blog.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Authors
@@ -364,7 +196,7 @@ select
 ,
   insert,
 update,
-delete on table blog.authors to authenticated;
+delete on table blog.authors to "x-admin";
 
 create index idx_blog_authors_user_id on blog.authors (user_id);
 
@@ -373,8 +205,7 @@ alter table blog.authors enable row level security;
 create policy authors_select on blog.authors for
 select
   to authenticated using (
-    supasheet.has_permission ('blog.authors:select')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -383,8 +214,7 @@ select
 create policy authors_insert on blog.authors for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.authors:insert')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -393,24 +223,21 @@ with
 create policy authors_update on blog.authors
 for update
   to authenticated using (
-    supasheet.has_permission ('blog.authors:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
   )
 with
   check (
-    supasheet.has_permission ('blog.authors:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
   );
 
 create policy authors_delete on blog.authors for delete to authenticated using (
-  supasheet.has_permission ('blog.authors:delete')
-  and user_id = (
+  user_id = (
     select
       auth.uid ()
   )
@@ -443,15 +270,14 @@ select
 ,
   insert,
 update,
-delete on table blog.social_links to authenticated;
+delete on table blog.social_links to "x-admin";
 
 alter table blog.social_links enable row level security;
 
 create policy social_links_select on blog.social_links for
 select
   to authenticated using (
-    supasheet.has_permission ('blog.social_links:select')
-    and exists (
+    exists (
       select
         1
       from
@@ -468,8 +294,7 @@ select
 create policy social_links_insert on blog.social_links for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.social_links:insert')
-    and exists (
+    exists (
       select
         1
       from
@@ -486,8 +311,7 @@ with
 create policy social_links_update on blog.social_links
 for update
   to authenticated using (
-    supasheet.has_permission ('blog.social_links:update')
-    and exists (
+    exists (
       select
         1
       from
@@ -502,8 +326,7 @@ for update
   )
 with
   check (
-    supasheet.has_permission ('blog.social_links:update')
-    and exists (
+    exists (
       select
         1
       from
@@ -518,8 +341,7 @@ with
   );
 
 create policy social_links_delete on blog.social_links for delete to authenticated using (
-  supasheet.has_permission ('blog.social_links:delete')
-  and exists (
+  exists (
     select
       1
     from
@@ -598,28 +420,24 @@ select
 ,
   insert,
 update,
-delete on table blog.categories to authenticated;
+delete on table blog.categories to "x-admin";
 
 alter table blog.categories enable row level security;
 
 create policy categories_select on blog.categories for
 select
   to authenticated using (
-    supasheet.has_permission ('blog.categories:select')
-    and (
-      user_id is null
-      or user_id = (
-        select
-          auth.uid ()
-      )
+    user_id is null
+    or user_id = (
+      select
+        auth.uid ()
     )
   );
 
 create policy categories_insert on blog.categories for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.categories:insert')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -628,24 +446,21 @@ with
 create policy categories_update on blog.categories
 for update
   to authenticated using (
-    supasheet.has_permission ('blog.categories:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
   )
 with
   check (
-    supasheet.has_permission ('blog.categories:update')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
   );
 
 create policy categories_delete on blog.categories for delete to authenticated using (
-  supasheet.has_permission ('blog.categories:delete')
-  and user_id = (
+  user_id = (
     select
       auth.uid ()
   )
@@ -804,7 +619,7 @@ select
 ,
   insert,
 update,
-delete on table blog.posts to authenticated;
+delete on table blog.posts to "x-admin";
 
 create index idx_blog_posts_author_id on blog.posts (author_id);
 
@@ -822,29 +637,25 @@ alter table blog.posts enable row level security;
 create policy posts_select on blog.posts for
 select
   to authenticated using (
-    supasheet.has_permission ('blog.posts:select')
-    and (
-      published_at is not null
-      or exists (
-        select
-          1
-        from
-          blog.authors a
-        where
-          a.id = author_id
-          and a.user_id = (
-            select
-              auth.uid ()
-          )
-      )
+    published_at is not null
+    or exists (
+      select
+        1
+      from
+        blog.authors a
+      where
+        a.id = author_id
+        and a.user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
 create policy posts_insert on blog.posts for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.posts:insert')
-    and exists (
+    exists (
       select
         1
       from
@@ -861,8 +672,7 @@ with
 create policy posts_update on blog.posts
 for update
   to authenticated using (
-    supasheet.has_permission ('blog.posts:update')
-    and exists (
+    exists (
       select
         1
       from
@@ -877,8 +687,7 @@ for update
   )
 with
   check (
-    supasheet.has_permission ('blog.posts:update')
-    and exists (
+    exists (
       select
         1
       from
@@ -893,8 +702,7 @@ with
   );
 
 create policy posts_delete on blog.posts for delete to authenticated using (
-  supasheet.has_permission ('blog.posts:delete')
-  and exists (
+  exists (
     select
       1
     from
@@ -932,21 +740,18 @@ grant
 select
 ,
   insert,
-  delete on table blog.post_categories to authenticated;
+  delete on table blog.post_categories to "x-admin";
 
 alter table blog.post_categories enable row level security;
 
 create policy post_categories_select on blog.post_categories for
 select
-  to authenticated using (
-    supasheet.has_permission ('blog.post_categories:select')
-  );
+  to authenticated using (true);
 
 create policy post_categories_insert on blog.post_categories for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.post_categories:insert')
-    and exists (
+    exists (
       select
         1
       from
@@ -962,8 +767,7 @@ with
   );
 
 create policy post_categories_delete on blog.post_categories for delete to authenticated using (
-  supasheet.has_permission ('blog.post_categories:delete')
-  and exists (
+  exists (
     select
       1
     from
@@ -1093,7 +897,7 @@ select
 ,
   insert,
 update,
-delete on table blog.comments to authenticated;
+delete on table blog.comments to "x-admin";
 
 create index idx_blog_comments_post_id on blog.comments (post_id);
 
@@ -1110,34 +914,30 @@ alter table blog.comments enable row level security;
 create policy comments_select on blog.comments for
 select
   to authenticated using (
-    supasheet.has_permission ('blog.comments:select')
-    and (
-      status = 'approved'
-      or user_id = (
-        select
-          auth.uid ()
-      )
-      or exists (
-        select
-          1
-        from
-          blog.posts p
-          join blog.authors a on a.id = p.author_id
-        where
-          p.id = post_id
-          and a.user_id = (
-            select
-              auth.uid ()
-          )
-      )
+    status = 'approved'
+    or user_id = (
+      select
+        auth.uid ()
+    )
+    or exists (
+      select
+        1
+      from
+        blog.posts p
+        join blog.authors a on a.id = p.author_id
+      where
+        p.id = post_id
+        and a.user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
 create policy comments_insert on blog.comments for insert to authenticated
 with
   check (
-    supasheet.has_permission ('blog.comments:insert')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -1147,54 +947,6 @@ with
 create policy comments_update on blog.comments
 for update
   to authenticated using (
-    supasheet.has_permission ('blog.comments:update')
-    and (
-      user_id = (
-        select
-          auth.uid ()
-      )
-      or exists (
-        select
-          1
-        from
-          blog.posts p
-          join blog.authors a on a.id = p.author_id
-        where
-          p.id = post_id
-          and a.user_id = (
-            select
-              auth.uid ()
-          )
-      )
-    )
-  )
-with
-  check (
-    supasheet.has_permission ('blog.comments:update')
-    and (
-      user_id = (
-        select
-          auth.uid ()
-      )
-      or exists (
-        select
-          1
-        from
-          blog.posts p
-          join blog.authors a on a.id = p.author_id
-        where
-          p.id = post_id
-          and a.user_id = (
-            select
-              auth.uid ()
-          )
-      )
-    )
-  );
-
-create policy comments_delete on blog.comments for delete to authenticated using (
-  supasheet.has_permission ('blog.comments:delete')
-  and (
     user_id = (
       select
         auth.uid ()
@@ -1212,6 +964,45 @@ create policy comments_delete on blog.comments for delete to authenticated using
             auth.uid ()
         )
     )
+  )
+with
+  check (
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or exists (
+      select
+        1
+      from
+        blog.posts p
+        join blog.authors a on a.id = p.author_id
+      where
+        p.id = post_id
+        and a.user_id = (
+          select
+            auth.uid ()
+        )
+    )
+  );
+
+create policy comments_delete on blog.comments for delete to authenticated using (
+  user_id = (
+    select
+      auth.uid ()
+  )
+  or exists (
+    select
+      1
+    from
+      blog.posts p
+      join blog.authors a on a.id = p.author_id
+    where
+      p.id = post_id
+      and a.user_id = (
+        select
+          auth.uid ()
+      )
   )
 );
 
@@ -1238,7 +1029,7 @@ from
 
 grant
 select
-  on blog.posts_summary to authenticated;
+  on blog.posts_summary to "x-admin";
 
 comment on view blog.posts_summary is '{"type": "dashboard_widget", "name": "Published Posts", "description": "Total published posts", "widget_type": "card_1"}';
 
@@ -1267,7 +1058,7 @@ from
 
 grant
 select
-  on blog.posts_completion_rate to authenticated;
+  on blog.posts_completion_rate to "x-admin";
 
 comment on view blog.posts_completion_rate is '{"type": "dashboard_widget", "name": "Publishing Pipeline", "description": "Published vs draft/scheduled", "widget_type": "card_2"}';
 
@@ -1311,7 +1102,7 @@ from
 
 grant
 select
-  on blog.total_views to authenticated;
+  on blog.total_views to "x-admin";
 
 comment on view blog.total_views is '{"type": "dashboard_widget", "name": "Total Views", "description": "Lifetime views and avg per published post", "widget_type": "card_3"}';
 
@@ -1337,7 +1128,7 @@ from
 
 grant
 select
-  on blog.recent_posts to authenticated;
+  on blog.recent_posts to "x-admin";
 
 comment on view blog.recent_posts is '{"type": "dashboard_widget", "name": "Recent Posts", "description": "Latest activity across the blog", "widget_type": "table_1"}';
 
@@ -1363,7 +1154,7 @@ from
 
 grant
 select
-  on blog.posts_status_pie to authenticated;
+  on blog.posts_status_pie to "x-admin";
 
 comment on view blog.posts_status_pie is '{"type": "chart", "name": "Posts By Status", "description": "Distribution of posts across the lifecycle", "chart_type": "pie"}';
 
@@ -1397,7 +1188,7 @@ from
 
 grant
 select
-  on blog.posts_per_month_line to authenticated;
+  on blog.posts_per_month_line to "x-admin";
 
 comment on view blog.posts_per_month_line is '{"type": "chart", "name": "Publishing Cadence", "description": "Posts created vs published per month", "chart_type": "line"}';
 
@@ -1429,7 +1220,7 @@ from
 
 grant
 select
-  on blog.posts_by_category_bar to authenticated;
+  on blog.posts_by_category_bar to "x-admin";
 
 comment on view blog.posts_by_category_bar is '{"type": "chart", "name": "Posts By Category", "description": "Total and published posts per category", "chart_type": "bar"}';
 
@@ -1468,65 +1259,9 @@ from
 
 grant
 select
-  on blog.posts_report to authenticated;
+  on blog.posts_report to "x-admin";
 
 comment on view blog.posts_report is '{"type": "report", "name": "Posts Report", "description": "Full post list with author and categories"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin gets everything)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'blog.blog_settings:select'),
-  ('x-admin', 'blog.blog_settings:insert'),
-  ('x-admin', 'blog.blog_settings:update'),
-  ('x-admin', 'blog.blog_settings:audit'),
-  ('x-admin', 'blog.blog_settings:comment'),
-  ('x-admin', 'blog.authors:select'),
-  ('x-admin', 'blog.authors:insert'),
-  ('x-admin', 'blog.authors:update'),
-  ('x-admin', 'blog.authors:delete'),
-  ('x-admin', 'blog.authors:audit'),
-  ('x-admin', 'blog.authors:comment'),
-  ('x-admin', 'blog.social_links:select'),
-  ('x-admin', 'blog.social_links:insert'),
-  ('x-admin', 'blog.social_links:update'),
-  ('x-admin', 'blog.social_links:delete'),
-  ('x-admin', 'blog.social_links:audit'),
-  ('x-admin', 'blog.social_links:comment'),
-  ('x-admin', 'blog.categories:select'),
-  ('x-admin', 'blog.categories:insert'),
-  ('x-admin', 'blog.categories:update'),
-  ('x-admin', 'blog.categories:delete'),
-  ('x-admin', 'blog.categories:audit'),
-  ('x-admin', 'blog.categories:comment'),
-  ('x-admin', 'blog.posts:select'),
-  ('x-admin', 'blog.posts:insert'),
-  ('x-admin', 'blog.posts:update'),
-  ('x-admin', 'blog.posts:delete'),
-  ('x-admin', 'blog.posts:audit'),
-  ('x-admin', 'blog.posts:comment'),
-  ('x-admin', 'blog.post_categories:select'),
-  ('x-admin', 'blog.post_categories:insert'),
-  ('x-admin', 'blog.post_categories:delete'),
-  ('x-admin', 'blog.post_categories:audit'),
-  ('x-admin', 'blog.post_categories:comment'),
-  ('x-admin', 'blog.comments:select'),
-  ('x-admin', 'blog.comments:insert'),
-  ('x-admin', 'blog.comments:update'),
-  ('x-admin', 'blog.comments:delete'),
-  ('x-admin', 'blog.comments:audit'),
-  ('x-admin', 'blog.comments:comment'),
-  ('x-admin', 'blog.users:select'),
-  ('x-admin', 'blog.posts_summary:select'),
-  ('x-admin', 'blog.posts_completion_rate:select'),
-  ('x-admin', 'blog.total_views:select'),
-  ('x-admin', 'blog.recent_posts:select'),
-  ('x-admin', 'blog.posts_status_pie:select'),
-  ('x-admin', 'blog.posts_per_month_line:select'),
-  ('x-admin', 'blog.posts_by_category_bar:select'),
-  ('x-admin', 'blog.posts_report:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -1636,7 +1371,7 @@ begin
     then
         v_author_user := blog.get_post_author_user_id(new.id);
         v_recipients  := array_remove(
-            supasheet.get_users_with_permission('blog.posts:select') || array[v_author_user],
+            supasheet.get_users_with_table_privilege('blog', 'posts', 'select') || array[v_author_user],
             null
         );
 

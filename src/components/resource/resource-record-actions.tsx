@@ -26,12 +26,9 @@ export function ResourceRecordActions({
 }: ResourceRecordActionsProps) {
   const navigate = useNavigate()
 
-  const canViewAudit = useHasPermission(`${schema}.${resource}:audit`)
-  const canViewComments = useHasPermission(`${schema}.${resource}:comment`)
+  const canViewAudit = useHasPermission("supasheet.audit_logs:select")
 
   const params = { schema, resource, resourceId }
-
-  if (!canViewAudit && !canViewComments) return null
 
   return (
     <DropdownMenu>
@@ -45,19 +42,17 @@ export function ResourceRecordActions({
       />
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuGroup>
-          {canViewComments && (
-            <DropdownMenuItem
-              onClick={() =>
-                navigate({
-                  to: "/$schema/resource/$resource/$resourceId/comment",
-                  params,
-                })
-              }
-            >
-              <MessageSquareIcon />
-              Comments
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            onClick={() =>
+              navigate({
+                to: "/$schema/resource/$resource/$resourceId/comment",
+                params,
+              })
+            }
+          >
+            <MessageSquareIcon />
+            Comments
+          </DropdownMenuItem>
           {canViewAudit && (
             <DropdownMenuItem
               onClick={() =>

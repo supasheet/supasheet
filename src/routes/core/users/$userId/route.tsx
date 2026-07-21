@@ -12,19 +12,18 @@ import { DefaultHeader } from "#/components/layouts/default-header"
 import { Card, CardContent, CardHeader } from "#/components/ui/card"
 import { Skeleton } from "#/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs"
-import { useHasPermission } from "#/hooks/use-permissions"
+import { useHasRole } from "#/hooks/use-permissions"
 import { useAuthUser } from "#/hooks/use-user"
 import { pageTitle } from "#/lib/page-title"
 import { adminGetUserQueryOptions } from "#/lib/supabase/data/admin-auth"
+import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/$userId")({
-  beforeLoad: ({ context }) => {
-    if (
-      !context.permissions?.some(
-        (p) => p.permission === "supasheet.users:select_all"
-      )
+  beforeLoad: async ({ context }) => {
+    const isXAdmin = await context.queryClient.ensureQueryData(
+      hasRoleQueryOptions("x-admin")
     )
-      throw notFound()
+    if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params: { userId } }) => {
     const data = await context.queryClient.ensureQueryData(
@@ -83,10 +82,10 @@ function RouteComponent() {
   const authUser = useAuthUser()
   const isSelf = authUser?.id === userId
 
-  const canUpdate = useHasPermission("supasheet.users:update")
-  const canBan = useHasPermission("supasheet.users:ban")
-  const canGenerateLink = useHasPermission("supasheet.users:generate_link")
-  const canDelete = useHasPermission("supasheet.users:delete")
+  const canUpdate = useHasRole("x-admin")
+  const canBan = useHasRole("x-admin")
+  const canGenerateLink = useHasRole("x-admin")
+  const canDelete = useHasRole("x-admin")
 
   const { pathname } = useLocation()
   const activeTab = pathname.endsWith("/edit")

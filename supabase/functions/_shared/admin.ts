@@ -16,7 +16,7 @@ export function createAdminClient() {
   )
 }
 
-/** User-scoped client — used only to verify permissions via RLS / has_permission() */
+/** User-scoped client — used only to verify permissions via RLS / has_role() */
 function createUserClient(authHeader: string) {
   return createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -39,12 +39,13 @@ export async function getCallerId(
 }
 
 /**
- * Verify the caller holds the required permission.
- * Returns a Response if access should be denied, or null if allowed.
+ * Verify the caller's active native Postgres role is a member of `role`
+ * (pg_has_role, via supasheet.has_role). Returns a Response if access should
+ * be denied, or null if allowed.
  */
-export async function requirePermission(
+export async function requireRole(
   authHeader: string | null,
-  permission: string
+  role: string
 ): Promise<Response | null> {
   if (!authHeader) {
     return errorResponse("Missing authorization header", 401)
@@ -53,10 +54,10 @@ export async function requirePermission(
   const userClient = createUserClient(authHeader)
   const { data, error } = await userClient
     .schema("supasheet")
-    .rpc("has_permission", { requested_permission: permission })
+    .rpc("has_role", { requested_role: role })
 
   if (error) {
-    console.error("requirePermission rpc", error)
+    console.error("requireRole rpc", error)
     return errorResponse("Permission check failed", 500)
   }
   if (!data) return errorResponse("Forbidden", 403)

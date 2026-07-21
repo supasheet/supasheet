@@ -9,9 +9,8 @@
 #   2. *_seed.sql files insert demo data. Inventory (i) is loaded before
 #      manufacturing (m) and quality (q) since those align to inventory IDs.
 #
-# These migrations are NOT idempotent: each one appends values to the shared
-# `supasheet.app_permission` enum and inserts into `supasheet.role_permissions`,
-# neither of which a `drop schema ... cascade` removes. To reload cleanly, run
+# These migrations are NOT idempotent: `create schema`, `create type`, and
+# `create table` all fail if run twice. To reload cleanly, run
 # `pnpm supabase db reset` first, then re-run this script.
 #
 # Connection: set DATABASE_URL to override. When unset and `psql` is not on

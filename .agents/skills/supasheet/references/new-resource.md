@@ -1,6 +1,6 @@
 # Creating a New Resource (Table / Module)
 
-The complete, ordered checklist for adding a table (or a whole schema module) to Supasheet. Follow every step — missing grants, permissions, or the final metadata refresh are the most common failure modes.
+The complete, ordered checklist for adding a table (or a whole schema module) to Supasheet. Follow every step — missing grants or the final metadata refresh are the most common failure modes.
 
 ## 0. Migration file
 
@@ -12,41 +12,20 @@ Requires the base Supasheet migrations (`supabase/migrations/*`) to already be a
 
 ## 1. Schema
 
-One Postgres schema per business domain (`crm`, `desk`, `hr`, …). `public` works too for simple projects.
+One Postgres schema per business domain (`crm`, `desk`, `hr`, …). `public` works too for simple projects. Do **not** `grant usage` to `authenticated` here — usage is granted per native role once you know which roles need this schema (step 5).
 
 ```sql
 create schema if not exists app;
-
-grant usage on schema app to authenticated;
 ```
 
-## 2. Enums + permission values (must commit before use)
+## 2. Enums (must commit before use)
 
-Postgres cannot use an enum value in the same transaction that added it, so wrap enum DDL in an explicit `begin; ... commit;` block at the top of the migration.
+Postgres cannot use an enum value in the same transaction that added it, so wrap enum DDL in an explicit `begin; ... commit;` block at the top of the migration. There's no permission enum to extend anymore — only genuine domain enums like statuses.
 
 ```sql
 begin;
 
 create type app.ticket_status as enum ('open', 'in_progress', 'resolved', 'closed');
-
--- One permission value per resource+action. Actions: select/insert/update/delete/audit/comment.
-alter type supasheet.app_permission add value if not exists 'app.tickets:select';
-
-alter type supasheet.app_permission add value if not exists 'app.tickets:insert';
-
-alter type supasheet.app_permission add value if not exists 'app.tickets:update';
-
-alter type supasheet.app_permission add value if not exists 'app.tickets:delete';
-
-alter type supasheet.app_permission add value if not exists 'app.tickets:audit';
-
-alter type supasheet.app_permission add value if not exists 'app.tickets:comment';
-
--- Views (reports/widgets/charts) only need :select
-alter type supasheet.app_permission add value if not exists 'app.tickets_report:select';
-
--- Replica users view (see step 3)
-alter type supasheet.app_permission add value if not exists 'app.users:select';
 
 commit;
 ```
@@ -74,7 +53,8 @@ from
 
 grant
 select
-  on app.users to authenticated;
+  on app.users to "x-admin",
+"user";
 ```
 
 Apply the same pattern for any other cross-schema table you need to join/lookup.
@@ -116,7 +96,9 @@ comment on column app.tickets.status is '{
 comment on column app.tickets.attachment is '{"accept": "*", "maxFiles": 5}';
 ```
 
-## 5. Grants (revoke first, then grant exactly what's needed)
+## 5. Grants (revoke first, then grant exactly what's needed, per role)
+
+Nothing is visible until a role holds a `select` grant on it. `x-admin` conventionally gets everything; `user` gets a reduced set (typically no delete). Grants are non-inheriting by convention — spell out each role explicitly, don't rely on one role being a superset of another.
 
 ```sql
 revoke all on table app.tickets
@@ -126,37 +108,27 @@ from
   authenticated,
   service_role;
 
-grant
-select
-,
-  insert,
-update,
-delete on table app.tickets to authenticated;
+grant select, insert, update, delete on table app.tickets to "x-admin";
+
+grant select, insert, update on table app.tickets to "user";
 ```
 
 Variants: junction tables get `select, insert, delete` (no update); singletons get `select, insert, update` (no delete); report/widget/chart views get `select` only.
 
 ## 6. Row Level Security
 
-Every policy checks `supasheet.has_permission()`. Add `user_id = auth.uid() and ...` when rows are owner-scoped.
+Grants already decided who can attempt an operation, so most policies are trivial `using (true)`. Add `user_id = auth.uid()` when rows are owner-scoped, or a `pg_has_role(current_user, '<role>', 'member')` clause for a role-based row override.
 
 ```sql
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for
-select
-  to authenticated using (supasheet.has_permission ('app.tickets:select'));
+create policy tickets_select on app.tickets for select to authenticated using (true);
 
-create policy tickets_insert on app.tickets for insert to authenticated
-with
-  check (supasheet.has_permission ('app.tickets:insert'));
+create policy tickets_insert on app.tickets for insert to authenticated with check (true);
 
-create policy tickets_update on app.tickets for
-update to authenticated using (supasheet.has_permission ('app.tickets:update'))
-with
-  check (supasheet.has_permission ('app.tickets:update'));
+create policy tickets_update on app.tickets for update to authenticated using (true) with check (true);
 
-create policy tickets_delete on app.tickets for delete to authenticated using (supasheet.has_permission ('app.tickets:delete'));
+create policy tickets_delete on app.tickets for delete to authenticated using (true);
 ```
 
 ## 7. Indexes
@@ -177,38 +149,16 @@ create index idx_app_tickets_created_at on app.tickets (created_at desc);
 - Notifications → see `notifications.md`
 - `updated_at` maintenance: `supasheet.set_updated_at()` / `supasheet.set_updated_by()` are available.
 
-## 9. Seed role permissions
+## 9. Refresh the metadata catalog (always last)
 
-Nothing is visible until a role holds the permission. `x-admin` conventionally gets everything; `user` gets a reduced set (typically no delete/audit).
-
-```sql
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'app.tickets:select'),
-  ('x-admin', 'app.tickets:insert'),
-  ('x-admin', 'app.tickets:update'),
-  ('x-admin', 'app.tickets:delete'),
-  ('x-admin', 'app.tickets:audit'),
-  ('x-admin', 'app.tickets:comment'),
-  ('x-admin', 'app.users:select'),
-  ('user', 'app.tickets:select'),
-  ('user', 'app.tickets:insert'),
-  ('user', 'app.tickets:update'),
-  ('user', 'app.tickets:comment'),
-  ('user', 'app.users:select') on conflict (role, permission) do nothing;
-```
-
-## 10. Refresh the metadata catalog (always last)
-
-`supasheet.tables/columns/views/materialized_views` are materialized views. They do NOT refresh automatically — every migration that touches DDL, comments, or enums must end with:
+`supasheet.tables/columns/views/materialized_views` are materialized views. They do NOT refresh automatically — every migration that touches DDL or comments must end with:
 
 ```sql
 select
   supasheet.refresh_metadata ();
 ```
 
-## 11. Expose the schema to PostgREST
+## 10. Expose the schema to PostgREST
 
 `supabase/config.toml` — add the schema to BOTH arrays (the `supasheet` schema must always stay listed):
 
@@ -220,7 +170,7 @@ extra_search_path = ["public", "extensions", "supasheet", "app"]
 
 Then `npx supabase stop && npx supabase start` (local) or set "Exposed schemas" in Project Settings → Data API (cloud).
 
-## 12. Regenerate TypeScript types
+## 11. Regenerate TypeScript types
 
 ```bash
 npx supabase gen types typescript --local --schema public --schema supasheet --schema app > src/lib/database.types.ts
@@ -246,7 +196,7 @@ comment on table app.ticket_watchers is '{
 }';
 ```
 
-Grant `select, insert, delete` only; add only `:select`, `:insert`, `:delete` permissions; add a `unique (ticket_id, user_id)` constraint.
+Grant `select, insert, delete` only; add a `unique (ticket_id, user_id)` constraint.
 
 ### Singleton (settings table)
 
@@ -254,14 +204,14 @@ Grant `select, insert, delete` only; add only `:select`, `:insert`, `:delete` pe
 comment on table app.settings is '{"icon": "Settings", "display": "block", "singleton": true, ...}';
 ```
 
-Grant `select, insert, update` only (no delete permission, no delete grant). The UI opens the single record directly.
+Grant `select, insert, update` only (no delete grant). The UI opens the single record directly.
 
 ### Materialized view resource
 
-Same comment shape as tables, `:select` only. Needs a unique index for `refresh materialized view concurrently`. Remember: `supasheet.refresh_metadata()` refreshes the _catalog_; `refresh materialized view app.my_mv` refreshes the _data_.
+Same comment shape as tables, `select` grant only. Needs a unique index for `refresh materialized view concurrently`. Remember: `supasheet.refresh_metadata()` refreshes the _catalog_; `refresh materialized view app.my_mv` refreshes the _data_.
 
 ## Authoritative sources
 
 - `supabase/demo.sql` — full worked module (clients/projects/tasks/invoices), including junction (`project_members`) and singleton (`workspace_settings`).
-- `supabase/examples/*.sql` — per-domain modules; `supabase/examples/apply.sh` applies them.
+- `supabase/examples/*.sql` — per-domain modules; `supabase/examples/apply.sh` applies them. **Note:** these still reference the removed `role_permissions`/`user_roles`/`app_permission` and won't apply until converted to the grant-based model above.
 - `supabase/config.toml` — commented-out arrays show how example schemas are enabled.

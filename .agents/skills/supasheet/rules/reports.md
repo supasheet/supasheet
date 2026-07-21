@@ -10,14 +10,11 @@ requires:
 
 # Reports
 
-A report = a view whose comment is `{"type": "report", "name": ..., "description": ...}` (those three keys only). Discovered by `supasheet.get_reports()`; renders as a filterable, exportable table at `/$schema/report/$name` for users holding `:select`.
+A report = a view whose comment is `{"type": "report", "name": ..., "description": ...}` (those three keys only). Discovered by `supasheet.get_reports()`; renders as a filterable, exportable table at `/$schema/report/$name` for callers whose native role holds `select` on the view.
 
 ## Full recipe
 
 ```sql
--- committed enum block:
-alter type supasheet.app_permission add value if not exists 'app.tickets_report:select';
-
 create
 or replace view app.tickets_report
 with
@@ -46,15 +43,10 @@ from
 
 grant
 select
-  on app.tickets_report to authenticated;
+  on app.tickets_report to "x-admin",
+"user";
 
 comment on view app.tickets_report is '{"type": "report", "name": "Tickets Report", "description": "Tickets with owner and comment rollups"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'app.tickets_report:select'),
-  ('user', 'app.tickets_report:select') on conflict (role, permission) do nothing;
 
 select
   supasheet.refresh_metadata ();
@@ -64,7 +56,7 @@ select
 
 - Suffix names with `_report`: `clients_report`, `team_utilization_report`.
 - Denormalize: join names in (via same-schema replica views), roll up child counts/sums with `count(distinct ...)` and `sum(...) filter (where ...)`.
-- Reports are read-only — `:select` only, `grant select` only.
+- Reports are read-only — `select` grant only.
 - Always `security_invoker = true` so the viewer's RLS applies.
 - Column headers can be renamed with column comments on the view: `comment on column app.tickets_report.owner is '{"name": "Owner"}';`
 - Heavy reports → materialized view instead (same comment shape); see `rules/materialized-views.md`.

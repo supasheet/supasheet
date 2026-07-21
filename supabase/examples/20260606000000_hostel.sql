@@ -53,183 +53,6 @@ create type hostel.complaint_status as enum(
 
 create type hostel.visitor_status as enum('checked_in', 'checked_out');
 
--- Hostel permissions
-alter type supasheet.app_permission
-add value 'hostel.hostels:select';
-
-alter type supasheet.app_permission
-add value 'hostel.hostels:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.hostels:update';
-
-alter type supasheet.app_permission
-add value 'hostel.hostels:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.hostels:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.hostels:comment';
-
--- Room permissions
-alter type supasheet.app_permission
-add value 'hostel.rooms:select';
-
-alter type supasheet.app_permission
-add value 'hostel.rooms:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.rooms:update';
-
-alter type supasheet.app_permission
-add value 'hostel.rooms:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.rooms:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.rooms:comment';
-
--- Resident permissions
-alter type supasheet.app_permission
-add value 'hostel.residents:select';
-
-alter type supasheet.app_permission
-add value 'hostel.residents:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.residents:update';
-
-alter type supasheet.app_permission
-add value 'hostel.residents:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.residents:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.residents:comment';
-
--- Allocation permissions
-alter type supasheet.app_permission
-add value 'hostel.allocations:select';
-
-alter type supasheet.app_permission
-add value 'hostel.allocations:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.allocations:update';
-
-alter type supasheet.app_permission
-add value 'hostel.allocations:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.allocations:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.allocations:comment';
-
--- Payment permissions
-alter type supasheet.app_permission
-add value 'hostel.payments:select';
-
-alter type supasheet.app_permission
-add value 'hostel.payments:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.payments:update';
-
-alter type supasheet.app_permission
-add value 'hostel.payments:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.payments:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.payments:comment';
-
--- Complaint permissions
-alter type supasheet.app_permission
-add value 'hostel.complaints:select';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints:update';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints:comment';
-
--- Visitor permissions
-alter type supasheet.app_permission
-add value 'hostel.visitors:select';
-
-alter type supasheet.app_permission
-add value 'hostel.visitors:insert';
-
-alter type supasheet.app_permission
-add value 'hostel.visitors:update';
-
-alter type supasheet.app_permission
-add value 'hostel.visitors:delete';
-
-alter type supasheet.app_permission
-add value 'hostel.visitors:audit';
-
-alter type supasheet.app_permission
-add value 'hostel.visitors:comment';
-
--- Users mirror view
-alter type supasheet.app_permission
-add value 'hostel.users:select';
-
--- Reports / dashboard widgets / charts
-alter type supasheet.app_permission
-add value 'hostel.occupancy_report:select';
-
-alter type supasheet.app_permission
-add value 'hostel.payment_report:select';
-
-alter type supasheet.app_permission
-add value 'hostel.complaint_report:select';
-
-alter type supasheet.app_permission
-add value 'hostel.revenue_summary:select';
-
-alter type supasheet.app_permission
-add value 'hostel.occupancy_rate:select';
-
-alter type supasheet.app_permission
-add value 'hostel.active_complaints:select';
-
-alter type supasheet.app_permission
-add value 'hostel.pending_payments:select';
-
-alter type supasheet.app_permission
-add value 'hostel.recent_allocations:select';
-
-alter type supasheet.app_permission
-add value 'hostel.top_hostels:select';
-
-alter type supasheet.app_permission
-add value 'hostel.room_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'hostel.revenue_line:select';
-
-alter type supasheet.app_permission
-add value 'hostel.complaints_category_bar:select';
-
-alter type supasheet.app_permission
-add value 'hostel.occupancy_metrics_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -364,7 +187,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.hostels to authenticated;
+delete on table hostel.hostels to "x-admin";
 
 create index idx_hostel_hostels_code on hostel.hostels (code);
 
@@ -378,29 +201,19 @@ alter table hostel.hostels enable row level security;
 
 create policy hostels_select on hostel.hostels for
 select
-  to authenticated using (
-    supasheet.has_permission ('hostel.hostels:select')
-  );
+  to authenticated using (true);
 
 create policy hostels_insert on hostel.hostels for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.hostels:insert')
-  );
+  check (true);
 
 create policy hostels_update on hostel.hostels
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.hostels:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.hostels:update')
-  );
+  check (true);
 
-create policy hostels_delete on hostel.hostels for delete to authenticated using (
-  supasheet.has_permission ('hostel.hostels:delete')
-);
+create policy hostels_delete on hostel.hostels for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Rooms table
@@ -554,7 +367,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.rooms to authenticated;
+delete on table hostel.rooms to "x-admin";
 
 create index idx_hostel_rooms_hostel_id on hostel.rooms (hostel_id);
 
@@ -566,19 +379,19 @@ alter table hostel.rooms enable row level security;
 
 create policy rooms_select on hostel.rooms for
 select
-  to authenticated using (supasheet.has_permission ('hostel.rooms:select'));
+  to authenticated using (true);
 
 create policy rooms_insert on hostel.rooms for insert to authenticated
 with
-  check (supasheet.has_permission ('hostel.rooms:insert'));
+  check (true);
 
 create policy rooms_update on hostel.rooms
 for update
-  to authenticated using (supasheet.has_permission ('hostel.rooms:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('hostel.rooms:update'));
+  check (true);
 
-create policy rooms_delete on hostel.rooms for delete to authenticated using (supasheet.has_permission ('hostel.rooms:delete'));
+create policy rooms_delete on hostel.rooms for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Residents table
@@ -708,7 +521,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.residents to authenticated;
+delete on table hostel.residents to "x-admin";
 
 create index idx_hostel_residents_user_id on hostel.residents (user_id);
 
@@ -723,8 +536,7 @@ alter table hostel.residents enable row level security;
 create policy residents_select on hostel.residents for
 select
   to authenticated using (
-    supasheet.has_permission ('hostel.residents:select')
-    or user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -732,23 +544,15 @@ select
 
 create policy residents_insert on hostel.residents for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.residents:insert')
-  );
+  check (true);
 
 create policy residents_update on hostel.residents
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.residents:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.residents:update')
-  );
+  check (true);
 
-create policy residents_delete on hostel.residents for delete to authenticated using (
-  supasheet.has_permission ('hostel.residents:delete')
-);
+create policy residents_delete on hostel.residents for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Allocations table
@@ -911,7 +715,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.allocations to authenticated;
+delete on table hostel.allocations to "x-admin";
 
 create index idx_hostel_allocations_resident_id on hostel.allocations (resident_id);
 
@@ -926,8 +730,7 @@ alter table hostel.allocations enable row level security;
 create policy allocations_select on hostel.allocations for
 select
   to authenticated using (
-    supasheet.has_permission ('hostel.allocations:select')
-    or exists (
+    exists (
       select
         1
       from
@@ -943,23 +746,15 @@ select
 
 create policy allocations_insert on hostel.allocations for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.allocations:insert')
-  );
+  check (true);
 
 create policy allocations_update on hostel.allocations
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.allocations:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.allocations:update')
-  );
+  check (true);
 
-create policy allocations_delete on hostel.allocations for delete to authenticated using (
-  supasheet.has_permission ('hostel.allocations:delete')
-);
+create policy allocations_delete on hostel.allocations for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Payments table
@@ -1158,7 +953,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.payments to authenticated;
+delete on table hostel.payments to "x-admin";
 
 create index idx_hostel_payments_allocation_id on hostel.payments (allocation_id);
 
@@ -1175,8 +970,7 @@ alter table hostel.payments enable row level security;
 create policy payments_select on hostel.payments for
 select
   to authenticated using (
-    supasheet.has_permission ('hostel.payments:select')
-    or exists (
+    exists (
       select
         1
       from
@@ -1192,23 +986,15 @@ select
 
 create policy payments_insert on hostel.payments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.payments:insert')
-  );
+  check (true);
 
 create policy payments_update on hostel.payments
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.payments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.payments:update')
-  );
+  check (true);
 
-create policy payments_delete on hostel.payments for delete to authenticated using (
-  supasheet.has_permission ('hostel.payments:delete')
-);
+create policy payments_delete on hostel.payments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Complaints table
@@ -1430,7 +1216,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.complaints to authenticated;
+delete on table hostel.complaints to "x-admin";
 
 create index idx_hostel_complaints_resident_id on hostel.complaints (resident_id);
 
@@ -1451,8 +1237,7 @@ alter table hostel.complaints enable row level security;
 create policy complaints_select on hostel.complaints for
 select
   to authenticated using (
-    supasheet.has_permission ('hostel.complaints:select')
-    or exists (
+    exists (
       select
         1
       from
@@ -1472,23 +1257,15 @@ select
 
 create policy complaints_insert on hostel.complaints for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.complaints:insert')
-  );
+  check (true);
 
 create policy complaints_update on hostel.complaints
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.complaints:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.complaints:update')
-  );
+  check (true);
 
-create policy complaints_delete on hostel.complaints for delete to authenticated using (
-  supasheet.has_permission ('hostel.complaints:delete')
-);
+create policy complaints_delete on hostel.complaints for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Visitors table
@@ -1608,7 +1385,7 @@ select
 ,
   insert,
 update,
-delete on table hostel.visitors to authenticated;
+delete on table hostel.visitors to "x-admin";
 
 create index idx_hostel_visitors_resident_id on hostel.visitors (resident_id);
 
@@ -1621,8 +1398,7 @@ alter table hostel.visitors enable row level security;
 create policy visitors_select on hostel.visitors for
 select
   to authenticated using (
-    supasheet.has_permission ('hostel.visitors:select')
-    or exists (
+    exists (
       select
         1
       from
@@ -1638,23 +1414,15 @@ select
 
 create policy visitors_insert on hostel.visitors for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hostel.visitors:insert')
-  );
+  check (true);
 
 create policy visitors_update on hostel.visitors
 for update
-  to authenticated using (
-    supasheet.has_permission ('hostel.visitors:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hostel.visitors:update')
-  );
+  check (true);
 
-create policy visitors_delete on hostel.visitors for delete to authenticated using (
-  supasheet.has_permission ('hostel.visitors:delete')
-);
+create policy visitors_delete on hostel.visitors for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Users mirror (for Postgrest joins)
@@ -1674,7 +1442,7 @@ from
 
 grant
 select
-  on hostel.users to authenticated;
+  on hostel.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Reports
@@ -1722,7 +1490,7 @@ from
 
 grant
 select
-  on hostel.occupancy_report to authenticated;
+  on hostel.occupancy_report to "x-admin";
 
 comment on view hostel.occupancy_report is '{"type": "report", "name": "Occupancy Report", "description": "Per-hostel room and bed utilization"}';
 
@@ -1759,7 +1527,7 @@ from
 
 grant
 select
-  on hostel.payment_report to authenticated;
+  on hostel.payment_report to "x-admin";
 
 comment on view hostel.payment_report is '{"type": "report", "name": "Payment Report", "description": "All resident payments with status and method"}';
 
@@ -1802,7 +1570,7 @@ from
 
 grant
 select
-  on hostel.complaint_report to authenticated;
+  on hostel.complaint_report to "x-admin";
 
 comment on view hostel.complaint_report is '{"type": "report", "name": "Complaint Report", "description": "Tickets with category, priority, status, and resolution time"}';
 
@@ -1829,7 +1597,7 @@ from
 
 grant
 select
-  on hostel.revenue_summary to authenticated;
+  on hostel.revenue_summary to "x-admin";
 
 -- Card2: occupancy rate (occupied vs available capacity)
 create or replace view hostel.occupancy_rate
@@ -1853,7 +1621,7 @@ from
 
 grant
 select
-  on hostel.occupancy_rate to authenticated;
+  on hostel.occupancy_rate to "x-admin";
 
 -- Card3: active complaints with resolution rate
 create or replace view hostel.active_complaints
@@ -1886,7 +1654,7 @@ from
 
 grant
 select
-  on hostel.active_complaints to authenticated;
+  on hostel.active_complaints to "x-admin";
 
 -- Card4: pending payments alert
 create or replace view hostel.pending_payments
@@ -1937,7 +1705,7 @@ from
 
 grant
 select
-  on hostel.pending_payments to authenticated;
+  on hostel.pending_payments to "x-admin";
 
 -- Table1: recent allocations
 create or replace view hostel.recent_allocations
@@ -1967,7 +1735,7 @@ from
 
 grant
 select
-  on hostel.recent_allocations to authenticated;
+  on hostel.recent_allocations to "x-admin";
 
 -- Table2: top hostels by occupancy
 create or replace view hostel.top_hostels
@@ -2008,7 +1776,7 @@ from
 
 grant
 select
-  on hostel.top_hostels to authenticated;
+  on hostel.top_hostels to "x-admin";
 
 comment on view hostel.revenue_summary is '{"type": "dashboard_widget", "name": "Collected Revenue", "description": "Total paid payments collected", "widget_type": "card_1"}';
 
@@ -2044,7 +1812,7 @@ from
 
 grant
 select
-  on hostel.room_status_pie to authenticated;
+  on hostel.room_status_pie to "x-admin";
 
 -- Line: monthly revenue collected (last 6 months)
 create or replace view hostel.revenue_line
@@ -2079,7 +1847,7 @@ from
 
 grant
 select
-  on hostel.revenue_line to authenticated;
+  on hostel.revenue_line to "x-admin";
 
 -- Bar: complaints by category
 create or replace view hostel.complaints_category_bar
@@ -2106,7 +1874,7 @@ from
 
 grant
 select
-  on hostel.complaints_category_bar to authenticated;
+  on hostel.complaints_category_bar to "x-admin";
 
 -- Radar: occupancy metrics by hostel
 create or replace view hostel.occupancy_metrics_radar
@@ -2133,7 +1901,7 @@ from
 
 grant
 select
-  on hostel.occupancy_metrics_radar to authenticated;
+  on hostel.occupancy_metrics_radar to "x-admin";
 
 comment on view hostel.room_status_pie is '{"type": "chart", "name": "Rooms by Status", "description": "Current room status breakdown", "chart_type": "pie"}';
 
@@ -2142,75 +1910,6 @@ comment on view hostel.revenue_line is '{"type": "chart", "name": "Monthly Reven
 comment on view hostel.complaints_category_bar is '{"type": "chart", "name": "Complaints by Category", "description": "Complaint volume grouped by category", "chart_type": "bar"}';
 
 comment on view hostel.occupancy_metrics_radar is '{"type": "chart", "name": "Occupancy Metrics", "description": "Capacity vs occupied beds per hostel", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'hostel.hostels:select'),
-  ('x-admin', 'hostel.hostels:insert'),
-  ('x-admin', 'hostel.hostels:update'),
-  ('x-admin', 'hostel.hostels:delete'),
-  ('x-admin', 'hostel.hostels:audit'),
-  ('x-admin', 'hostel.hostels:comment'),
-  ('x-admin', 'hostel.rooms:select'),
-  ('x-admin', 'hostel.rooms:insert'),
-  ('x-admin', 'hostel.rooms:update'),
-  ('x-admin', 'hostel.rooms:delete'),
-  ('x-admin', 'hostel.rooms:audit'),
-  ('x-admin', 'hostel.rooms:comment'),
-  ('x-admin', 'hostel.residents:select'),
-  ('x-admin', 'hostel.residents:insert'),
-  ('x-admin', 'hostel.residents:update'),
-  ('x-admin', 'hostel.residents:delete'),
-  ('x-admin', 'hostel.residents:audit'),
-  ('x-admin', 'hostel.residents:comment'),
-  ('x-admin', 'hostel.allocations:select'),
-  ('x-admin', 'hostel.allocations:insert'),
-  ('x-admin', 'hostel.allocations:update'),
-  ('x-admin', 'hostel.allocations:delete'),
-  ('x-admin', 'hostel.allocations:audit'),
-  ('x-admin', 'hostel.allocations:comment'),
-  ('x-admin', 'hostel.payments:select'),
-  ('x-admin', 'hostel.payments:insert'),
-  ('x-admin', 'hostel.payments:update'),
-  ('x-admin', 'hostel.payments:delete'),
-  ('x-admin', 'hostel.payments:audit'),
-  ('x-admin', 'hostel.payments:comment'),
-  ('x-admin', 'hostel.complaints:select'),
-  ('x-admin', 'hostel.complaints:insert'),
-  ('x-admin', 'hostel.complaints:update'),
-  ('x-admin', 'hostel.complaints:delete'),
-  ('x-admin', 'hostel.complaints:audit'),
-  ('x-admin', 'hostel.complaints:comment'),
-  ('x-admin', 'hostel.visitors:select'),
-  ('x-admin', 'hostel.visitors:insert'),
-  ('x-admin', 'hostel.visitors:update'),
-  ('x-admin', 'hostel.visitors:delete'),
-  ('x-admin', 'hostel.visitors:audit'),
-  ('x-admin', 'hostel.visitors:comment'),
-  ('x-admin', 'hostel.users:select'),
-  ('x-admin', 'hostel.occupancy_report:select'),
-  ('x-admin', 'hostel.payment_report:select'),
-  ('x-admin', 'hostel.complaint_report:select'),
-  ('x-admin', 'hostel.revenue_summary:select'),
-  ('x-admin', 'hostel.occupancy_rate:select'),
-  ('x-admin', 'hostel.active_complaints:select'),
-  ('x-admin', 'hostel.pending_payments:select'),
-  ('x-admin', 'hostel.recent_allocations:select'),
-  ('x-admin', 'hostel.top_hostels:select'),
-  ('x-admin', 'hostel.room_status_pie:select'),
-  ('x-admin', 'hostel.revenue_line:select'),
-  (
-    'x-admin',
-    'hostel.complaints_category_bar:select'
-  ),
-  (
-    'x-admin',
-    'hostel.occupancy_metrics_radar:select'
-  );
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -2397,7 +2096,7 @@ begin
         v_title := 'New room allocation';
         v_body  := 'Allocation ' || v_ref || ' was created for ' || coalesce(v_resident.name, 'a resident') || '.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('hostel.allocations:select') || array[v_resident.user_id],
+            supasheet.get_users_with_table_privilege('hostel', 'allocations', 'select') || array[v_resident.user_id],
             null
         );
     elsif new.status is distinct from old.status then
@@ -2458,7 +2157,7 @@ begin
         v_title := 'Payment overdue';
         v_body  := 'Payment ' || v_ref || ' is now overdue.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('hostel.payments:update') || array[v_resident.user_id],
+            supasheet.get_users_with_table_privilege('hostel', 'payments', 'update') || array[v_resident.user_id],
             null
         );
     elsif new.status is distinct from old.status and new.status = 'paid' then
@@ -2516,7 +2215,7 @@ begin
         v_title := 'New complaint submitted';
         v_body  := 'Ticket ' || v_ref || ' (' || new.priority::text || '): ' || new.title;
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('hostel.complaints:update'),
+            supasheet.get_users_with_table_privilege('hostel', 'complaints', 'update'),
             null
         );
     elsif new.status is distinct from old.status then
@@ -2568,13 +2267,6 @@ execute function hostel.trg_complaints_notify ();
 -- receipt_no, paid_date, method, reference, and notes are
 -- intentionally omitted (auto-generated or optional).
 ----------------------------------------------------------------
-begin;
-
-alter type supasheet.app_permission
-add value if not exists 'hostel.monthly_payment_template:select';
-
-commit;
-
 create or replace view hostel.monthly_payment_template
 with
   (security_invoker = true) as
@@ -2601,14 +2293,6 @@ from
 
 grant
 select
-  on hostel.monthly_payment_template to authenticated;
+  on hostel.monthly_payment_template to "x-admin";
 
 comment on view hostel.monthly_payment_template is '{"type": "template", "name": "Monthly Payment Template", "description": "Pending payment entries for all active allocations. Apply to hostel.payments to seed a new billing month.", "target_table": "payments"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  (
-    'x-admin',
-    'hostel.monthly_payment_template:select'
-  );

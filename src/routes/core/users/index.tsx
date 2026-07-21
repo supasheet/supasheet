@@ -11,7 +11,7 @@ import { DataTableSkeleton } from "#/components/data-table/data-table-skeleton"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { Button } from "#/components/ui/button"
 import { UsersTable } from "#/components/users/users-table"
-import { useHasPermission } from "#/hooks/use-permissions"
+import { useHasRole } from "#/hooks/use-permissions"
 import { pageTitle } from "#/lib/page-title"
 import { usersQueryOptions } from "#/lib/supabase/data/core"
 import { columnsSchemaQueryOptions } from "#/lib/supabase/data/resource"
@@ -58,8 +58,8 @@ export const Route = createFileRoute("/core/users/")({
 })
 
 function HeaderActions() {
-  const canInvite = useHasPermission("supasheet.users:invite")
-  const canInsert = useHasPermission("supasheet.users:insert")
+  const canInvite = useHasRole("x-admin")
+  const canInsert = useHasRole("x-admin")
   return (
     <>
       {canInvite && (

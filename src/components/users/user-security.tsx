@@ -16,11 +16,14 @@ import {
   SelectValue,
 } from "#/components/ui/select"
 import { Separator } from "#/components/ui/separator"
-import { useHasPermission } from "#/hooks/use-permissions"
+import { useHasRole } from "#/hooks/use-permissions"
 import {
   adminBanUserMutationOptions,
   adminGenerateLinkMutationOptions,
+  adminSetUserRoleMutationOptions,
 } from "#/lib/supabase/data/admin-auth"
+
+const ROLES = ["x-admin", "admin", "user"] as const
 
 function isBanned(user: AuthUser): boolean {
   return !!user.banned_until && new Date(user.banned_until) > new Date()
@@ -30,8 +33,22 @@ export function UserSecurity({ user }: { user: AuthUser }) {
   const queryClient = useQueryClient()
   const [banDuration, setBanDuration] = useState("720h")
 
-  const canBan = useHasPermission("supasheet.users:ban")
-  const canGenerateLink = useHasPermission("supasheet.users:generate_link")
+  const canBan = useHasRole("x-admin")
+  const canGenerateLink = useHasRole("x-admin")
+  const canSetRole = useHasRole("x-admin")
+
+  const currentRole = (user.app_metadata?.role as string | undefined) ?? "user"
+
+  const { mutateAsync: setUserRole, isPending: isSettingRole } = useMutation({
+    ...adminSetUserRoleMutationOptions,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "auth", "user", user.id],
+      })
+      toast.success("Role updated")
+    },
+    onError: (err) => toast.error(err.message),
+  })
 
   const { mutateAsync: banUser, isPending: isBanning } = useMutation({
     ...adminBanUserMutationOptions,
@@ -64,6 +81,38 @@ export function UserSecurity({ user }: { user: AuthUser }) {
         <CardTitle>Security</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 py-4">
+        {canSetRole && (
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">Role</p>
+              <p className="text-xs text-muted-foreground">
+                Takes effect next time this user signs in or refreshes their
+                session
+              </p>
+            </div>
+            <Select
+              value={currentRole}
+              disabled={isSettingRole}
+              onValueChange={(val) => {
+                if (val !== null) setUserRole({ userId: user.id, role: val })
+              }}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ROLES.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {canSetRole && (canBan || canGenerateLink) && <Separator />}
+
         {canBan && (
           <div className="flex items-center justify-between gap-4">
             <div>

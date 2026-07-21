@@ -3,7 +3,7 @@ create schema if not exists inventory;
 grant usage on schema inventory to authenticated;
 
 ----------------------------------------------------------------
--- Enums + permissions (must commit before use)
+-- Enums (must commit before use)
 ----------------------------------------------------------------
 begin;
 
@@ -63,226 +63,6 @@ create type inventory.movement_type as enum(
   'damage_out'
 );
 
--- Warehouses
-alter type supasheet.app_permission
-add value 'inventory.warehouses:select';
-
-alter type supasheet.app_permission
-add value 'inventory.warehouses:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.warehouses:update';
-
-alter type supasheet.app_permission
-add value 'inventory.warehouses:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.warehouses:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.warehouses:comment';
-
--- Suppliers
-alter type supasheet.app_permission
-add value 'inventory.suppliers:select';
-
-alter type supasheet.app_permission
-add value 'inventory.suppliers:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.suppliers:update';
-
-alter type supasheet.app_permission
-add value 'inventory.suppliers:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.suppliers:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.suppliers:comment';
-
--- Products
-alter type supasheet.app_permission
-add value 'inventory.products:select';
-
-alter type supasheet.app_permission
-add value 'inventory.products:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.products:update';
-
-alter type supasheet.app_permission
-add value 'inventory.products:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.products:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.products:comment';
-
--- Stock levels
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:select';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:update';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_levels:comment';
-
--- Purchase orders
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:select';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:update';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders:comment';
-
--- Purchase order items
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:select';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:update';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_order_items:comment';
-
--- Shipments
-alter type supasheet.app_permission
-add value 'inventory.shipments:select';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments:update';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments:comment';
-
--- Shipment items
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:select';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:update';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_items:comment';
-
--- Stock movements
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:select';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:insert';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:update';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:delete';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:audit';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_movements:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'inventory.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'inventory.products_report:select';
-
-alter type supasheet.app_permission
-add value 'inventory.purchase_orders_report:select';
-
-alter type supasheet.app_permission
-add value 'inventory.shipments_report:select';
-
-alter type supasheet.app_permission
-add value 'inventory.low_stock_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'inventory.inventory_value_summary:select';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_status_split:select';
-
-alter type supasheet.app_permission
-add value 'inventory.open_pos_value:select';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_health:select';
-
-alter type supasheet.app_permission
-add value 'inventory.recent_shipments:select';
-
-alter type supasheet.app_permission
-add value 'inventory.top_suppliers:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'inventory.products_by_category_pie:select';
-
-alter type supasheet.app_permission
-add value 'inventory.stock_by_warehouse_bar:select';
-
-alter type supasheet.app_permission
-add value 'inventory.shipment_volume_line:select';
-
-alter type supasheet.app_permission
-add value 'inventory.movement_metrics_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -303,7 +83,7 @@ from
 
 grant
 select
-  on inventory.users to authenticated;
+  on inventory.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Warehouses
@@ -438,7 +218,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.warehouses to authenticated;
+delete on table inventory.warehouses to "x-admin";
 
 create index idx_inv_warehouses_type on inventory.warehouses (type);
 
@@ -450,29 +230,19 @@ alter table inventory.warehouses enable row level security;
 
 create policy warehouses_select on inventory.warehouses for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.warehouses:select')
-  );
+  to authenticated using (true);
 
 create policy warehouses_insert on inventory.warehouses for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.warehouses:insert')
-  );
+  check (true);
 
 create policy warehouses_update on inventory.warehouses
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.warehouses:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.warehouses:update')
-  );
+  check (true);
 
-create policy warehouses_delete on inventory.warehouses for delete to authenticated using (
-  supasheet.has_permission ('inventory.warehouses:delete')
-);
+create policy warehouses_delete on inventory.warehouses for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Suppliers
@@ -623,7 +393,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.suppliers to authenticated;
+delete on table inventory.suppliers to "x-admin";
 
 create index idx_inv_suppliers_user_id on inventory.suppliers (user_id);
 
@@ -635,29 +405,19 @@ alter table inventory.suppliers enable row level security;
 
 create policy suppliers_select on inventory.suppliers for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.suppliers:select')
-  );
+  to authenticated using (true);
 
 create policy suppliers_insert on inventory.suppliers for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.suppliers:insert')
-  );
+  check (true);
 
 create policy suppliers_update on inventory.suppliers
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.suppliers:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.suppliers:update')
-  );
+  check (true);
 
-create policy suppliers_delete on inventory.suppliers for delete to authenticated using (
-  supasheet.has_permission ('inventory.suppliers:delete')
-);
+create policy suppliers_delete on inventory.suppliers for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Products
@@ -831,7 +591,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.products to authenticated;
+delete on table inventory.products to "x-admin";
 
 create index idx_inv_products_user_id on inventory.products (user_id);
 
@@ -849,29 +609,19 @@ alter table inventory.products enable row level security;
 
 create policy products_select on inventory.products for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.products:select')
-  );
+  to authenticated using (true);
 
 create policy products_insert on inventory.products for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.products:insert')
-  );
+  check (true);
 
 create policy products_update on inventory.products
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.products:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.products:update')
-  );
+  check (true);
 
-create policy products_delete on inventory.products for delete to authenticated using (
-  supasheet.has_permission ('inventory.products:delete')
-);
+create policy products_delete on inventory.products for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Stock levels (warehouse × product)
@@ -988,7 +738,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.stock_levels to authenticated;
+delete on table inventory.stock_levels to "x-admin";
 
 create index idx_inv_stock_levels_warehouse_id on inventory.stock_levels (warehouse_id);
 
@@ -1000,29 +750,19 @@ alter table inventory.stock_levels enable row level security;
 
 create policy stock_levels_select on inventory.stock_levels for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.stock_levels:select')
-  );
+  to authenticated using (true);
 
 create policy stock_levels_insert on inventory.stock_levels for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.stock_levels:insert')
-  );
+  check (true);
 
 create policy stock_levels_update on inventory.stock_levels
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.stock_levels:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.stock_levels:update')
-  );
+  check (true);
 
-create policy stock_levels_delete on inventory.stock_levels for delete to authenticated using (
-  supasheet.has_permission ('inventory.stock_levels:delete')
-);
+create policy stock_levels_delete on inventory.stock_levels for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Purchase orders
@@ -1180,7 +920,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.purchase_orders to authenticated;
+delete on table inventory.purchase_orders to "x-admin";
 
 create index idx_inv_purchase_orders_user_id on inventory.purchase_orders (user_id);
 
@@ -1198,29 +938,19 @@ alter table inventory.purchase_orders enable row level security;
 
 create policy purchase_orders_select on inventory.purchase_orders for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.purchase_orders:select')
-  );
+  to authenticated using (true);
 
 create policy purchase_orders_insert on inventory.purchase_orders for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.purchase_orders:insert')
-  );
+  check (true);
 
 create policy purchase_orders_update on inventory.purchase_orders
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.purchase_orders:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.purchase_orders:update')
-  );
+  check (true);
 
-create policy purchase_orders_delete on inventory.purchase_orders for delete to authenticated using (
-  supasheet.has_permission ('inventory.purchase_orders:delete')
-);
+create policy purchase_orders_delete on inventory.purchase_orders for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Purchase order items
@@ -1309,7 +1039,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.purchase_order_items to authenticated;
+delete on table inventory.purchase_order_items to "x-admin";
 
 create index idx_inv_po_items_po_id on inventory.purchase_order_items (po_id);
 
@@ -1319,29 +1049,19 @@ alter table inventory.purchase_order_items enable row level security;
 
 create policy purchase_order_items_select on inventory.purchase_order_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.purchase_order_items:select')
-  );
+  to authenticated using (true);
 
 create policy purchase_order_items_insert on inventory.purchase_order_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.purchase_order_items:insert')
-  );
+  check (true);
 
 create policy purchase_order_items_update on inventory.purchase_order_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.purchase_order_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.purchase_order_items:update')
-  );
+  check (true);
 
-create policy purchase_order_items_delete on inventory.purchase_order_items for delete to authenticated using (
-  supasheet.has_permission ('inventory.purchase_order_items:delete')
-);
+create policy purchase_order_items_delete on inventory.purchase_order_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Shipments
@@ -1524,7 +1244,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.shipments to authenticated;
+delete on table inventory.shipments to "x-admin";
 
 create index idx_inv_shipments_user_id on inventory.shipments (user_id);
 
@@ -1542,29 +1262,19 @@ alter table inventory.shipments enable row level security;
 
 create policy shipments_select on inventory.shipments for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.shipments:select')
-  );
+  to authenticated using (true);
 
 create policy shipments_insert on inventory.shipments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.shipments:insert')
-  );
+  check (true);
 
 create policy shipments_update on inventory.shipments
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.shipments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.shipments:update')
-  );
+  check (true);
 
-create policy shipments_delete on inventory.shipments for delete to authenticated using (
-  supasheet.has_permission ('inventory.shipments:delete')
-);
+create policy shipments_delete on inventory.shipments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Shipment items
@@ -1651,7 +1361,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.shipment_items to authenticated;
+delete on table inventory.shipment_items to "x-admin";
 
 create index idx_inv_shipment_items_shipment_id on inventory.shipment_items (shipment_id);
 
@@ -1661,29 +1371,19 @@ alter table inventory.shipment_items enable row level security;
 
 create policy shipment_items_select on inventory.shipment_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.shipment_items:select')
-  );
+  to authenticated using (true);
 
 create policy shipment_items_insert on inventory.shipment_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.shipment_items:insert')
-  );
+  check (true);
 
 create policy shipment_items_update on inventory.shipment_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.shipment_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.shipment_items:update')
-  );
+  check (true);
 
-create policy shipment_items_delete on inventory.shipment_items for delete to authenticated using (
-  supasheet.has_permission ('inventory.shipment_items:delete')
-);
+create policy shipment_items_delete on inventory.shipment_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Stock movements (audit trail)
@@ -1847,7 +1547,7 @@ select
 ,
   insert,
 update,
-delete on table inventory.stock_movements to authenticated;
+delete on table inventory.stock_movements to "x-admin";
 
 create index idx_inv_stock_movements_user_id on inventory.stock_movements (user_id);
 
@@ -1865,29 +1565,19 @@ alter table inventory.stock_movements enable row level security;
 
 create policy stock_movements_select on inventory.stock_movements for
 select
-  to authenticated using (
-    supasheet.has_permission ('inventory.stock_movements:select')
-  );
+  to authenticated using (true);
 
 create policy stock_movements_insert on inventory.stock_movements for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('inventory.stock_movements:insert')
-  );
+  check (true);
 
 create policy stock_movements_update on inventory.stock_movements
 for update
-  to authenticated using (
-    supasheet.has_permission ('inventory.stock_movements:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('inventory.stock_movements:update')
-  );
+  check (true);
 
-create policy stock_movements_delete on inventory.stock_movements for delete to authenticated using (
-  supasheet.has_permission ('inventory.stock_movements:delete')
-);
+create policy stock_movements_delete on inventory.stock_movements for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -1930,7 +1620,7 @@ from
 
 grant
 select
-  on inventory.products_report to authenticated;
+  on inventory.products_report to "x-admin";
 
 comment on view inventory.products_report is '{"type": "report", "name": "Products Report", "description": "Products with aggregated stock levels and inventory value"}';
 
@@ -1974,7 +1664,7 @@ from
 
 grant
 select
-  on inventory.purchase_orders_report to authenticated;
+  on inventory.purchase_orders_report to "x-admin";
 
 comment on view inventory.purchase_orders_report is '{"type": "report", "name": "Purchase Orders Report", "description": "POs with supplier, warehouse and receipt progress"}';
 
@@ -2021,7 +1711,7 @@ from
 
 grant
 select
-  on inventory.shipments_report to authenticated;
+  on inventory.shipments_report to "x-admin";
 
 comment on view inventory.shipments_report is '{"type": "report", "name": "Shipments Report", "description": "Shipments with delivery outcome and unit counts"}';
 
@@ -2063,7 +1753,7 @@ from
 
 grant
 select
-  on inventory.low_stock_report to authenticated;
+  on inventory.low_stock_report to "x-admin";
 
 comment on view inventory.low_stock_report is '{"type": "report", "name": "Low Stock Report", "description": "Products at or below reorder point"}';
 
@@ -2089,7 +1779,7 @@ from
 
 grant
 select
-  on inventory.inventory_value_summary to authenticated;
+  on inventory.inventory_value_summary to "x-admin";
 
 -- card_2: in-stock vs at-risk SKUs
 create or replace view inventory.stock_status_split
@@ -2116,7 +1806,7 @@ from
 
 grant
 select
-  on inventory.stock_status_split to authenticated;
+  on inventory.stock_status_split to "x-admin";
 
 -- card_3: open POs value + on-time fulfillment %
 create or replace view inventory.open_pos_value
@@ -2162,7 +1852,7 @@ from
 
 grant
 select
-  on inventory.open_pos_value to authenticated;
+  on inventory.open_pos_value to "x-admin";
 
 -- card_4: stock health (out_of_stock + low + overstocked + overdue POs)
 create or replace view inventory.stock_health
@@ -2231,7 +1921,7 @@ from
 
 grant
 select
-  on inventory.stock_health to authenticated;
+  on inventory.stock_health to "x-admin";
 
 -- table_1: recent shipments
 create or replace view inventory.recent_shipments
@@ -2256,7 +1946,7 @@ from
 
 grant
 select
-  on inventory.recent_shipments to authenticated;
+  on inventory.recent_shipments to "x-admin";
 
 -- table_2: top suppliers by PO spend
 create or replace view inventory.top_suppliers
@@ -2286,7 +1976,7 @@ from
 
 grant
 select
-  on inventory.top_suppliers to authenticated;
+  on inventory.top_suppliers to "x-admin";
 
 comment on view inventory.inventory_value_summary is '{"type": "dashboard_widget", "name": "Inventory Value", "description": "Total on-hand value at cost", "widget_type": "card_1"}';
 
@@ -2326,7 +2016,7 @@ from
 
 grant
 select
-  on inventory.products_by_category_pie to authenticated;
+  on inventory.products_by_category_pie to "x-admin";
 
 -- Bar: stock units by warehouse
 create or replace view inventory.stock_by_warehouse_bar
@@ -2354,7 +2044,7 @@ from
 
 grant
 select
-  on inventory.stock_by_warehouse_bar to authenticated;
+  on inventory.stock_by_warehouse_bar to "x-admin";
 
 -- Line: weekly shipment volume (last 12 weeks)
 create or replace view inventory.shipment_volume_line
@@ -2386,7 +2076,7 @@ from
 
 grant
 select
-  on inventory.shipment_volume_line to authenticated;
+  on inventory.shipment_volume_line to "x-admin";
 
 -- Radar: stock movement metrics by type
 create or replace view inventory.movement_metrics_radar
@@ -2412,7 +2102,7 @@ from
 
 grant
 select
-  on inventory.movement_metrics_radar to authenticated;
+  on inventory.movement_metrics_radar to "x-admin";
 
 comment on view inventory.products_by_category_pie is '{"type": "chart", "name": "Products By Category", "description": "Active product count per category", "chart_type": "pie"}';
 
@@ -2421,115 +2111,6 @@ comment on view inventory.stock_by_warehouse_bar is '{"type": "chart", "name": "
 comment on view inventory.shipment_volume_line is '{"type": "chart", "name": "Shipment Volume", "description": "Weekly shipment counts over 12 weeks", "chart_type": "line"}';
 
 comment on view inventory.movement_metrics_radar is '{"type": "chart", "name": "Movement Metrics", "description": "Stock movement counts and units across types", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'inventory.warehouses:select'),
-  ('x-admin', 'inventory.warehouses:insert'),
-  ('x-admin', 'inventory.warehouses:update'),
-  ('x-admin', 'inventory.warehouses:delete'),
-  ('x-admin', 'inventory.warehouses:audit'),
-  ('x-admin', 'inventory.warehouses:comment'),
-  ('x-admin', 'inventory.suppliers:select'),
-  ('x-admin', 'inventory.suppliers:insert'),
-  ('x-admin', 'inventory.suppliers:update'),
-  ('x-admin', 'inventory.suppliers:delete'),
-  ('x-admin', 'inventory.suppliers:audit'),
-  ('x-admin', 'inventory.suppliers:comment'),
-  ('x-admin', 'inventory.products:select'),
-  ('x-admin', 'inventory.products:insert'),
-  ('x-admin', 'inventory.products:update'),
-  ('x-admin', 'inventory.products:delete'),
-  ('x-admin', 'inventory.products:audit'),
-  ('x-admin', 'inventory.products:comment'),
-  ('x-admin', 'inventory.stock_levels:select'),
-  ('x-admin', 'inventory.stock_levels:insert'),
-  ('x-admin', 'inventory.stock_levels:update'),
-  ('x-admin', 'inventory.stock_levels:delete'),
-  ('x-admin', 'inventory.stock_levels:audit'),
-  ('x-admin', 'inventory.stock_levels:comment'),
-  ('x-admin', 'inventory.purchase_orders:select'),
-  ('x-admin', 'inventory.purchase_orders:insert'),
-  ('x-admin', 'inventory.purchase_orders:update'),
-  ('x-admin', 'inventory.purchase_orders:delete'),
-  ('x-admin', 'inventory.purchase_orders:audit'),
-  ('x-admin', 'inventory.purchase_orders:comment'),
-  (
-    'x-admin',
-    'inventory.purchase_order_items:select'
-  ),
-  (
-    'x-admin',
-    'inventory.purchase_order_items:insert'
-  ),
-  (
-    'x-admin',
-    'inventory.purchase_order_items:update'
-  ),
-  (
-    'x-admin',
-    'inventory.purchase_order_items:delete'
-  ),
-  ('x-admin', 'inventory.purchase_order_items:audit'),
-  (
-    'x-admin',
-    'inventory.purchase_order_items:comment'
-  ),
-  ('x-admin', 'inventory.shipments:select'),
-  ('x-admin', 'inventory.shipments:insert'),
-  ('x-admin', 'inventory.shipments:update'),
-  ('x-admin', 'inventory.shipments:delete'),
-  ('x-admin', 'inventory.shipments:audit'),
-  ('x-admin', 'inventory.shipments:comment'),
-  ('x-admin', 'inventory.shipment_items:select'),
-  ('x-admin', 'inventory.shipment_items:insert'),
-  ('x-admin', 'inventory.shipment_items:update'),
-  ('x-admin', 'inventory.shipment_items:delete'),
-  ('x-admin', 'inventory.shipment_items:audit'),
-  ('x-admin', 'inventory.shipment_items:comment'),
-  ('x-admin', 'inventory.stock_movements:select'),
-  ('x-admin', 'inventory.stock_movements:insert'),
-  ('x-admin', 'inventory.stock_movements:update'),
-  ('x-admin', 'inventory.stock_movements:delete'),
-  ('x-admin', 'inventory.stock_movements:audit'),
-  ('x-admin', 'inventory.stock_movements:comment'),
-  ('x-admin', 'inventory.users:select'),
-  ('x-admin', 'inventory.products_report:select'),
-  (
-    'x-admin',
-    'inventory.purchase_orders_report:select'
-  ),
-  ('x-admin', 'inventory.shipments_report:select'),
-  ('x-admin', 'inventory.low_stock_report:select'),
-  (
-    'x-admin',
-    'inventory.inventory_value_summary:select'
-  ),
-  ('x-admin', 'inventory.stock_status_split:select'),
-  ('x-admin', 'inventory.open_pos_value:select'),
-  ('x-admin', 'inventory.stock_health:select'),
-  ('x-admin', 'inventory.recent_shipments:select'),
-  ('x-admin', 'inventory.top_suppliers:select'),
-  (
-    'x-admin',
-    'inventory.products_by_category_pie:select'
-  ),
-  (
-    'x-admin',
-    'inventory.stock_by_warehouse_bar:select'
-  ),
-  (
-    'x-admin',
-    'inventory.shipment_volume_line:select'
-  ),
-  (
-    'x-admin',
-    'inventory.movement_metrics_radar:select'
-  );
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -2666,7 +2247,7 @@ begin
     select name into v_warehouse_name from inventory.warehouses where id = new.warehouse_id;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('inventory.stock_levels:update'),
+        supasheet.get_users_with_table_privilege('inventory', 'stock_levels', 'update'),
         null
     );
 
@@ -2726,7 +2307,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('inventory.purchase_orders:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('inventory', 'purchase_orders', 'select') || array[new.user_id],
         null
     );
 
@@ -2772,7 +2353,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('inventory.shipments:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('inventory', 'shipments', 'select') || array[new.user_id],
         null
     );
 

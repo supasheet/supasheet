@@ -38,9 +38,16 @@ this automatically; everyone else should read the files directly.
 - Every migration that touches schema ends with `select supasheet.refresh_metadata();`
 - New schemas must be added to `supabase/config.toml` under both `[api].schemas`
   and `[api].extra_search_path`
-- RLS on every table, policies gated by `supasheet.has_permission('<schema>.<resource>:<action>')`
-- Revoke all default grants, then grant back exactly the intended operations to `authenticated`
-- Permission enum values are added in a committed `begin; ... commit;` block before use
+- RLS on every table. There's no permissions table — roles are real Postgres
+  roles (`x-admin`/`admin`/`user`, `nologin`), access is real `GRANT`s, and the
+  JWT's `role` claim (via a Custom Access Token Hook) drives PostgREST's
+  `SET ROLE`. Most policies are just `using (true)` since grants already gate
+  who can attempt the operation; use `pg_has_role(current_user, '<role>',
+  'member')` for row-level admin overrides
+- Revoke all default grants, then grant back exactly the intended operations
+  directly to the specific native roles that should hold them — never to
+  `authenticated` itself
+- Custom roles are just `create role "<name>" nologin;` + grants — no enum to extend first
 - After schema changes, regenerate types:
   `npx supabase gen types typescript --local --schema public --schema supasheet --schema <yours> > src/lib/database.types.ts`
 
@@ -68,7 +75,7 @@ alias (not `@/`).
   - `__root.tsx` (root layout/context), `index.tsx` (entry redirect)
   - `auth/` — sign-in, sign-up, MFA, forgot/update password
   - `account/` — profile, security, identities, roles & permissions
-  - `core/` — `users/`, `user_roles/`, `role_permissions/`, `audit_logs/`, `notifications/`
+  - `core/` — `users/`, `audit_logs/`, `notifications/`
   - `storage/` — file browser per bucket (`$bucketId/`)
   - `$schema/` — dynamic schema module: `resource/$resource/` (list, `new`,
     `update/`, `detail/`, `kanban/`, `calendar/`, `gallery/`, `report`),

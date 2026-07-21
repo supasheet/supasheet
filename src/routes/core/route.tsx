@@ -32,20 +32,6 @@ const CORE_RESOURCES = [
     meta: { icon: "UserIcon" } as TableMetadata,
   },
   {
-    name: "user_roles",
-    id: "user_roles",
-    schema: "supasheet",
-    type: "table" as const,
-    meta: { icon: "UserCheckIcon" } as TableMetadata,
-  },
-  {
-    name: "role_permissions",
-    id: "role_permissions",
-    schema: "supasheet",
-    type: "table" as const,
-    meta: { icon: "ShieldCheckIcon" } as TableMetadata,
-  },
-  {
     name: "audit_logs",
     id: "audit_logs",
     schema: "supasheet",

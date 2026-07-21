@@ -5,16 +5,15 @@ import { Card, CardContent, CardFooter, CardHeader } from "#/components/ui/card"
 import { Skeleton } from "#/components/ui/skeleton"
 import { UserCreateForm } from "#/components/users/user-create-form"
 import { pageTitle } from "#/lib/page-title"
+import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/new")({
   head: () => ({ meta: [{ title: pageTitle("New User") }] }),
-  beforeLoad: ({ context }) => {
-    if (
-      !context.permissions?.some(
-        (p) => p.permission === "supasheet.users:insert"
-      )
+  beforeLoad: async ({ context }) => {
+    const isXAdmin = await context.queryClient.ensureQueryData(
+      hasRoleQueryOptions("x-admin")
     )
-      throw notFound()
+    if (!isXAdmin) throw notFound()
   },
   pendingComponent: PendingComponent,
   component: RouteComponent,

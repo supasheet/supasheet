@@ -21,7 +21,7 @@ Execution is granted only to `service_role`, so it **must** be called from a `se
 
 ```sql
 supasheet.get_users_with_role ('admin') -- returns uuid[]
-supasheet.get_users_with_permission ('app.tickets:update') -- returns uuid[]
+supasheet.get_users_with_table_privilege ('app', 'tickets', 'update') -- returns uuid[]
 ```
 
 ## Canonical trigger pattern
@@ -78,13 +78,13 @@ for each row execute function app.trg_tickets_notify ();
 
 - Fire `after insert or update of <specific columns>` — not on every update.
 - Guard with `is distinct from` so no-op updates don't notify.
-- Use `array_remove(..., null)` for nullable recipient columns; broadcast with `get_users_with_permission('<schema>.<table>:select')` when a whole group should know.
+- Use `array_remove(..., null)` for nullable recipient columns; broadcast with `get_users_with_table_privilege('<schema>', '<table>', 'select')` when a whole group should know.
 - `p_link` is an in-app route: `/<schema>/resource/<table>/<id>/detail`.
 - Notifications run synchronously inside the trigger's transaction — keep them cheap.
-- **No permissions needed for end users**: RLS on `user_notifications` already shows each user their own deliveries; `supasheet.unread_notifications_count()` / `mark_all_notifications_read()` are granted to `authenticated`. Only the admin browse pages need `supasheet.notifications:select` / `supasheet.user_notifications:select` (seeded for `x-admin` by the base migration).
+- **No grants needed for end users**: RLS on `user_notifications` already shows each user their own deliveries; `supasheet.unread_notifications_count()` / `mark_all_notifications_read()` are granted to `authenticated`. Only the admin "view all notifications" override is gated, via `pg_has_role(current_user, 'x-admin', 'member')`.
 
 ## Authoritative sources
 
-- `supabase/migrations/20251006051303_notifications.sql` — tables, `create_notification`, resolvers, sample `trg_user_roles_notify`
+- `supabase/migrations/20251006051303_notifications.sql` — tables, `create_notification`, resolvers, sample `trg_user_role_changed_notify`
 - `supabase/demo.sql` — `demo.trg_projects_notify`, `demo.trg_tasks_notify`, `demo.trg_invoices_notify`
 - `supabase/examples/20251005100000_desk.sql` — `desk.trg_*_notify` set

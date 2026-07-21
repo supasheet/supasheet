@@ -3,10 +3,8 @@ create schema if not exists store;
 grant usage on schema store to authenticated;
 
 ----------------------------------------------------------------
--- Enums + permissions (must commit before use)
+-- Enums
 ----------------------------------------------------------------
-begin;
-
 create type store.product_status as enum('active', 'draft', 'archived', 'out_of_stock');
 
 create type store.order_status as enum(
@@ -26,141 +24,6 @@ create type store.payment_method as enum(
 );
 
 create type store.review_status as enum('pending', 'approved', 'rejected');
-
--- Product permissions
-alter type supasheet.app_permission
-add value 'store.products:select';
-
-alter type supasheet.app_permission
-add value 'store.products:insert';
-
-alter type supasheet.app_permission
-add value 'store.products:update';
-
-alter type supasheet.app_permission
-add value 'store.products:delete';
-
-alter type supasheet.app_permission
-add value 'store.products:audit';
-
-alter type supasheet.app_permission
-add value 'store.products:comment';
-
--- Order permissions
-alter type supasheet.app_permission
-add value 'store.orders:select';
-
-alter type supasheet.app_permission
-add value 'store.orders:insert';
-
-alter type supasheet.app_permission
-add value 'store.orders:update';
-
-alter type supasheet.app_permission
-add value 'store.orders:delete';
-
-alter type supasheet.app_permission
-add value 'store.orders:audit';
-
-alter type supasheet.app_permission
-add value 'store.orders:comment';
-
--- Order items permissions
-alter type supasheet.app_permission
-add value 'store.order_items:select';
-
-alter type supasheet.app_permission
-add value 'store.order_items:insert';
-
-alter type supasheet.app_permission
-add value 'store.order_items:update';
-
-alter type supasheet.app_permission
-add value 'store.order_items:delete';
-
-alter type supasheet.app_permission
-add value 'store.order_items:audit';
-
-alter type supasheet.app_permission
-add value 'store.order_items:comment';
-
--- Review permissions
-alter type supasheet.app_permission
-add value 'store.reviews:select';
-
-alter type supasheet.app_permission
-add value 'store.reviews:insert';
-
-alter type supasheet.app_permission
-add value 'store.reviews:update';
-
-alter type supasheet.app_permission
-add value 'store.reviews:delete';
-
-alter type supasheet.app_permission
-add value 'store.reviews:audit';
-
-alter type supasheet.app_permission
-add value 'store.reviews:comment';
-
--- Users mirror view
-alter type supasheet.app_permission
-add value 'store.users:select';
-
--- Store settings (singleton)
-alter type supasheet.app_permission
-add value 'store.store_settings:select';
-
-alter type supasheet.app_permission
-add value 'store.store_settings:insert';
-
-alter type supasheet.app_permission
-add value 'store.store_settings:update';
-
-alter type supasheet.app_permission
-add value 'store.store_settings:audit';
-
-alter type supasheet.app_permission
-add value 'store.store_settings:comment';
-
--- Widget / report / chart permissions
-alter type supasheet.app_permission
-add value 'store.order_report:select';
-
-alter type supasheet.app_permission
-add value 'store.revenue_summary:select';
-
-alter type supasheet.app_permission
-add value 'store.order_completion_rate:select';
-
-alter type supasheet.app_permission
-add value 'store.orders_by_status:select';
-
-alter type supasheet.app_permission
-add value 'store.low_stock_count:select';
-
-alter type supasheet.app_permission
-add value 'store.recent_orders:select';
-
-alter type supasheet.app_permission
-add value 'store.top_products:select';
-
-alter type supasheet.app_permission
-add value 'store.orders_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'store.revenue_line:select';
-
-alter type supasheet.app_permission
-add value 'store.product_category_bar:select';
-
-alter type supasheet.app_permission
-add value 'store.order_metrics_radar:select';
-
-alter type supasheet.app_permission
-add value 'store.product_ratings:select';
-
-commit;
 
 ----------------------------------------------------------------
 -- Store Settings  (single resource — one row only)
@@ -239,31 +102,23 @@ grant
 select
 ,
   insert,
-update on table store.store_settings to authenticated;
+update on table store.store_settings to "x-admin";
 
 alter table store.store_settings enable row level security;
 
 create policy store_settings_select on store.store_settings for
 select
-  to authenticated using (
-    supasheet.has_permission ('store.store_settings:select')
-  );
+  to authenticated using (true);
 
 create policy store_settings_insert on store.store_settings for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('store.store_settings:insert')
-  );
+  check (true);
 
 create policy store_settings_update on store.store_settings
 for update
-  to authenticated using (
-    supasheet.has_permission ('store.store_settings:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('store.store_settings:update')
-  );
+  check (true);
 
 ----------------------------------------------------------------
 -- Products table
@@ -385,7 +240,7 @@ select
 ,
   insert,
 update,
-delete on table store.products to authenticated;
+delete on table store.products to "x-admin";
 
 create index idx_store_products_status on store.products (status);
 
@@ -401,29 +256,19 @@ alter table store.products enable row level security;
 
 create policy products_select on store.products for
 select
-  to authenticated using (
-    supasheet.has_permission ('store.products:select')
-  );
+  to authenticated using (true);
 
 create policy products_insert on store.products for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('store.products:insert')
-  );
+  check (true);
 
 create policy products_update on store.products
 for update
-  to authenticated using (
-    supasheet.has_permission ('store.products:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('store.products:update')
-  );
+  check (true);
 
-create policy products_delete on store.products for delete to authenticated using (
-  supasheet.has_permission ('store.products:delete')
-);
+create policy products_delete on store.products for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Orders table
@@ -590,7 +435,7 @@ select
 ,
   insert,
 update,
-delete on table store.orders to authenticated;
+delete on table store.orders to "x-admin";
 
 create index idx_store_orders_user_id on store.orders (user_id);
 
@@ -604,19 +449,19 @@ alter table store.orders enable row level security;
 
 create policy orders_select on store.orders for
 select
-  to authenticated using (supasheet.has_permission ('store.orders:select'));
+  to authenticated using (true);
 
 create policy orders_insert on store.orders for insert to authenticated
 with
-  check (supasheet.has_permission ('store.orders:insert'));
+  check (true);
 
 create policy orders_update on store.orders
 for update
-  to authenticated using (supasheet.has_permission ('store.orders:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('store.orders:update'));
+  check (true);
 
-create policy orders_delete on store.orders for delete to authenticated using (supasheet.has_permission ('store.orders:delete'));
+create policy orders_delete on store.orders for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Order items table
@@ -692,7 +537,7 @@ select
 ,
   insert,
 update,
-delete on table store.order_items to authenticated;
+delete on table store.order_items to "x-admin";
 
 create index idx_store_order_items_order_id on store.order_items (order_id);
 
@@ -702,29 +547,19 @@ alter table store.order_items enable row level security;
 
 create policy order_items_select on store.order_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('store.order_items:select')
-  );
+  to authenticated using (true);
 
 create policy order_items_insert on store.order_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('store.order_items:insert')
-  );
+  check (true);
 
 create policy order_items_update on store.order_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('store.order_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('store.order_items:update')
-  );
+  check (true);
 
-create policy order_items_delete on store.order_items for delete to authenticated using (
-  supasheet.has_permission ('store.order_items:delete')
-);
+create policy order_items_delete on store.order_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reviews
@@ -844,7 +679,7 @@ select
 ,
   insert,
 update,
-delete on table store.reviews to authenticated;
+delete on table store.reviews to "x-admin";
 
 create index idx_store_reviews_product_id on store.reviews (product_id);
 
@@ -856,25 +691,21 @@ create index idx_store_reviews_rating on store.reviews (rating);
 
 alter table store.reviews enable row level security;
 
--- Anyone with the perm sees approved reviews; users always see their own
+-- Users always see their own reviews; approved reviews are visible to all
 create policy reviews_select on store.reviews for
 select
   to authenticated using (
-    supasheet.has_permission ('store.reviews:select')
-    and (
-      status = 'approved'
-      or user_id = (
-        select
-          auth.uid ()
-      )
+    status = 'approved'
+    or user_id = (
+      select
+        auth.uid ()
     )
   );
 
 create policy reviews_insert on store.reviews for insert to authenticated
 with
   check (
-    supasheet.has_permission ('store.reviews:insert')
-    and user_id = (
+    user_id = (
       select
         auth.uid ()
     )
@@ -882,11 +713,11 @@ with
 
 create policy reviews_update on store.reviews
 for update
-  to authenticated using (supasheet.has_permission ('store.reviews:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('store.reviews:update'));
+  check (true);
 
-create policy reviews_delete on store.reviews for delete to authenticated using (supasheet.has_permission ('store.reviews:delete'));
+create policy reviews_delete on store.reviews for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Users mirror (for Postgrest joins)
@@ -906,7 +737,7 @@ from
 
 grant
 select
-  on store.users to authenticated;
+  on store.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Reports
@@ -944,7 +775,7 @@ from
 
 grant
 select
-  on store.order_report to authenticated;
+  on store.order_report to "x-admin";
 
 comment on view store.order_report is '{"type": "report", "name": "Order Report", "description": "Full order list with customer and item details"}';
 
@@ -993,7 +824,7 @@ from
 
 grant
 select
-  on store.product_ratings to authenticated;
+  on store.product_ratings to "x-admin";
 
 comment on view store.product_ratings is '{"type": "report", "name": "Product Ratings", "description": "Approved review counts and average ratings per product"}';
 
@@ -1020,7 +851,7 @@ from
 
 grant
 select
-  on store.revenue_summary to authenticated;
+  on store.revenue_summary to "x-admin";
 
 -- Card2: delivered vs pending
 create or replace view store.order_completion_rate
@@ -1047,7 +878,7 @@ from
 
 grant
 select
-  on store.order_completion_rate to authenticated;
+  on store.order_completion_rate to "x-admin";
 
 -- Card3: delivered orders with rate
 create or replace view store.orders_by_status
@@ -1080,7 +911,7 @@ from
 
 grant
 select
-  on store.orders_by_status to authenticated;
+  on store.orders_by_status to "x-admin";
 
 -- Card4: inventory alert
 create or replace view store.low_stock_count
@@ -1132,7 +963,7 @@ from
 
 grant
 select
-  on store.low_stock_count to authenticated;
+  on store.low_stock_count to "x-admin";
 
 -- Table1: recent orders
 create or replace view store.recent_orders
@@ -1159,7 +990,7 @@ from
 
 grant
 select
-  on store.recent_orders to authenticated;
+  on store.recent_orders to "x-admin";
 
 -- Table2: top products by units sold
 create or replace view store.top_products
@@ -1195,7 +1026,7 @@ from
 
 grant
 select
-  on store.top_products to authenticated;
+  on store.top_products to "x-admin";
 
 comment on view store.revenue_summary is '{"type": "dashboard_widget", "name": "Total Revenue", "description": "Sum of all completed order revenue", "widget_type": "card_1"}';
 
@@ -1231,7 +1062,7 @@ from
 
 grant
 select
-  on store.orders_status_pie to authenticated;
+  on store.orders_status_pie to "x-admin";
 
 -- Line: daily revenue over 14 days
 create or replace view store.revenue_line
@@ -1258,7 +1089,7 @@ from
 
 grant
 select
-  on store.revenue_line to authenticated;
+  on store.revenue_line to "x-admin";
 
 -- Bar: products by category
 create or replace view store.product_category_bar
@@ -1285,7 +1116,7 @@ from
 
 grant
 select
-  on store.product_category_bar to authenticated;
+  on store.product_category_bar to "x-admin";
 
 -- Radar: order metrics by status
 create or replace view store.order_metrics_radar
@@ -1308,7 +1139,7 @@ from
 
 grant
 select
-  on store.order_metrics_radar to authenticated;
+  on store.order_metrics_radar to "x-admin";
 
 comment on view store.orders_status_pie is '{"type": "chart", "name": "Orders by Status", "description": "Current order status breakdown", "chart_type": "pie"}';
 
@@ -1317,55 +1148,6 @@ comment on view store.revenue_line is '{"type": "chart", "name": "Daily Revenue"
 comment on view store.product_category_bar is '{"type": "chart", "name": "Products by Category", "description": "Product count grouped by category", "chart_type": "bar"}';
 
 comment on view store.order_metrics_radar is '{"type": "chart", "name": "Order Metrics", "description": "Order volume and value by status", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'store.products:select'),
-  ('x-admin', 'store.products:insert'),
-  ('x-admin', 'store.products:update'),
-  ('x-admin', 'store.products:delete'),
-  ('x-admin', 'store.products:audit'),
-  ('x-admin', 'store.products:comment'),
-  ('x-admin', 'store.orders:select'),
-  ('x-admin', 'store.orders:insert'),
-  ('x-admin', 'store.orders:update'),
-  ('x-admin', 'store.orders:delete'),
-  ('x-admin', 'store.orders:audit'),
-  ('x-admin', 'store.orders:comment'),
-  ('x-admin', 'store.order_items:select'),
-  ('x-admin', 'store.order_items:insert'),
-  ('x-admin', 'store.order_items:update'),
-  ('x-admin', 'store.order_items:delete'),
-  ('x-admin', 'store.order_items:audit'),
-  ('x-admin', 'store.order_items:comment'),
-  ('x-admin', 'store.reviews:select'),
-  ('x-admin', 'store.reviews:insert'),
-  ('x-admin', 'store.reviews:update'),
-  ('x-admin', 'store.reviews:delete'),
-  ('x-admin', 'store.reviews:audit'),
-  ('x-admin', 'store.reviews:comment'),
-  ('x-admin', 'store.store_settings:select'),
-  ('x-admin', 'store.store_settings:insert'),
-  ('x-admin', 'store.store_settings:update'),
-  ('x-admin', 'store.store_settings:audit'),
-  ('x-admin', 'store.store_settings:comment'),
-  ('x-admin', 'store.users:select'),
-  ('x-admin', 'store.order_report:select'),
-  ('x-admin', 'store.product_ratings:select'),
-  ('x-admin', 'store.revenue_summary:select'),
-  ('x-admin', 'store.order_completion_rate:select'),
-  ('x-admin', 'store.orders_by_status:select'),
-  ('x-admin', 'store.low_stock_count:select'),
-  ('x-admin', 'store.recent_orders:select'),
-  ('x-admin', 'store.top_products:select'),
-  ('x-admin', 'store.orders_status_pie:select'),
-  ('x-admin', 'store.revenue_line:select'),
-  ('x-admin', 'store.product_category_bar:select'),
-  ('x-admin', 'store.order_metrics_radar:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -1447,7 +1229,7 @@ begin
         v_title := 'New order placed';
         v_body  := 'Order ' || v_order_ref || ' was placed.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('store.orders:select') || array[new.user_id],
+            supasheet.get_users_with_table_privilege('store', 'orders', 'select') || array[new.user_id],
             null
         );
     elsif new.status is distinct from old.status then
@@ -1496,7 +1278,7 @@ begin
     if new.stock < 10
        and (tg_op = 'INSERT' or old.stock >= 10)
     then
-        v_recipients := supasheet.get_users_with_permission('store.products:update');
+        v_recipients := supasheet.get_users_with_table_privilege('store', 'products', 'update');
 
         perform supasheet.create_notification(
             'product_low_stock',
@@ -1537,7 +1319,7 @@ begin
     select * into v_product from store.products where id = new.product_id;
 
     if tg_op = 'INSERT' then
-        v_recipients := supasheet.get_users_with_permission('store.reviews:update');
+        v_recipients := supasheet.get_users_with_table_privilege('store', 'reviews', 'update');
         v_type       := 'review_submitted';
         v_title      := 'New review submitted';
         v_body       := 'A review for "' || v_product.name || '" is awaiting moderation.';

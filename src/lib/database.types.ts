@@ -65,7 +65,7 @@ export type Database = {
           old_data: Json | null
           operation: string
           record_id: string | null
-          role: Database["supasheet"]["Enums"]["app_role"] | null
+          role: string | null
           schema_name: string
           table_name: string
           user_type: string
@@ -83,7 +83,7 @@ export type Database = {
           old_data?: Json | null
           operation: string
           record_id?: string | null
-          role?: Database["supasheet"]["Enums"]["app_role"] | null
+          role?: string | null
           schema_name: string
           table_name: string
           user_type?: string
@@ -101,7 +101,7 @@ export type Database = {
           old_data?: Json | null
           operation?: string
           record_id?: string | null
-          role?: Database["supasheet"]["Enums"]["app_role"] | null
+          role?: string | null
           schema_name?: string
           table_name?: string
           user_type?: string
@@ -222,24 +222,6 @@ export type Database = {
           },
         ]
       }
-      role_permissions: {
-        Row: {
-          id: number
-          permission: Database["supasheet"]["Enums"]["app_permission"]
-          role: Database["supasheet"]["Enums"]["app_role"]
-        }
-        Insert: {
-          id?: number
-          permission: Database["supasheet"]["Enums"]["app_permission"]
-          role: Database["supasheet"]["Enums"]["app_role"]
-        }
-        Update: {
-          id?: number
-          permission?: Database["supasheet"]["Enums"]["app_permission"]
-          role?: Database["supasheet"]["Enums"]["app_role"]
-        }
-        Relationships: []
-      }
       user_notifications: {
         Row: {
           archived_at: string | null
@@ -275,32 +257,6 @@ export type Database = {
           },
           {
             foreignKeyName: "user_notifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          id: number
-          role: Database["supasheet"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          id?: number
-          role: Database["supasheet"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          id?: number
-          role?: Database["supasheet"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -421,6 +377,7 @@ export type Database = {
       }
       create_audit_log: {
         Args: {
+          p_caller_role?: string
           p_metadata?: Json
           p_new_data?: Json
           p_old_data?: Json
@@ -442,32 +399,9 @@ export type Database = {
         }
         Returns: string
       }
-      get_audit_logs: {
-        Args: { p_record_id?: string; p_schema: string; p_table: string }
-        Returns: {
-          changed_fields: string[]
-          created_at: string
-          created_by: string
-          created_by_email: string
-          created_by_name: string
-          created_by_picture_url: string
-          error_code: string
-          error_message: string
-          id: string
-          is_error: boolean
-          metadata: Json
-          new_data: Json
-          old_data: Json
-          operation: string
-          record_id: string
-          role: Database["supasheet"]["Enums"]["app_role"]
-          schema_name: string
-          table_name: string
-          user_type: string
-        }[]
-      }
+      custom_access_token: { Args: { event: Json }; Returns: Json }
       get_charts: {
-        Args: { p_resource?: string; p_schema?: string }
+        Args: { p_caller?: string; p_resource?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number
@@ -477,7 +411,12 @@ export type Database = {
         }[]
       }
       get_columns: {
-        Args: { action?: string; schema_name?: string; table_name?: string }
+        Args: {
+          action?: string
+          p_caller?: string
+          schema_name?: string
+          table_name?: string
+        }
         Returns: {
           actual_type: string | null
           check: string | null
@@ -508,7 +447,12 @@ export type Database = {
         }
       }
       get_comments: {
-        Args: { p_record_id: string; p_schema: string; p_table: string }
+        Args: {
+          p_caller?: string
+          p_record_id: string
+          p_schema: string
+          p_table: string
+        }
         Returns: {
           content: string
           created_at: string
@@ -524,7 +468,12 @@ export type Database = {
         }[]
       }
       get_materialized_views: {
-        Args: { action?: string; schema_name?: string; view_name?: string }
+        Args: {
+          action?: string
+          p_caller?: string
+          schema_name?: string
+          view_name?: string
+        }
         Returns: {
           comment: string | null
           id: number | null
@@ -540,26 +489,26 @@ export type Database = {
         }
       }
       get_nav_items: {
-        Args: { schema_name?: string }
+        Args: { p_caller?: string; schema_name?: string }
         Returns: {
           count: number
           type: string
         }[]
       }
       get_permissions: {
-        Args: { schema_name?: string }
+        Args: { p_caller?: string; schema_name?: string }
         Returns: {
-          permission: Database["supasheet"]["Enums"]["app_permission"]
+          permission: string
         }[]
       }
       get_privileges: {
-        Args: { resource_name: string; schema_name: string }
+        Args: { p_caller?: string; resource_name: string; schema_name: string }
         Returns: {
           privilege: string
         }[]
       }
       get_related_tables: {
-        Args: { schema_name: string; table_name: string }
+        Args: { p_caller?: string; schema_name: string; table_name: string }
         Returns: {
           bytes: number
           comment: string
@@ -577,7 +526,7 @@ export type Database = {
         }[]
       }
       get_reports: {
-        Args: { p_schema?: string }
+        Args: { p_caller?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number
@@ -587,14 +536,19 @@ export type Database = {
         }[]
       }
       get_schemas: {
-        Args: never
+        Args: { p_caller?: string }
         Returns: {
           schema: string
         }[]
       }
       get_storage_filename_as_uuid: { Args: { name: string }; Returns: string }
       get_tables: {
-        Args: { action?: string; schema_name?: string; table_name?: string }
+        Args: {
+          action?: string
+          p_caller?: string
+          schema_name?: string
+          table_name?: string
+        }
         Returns: {
           bytes: number | null
           comment: string | null
@@ -618,7 +572,7 @@ export type Database = {
         }
       }
       get_templates: {
-        Args: { p_schema?: string }
+        Args: { p_caller?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number
@@ -627,16 +581,18 @@ export type Database = {
           schema: string
         }[]
       }
-      get_users_with_permission: {
-        Args: { p_permission: Database["supasheet"]["Enums"]["app_permission"] }
-        Returns: string[]
-      }
-      get_users_with_role: {
-        Args: { p_role: Database["supasheet"]["Enums"]["app_role"] }
+      get_users_with_role: { Args: { p_role: string }; Returns: string[] }
+      get_users_with_table_privilege: {
+        Args: { p_action?: string; p_schema: string; p_table: string }
         Returns: string[]
       }
       get_views: {
-        Args: { action?: string; schema_name?: string; view_name?: string }
+        Args: {
+          action?: string
+          p_caller?: string
+          schema_name?: string
+          view_name?: string
+        }
         Returns: {
           comment: string | null
           id: number | null
@@ -652,7 +608,7 @@ export type Database = {
         }
       }
       get_widgets: {
-        Args: { p_resource?: string; p_schema?: string }
+        Args: { p_caller?: string; p_resource?: string; p_schema?: string }
         Returns: {
           comment: string
           id: number
@@ -661,43 +617,14 @@ export type Database = {
           schema: string
         }[]
       }
-      has_permission: {
-        Args: {
-          requested_permission: Database["supasheet"]["Enums"]["app_permission"]
-        }
-        Returns: boolean
-      }
-      has_role: {
-        Args: { requested_role: Database["supasheet"]["Enums"]["app_role"] }
-        Returns: boolean
-      }
+      has_role: { Args: { requested_role: string }; Returns: boolean }
       mark_all_notifications_read: { Args: never; Returns: number }
       refresh_metadata: { Args: never; Returns: undefined }
       unread_notifications_count: { Args: never; Returns: number }
+      whoami: { Args: never; Returns: Json }
     }
     Enums: {
-      app_permission:
-        | "supasheet.users:select"
-        | "supasheet.users:select_all"
-        | "supasheet.users:update"
-        | "supasheet.users:insert"
-        | "supasheet.users:delete"
-        | "supasheet.users:invite"
-        | "supasheet.users:ban"
-        | "supasheet.users:generate_link"
-        | "supasheet.user_roles:select"
-        | "supasheet.user_roles:select_all"
-        | "supasheet.user_roles:insert"
-        | "supasheet.user_roles:delete"
-        | "supasheet.role_permissions:select"
-        | "supasheet.role_permissions:select_all"
-        | "supasheet.role_permissions:insert"
-        | "supasheet.role_permissions:delete"
-        | "supasheet.audit_logs:select"
-        | "supasheet.audit_logs:select_all"
-        | "supasheet.notifications:select"
-        | "supasheet.user_notifications:select"
-      app_role: "x-admin" | "admin" | "user"
+      [_ in never]: never
     }
     CompositeTypes: {
       file_object: {
@@ -719,12 +646,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -746,13 +673,12 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -771,13 +697,12 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -796,13 +721,12 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -815,11 +739,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -829,37 +753,10 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
   supasheet: {
-    Enums: {
-      app_permission: [
-        "supasheet.users:select",
-        "supasheet.users:select_all",
-        "supasheet.users:update",
-        "supasheet.users:insert",
-        "supasheet.users:delete",
-        "supasheet.users:invite",
-        "supasheet.users:ban",
-        "supasheet.users:generate_link",
-        "supasheet.user_roles:select",
-        "supasheet.user_roles:select_all",
-        "supasheet.user_roles:insert",
-        "supasheet.user_roles:delete",
-        "supasheet.role_permissions:select",
-        "supasheet.role_permissions:select_all",
-        "supasheet.role_permissions:insert",
-        "supasheet.role_permissions:delete",
-        "supasheet.audit_logs:select",
-        "supasheet.audit_logs:select_all",
-        "supasheet.notifications:select",
-        "supasheet.user_notifications:select",
-      ],
-      app_role: ["x-admin", "admin", "user"],
-    },
+    Enums: {},
   },
 } as const

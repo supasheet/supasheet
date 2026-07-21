@@ -11,7 +11,6 @@ import { getColumnMetadata } from "#/lib/columns"
 import type { ResourceSchema } from "#/lib/database-meta.types"
 import { getMetaFields } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
-import type { AppPermission } from "#/lib/supabase/data/core"
 import {
   columnsSchemaQueryOptions,
   singleResourceDataQueryOptions,
@@ -42,9 +41,7 @@ export function ResourceDetailSheetBody({
     singleResourceDataQueryOptions(schema as never, resource as never, pk)
   )
 
-  const canUpdate = useHasPermission(
-    `${schema}.${resource}:update` as AppPermission
-  )
+  const canUpdate = useHasPermission(`${schema}.${resource}:update`)
 
   if (!tableSchema || !columnsSchema?.length || !record) {
     return (

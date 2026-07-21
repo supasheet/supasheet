@@ -3,13 +3,13 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import type { DatabaseSchemas } from "#/lib/database-meta.types"
-import type { Database, Json } from "#/lib/database.types"
+import type { Json } from "#/lib/database.types"
 
 import { supabase } from "../client"
 import { applyFilters } from "../filter"
 
-export type AppRole = Database["supasheet"]["Enums"]["app_role"]
-export type AppPermission = Database["supasheet"]["Enums"]["app_permission"]
+export type AppRole = string
+export type AppPermission = string
 
 export const auditLogsQueryOptions = (
   page: number,
@@ -106,188 +106,23 @@ export const allUsersQueryOptions = queryOptions({
   staleTime: 1000 * 60 * 5,
 })
 
-export const rolesQueryOptions = (userId: string) =>
-  queryOptions({
-    queryKey: ["supasheet", "roles", userId],
-    queryFn: async () => {
-      const { data: userRoles, error: rolesError } = await supabase
-        .schema("supasheet")
-        .from("user_roles")
-        .select("*")
-        .eq("user_id", userId)
-
-      if (rolesError) throw rolesError
-
-      const roles = userRoles
-      if (roles.length === 0) return []
-
-      const { data: rolePermissions, error: permissionsError } = await supabase
-        .schema("supasheet")
-        .from("role_permissions")
-        .select("*")
-        .in(
-          "role",
-          roles.map((r) => r.role)
-        )
-
-      if (permissionsError) throw permissionsError
-
-      return roles.map((userRole) => ({
-        ...userRole,
-        permissions: rolePermissions.filter((rp) => rp.role === userRole.role),
-      }))
-    },
-    staleTime: 1000 * 60 * 5,
-  })
-
-export const userRolesQueryOptions = (
-  page: number,
-  pageSize: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
-) =>
-  queryOptions({
-    queryKey: [
-      "supasheet",
-      "user_roles",
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
-    ],
-    queryFn: async () => {
-      let query = supabase
-        .schema("supasheet")
-        .from("user_roles")
-        .select("*", { count: "exact" })
-        .range((page - 1) * pageSize, page * pageSize - 1)
-
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
-      } else {
-        query = query.order("id", { ascending: true })
-      }
-
-      query = applyFilters(query, filters)
-
-      const { data, count, error } = await query
-      if (error) throw error
-
-      return { result: data, count, page, pageSize }
-    },
-    staleTime: 1000 * 60 * 5,
-  })
-
-export const rolePermissionsQueryOptions = (
-  page: number,
-  pageSize: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
-) =>
-  queryOptions({
-    queryKey: [
-      "supasheet",
-      "role_permissions",
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
-    ],
-    queryFn: async () => {
-      let query = supabase
-        .schema("supasheet")
-        .from("role_permissions")
-        .select("*", { count: "exact" })
-        .range((page - 1) * pageSize, page * pageSize - 1)
-
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
-      } else {
-        query = query.order("id", { ascending: true })
-      }
-
-      query = applyFilters(query, filters)
-
-      const { data, count, error } = await query
-      if (error) throw error
-
-      return { result: data, count, page, pageSize }
-    },
-    staleTime: 1000 * 60 * 5,
-  })
-
-export const createUserRoleMutationOptions = mutationOptions({
-  mutationFn: async (data: { user_id: string; role: AppRole }) => {
-    const { error } = await supabase
-      .schema("supasheet")
-      .from("user_roles")
-      .insert({ user_id: data.user_id, role: data.role })
+export const whoamiQueryOptions = queryOptions({
+  queryKey: ["supasheet", "whoami"] as const,
+  queryFn: async () => {
+    const { data, error } = await supabase.schema("supasheet").rpc("whoami")
     if (error) throw error
+    return data as { user_id: string | null; role: string | null }
   },
+  staleTime: 1000 * 60 * 5,
 })
 
-export const createRolePermissionMutationOptions = mutationOptions({
-  mutationFn: async (data: { role: AppRole; permission: AppPermission }) => {
-    const { error } = await supabase
-      .schema("supasheet")
-      .from("role_permissions")
-      .insert(data)
-    if (error) throw error
-  },
-})
-
-export const deleteUserRolesMutationOptions = mutationOptions({
-  mutationFn: async (ids: number[]) => {
-    const { error } = await supabase
-      .schema("supasheet")
-      .from("user_roles")
-      .delete()
-      .in("id", ids)
-    if (error) throw error
-  },
-})
-
-export const deleteRolePermissionsMutationOptions = mutationOptions({
-  mutationFn: async (ids: number[]) => {
-    const { error } = await supabase
-      .schema("supasheet")
-      .from("role_permissions")
-      .delete()
-      .in("id", ids)
-    if (error) throw error
-  },
-})
-
-export const userRoleQueryOptions = (id: number) =>
+export const hasRoleQueryOptions = (role: AppRole) =>
   queryOptions({
-    queryKey: ["supasheet", "user_roles", id],
+    queryKey: ["supasheet", "has_role", role],
     queryFn: async () => {
       const { data, error } = await supabase
         .schema("supasheet")
-        .from("user_roles")
-        .select("*")
-        .eq("id", id)
-        .single()
-      if (error) throw error
-      return data
-    },
-    staleTime: 1000 * 60 * 5,
-  })
-
-export const rolePermissionQueryOptions = (id: number) =>
-  queryOptions({
-    queryKey: ["supasheet", "role_permissions", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .schema("supasheet")
-        .from("role_permissions")
-        .select("*")
-        .eq("id", id)
-        .single()
+        .rpc("has_role", { requested_role: role })
       if (error) throw error
       return data
     },

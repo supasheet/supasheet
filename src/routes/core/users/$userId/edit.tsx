@@ -7,17 +7,16 @@ import { Skeleton } from "#/components/ui/skeleton"
 import { UserEditForm } from "#/components/users/user-edit-form"
 import { pageTitle } from "#/lib/page-title"
 import { adminGetUserQueryOptions } from "#/lib/supabase/data/admin-auth"
+import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/$userId/edit")({
   head: () => ({ meta: [{ title: pageTitle("Edit User") }] }),
-  beforeLoad: ({ context, params: { userId } }) => {
+  beforeLoad: async ({ context, params: { userId } }) => {
     if (context.authUser?.id === userId) throw notFound()
-    if (
-      !context.permissions?.some(
-        (p) => p.permission === "supasheet.users:update"
-      )
+    const isXAdmin = await context.queryClient.ensureQueryData(
+      hasRoleQueryOptions("x-admin")
     )
-      throw notFound()
+    if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params }) => {
     const user = await context.queryClient.ensureQueryData(

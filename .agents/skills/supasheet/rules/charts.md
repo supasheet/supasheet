@@ -11,7 +11,7 @@ requires:
 
 # Charts
 
-A chart = a view whose comment is `{"type": "chart", "name": ..., "description": ..., "chart_type": ...}` (optional `"format": "currency"`). Discovered by `supasheet.get_charts()`; shown on `/$schema/chart` to users holding `:select`.
+A chart = a view whose comment is `{"type": "chart", "name": ..., "description": ..., "chart_type": ...}` (optional `"format": "currency"`). Discovered by `supasheet.get_charts()`; shown on `/$schema/chart` to callers whose native role holds `select` on the view.
 
 ## Chart contracts (exact column shapes)
 
@@ -70,23 +70,15 @@ group by tm.name;
 ## Full recipe
 
 ```sql
--- committed enum block:
-alter type supasheet.app_permission add value if not exists 'app.tickets_by_status_pie:select';
-
 create view app.tickets_by_status_pie
 with (security_invoker = true) as
 select status::text as label, count(*) as value
 from app.tickets group by status;
 
 revoke all on app.tickets_by_status_pie from public, anon, authenticated, service_role;
-grant select on app.tickets_by_status_pie to authenticated;
+grant select on app.tickets_by_status_pie to "x-admin", "user";
 
 comment on view app.tickets_by_status_pie is '{"type": "chart", "name": "Tickets By Status", "description": "Distribution across statuses", "chart_type": "pie"}';
-
-insert into supasheet.role_permissions (role, permission) values
-  ('x-admin', 'app.tickets_by_status_pie:select'),
-  ('user', 'app.tickets_by_status_pie:select')
-on conflict (role, permission) do nothing;
 
 select supasheet.refresh_metadata ();
 ```
@@ -94,7 +86,7 @@ select supasheet.refresh_metadata ();
 ## Rules
 
 - Suffix names with the chart type: `revenue_trend_line`, `tasks_by_status_pie`, `projects_by_client_bar`, `signup_growth_area`, `team_workload_radar`.
-- Always `security_invoker = true`; `:select` is the only permission needed.
+- Always `security_invoker = true`; `select` is the only grant needed.
 - Keep name/description in the comment JSON, never as extra SELECT columns.
 - Money series: add `"format": "currency"` to the comment.
 - Sources: `supabase/demo.sql` (`tasks_by_status_pie`, `projects_by_client_bar`, `revenue_trend_line`, `team_workload_radar`); `supasheet.get_charts()` in `supabase/migrations/20250707035446_charts.sql`.

@@ -17,34 +17,27 @@ create index idx_comments_created_at on supasheet.comments (created_at);
 
 alter table supasheet.comments enable row level security;
 
-create policy "Users can insert comments if they have permission" on supasheet.comments for insert to authenticated
+create policy "Users can insert comments if they have select on the resource" on supasheet.comments for insert to authenticated
 with
   check (
     created_by = (
       select
         auth.uid ()
     )
-    and exists (
-      select
-        1
-      from
-        supasheet.role_permissions rp
-        inner join supasheet.user_roles ur on ur.role = rp.role
-      where
-        ur.user_id = (
-          select
-            auth.uid ()
-        )
-        and rp.permission::text = schema_name || '.' || table_name || ':comment'
+    and has_table_privilege(
+      current_user,
+      format('%I.%I', schema_name, table_name),
+      'select'
     )
   );
 
-create policy "Users can select their own comments" on supasheet.comments for
+create policy "Users can select comments if they have select on the resource" on supasheet.comments for
 select
   to authenticated using (
-    created_by = (
-      select
-        auth.uid ()
+    has_table_privilege(
+      current_user,
+      format('%I.%I', schema_name, table_name),
+      'select'
     )
   );
 
@@ -71,7 +64,14 @@ create policy "Users can delete their own comments" on supasheet.comments for de
   )
 );
 
-create or replace function supasheet.get_comments (p_schema text, p_table text, p_record_id text) returns table (
+drop function if exists supasheet.get_comments (text, text, text);
+
+create or replace function supasheet.get_comments (
+  p_schema text,
+  p_table text,
+  p_record_id text,
+  p_caller text default current_user
+) returns table (
   id uuid,
   created_at timestamptz,
   updated_at timestamptz,
@@ -99,13 +99,9 @@ set
     u.email          as created_by_email,
     u.picture_url    as created_by_picture_url
   from supasheet.comments c
-  inner join supasheet.role_permissions rp
-    on rp.permission::text = p_schema || '.' || p_table || ':comment'
-  inner join supasheet.user_roles ur
-    on ur.role = rp.role
   left join supasheet.users u
     on u.id = c.created_by
-  where ur.user_id    = (select auth.uid())
+  where has_table_privilege(p_caller, format('%I.%I', p_schema, p_table), 'select')
     and c.schema_name = p_schema
     and c.table_name  = p_table
     and c.record_id   = p_record_id
@@ -113,7 +109,7 @@ set
 $$;
 
 grant
-execute on function supasheet.get_comments (text, text, text) to authenticated;
+execute on function supasheet.get_comments (text, text, text, text) to authenticated;
 
 grant
 select

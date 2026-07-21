@@ -29,7 +29,6 @@ import { Skeleton } from "#/components/ui/skeleton"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type { TableMetadata, ViewMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
-import type { AppPermission } from "#/lib/supabase/data/core"
 
 function LucideIconComponent({
   iconName,
@@ -68,9 +67,7 @@ function ResourceMenuItem({
   const navigate = useNavigate()
   const { isMobile } = useSidebar()
 
-  const canInsert = useHasPermission(
-    `${item.schema}.${item.id}:insert` as AppPermission
-  )
+  const canInsert = useHasPermission(`${item.schema}.${item.id}:insert`)
   const showInsert = canInsert && item.type === "table"
 
   const icon = (

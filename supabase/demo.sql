@@ -7,8 +7,8 @@
 -- billable services, and invoices.
 --
 -- Feature coverage:
---   - Schema-scoped RBAC (supasheet.app_permission / role_permissions)
---   - Row Level Security via supasheet.has_permission()
+--   - Native-role RBAC (CREATE ROLE + GRANT, no permissions table)
+--   - Row Level Security scoped to native roles via pg_has_role()
 --   - All column data types: URL, TEL, EMAIL, RICH_TEXT, COLOR,
 --     PERCENTAGE, DURATION, file, AVATAR, enums, arrays
 --   - All view layouts: kanban, calendar, gallery, list, tree
@@ -92,323 +92,6 @@ create type demo.portfolio_category as enum(
   'marketing'
 );
 
--- Clients
-alter type supasheet.app_permission
-add value 'demo.clients:select';
-
-alter type supasheet.app_permission
-add value 'demo.clients:insert';
-
-alter type supasheet.app_permission
-add value 'demo.clients:update';
-
-alter type supasheet.app_permission
-add value 'demo.clients:delete';
-
-alter type supasheet.app_permission
-add value 'demo.clients:audit';
-
-alter type supasheet.app_permission
-add value 'demo.clients:comment';
-
--- Team members
-alter type supasheet.app_permission
-add value 'demo.team_members:select';
-
-alter type supasheet.app_permission
-add value 'demo.team_members:insert';
-
-alter type supasheet.app_permission
-add value 'demo.team_members:update';
-
-alter type supasheet.app_permission
-add value 'demo.team_members:delete';
-
-alter type supasheet.app_permission
-add value 'demo.team_members:audit';
-
-alter type supasheet.app_permission
-add value 'demo.team_members:comment';
-
--- Team member details (1:1 HR profile extension)
-alter type supasheet.app_permission
-add value 'demo.team_member_details:select';
-
-alter type supasheet.app_permission
-add value 'demo.team_member_details:insert';
-
-alter type supasheet.app_permission
-add value 'demo.team_member_details:update';
-
-alter type supasheet.app_permission
-add value 'demo.team_member_details:delete';
-
-alter type supasheet.app_permission
-add value 'demo.team_member_details:audit';
-
-alter type supasheet.app_permission
-add value 'demo.team_member_details:comment';
-
--- Projects
-alter type supasheet.app_permission
-add value 'demo.projects:select';
-
-alter type supasheet.app_permission
-add value 'demo.projects:insert';
-
-alter type supasheet.app_permission
-add value 'demo.projects:update';
-
-alter type supasheet.app_permission
-add value 'demo.projects:delete';
-
-alter type supasheet.app_permission
-add value 'demo.projects:audit';
-
-alter type supasheet.app_permission
-add value 'demo.projects:comment';
-
--- Project ↔ Team member junction (no :update — link rows are insert/delete only)
-alter type supasheet.app_permission
-add value 'demo.project_members:select';
-
-alter type supasheet.app_permission
-add value 'demo.project_members:insert';
-
-alter type supasheet.app_permission
-add value 'demo.project_members:delete';
-
-alter type supasheet.app_permission
-add value 'demo.project_members:audit';
-
-alter type supasheet.app_permission
-add value 'demo.project_members:comment';
-
--- Milestones
-alter type supasheet.app_permission
-add value 'demo.milestones:select';
-
-alter type supasheet.app_permission
-add value 'demo.milestones:insert';
-
-alter type supasheet.app_permission
-add value 'demo.milestones:update';
-
-alter type supasheet.app_permission
-add value 'demo.milestones:delete';
-
-alter type supasheet.app_permission
-add value 'demo.milestones:audit';
-
-alter type supasheet.app_permission
-add value 'demo.milestones:comment';
-
--- Tasks
-alter type supasheet.app_permission
-add value 'demo.tasks:select';
-
-alter type supasheet.app_permission
-add value 'demo.tasks:insert';
-
-alter type supasheet.app_permission
-add value 'demo.tasks:update';
-
-alter type supasheet.app_permission
-add value 'demo.tasks:delete';
-
-alter type supasheet.app_permission
-add value 'demo.tasks:audit';
-
-alter type supasheet.app_permission
-add value 'demo.tasks:comment';
-
--- Portfolio items (published case studies — gallery-first showcase)
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:select';
-
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:insert';
-
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:update';
-
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:delete';
-
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:audit';
-
-alter type supasheet.app_permission
-add value 'demo.portfolio_items:comment';
-
--- Services (billing catalog)
-alter type supasheet.app_permission
-add value 'demo.services:select';
-
-alter type supasheet.app_permission
-add value 'demo.services:insert';
-
-alter type supasheet.app_permission
-add value 'demo.services:update';
-
-alter type supasheet.app_permission
-add value 'demo.services:delete';
-
-alter type supasheet.app_permission
-add value 'demo.services:audit';
-
-alter type supasheet.app_permission
-add value 'demo.services:comment';
-
--- Invoices
-alter type supasheet.app_permission
-add value 'demo.invoices:select';
-
-alter type supasheet.app_permission
-add value 'demo.invoices:insert';
-
-alter type supasheet.app_permission
-add value 'demo.invoices:update';
-
-alter type supasheet.app_permission
-add value 'demo.invoices:delete';
-
-alter type supasheet.app_permission
-add value 'demo.invoices:audit';
-
-alter type supasheet.app_permission
-add value 'demo.invoices:comment';
-
--- Invoice line items
-alter type supasheet.app_permission
-add value 'demo.invoice_items:select';
-
-alter type supasheet.app_permission
-add value 'demo.invoice_items:insert';
-
-alter type supasheet.app_permission
-add value 'demo.invoice_items:update';
-
-alter type supasheet.app_permission
-add value 'demo.invoice_items:delete';
-
-alter type supasheet.app_permission
-add value 'demo.invoice_items:audit';
-
-alter type supasheet.app_permission
-add value 'demo.invoice_items:comment';
-
--- Time entries
-alter type supasheet.app_permission
-add value 'demo.time_entries:select';
-
-alter type supasheet.app_permission
-add value 'demo.time_entries:insert';
-
-alter type supasheet.app_permission
-add value 'demo.time_entries:update';
-
-alter type supasheet.app_permission
-add value 'demo.time_entries:delete';
-
-alter type supasheet.app_permission
-add value 'demo.time_entries:audit';
-
-alter type supasheet.app_permission
-add value 'demo.time_entries:comment';
-
--- Workspace settings (singleton — no :delete)
-alter type supasheet.app_permission
-add value 'demo.workspace_settings:select';
-
-alter type supasheet.app_permission
-add value 'demo.workspace_settings:insert';
-
-alter type supasheet.app_permission
-add value 'demo.workspace_settings:update';
-
-alter type supasheet.app_permission
-add value 'demo.workspace_settings:audit';
-
-alter type supasheet.app_permission
-add value 'demo.workspace_settings:comment';
-
--- Users mirror view (so PostgREST joins from demo.* tables can resolve)
-alter type supasheet.app_permission
-add value 'demo.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'demo.clients_report:select';
-
-alter type supasheet.app_permission
-add value 'demo.projects_report:select';
-
-alter type supasheet.app_permission
-add value 'demo.invoices_report:select';
-
-alter type supasheet.app_permission
-add value 'demo.team_utilization_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'demo.active_projects_count:select';
-
-alter type supasheet.app_permission
-add value 'demo.task_completion:select';
-
-alter type supasheet.app_permission
-add value 'demo.revenue_summary:select';
-
-alter type supasheet.app_permission
-add value 'demo.project_health:select';
-
-alter type supasheet.app_permission
-add value 'demo.recent_tasks:select';
-
-alter type supasheet.app_permission
-add value 'demo.upcoming_milestones:select';
-
-alter type supasheet.app_permission
-add value 'demo.top_clients:select';
-
-alter type supasheet.app_permission
-add value 'demo.client_pipeline:select';
-
-alter type supasheet.app_permission
-add value 'demo.project_progress:select';
-
-alter type supasheet.app_permission
-add value 'demo.outstanding_balance:select';
-
-alter type supasheet.app_permission
-add value 'demo.active_team_members_count:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'demo.tasks_by_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'demo.projects_by_client_bar:select';
-
-alter type supasheet.app_permission
-add value 'demo.revenue_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'demo.team_workload_radar:select';
-
-alter type supasheet.app_permission
-add value 'demo.clients_by_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'demo.projects_by_priority_bar:select';
-
-alter type supasheet.app_permission
-add value 'demo.invoices_by_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'demo.team_by_department_pie:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -429,7 +112,8 @@ from
 
 grant
 select
-  on demo.users to authenticated;
+  on demo.users to "x-admin",
+  "user";
 
 ----------------------------------------------------------------
 -- Clients
@@ -521,7 +205,13 @@ select
 ,
   insert,
 update,
-delete on table demo.clients to authenticated;
+delete on table demo.clients to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.clients to "user";
 
 create index idx_demo_clients_user_id on demo.clients (user_id);
 
@@ -537,19 +227,19 @@ alter table demo.clients enable row level security;
 
 create policy clients_select on demo.clients for
 select
-  to authenticated using (supasheet.has_permission ('demo.clients:select'));
+  to authenticated using (true);
 
 create policy clients_insert on demo.clients for insert to authenticated
 with
-  check (supasheet.has_permission ('demo.clients:insert'));
+  check (true);
 
 create policy clients_update on demo.clients
 for update
-  to authenticated using (supasheet.has_permission ('demo.clients:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('demo.clients:update'));
+  check (true);
 
-create policy clients_delete on demo.clients for delete to authenticated using (supasheet.has_permission ('demo.clients:delete'));
+create policy clients_delete on demo.clients for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Team members (staff directory, org hierarchy)
@@ -649,7 +339,11 @@ select
 ,
   insert,
 update,
-delete on table demo.team_members to authenticated;
+delete on table demo.team_members to "x-admin";
+
+grant
+select
+  on table demo.team_members to "user";
 
 create index idx_demo_team_members_user_id on demo.team_members (user_id);
 
@@ -663,29 +357,19 @@ alter table demo.team_members enable row level security;
 
 create policy team_members_select on demo.team_members for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.team_members:select')
-  );
+  to authenticated using (true);
 
 create policy team_members_insert on demo.team_members for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.team_members:insert')
-  );
+  check (true);
 
 create policy team_members_update on demo.team_members
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.team_members:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.team_members:update')
-  );
+  check (true);
 
-create policy team_members_delete on demo.team_members for delete to authenticated using (
-  supasheet.has_permission ('demo.team_members:delete')
-);
+create policy team_members_delete on demo.team_members for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Team member details (1:1 HR profile extension — a unique,
@@ -736,35 +420,25 @@ select
 ,
   insert,
 update,
-delete on table demo.team_member_details to authenticated;
+delete on table demo.team_member_details to "x-admin";
 
 alter table demo.team_member_details enable row level security;
 
 create policy team_member_details_select on demo.team_member_details for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.team_member_details:select')
-  );
+  to authenticated using (true);
 
 create policy team_member_details_insert on demo.team_member_details for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.team_member_details:insert')
-  );
+  check (true);
 
 create policy team_member_details_update on demo.team_member_details
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.team_member_details:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.team_member_details:update')
-  );
+  check (true);
 
-create policy team_member_details_delete on demo.team_member_details for delete to authenticated using (
-  supasheet.has_permission ('demo.team_member_details:delete')
-);
+create policy team_member_details_delete on demo.team_member_details for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Projects
@@ -883,7 +557,13 @@ select
 ,
   insert,
 update,
-delete on table demo.projects to authenticated;
+delete on table demo.projects to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.projects to "user";
 
 create index idx_demo_projects_client_id on demo.projects (client_id);
 
@@ -903,19 +583,19 @@ alter table demo.projects enable row level security;
 
 create policy projects_select on demo.projects for
 select
-  to authenticated using (supasheet.has_permission ('demo.projects:select'));
+  to authenticated using (true);
 
 create policy projects_insert on demo.projects for insert to authenticated
 with
-  check (supasheet.has_permission ('demo.projects:insert'));
+  check (true);
 
 create policy projects_update on demo.projects
 for update
-  to authenticated using (supasheet.has_permission ('demo.projects:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('demo.projects:update'));
+  check (true);
 
-create policy projects_delete on demo.projects for delete to authenticated using (supasheet.has_permission ('demo.projects:delete'));
+create policy projects_delete on demo.projects for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Project ↔ Team member junction (many-to-many, inline form)
@@ -958,7 +638,8 @@ grant
 select
 ,
   insert,
-  delete on table demo.project_members to authenticated;
+  delete on table demo.project_members to "x-admin",
+  "user";
 
 create index idx_demo_project_members_project_id on demo.project_members (project_id);
 
@@ -968,19 +649,13 @@ alter table demo.project_members enable row level security;
 
 create policy project_members_select on demo.project_members for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.project_members:select')
-  );
+  to authenticated using (true);
 
 create policy project_members_insert on demo.project_members for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.project_members:insert')
-  );
+  check (true);
 
-create policy project_members_delete on demo.project_members for delete to authenticated using (
-  supasheet.has_permission ('demo.project_members:delete')
-);
+create policy project_members_delete on demo.project_members for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Milestones
@@ -1053,7 +728,13 @@ select
 ,
   insert,
 update,
-delete on table demo.milestones to authenticated;
+delete on table demo.milestones to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.milestones to "user";
 
 create index idx_demo_milestones_project_id on demo.milestones (project_id);
 
@@ -1065,29 +746,19 @@ alter table demo.milestones enable row level security;
 
 create policy milestones_select on demo.milestones for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.milestones:select')
-  );
+  to authenticated using (true);
 
 create policy milestones_insert on demo.milestones for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.milestones:insert')
-  );
+  check (true);
 
 create policy milestones_update on demo.milestones
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.milestones:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.milestones:update')
-  );
+  check (true);
 
-create policy milestones_delete on demo.milestones for delete to authenticated using (
-  supasheet.has_permission ('demo.milestones:delete')
-);
+create policy milestones_delete on demo.milestones for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Tasks (kanban + tree for subtasks + calendar for due dates)
@@ -1217,7 +888,13 @@ select
 ,
   insert,
 update,
-delete on table demo.tasks to authenticated;
+delete on table demo.tasks to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.tasks to "user";
 
 create index idx_demo_tasks_project_id on demo.tasks (project_id);
 
@@ -1241,19 +918,19 @@ alter table demo.tasks enable row level security;
 
 create policy tasks_select on demo.tasks for
 select
-  to authenticated using (supasheet.has_permission ('demo.tasks:select'));
+  to authenticated using (true);
 
 create policy tasks_insert on demo.tasks for insert to authenticated
 with
-  check (supasheet.has_permission ('demo.tasks:insert'));
+  check (true);
 
 create policy tasks_update on demo.tasks
 for update
-  to authenticated using (supasheet.has_permission ('demo.tasks:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('demo.tasks:update'));
+  check (true);
 
-create policy tasks_delete on demo.tasks for delete to authenticated using (supasheet.has_permission ('demo.tasks:delete'));
+create policy tasks_delete on demo.tasks for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Portfolio items (published case studies — gallery is the natural
@@ -1347,7 +1024,13 @@ select
 ,
   insert,
 update,
-delete on table demo.portfolio_items to authenticated;
+delete on table demo.portfolio_items to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.portfolio_items to "user";
 
 create index idx_demo_portfolio_items_project_id on demo.portfolio_items (project_id);
 
@@ -1363,29 +1046,19 @@ alter table demo.portfolio_items enable row level security;
 
 create policy portfolio_items_select on demo.portfolio_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.portfolio_items:select')
-  );
+  to authenticated using (true);
 
 create policy portfolio_items_insert on demo.portfolio_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.portfolio_items:insert')
-  );
+  check (true);
 
 create policy portfolio_items_update on demo.portfolio_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.portfolio_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.portfolio_items:update')
-  );
+  check (true);
 
-create policy portfolio_items_delete on demo.portfolio_items for delete to authenticated using (
-  supasheet.has_permission ('demo.portfolio_items:delete')
-);
+create policy portfolio_items_delete on demo.portfolio_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Services (billable catalog — list view)
@@ -1456,7 +1129,11 @@ select
 ,
   insert,
 update,
-delete on table demo.services to authenticated;
+delete on table demo.services to "x-admin";
+
+grant
+select
+  on table demo.services to "user";
 
 create index idx_demo_services_category on demo.services (category);
 
@@ -1466,19 +1143,19 @@ alter table demo.services enable row level security;
 
 create policy services_select on demo.services for
 select
-  to authenticated using (supasheet.has_permission ('demo.services:select'));
+  to authenticated using (true);
 
 create policy services_insert on demo.services for insert to authenticated
 with
-  check (supasheet.has_permission ('demo.services:insert'));
+  check (true);
 
 create policy services_update on demo.services
 for update
-  to authenticated using (supasheet.has_permission ('demo.services:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('demo.services:update'));
+  check (true);
 
-create policy services_delete on demo.services for delete to authenticated using (supasheet.has_permission ('demo.services:delete'));
+create policy services_delete on demo.services for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Invoices
@@ -1583,7 +1260,13 @@ select
 ,
   insert,
 update,
-delete on table demo.invoices to authenticated;
+delete on table demo.invoices to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.invoices to "user";
 
 create index idx_demo_invoices_client_id on demo.invoices (client_id);
 
@@ -1601,19 +1284,19 @@ alter table demo.invoices enable row level security;
 
 create policy invoices_select on demo.invoices for
 select
-  to authenticated using (supasheet.has_permission ('demo.invoices:select'));
+  to authenticated using (true);
 
 create policy invoices_insert on demo.invoices for insert to authenticated
 with
-  check (supasheet.has_permission ('demo.invoices:insert'));
+  check (true);
 
 create policy invoices_update on demo.invoices
 for update
-  to authenticated using (supasheet.has_permission ('demo.invoices:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('demo.invoices:update'));
+  check (true);
 
-create policy invoices_delete on demo.invoices for delete to authenticated using (supasheet.has_permission ('demo.invoices:delete'));
+create policy invoices_delete on demo.invoices for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Invoice line items (lookup fill from services catalog)
@@ -1667,7 +1350,8 @@ select
 ,
   insert,
 update,
-delete on table demo.invoice_items to authenticated;
+delete on table demo.invoice_items to "x-admin",
+"user";
 
 create index idx_demo_invoice_items_invoice_id on demo.invoice_items (invoice_id);
 
@@ -1677,29 +1361,19 @@ alter table demo.invoice_items enable row level security;
 
 create policy invoice_items_select on demo.invoice_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.invoice_items:select')
-  );
+  to authenticated using (true);
 
 create policy invoice_items_insert on demo.invoice_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.invoice_items:insert')
-  );
+  check (true);
 
 create policy invoice_items_update on demo.invoice_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.invoice_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.invoice_items:update')
-  );
+  check (true);
 
-create policy invoice_items_delete on demo.invoice_items for delete to authenticated using (
-  supasheet.has_permission ('demo.invoice_items:delete')
-);
+create policy invoice_items_delete on demo.invoice_items for delete to authenticated using (true);
 
 -- Keep parent invoice totals in sync with its line items.
 create or replace function demo.trg_invoice_items_recalc () returns trigger as $$
@@ -1778,7 +1452,13 @@ select
 ,
   insert,
 update,
-delete on table demo.time_entries to authenticated;
+delete on table demo.time_entries to "x-admin";
+
+grant
+select
+,
+  insert,
+update on table demo.time_entries to "user";
 
 create index idx_demo_time_entries_task_id on demo.time_entries (task_id);
 
@@ -1790,29 +1470,19 @@ alter table demo.time_entries enable row level security;
 
 create policy time_entries_select on demo.time_entries for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.time_entries:select')
-  );
+  to authenticated using (true);
 
 create policy time_entries_insert on demo.time_entries for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.time_entries:insert')
-  );
+  check (true);
 
 create policy time_entries_update on demo.time_entries
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.time_entries:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.time_entries:update')
-  );
+  check (true);
 
-create policy time_entries_delete on demo.time_entries for delete to authenticated using (
-  supasheet.has_permission ('demo.time_entries:delete')
-);
+create policy time_entries_delete on demo.time_entries for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Workspace settings (singleton — one row only)
@@ -1856,31 +1526,27 @@ grant
 select
 ,
   insert,
-update on table demo.workspace_settings to authenticated;
+update on table demo.workspace_settings to "x-admin";
+
+grant
+select
+  on table demo.workspace_settings to "user";
 
 alter table demo.workspace_settings enable row level security;
 
 create policy workspace_settings_select on demo.workspace_settings for
 select
-  to authenticated using (
-    supasheet.has_permission ('demo.workspace_settings:select')
-  );
+  to authenticated using (true);
 
 create policy workspace_settings_insert on demo.workspace_settings for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('demo.workspace_settings:insert')
-  );
+  check (true);
 
 create policy workspace_settings_update on demo.workspace_settings
 for update
-  to authenticated using (
-    supasheet.has_permission ('demo.workspace_settings:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('demo.workspace_settings:update')
-  );
+  check (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -1928,7 +1594,8 @@ from
 
 grant
 select
-  on demo.clients_report to authenticated;
+  on demo.clients_report to "x-admin",
+  "user";
 
 comment on view demo.clients_report is '{"type": "report", "name": "Clients Report", "description": "Clients with project counts and invoice revenue rollups"}';
 
@@ -1970,7 +1637,8 @@ from
 
 grant
 select
-  on demo.projects_report to authenticated;
+  on demo.projects_report to "x-admin",
+  "user";
 
 comment on view demo.projects_report is '{"type": "report", "name": "Projects Report", "description": "Projects with client, owner, task, and logged-time rollups"}';
 
@@ -2006,7 +1674,8 @@ from
 
 grant
 select
-  on demo.invoices_report to authenticated;
+  on demo.invoices_report to "x-admin",
+  "user";
 
 comment on view demo.invoices_report is '{"type": "report", "name": "Invoices Report", "description": "Invoices with client, project, and line item counts"}';
 
@@ -2040,7 +1709,8 @@ from
 
 grant
 select
-  on demo.team_utilization_report to authenticated;
+  on demo.team_utilization_report to "x-admin",
+  "user";
 
 comment on view demo.team_utilization_report is '{"type": "report", "name": "Team Utilization Report", "description": "Task load and logged hours per team member"}';
 
@@ -2067,7 +1737,8 @@ from
 
 grant
 select
-  on demo.active_projects_count to authenticated;
+  on demo.active_projects_count to "x-admin",
+  "user";
 
 -- card_2: task completion (done vs open)
 create or replace view demo.task_completion
@@ -2094,7 +1765,8 @@ from
 
 grant
 select
-  on demo.task_completion to authenticated;
+  on demo.task_completion to "x-admin",
+  "user";
 
 -- card_3: revenue collected + collection rate
 create or replace view demo.revenue_summary
@@ -2136,7 +1808,8 @@ from
 
 grant
 select
-  on demo.revenue_summary to authenticated;
+  on demo.revenue_summary to "x-admin",
+  "user";
 
 -- card_4: project health (at-risk breakdown)
 create or replace view demo.project_health
@@ -2201,7 +1874,8 @@ from
 
 grant
 select
-  on demo.project_health to authenticated;
+  on demo.project_health to "x-admin",
+  "user";
 
 -- table_1: recent tasks
 create or replace view demo.recent_tasks
@@ -2226,7 +1900,8 @@ from
 
 grant
 select
-  on demo.recent_tasks to authenticated;
+  on demo.recent_tasks to "x-admin",
+  "user";
 
 -- table_1: upcoming milestones (pairs with Recent Tasks to fill the row)
 create or replace view demo.upcoming_milestones
@@ -2255,7 +1930,8 @@ from
 
 grant
 select
-  on demo.upcoming_milestones to authenticated;
+  on demo.upcoming_milestones to "x-admin",
+  "user";
 
 -- table_2: top clients by revenue
 create or replace view demo.top_clients
@@ -2287,7 +1963,8 @@ from
 
 grant
 select
-  on demo.top_clients to authenticated;
+  on demo.top_clients to "x-admin",
+  "user";
 
 -- card_2: client pipeline (active vs lead) — shown on the clients resource page
 create or replace view demo.client_pipeline
@@ -2314,7 +1991,8 @@ from
 
 grant
 select
-  on demo.client_pipeline to authenticated;
+  on demo.client_pipeline to "x-admin",
+  "user";
 
 -- card_3: project progress (active count + average completion) — shown on the projects resource page
 create or replace view demo.project_progress
@@ -2347,7 +2025,8 @@ from
 
 grant
 select
-  on demo.project_progress to authenticated;
+  on demo.project_progress to "x-admin",
+  "user";
 
 -- card_1: outstanding invoice balance — shown on the invoices resource page
 create or replace view demo.outstanding_balance
@@ -2373,7 +2052,8 @@ from
 
 grant
 select
-  on demo.outstanding_balance to authenticated;
+  on demo.outstanding_balance to "x-admin",
+  "user";
 
 -- card_1: active team member count — shown on the team_members resource page
 create or replace view demo.active_team_members_count
@@ -2396,7 +2076,8 @@ from
 
 grant
 select
-  on demo.active_team_members_count to authenticated;
+  on demo.active_team_members_count to "x-admin",
+  "user";
 
 comment on view demo.active_projects_count is '{"type": "dashboard_widget", "name": "Active Projects", "description": "Count of projects currently active", "widget_type": "card_1"}';
 
@@ -2451,7 +2132,8 @@ from
 
 grant
 select
-  on demo.tasks_by_status_pie to authenticated;
+  on demo.tasks_by_status_pie to "x-admin",
+  "user";
 
 -- Bar: projects by client
 create or replace view demo.projects_by_client_bar
@@ -2484,7 +2166,8 @@ from
 
 grant
 select
-  on demo.projects_by_client_bar to authenticated;
+  on demo.projects_by_client_bar to "x-admin",
+  "user";
 
 -- Line: weekly invoiced revenue (last 8 weeks)
 create or replace view demo.revenue_trend_line
@@ -2510,7 +2193,8 @@ from
 
 grant
 select
-  on demo.revenue_trend_line to authenticated;
+  on demo.revenue_trend_line to "x-admin",
+  "user";
 
 -- Radar: team workload by department
 create or replace view demo.team_workload_radar
@@ -2540,7 +2224,8 @@ from
 
 grant
 select
-  on demo.team_workload_radar to authenticated;
+  on demo.team_workload_radar to "x-admin",
+  "user";
 
 -- Pie: clients by status — shown on the clients resource page
 create or replace view demo.clients_by_status_pie
@@ -2561,7 +2246,8 @@ from
 
 grant
 select
-  on demo.clients_by_status_pie to authenticated;
+  on demo.clients_by_status_pie to "x-admin",
+  "user";
 
 -- Bar: projects by priority — shown on the projects resource page
 create or replace view demo.projects_by_priority_bar
@@ -2593,7 +2279,8 @@ from
 
 grant
 select
-  on demo.projects_by_priority_bar to authenticated;
+  on demo.projects_by_priority_bar to "x-admin",
+  "user";
 
 -- Pie: invoices by status — shown on the invoices resource page
 create or replace view demo.invoices_by_status_pie
@@ -2614,7 +2301,8 @@ from
 
 grant
 select
-  on demo.invoices_by_status_pie to authenticated;
+  on demo.invoices_by_status_pie to "x-admin",
+  "user";
 
 -- Pie: team by department — shown on the team_members resource page
 create or replace view demo.team_by_department_pie
@@ -2635,7 +2323,8 @@ from
 
 grant
 select
-  on demo.team_by_department_pie to authenticated;
+  on demo.team_by_department_pie to "x-admin",
+  "user";
 
 comment on view demo.tasks_by_status_pie is '{"type": "chart", "name": "Tasks By Status", "description": "Task count grouped by workflow status", "chart_type": "pie", "resource": "tasks"}';
 
@@ -2652,177 +2341,6 @@ comment on view demo.projects_by_priority_bar is '{"type": "chart", "name": "Pro
 comment on view demo.invoices_by_status_pie is '{"type": "chart", "name": "Invoices By Status", "description": "Invoice count across lifecycle statuses", "chart_type": "pie", "resource": "invoices"}';
 
 comment on view demo.team_by_department_pie is '{"type": "chart", "name": "Team By Department", "description": "Headcount distribution across departments", "chart_type": "pie", "resource": "team_members"}';
-
-----------------------------------------------------------------
--- Role permissions
-----------------------------------------------------------------
--- x-admin: full access to every demo resource
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'demo.clients:select'),
-  ('x-admin', 'demo.clients:insert'),
-  ('x-admin', 'demo.clients:update'),
-  ('x-admin', 'demo.clients:delete'),
-  ('x-admin', 'demo.clients:audit'),
-  ('x-admin', 'demo.clients:comment'),
-  ('x-admin', 'demo.team_members:select'),
-  ('x-admin', 'demo.team_members:insert'),
-  ('x-admin', 'demo.team_members:update'),
-  ('x-admin', 'demo.team_members:delete'),
-  ('x-admin', 'demo.team_members:audit'),
-  ('x-admin', 'demo.team_members:comment'),
-  ('x-admin', 'demo.team_member_details:select'),
-  ('x-admin', 'demo.team_member_details:insert'),
-  ('x-admin', 'demo.team_member_details:update'),
-  ('x-admin', 'demo.team_member_details:delete'),
-  ('x-admin', 'demo.team_member_details:audit'),
-  ('x-admin', 'demo.team_member_details:comment'),
-  ('x-admin', 'demo.projects:select'),
-  ('x-admin', 'demo.projects:insert'),
-  ('x-admin', 'demo.projects:update'),
-  ('x-admin', 'demo.projects:delete'),
-  ('x-admin', 'demo.projects:audit'),
-  ('x-admin', 'demo.projects:comment'),
-  ('x-admin', 'demo.project_members:select'),
-  ('x-admin', 'demo.project_members:insert'),
-  ('x-admin', 'demo.project_members:delete'),
-  ('x-admin', 'demo.project_members:audit'),
-  ('x-admin', 'demo.project_members:comment'),
-  ('x-admin', 'demo.milestones:select'),
-  ('x-admin', 'demo.milestones:insert'),
-  ('x-admin', 'demo.milestones:update'),
-  ('x-admin', 'demo.milestones:delete'),
-  ('x-admin', 'demo.milestones:audit'),
-  ('x-admin', 'demo.milestones:comment'),
-  ('x-admin', 'demo.tasks:select'),
-  ('x-admin', 'demo.tasks:insert'),
-  ('x-admin', 'demo.tasks:update'),
-  ('x-admin', 'demo.tasks:delete'),
-  ('x-admin', 'demo.tasks:audit'),
-  ('x-admin', 'demo.tasks:comment'),
-  ('x-admin', 'demo.portfolio_items:select'),
-  ('x-admin', 'demo.portfolio_items:insert'),
-  ('x-admin', 'demo.portfolio_items:update'),
-  ('x-admin', 'demo.portfolio_items:delete'),
-  ('x-admin', 'demo.portfolio_items:audit'),
-  ('x-admin', 'demo.portfolio_items:comment'),
-  ('x-admin', 'demo.services:select'),
-  ('x-admin', 'demo.services:insert'),
-  ('x-admin', 'demo.services:update'),
-  ('x-admin', 'demo.services:delete'),
-  ('x-admin', 'demo.services:audit'),
-  ('x-admin', 'demo.services:comment'),
-  ('x-admin', 'demo.invoices:select'),
-  ('x-admin', 'demo.invoices:insert'),
-  ('x-admin', 'demo.invoices:update'),
-  ('x-admin', 'demo.invoices:delete'),
-  ('x-admin', 'demo.invoices:audit'),
-  ('x-admin', 'demo.invoices:comment'),
-  ('x-admin', 'demo.invoice_items:select'),
-  ('x-admin', 'demo.invoice_items:insert'),
-  ('x-admin', 'demo.invoice_items:update'),
-  ('x-admin', 'demo.invoice_items:delete'),
-  ('x-admin', 'demo.invoice_items:audit'),
-  ('x-admin', 'demo.invoice_items:comment'),
-  ('x-admin', 'demo.time_entries:select'),
-  ('x-admin', 'demo.time_entries:insert'),
-  ('x-admin', 'demo.time_entries:update'),
-  ('x-admin', 'demo.time_entries:delete'),
-  ('x-admin', 'demo.time_entries:audit'),
-  ('x-admin', 'demo.time_entries:comment'),
-  ('x-admin', 'demo.workspace_settings:select'),
-  ('x-admin', 'demo.workspace_settings:insert'),
-  ('x-admin', 'demo.workspace_settings:update'),
-  ('x-admin', 'demo.workspace_settings:audit'),
-  ('x-admin', 'demo.workspace_settings:comment'),
-  ('x-admin', 'demo.users:select'),
-  ('x-admin', 'demo.clients_report:select'),
-  ('x-admin', 'demo.projects_report:select'),
-  ('x-admin', 'demo.invoices_report:select'),
-  ('x-admin', 'demo.team_utilization_report:select'),
-  ('x-admin', 'demo.active_projects_count:select'),
-  ('x-admin', 'demo.task_completion:select'),
-  ('x-admin', 'demo.revenue_summary:select'),
-  ('x-admin', 'demo.project_health:select'),
-  ('x-admin', 'demo.recent_tasks:select'),
-  ('x-admin', 'demo.upcoming_milestones:select'),
-  ('x-admin', 'demo.top_clients:select'),
-  ('x-admin', 'demo.client_pipeline:select'),
-  ('x-admin', 'demo.project_progress:select'),
-  ('x-admin', 'demo.outstanding_balance:select'),
-  ('x-admin', 'demo.active_team_members_count:select'),
-  ('x-admin', 'demo.tasks_by_status_pie:select'),
-  ('x-admin', 'demo.projects_by_client_bar:select'),
-  ('x-admin', 'demo.revenue_trend_line:select'),
-  ('x-admin', 'demo.team_workload_radar:select'),
-  ('x-admin', 'demo.clients_by_status_pie:select'),
-  ('x-admin', 'demo.projects_by_priority_bar:select'),
-  ('x-admin', 'demo.invoices_by_status_pie:select'),
-  ('x-admin', 'demo.team_by_department_pie:select');
-
--- user: day-to-day delivery work — no deletes, no audit trail, no HR/settings writes
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('user', 'demo.clients:select'),
-  ('user', 'demo.clients:insert'),
-  ('user', 'demo.clients:update'),
-  ('user', 'demo.clients:comment'),
-  ('user', 'demo.team_members:select'),
-  ('user', 'demo.projects:select'),
-  ('user', 'demo.projects:insert'),
-  ('user', 'demo.projects:update'),
-  ('user', 'demo.projects:comment'),
-  ('user', 'demo.project_members:select'),
-  ('user', 'demo.project_members:insert'),
-  ('user', 'demo.project_members:delete'),
-  ('user', 'demo.milestones:select'),
-  ('user', 'demo.milestones:insert'),
-  ('user', 'demo.milestones:update'),
-  ('user', 'demo.tasks:select'),
-  ('user', 'demo.tasks:insert'),
-  ('user', 'demo.tasks:update'),
-  ('user', 'demo.tasks:comment'),
-  ('user', 'demo.portfolio_items:select'),
-  ('user', 'demo.portfolio_items:insert'),
-  ('user', 'demo.portfolio_items:update'),
-  ('user', 'demo.services:select'),
-  ('user', 'demo.invoices:select'),
-  ('user', 'demo.invoices:insert'),
-  ('user', 'demo.invoices:update'),
-  ('user', 'demo.invoice_items:select'),
-  ('user', 'demo.invoice_items:insert'),
-  ('user', 'demo.invoice_items:update'),
-  ('user', 'demo.invoice_items:delete'),
-  ('user', 'demo.time_entries:select'),
-  ('user', 'demo.time_entries:insert'),
-  ('user', 'demo.time_entries:update'),
-  ('user', 'demo.workspace_settings:select'),
-  ('user', 'demo.users:select'),
-  ('user', 'demo.clients_report:select'),
-  ('user', 'demo.projects_report:select'),
-  ('user', 'demo.invoices_report:select'),
-  ('user', 'demo.team_utilization_report:select'),
-  ('user', 'demo.active_projects_count:select'),
-  ('user', 'demo.task_completion:select'),
-  ('user', 'demo.revenue_summary:select'),
-  ('user', 'demo.project_health:select'),
-  ('user', 'demo.recent_tasks:select'),
-  ('user', 'demo.upcoming_milestones:select'),
-  ('user', 'demo.top_clients:select'),
-  ('user', 'demo.client_pipeline:select'),
-  ('user', 'demo.project_progress:select'),
-  ('user', 'demo.outstanding_balance:select'),
-  ('user', 'demo.active_team_members_count:select'),
-  ('user', 'demo.tasks_by_status_pie:select'),
-  ('user', 'demo.projects_by_client_bar:select'),
-  ('user', 'demo.revenue_trend_line:select'),
-  ('user', 'demo.team_workload_radar:select'),
-  ('user', 'demo.clients_by_status_pie:select'),
-  ('user', 'demo.projects_by_priority_bar:select'),
-  ('user', 'demo.invoices_by_status_pie:select'),
-  ('user', 'demo.team_by_department_pie:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -2987,7 +2505,7 @@ declare
     v_body       text;
 begin
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('demo.projects:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('demo', 'projects') || array[new.user_id],
         null
     );
 
@@ -3084,7 +2602,7 @@ declare
     v_body       text;
 begin
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('demo.invoices:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('demo', 'invoices') || array[new.user_id],
         null
     );
 
@@ -3190,7 +2708,7 @@ values
     '',
     null,
     '2024-04-20 08:38:00.93864+00',
-    '{"provider": "email", "providers": ["email"]}',
+    '{"provider": "email", "providers": ["email"], "role": "x-admin"}',
     '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b8", "email": "superadmin@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
@@ -3226,7 +2744,7 @@ values
     '',
     null,
     '2024-04-20 08:38:00.93864+00',
-    '{"provider": "email", "providers": ["email"]}',
+    '{"provider": "email", "providers": ["email"], "role": "user"}',
     '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
@@ -3262,7 +2780,7 @@ values
     '',
     null,
     '2024-04-20 08:38:00.93864+00',
-    '{"provider": "email", "providers": ["email"]}',
+    '{"provider": "email", "providers": ["email"], "role": "user"}',
     '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
@@ -3326,14 +2844,6 @@ values
     '9bb58bad-24a4-41a8-9742-1b5b4e2d8abd'
   )
 on conflict (id) do nothing;
-
-insert into
-  supasheet.user_roles (user_id, role)
-values
-  ('b73eb03e-fb7a-424d-84ff-18e2791ce0b8', 'x-admin'),
-  ('b73eb03e-fb7a-424d-84ff-18e2791ce0b4', 'user'),
-  ('b73eb03e-fb7a-424d-84ff-18e2791ce0b1', 'user')
-on conflict (user_id, role) do nothing;
 
 ----------------------------------------------------------------
 -- Workspace settings

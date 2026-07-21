@@ -10,7 +10,7 @@ requires:
 
 # Dashboard Widgets
 
-A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "description": ..., "widget_type": ...}`. Discovered by `supasheet.get_widgets()`; shown on `/$schema/dashboard` to users holding `:select`.
+A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "description": ..., "widget_type": ...}`. Discovered by `supasheet.get_widgets()`; shown on `/$schema/dashboard` to callers whose native role holds `select` on the view.
 
 ## Widget contracts (exact required columns)
 
@@ -71,9 +71,6 @@ limit 10;
 ## Full recipe
 
 ```sql
--- committed enum block:
-alter type supasheet.app_permission add value if not exists 'app.open_tickets_count:select';
-
 create view app.open_tickets_count
 with
   (security_invoker = true) as
@@ -95,15 +92,10 @@ from
 
 grant
 select
-  on app.open_tickets_count to authenticated;
+  on app.open_tickets_count to "x-admin",
+"user";
 
 comment on view app.open_tickets_count is '{"type": "dashboard_widget", "name": "Open Tickets", "description": "Tickets currently open", "widget_type": "card_1"}';
-
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'app.open_tickets_count:select'),
-  ('user', 'app.open_tickets_count:select') on conflict (role, permission) do nothing;
 
 select
   supasheet.refresh_metadata ();
@@ -113,6 +105,6 @@ select
 
 - Name views by what they show: `open_tickets_count`, `revenue_summary`, `recent_tasks`, `top_clients`.
 - Always `security_invoker = true` — the widget respects the viewer's RLS.
-- `:select` is the only permission a widget needs; grant to `anon` only for intentionally public dashboards.
+- `select` is the only grant a widget needs; grant to `anon` only for intentionally public dashboards.
 - Widgets are per-schema — they appear on that schema's dashboard.
 - Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.

@@ -3,7 +3,7 @@ import {
   createAdminClient,
   errorResponse,
   jsonResponse,
-  requirePermission,
+  requireRole,
 } from "../_shared/admin.ts"
 
 // Valid link types from the Supabase admin API
@@ -20,9 +20,9 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  const denied = await requirePermission(
+  const denied = await requireRole(
     req.headers.get("Authorization"),
-    "supasheet.users:generate_link"
+    "x-admin"
   )
   if (denied) return denied
 

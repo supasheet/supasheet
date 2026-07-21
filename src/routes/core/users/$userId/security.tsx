@@ -8,18 +8,16 @@ import { Skeleton } from "#/components/ui/skeleton"
 import { UserSecurity } from "#/components/users/user-security"
 import { pageTitle } from "#/lib/page-title"
 import { adminGetUserQueryOptions } from "#/lib/supabase/data/admin-auth"
+import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/$userId/security")({
   head: () => ({ meta: [{ title: pageTitle("User Security") }] }),
-  beforeLoad: ({ context, params: { userId } }) => {
+  beforeLoad: async ({ context, params: { userId } }) => {
     if (context.authUser?.id === userId) throw notFound()
-    const p = context.permissions
-    if (
-      !p?.some((r) => r.permission === "supasheet.users:ban") &&
-      !p?.some((r) => r.permission === "supasheet.users:generate_link")
-    ) {
-      throw notFound()
-    }
+    const isXAdmin = await context.queryClient.ensureQueryData(
+      hasRoleQueryOptions("x-admin")
+    )
+    if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(

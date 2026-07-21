@@ -73,245 +73,6 @@ create type finance.payslip_status as enum('pending', 'issued', 'paid');
 
 create type finance.journal_status as enum('draft', 'posted', 'reversed');
 
--- Accounts
-alter type supasheet.app_permission
-add value 'finance.accounts:select';
-
-alter type supasheet.app_permission
-add value 'finance.accounts:insert';
-
-alter type supasheet.app_permission
-add value 'finance.accounts:update';
-
-alter type supasheet.app_permission
-add value 'finance.accounts:delete';
-
-alter type supasheet.app_permission
-add value 'finance.accounts:audit';
-
-alter type supasheet.app_permission
-add value 'finance.accounts:comment';
-
--- Vendors
-alter type supasheet.app_permission
-add value 'finance.vendors:select';
-
-alter type supasheet.app_permission
-add value 'finance.vendors:insert';
-
-alter type supasheet.app_permission
-add value 'finance.vendors:update';
-
-alter type supasheet.app_permission
-add value 'finance.vendors:delete';
-
-alter type supasheet.app_permission
-add value 'finance.vendors:audit';
-
-alter type supasheet.app_permission
-add value 'finance.vendors:comment';
-
--- Invoices
-alter type supasheet.app_permission
-add value 'finance.invoices:select';
-
-alter type supasheet.app_permission
-add value 'finance.invoices:insert';
-
-alter type supasheet.app_permission
-add value 'finance.invoices:update';
-
-alter type supasheet.app_permission
-add value 'finance.invoices:delete';
-
-alter type supasheet.app_permission
-add value 'finance.invoices:audit';
-
-alter type supasheet.app_permission
-add value 'finance.invoices:comment';
-
--- Bills
-alter type supasheet.app_permission
-add value 'finance.bills:select';
-
-alter type supasheet.app_permission
-add value 'finance.bills:insert';
-
-alter type supasheet.app_permission
-add value 'finance.bills:update';
-
-alter type supasheet.app_permission
-add value 'finance.bills:delete';
-
-alter type supasheet.app_permission
-add value 'finance.bills:audit';
-
-alter type supasheet.app_permission
-add value 'finance.bills:comment';
-
--- Expenses
-alter type supasheet.app_permission
-add value 'finance.expenses:select';
-
-alter type supasheet.app_permission
-add value 'finance.expenses:insert';
-
-alter type supasheet.app_permission
-add value 'finance.expenses:update';
-
-alter type supasheet.app_permission
-add value 'finance.expenses:delete';
-
-alter type supasheet.app_permission
-add value 'finance.expenses:audit';
-
-alter type supasheet.app_permission
-add value 'finance.expenses:comment';
-
--- Payments
-alter type supasheet.app_permission
-add value 'finance.payments:select';
-
-alter type supasheet.app_permission
-add value 'finance.payments:insert';
-
-alter type supasheet.app_permission
-add value 'finance.payments:update';
-
-alter type supasheet.app_permission
-add value 'finance.payments:delete';
-
-alter type supasheet.app_permission
-add value 'finance.payments:audit';
-
-alter type supasheet.app_permission
-add value 'finance.payments:comment';
-
--- Budgets
-alter type supasheet.app_permission
-add value 'finance.budgets:select';
-
-alter type supasheet.app_permission
-add value 'finance.budgets:insert';
-
-alter type supasheet.app_permission
-add value 'finance.budgets:update';
-
-alter type supasheet.app_permission
-add value 'finance.budgets:delete';
-
-alter type supasheet.app_permission
-add value 'finance.budgets:audit';
-
-alter type supasheet.app_permission
-add value 'finance.budgets:comment';
-
--- Payroll runs
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:select';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:insert';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:update';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:delete';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:audit';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_runs:comment';
-
--- Payslips
-alter type supasheet.app_permission
-add value 'finance.payslips:select';
-
-alter type supasheet.app_permission
-add value 'finance.payslips:insert';
-
-alter type supasheet.app_permission
-add value 'finance.payslips:update';
-
-alter type supasheet.app_permission
-add value 'finance.payslips:delete';
-
-alter type supasheet.app_permission
-add value 'finance.payslips:audit';
-
-alter type supasheet.app_permission
-add value 'finance.payslips:comment';
-
--- Journal entries
-alter type supasheet.app_permission
-add value 'finance.journal_entries:select';
-
-alter type supasheet.app_permission
-add value 'finance.journal_entries:insert';
-
-alter type supasheet.app_permission
-add value 'finance.journal_entries:update';
-
-alter type supasheet.app_permission
-add value 'finance.journal_entries:delete';
-
-alter type supasheet.app_permission
-add value 'finance.journal_entries:audit';
-
-alter type supasheet.app_permission
-add value 'finance.journal_entries:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'finance.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'finance.invoices_report:select';
-
-alter type supasheet.app_permission
-add value 'finance.bills_report:select';
-
-alter type supasheet.app_permission
-add value 'finance.expenses_report:select';
-
-alter type supasheet.app_permission
-add value 'finance.payroll_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'finance.revenue_summary:select';
-
-alter type supasheet.app_permission
-add value 'finance.ar_ap_split:select';
-
-alter type supasheet.app_permission
-add value 'finance.cash_position:select';
-
-alter type supasheet.app_permission
-add value 'finance.financial_health:select';
-
-alter type supasheet.app_permission
-add value 'finance.recent_invoices:select';
-
-alter type supasheet.app_permission
-add value 'finance.top_vendors:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'finance.invoices_by_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'finance.revenue_by_month_bar:select';
-
-alter type supasheet.app_permission
-add value 'finance.cash_flow_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'finance.expense_categories_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -332,7 +93,7 @@ from
 
 grant
 select
-  on finance.users to authenticated;
+  on finance.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Accounts (Chart of Accounts)
@@ -432,7 +193,7 @@ select
 ,
   insert,
 update,
-delete on table finance.accounts to authenticated;
+delete on table finance.accounts to "x-admin";
 
 create index idx_finance_accounts_parent_id on finance.accounts (parent_id);
 
@@ -444,29 +205,19 @@ alter table finance.accounts enable row level security;
 
 create policy accounts_select on finance.accounts for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.accounts:select')
-  );
+  to authenticated using (true);
 
 create policy accounts_insert on finance.accounts for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.accounts:insert')
-  );
+  check (true);
 
 create policy accounts_update on finance.accounts
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.accounts:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.accounts:update')
-  );
+  check (true);
 
-create policy accounts_delete on finance.accounts for delete to authenticated using (
-  supasheet.has_permission ('finance.accounts:delete')
-);
+create policy accounts_delete on finance.accounts for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Vendors
@@ -593,7 +344,7 @@ select
 ,
   insert,
 update,
-delete on table finance.vendors to authenticated;
+delete on table finance.vendors to "x-admin";
 
 create index idx_finance_vendors_user_id on finance.vendors (user_id);
 
@@ -603,29 +354,19 @@ alter table finance.vendors enable row level security;
 
 create policy vendors_select on finance.vendors for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.vendors:select')
-  );
+  to authenticated using (true);
 
 create policy vendors_insert on finance.vendors for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.vendors:insert')
-  );
+  check (true);
 
 create policy vendors_update on finance.vendors
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.vendors:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.vendors:update')
-  );
+  check (true);
 
-create policy vendors_delete on finance.vendors for delete to authenticated using (
-  supasheet.has_permission ('finance.vendors:delete')
-);
+create policy vendors_delete on finance.vendors for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Invoices (Accounts Receivable)
@@ -794,7 +535,7 @@ select
 ,
   insert,
 update,
-delete on table finance.invoices to authenticated;
+delete on table finance.invoices to "x-admin";
 
 create index idx_finance_invoices_user_id on finance.invoices (user_id);
 
@@ -810,29 +551,19 @@ alter table finance.invoices enable row level security;
 
 create policy invoices_select on finance.invoices for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.invoices:select')
-  );
+  to authenticated using (true);
 
 create policy invoices_insert on finance.invoices for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.invoices:insert')
-  );
+  check (true);
 
 create policy invoices_update on finance.invoices
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.invoices:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.invoices:update')
-  );
+  check (true);
 
-create policy invoices_delete on finance.invoices for delete to authenticated using (
-  supasheet.has_permission ('finance.invoices:delete')
-);
+create policy invoices_delete on finance.invoices for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Bills (Accounts Payable)
@@ -999,7 +730,7 @@ select
 ,
   insert,
 update,
-delete on table finance.bills to authenticated;
+delete on table finance.bills to "x-admin";
 
 create index idx_finance_bills_user_id on finance.bills (user_id);
 
@@ -1015,19 +746,19 @@ alter table finance.bills enable row level security;
 
 create policy bills_select on finance.bills for
 select
-  to authenticated using (supasheet.has_permission ('finance.bills:select'));
+  to authenticated using (true);
 
 create policy bills_insert on finance.bills for insert to authenticated
 with
-  check (supasheet.has_permission ('finance.bills:insert'));
+  check (true);
 
 create policy bills_update on finance.bills
 for update
-  to authenticated using (supasheet.has_permission ('finance.bills:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('finance.bills:update'));
+  check (true);
 
-create policy bills_delete on finance.bills for delete to authenticated using (supasheet.has_permission ('finance.bills:delete'));
+create policy bills_delete on finance.bills for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Expenses (employee expense claims)
@@ -1229,7 +960,7 @@ select
 ,
   insert,
 update,
-delete on table finance.expenses to authenticated;
+delete on table finance.expenses to "x-admin";
 
 create index idx_finance_expenses_user_id on finance.expenses (user_id);
 
@@ -1245,29 +976,19 @@ alter table finance.expenses enable row level security;
 
 create policy expenses_select on finance.expenses for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.expenses:select')
-  );
+  to authenticated using (true);
 
 create policy expenses_insert on finance.expenses for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.expenses:insert')
-  );
+  check (true);
 
 create policy expenses_update on finance.expenses
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.expenses:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.expenses:update')
-  );
+  check (true);
 
-create policy expenses_delete on finance.expenses for delete to authenticated using (
-  supasheet.has_permission ('finance.expenses:delete')
-);
+create policy expenses_delete on finance.expenses for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Payments (incoming/outgoing)
@@ -1451,7 +1172,7 @@ select
 ,
   insert,
 update,
-delete on table finance.payments to authenticated;
+delete on table finance.payments to "x-admin";
 
 create index idx_finance_payments_user_id on finance.payments (user_id);
 
@@ -1471,29 +1192,19 @@ alter table finance.payments enable row level security;
 
 create policy payments_select on finance.payments for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.payments:select')
-  );
+  to authenticated using (true);
 
 create policy payments_insert on finance.payments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.payments:insert')
-  );
+  check (true);
 
 create policy payments_update on finance.payments
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.payments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.payments:update')
-  );
+  check (true);
 
-create policy payments_delete on finance.payments for delete to authenticated using (
-  supasheet.has_permission ('finance.payments:delete')
-);
+create policy payments_delete on finance.payments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Budgets
@@ -1633,7 +1344,7 @@ select
 ,
   insert,
 update,
-delete on table finance.budgets to authenticated;
+delete on table finance.budgets to "x-admin";
 
 create index idx_finance_budgets_user_id on finance.budgets (user_id);
 
@@ -1647,29 +1358,19 @@ alter table finance.budgets enable row level security;
 
 create policy budgets_select on finance.budgets for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.budgets:select')
-  );
+  to authenticated using (true);
 
 create policy budgets_insert on finance.budgets for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.budgets:insert')
-  );
+  check (true);
 
 create policy budgets_update on finance.budgets
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.budgets:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.budgets:update')
-  );
+  check (true);
 
-create policy budgets_delete on finance.budgets for delete to authenticated using (
-  supasheet.has_permission ('finance.budgets:delete')
-);
+create policy budgets_delete on finance.budgets for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Payroll runs
@@ -1808,7 +1509,7 @@ select
 ,
   insert,
 update,
-delete on table finance.payroll_runs to authenticated;
+delete on table finance.payroll_runs to "x-admin";
 
 create index idx_finance_payroll_runs_user_id on finance.payroll_runs (user_id);
 
@@ -1820,29 +1521,19 @@ alter table finance.payroll_runs enable row level security;
 
 create policy payroll_runs_select on finance.payroll_runs for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.payroll_runs:select')
-  );
+  to authenticated using (true);
 
 create policy payroll_runs_insert on finance.payroll_runs for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.payroll_runs:insert')
-  );
+  check (true);
 
 create policy payroll_runs_update on finance.payroll_runs
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.payroll_runs:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.payroll_runs:update')
-  );
+  check (true);
 
-create policy payroll_runs_delete on finance.payroll_runs for delete to authenticated using (
-  supasheet.has_permission ('finance.payroll_runs:delete')
-);
+create policy payroll_runs_delete on finance.payroll_runs for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Payslips
@@ -2005,7 +1696,7 @@ select
 ,
   insert,
 update,
-delete on table finance.payslips to authenticated;
+delete on table finance.payslips to "x-admin";
 
 create index idx_finance_payslips_run_id on finance.payslips (run_id);
 
@@ -2019,29 +1710,19 @@ alter table finance.payslips enable row level security;
 
 create policy payslips_select on finance.payslips for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.payslips:select')
-  );
+  to authenticated using (true);
 
 create policy payslips_insert on finance.payslips for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.payslips:insert')
-  );
+  check (true);
 
 create policy payslips_update on finance.payslips
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.payslips:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.payslips:update')
-  );
+  check (true);
 
-create policy payslips_delete on finance.payslips for delete to authenticated using (
-  supasheet.has_permission ('finance.payslips:delete')
-);
+create policy payslips_delete on finance.payslips for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Journal entries (general ledger)
@@ -2193,7 +1874,7 @@ select
 ,
   insert,
 update,
-delete on table finance.journal_entries to authenticated;
+delete on table finance.journal_entries to "x-admin";
 
 create index idx_finance_journal_entries_user_id on finance.journal_entries (user_id);
 
@@ -2209,29 +1890,19 @@ alter table finance.journal_entries enable row level security;
 
 create policy journal_entries_select on finance.journal_entries for
 select
-  to authenticated using (
-    supasheet.has_permission ('finance.journal_entries:select')
-  );
+  to authenticated using (true);
 
 create policy journal_entries_insert on finance.journal_entries for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('finance.journal_entries:insert')
-  );
+  check (true);
 
 create policy journal_entries_update on finance.journal_entries
 for update
-  to authenticated using (
-    supasheet.has_permission ('finance.journal_entries:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('finance.journal_entries:update')
-  );
+  check (true);
 
-create policy journal_entries_delete on finance.journal_entries for delete to authenticated using (
-  supasheet.has_permission ('finance.journal_entries:delete')
-);
+create policy journal_entries_delete on finance.journal_entries for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -2274,7 +1945,7 @@ from
 
 grant
 select
-  on finance.invoices_report to authenticated;
+  on finance.invoices_report to "x-admin";
 
 comment on view finance.invoices_report is '{"type": "report", "name": "Invoices Report", "description": "All invoices with aging and account info"}';
 
@@ -2314,7 +1985,7 @@ from
 
 grant
 select
-  on finance.bills_report to authenticated;
+  on finance.bills_report to "x-admin";
 
 comment on view finance.bills_report is '{"type": "report", "name": "Bills Report", "description": "All bills with vendor and aging info"}';
 
@@ -2351,7 +2022,7 @@ from
 
 grant
 select
-  on finance.expenses_report to authenticated;
+  on finance.expenses_report to "x-admin";
 
 comment on view finance.expenses_report is '{"type": "report", "name": "Expenses Report", "description": "Employee expense claims with reviewer"}';
 
@@ -2387,7 +2058,7 @@ from
 
 grant
 select
-  on finance.payroll_report to authenticated;
+  on finance.payroll_report to "x-admin";
 
 comment on view finance.payroll_report is '{"type": "report", "name": "Payroll Report", "description": "All payslips with payroll run info"}';
 
@@ -2415,7 +2086,7 @@ from
 
 grant
 select
-  on finance.revenue_summary to authenticated;
+  on finance.revenue_summary to "x-admin";
 
 -- card_2: AR vs AP outstanding
 create or replace view finance.ar_ap_split
@@ -2449,7 +2120,7 @@ from
 
 grant
 select
-  on finance.ar_ap_split to authenticated;
+  on finance.ar_ap_split to "x-admin";
 
 -- card_3: cash position (in - out, last 30d) + collection %
 create or replace view finance.cash_position
@@ -2502,7 +2173,7 @@ from
 
 grant
 select
-  on finance.cash_position to authenticated;
+  on finance.cash_position to "x-admin";
 
 -- card_4: financial health (overdue + at-risk)
 create or replace view finance.financial_health
@@ -2577,7 +2248,7 @@ from
 
 grant
 select
-  on finance.financial_health to authenticated;
+  on finance.financial_health to "x-admin";
 
 -- table_1: recent invoices
 create or replace view finance.recent_invoices
@@ -2602,7 +2273,7 @@ from
 
 grant
 select
-  on finance.recent_invoices to authenticated;
+  on finance.recent_invoices to "x-admin";
 
 -- table_2: top vendors by spend
 create or replace view finance.top_vendors
@@ -2632,7 +2303,7 @@ from
 
 grant
 select
-  on finance.top_vendors to authenticated;
+  on finance.top_vendors to "x-admin";
 
 comment on view finance.revenue_summary is '{"type": "dashboard_widget", "name": "Revenue (YTD)", "description": "Sum of paid invoices this year", "widget_type": "card_1"}';
 
@@ -2677,7 +2348,7 @@ from
 
 grant
 select
-  on finance.invoices_by_status_pie to authenticated;
+  on finance.invoices_by_status_pie to "x-admin";
 
 -- Bar: monthly revenue (last 12 months)
 create or replace view finance.revenue_by_month_bar
@@ -2715,7 +2386,7 @@ from
 
 grant
 select
-  on finance.revenue_by_month_bar to authenticated;
+  on finance.revenue_by_month_bar to "x-admin";
 
 -- Line: weekly cash flow trend (last 12 weeks)
 create or replace view finance.cash_flow_trend_line
@@ -2755,7 +2426,7 @@ from
 
 grant
 select
-  on finance.cash_flow_trend_line to authenticated;
+  on finance.cash_flow_trend_line to "x-admin";
 
 -- Radar: expense categories
 create or replace view finance.expense_categories_radar
@@ -2784,7 +2455,7 @@ from
 
 grant
 select
-  on finance.expense_categories_radar to authenticated;
+  on finance.expense_categories_radar to "x-admin";
 
 comment on view finance.invoices_by_status_pie is '{"type": "chart", "name": "Invoices By Status", "description": "Invoice count grouped by status", "chart_type": "pie"}';
 
@@ -2793,94 +2464,6 @@ comment on view finance.revenue_by_month_bar is '{"type": "chart", "name": "Reve
 comment on view finance.cash_flow_trend_line is '{"type": "chart", "name": "Cash Flow Trend", "description": "Weekly inflow vs outflow over 12 weeks", "chart_type": "line"}';
 
 comment on view finance.expense_categories_radar is '{"type": "chart", "name": "Expense Categories", "description": "Expense counts across categories and statuses", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'finance.accounts:select'),
-  ('x-admin', 'finance.accounts:insert'),
-  ('x-admin', 'finance.accounts:update'),
-  ('x-admin', 'finance.accounts:delete'),
-  ('x-admin', 'finance.accounts:audit'),
-  ('x-admin', 'finance.accounts:comment'),
-  ('x-admin', 'finance.vendors:select'),
-  ('x-admin', 'finance.vendors:insert'),
-  ('x-admin', 'finance.vendors:update'),
-  ('x-admin', 'finance.vendors:delete'),
-  ('x-admin', 'finance.vendors:audit'),
-  ('x-admin', 'finance.vendors:comment'),
-  ('x-admin', 'finance.invoices:select'),
-  ('x-admin', 'finance.invoices:insert'),
-  ('x-admin', 'finance.invoices:update'),
-  ('x-admin', 'finance.invoices:delete'),
-  ('x-admin', 'finance.invoices:audit'),
-  ('x-admin', 'finance.invoices:comment'),
-  ('x-admin', 'finance.bills:select'),
-  ('x-admin', 'finance.bills:insert'),
-  ('x-admin', 'finance.bills:update'),
-  ('x-admin', 'finance.bills:delete'),
-  ('x-admin', 'finance.bills:audit'),
-  ('x-admin', 'finance.bills:comment'),
-  ('x-admin', 'finance.expenses:select'),
-  ('x-admin', 'finance.expenses:insert'),
-  ('x-admin', 'finance.expenses:update'),
-  ('x-admin', 'finance.expenses:delete'),
-  ('x-admin', 'finance.expenses:audit'),
-  ('x-admin', 'finance.expenses:comment'),
-  ('x-admin', 'finance.payments:select'),
-  ('x-admin', 'finance.payments:insert'),
-  ('x-admin', 'finance.payments:update'),
-  ('x-admin', 'finance.payments:delete'),
-  ('x-admin', 'finance.payments:audit'),
-  ('x-admin', 'finance.payments:comment'),
-  ('x-admin', 'finance.budgets:select'),
-  ('x-admin', 'finance.budgets:insert'),
-  ('x-admin', 'finance.budgets:update'),
-  ('x-admin', 'finance.budgets:delete'),
-  ('x-admin', 'finance.budgets:audit'),
-  ('x-admin', 'finance.budgets:comment'),
-  ('x-admin', 'finance.payroll_runs:select'),
-  ('x-admin', 'finance.payroll_runs:insert'),
-  ('x-admin', 'finance.payroll_runs:update'),
-  ('x-admin', 'finance.payroll_runs:delete'),
-  ('x-admin', 'finance.payroll_runs:audit'),
-  ('x-admin', 'finance.payroll_runs:comment'),
-  ('x-admin', 'finance.payslips:select'),
-  ('x-admin', 'finance.payslips:insert'),
-  ('x-admin', 'finance.payslips:update'),
-  ('x-admin', 'finance.payslips:delete'),
-  ('x-admin', 'finance.payslips:audit'),
-  ('x-admin', 'finance.payslips:comment'),
-  ('x-admin', 'finance.journal_entries:select'),
-  ('x-admin', 'finance.journal_entries:insert'),
-  ('x-admin', 'finance.journal_entries:update'),
-  ('x-admin', 'finance.journal_entries:delete'),
-  ('x-admin', 'finance.journal_entries:audit'),
-  ('x-admin', 'finance.journal_entries:comment'),
-  ('x-admin', 'finance.users:select'),
-  ('x-admin', 'finance.invoices_report:select'),
-  ('x-admin', 'finance.bills_report:select'),
-  ('x-admin', 'finance.expenses_report:select'),
-  ('x-admin', 'finance.payroll_report:select'),
-  ('x-admin', 'finance.revenue_summary:select'),
-  ('x-admin', 'finance.ar_ap_split:select'),
-  ('x-admin', 'finance.cash_position:select'),
-  ('x-admin', 'finance.financial_health:select'),
-  ('x-admin', 'finance.recent_invoices:select'),
-  ('x-admin', 'finance.top_vendors:select'),
-  (
-    'x-admin',
-    'finance.invoices_by_status_pie:select'
-  ),
-  ('x-admin', 'finance.revenue_by_month_bar:select'),
-  ('x-admin', 'finance.cash_flow_trend_line:select'),
-  (
-    'x-admin',
-    'finance.expense_categories_radar:select'
-  );
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -3021,7 +2604,7 @@ begin
         v_title := 'New invoice';
         v_body  := 'Invoice ' || new.invoice_number || ' for ' || new.customer_name || ' was created.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('finance.invoices:select') || array[new.user_id],
+            supasheet.get_users_with_table_privilege('finance', 'invoices', 'select') || array[new.user_id],
             null
         );
     elsif new.status is distinct from old.status and new.status in ('paid', 'overdue') then
@@ -3029,7 +2612,7 @@ begin
         v_title := 'Invoice ' || new.status::text;
         v_body  := 'Invoice ' || new.invoice_number || ' is now ' || new.status::text || '.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('finance.invoices:select') || array[new.user_id],
+            supasheet.get_users_with_table_privilege('finance', 'invoices', 'select') || array[new.user_id],
             null
         );
     else
@@ -3073,7 +2656,7 @@ begin
         v_title := 'New expense submitted';
         v_body  := new.employee_name || ' submitted ' || new.amount::text || ' ' || new.currency || ' for ' || new.category::text || '.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('finance.expenses:update') || array[new.reviewer_user_id],
+            supasheet.get_users_with_table_privilege('finance', 'expenses', 'update') || array[new.reviewer_user_id],
             null
         );
     elsif new.status is distinct from old.status and new.status in ('approved', 'rejected', 'reimbursed') then
@@ -3120,7 +2703,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('finance.payroll_runs:select') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('finance', 'payroll_runs', 'select') || array[new.user_id],
         null
     );
 

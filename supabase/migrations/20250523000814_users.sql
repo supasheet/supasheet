@@ -61,15 +61,6 @@ from
   authenticated,
   service_role;
 
--- Open up access to users
-grant
-select
-,
-  insert,
-update,
-delete on table supasheet.users to authenticated,
-service_role;
-
 -- Function "supasheet.protect_user_fields"
 -- Function to protect user fields from being updated by anyone
 create or replace function supasheet.protect_user_fields () returns trigger as $$

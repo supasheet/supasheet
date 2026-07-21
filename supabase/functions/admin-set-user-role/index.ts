@@ -7,15 +7,7 @@ import {
   requireRole,
 } from "../_shared/admin.ts"
 
-const UPDATE_ALLOWED_FIELDS = [
-  "email",
-  "password",
-  "email_confirm",
-  "phone",
-  "phone_confirm",
-  "user_metadata",
-  "ban_duration",
-] as const
+const KNOWN_ROLES = ["x-admin", "admin", "user"] as const
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -24,17 +16,16 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => null)
   if (!body?.userId) return errorResponse("Missing userId", 400)
-
-  const { userId } = body
-  const attrs: Record<string, unknown> = {}
-  for (const key of UPDATE_ALLOWED_FIELDS) {
-    if (key in body) attrs[key] = body[key]
+  if (!KNOWN_ROLES.includes(body.role)) {
+    return errorResponse(`Invalid role: ${body.role}`, 400)
   }
+
+  const { userId, role } = body
 
   const callerId = await getCallerId(req.headers.get("Authorization"))
   if (callerId === userId)
     return errorResponse(
-      "Cannot modify your own account via this endpoint",
+      "Cannot change your own role via this endpoint",
       403
     )
 
@@ -42,13 +33,12 @@ Deno.serve(async (req) => {
   if (denied) return denied
 
   const adminClient = createAdminClient()
-  const { data, error } = await adminClient.auth.admin.updateUserById(
-    userId,
-    attrs
-  )
+  const { data, error } = await adminClient.auth.admin.updateUserById(userId, {
+    app_metadata: { role },
+  })
   if (error) {
-    console.error("admin-update-user", error)
-    return errorResponse("Could not update user", 400)
+    console.error("admin-set-user-role", error)
+    return errorResponse("Could not update user role", 400)
   }
 
   return jsonResponse(data)

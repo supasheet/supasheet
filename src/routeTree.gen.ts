@@ -32,8 +32,6 @@ import { Route as AccountIdentitiesRouteImport } from './routes/account/identiti
 import { Route as StorageBucketIdRouteRouteImport } from './routes/storage/$bucketId/route'
 import { Route as StorageBucketIdIndexRouteImport } from './routes/storage/$bucketId/index'
 import { Route as CoreUsersIndexRouteImport } from './routes/core/users/index'
-import { Route as CoreUser_rolesIndexRouteImport } from './routes/core/user_roles/index'
-import { Route as CoreRole_permissionsIndexRouteImport } from './routes/core/role_permissions/index'
 import { Route as CoreAudit_logsIndexRouteImport } from './routes/core/audit_logs/index'
 import { Route as SchemaTemplateIndexRouteImport } from './routes/$schema/template/index'
 import { Route as SchemaReportIndexRouteImport } from './routes/$schema/report/index'
@@ -42,8 +40,6 @@ import { Route as SchemaChartIndexRouteImport } from './routes/$schema/chart/ind
 import { Route as StorageBucketIdSplatRouteImport } from './routes/storage/$bucketId/$'
 import { Route as CoreUsersNewRouteImport } from './routes/core/users/new'
 import { Route as CoreUsersInviteRouteImport } from './routes/core/users/invite'
-import { Route as CoreUser_rolesNewRouteImport } from './routes/core/user_roles/new'
-import { Route as CoreRole_permissionsNewRouteImport } from './routes/core/role_permissions/new'
 import { Route as CoreAudit_logsAuditLogIdRouteImport } from './routes/core/audit_logs/$auditLogId'
 import { Route as CoreUsersUserIdRouteRouteImport } from './routes/core/users/$userId/route'
 import { Route as SchemaResourceResourceRouteRouteImport } from './routes/$schema/resource/$resource/route'
@@ -194,17 +190,6 @@ const CoreUsersIndexRoute = CoreUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => CoreRouteRoute,
 } as any)
-const CoreUser_rolesIndexRoute = CoreUser_rolesIndexRouteImport.update({
-  id: '/user_roles/',
-  path: '/user_roles/',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const CoreRole_permissionsIndexRoute =
-  CoreRole_permissionsIndexRouteImport.update({
-    id: '/role_permissions/',
-    path: '/role_permissions/',
-    getParentRoute: () => CoreRouteRoute,
-  } as any)
 const CoreAudit_logsIndexRoute = CoreAudit_logsIndexRouteImport.update({
   id: '/audit_logs/',
   path: '/audit_logs/',
@@ -243,16 +228,6 @@ const CoreUsersNewRoute = CoreUsersNewRouteImport.update({
 const CoreUsersInviteRoute = CoreUsersInviteRouteImport.update({
   id: '/users/invite',
   path: '/users/invite',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const CoreUser_rolesNewRoute = CoreUser_rolesNewRouteImport.update({
-  id: '/user_roles/new',
-  path: '/user_roles/new',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const CoreRole_permissionsNewRoute = CoreRole_permissionsNewRouteImport.update({
-  id: '/role_permissions/new',
-  path: '/role_permissions/new',
   getParentRoute: () => CoreRouteRoute,
 } as any)
 const CoreAudit_logsAuditLogIdRoute =
@@ -479,8 +454,6 @@ export interface FileRoutesByFullPath {
   '/$schema/resource/$resource': typeof SchemaResourceResourceRouteRouteWithChildren
   '/core/users/$userId': typeof CoreUsersUserIdRouteRouteWithChildren
   '/core/audit_logs/$auditLogId': typeof CoreAudit_logsAuditLogIdRoute
-  '/core/role_permissions/new': typeof CoreRole_permissionsNewRoute
-  '/core/user_roles/new': typeof CoreUser_rolesNewRoute
   '/core/users/invite': typeof CoreUsersInviteRoute
   '/core/users/new': typeof CoreUsersNewRoute
   '/storage/$bucketId/$': typeof StorageBucketIdSplatRoute
@@ -489,8 +462,6 @@ export interface FileRoutesByFullPath {
   '/$schema/report/': typeof SchemaReportIndexRoute
   '/$schema/template/': typeof SchemaTemplateIndexRoute
   '/core/audit_logs/': typeof CoreAudit_logsIndexRoute
-  '/core/role_permissions/': typeof CoreRole_permissionsIndexRoute
-  '/core/user_roles/': typeof CoreUser_rolesIndexRoute
   '/core/users/': typeof CoreUsersIndexRoute
   '/storage/$bucketId/': typeof StorageBucketIdIndexRoute
   '/$schema/resource/$resource/definition': typeof SchemaResourceResourceDefinitionRoute
@@ -543,8 +514,6 @@ export interface FileRoutesByTo {
   '/core': typeof CoreIndexRoute
   '/storage': typeof StorageIndexRoute
   '/core/audit_logs/$auditLogId': typeof CoreAudit_logsAuditLogIdRoute
-  '/core/role_permissions/new': typeof CoreRole_permissionsNewRoute
-  '/core/user_roles/new': typeof CoreUser_rolesNewRoute
   '/core/users/invite': typeof CoreUsersInviteRoute
   '/core/users/new': typeof CoreUsersNewRoute
   '/storage/$bucketId/$': typeof StorageBucketIdSplatRoute
@@ -553,8 +522,6 @@ export interface FileRoutesByTo {
   '/$schema/report': typeof SchemaReportIndexRoute
   '/$schema/template': typeof SchemaTemplateIndexRoute
   '/core/audit_logs': typeof CoreAudit_logsIndexRoute
-  '/core/role_permissions': typeof CoreRole_permissionsIndexRoute
-  '/core/user_roles': typeof CoreUser_rolesIndexRoute
   '/core/users': typeof CoreUsersIndexRoute
   '/storage/$bucketId': typeof StorageBucketIdIndexRoute
   '/$schema/resource/$resource/definition': typeof SchemaResourceResourceDefinitionRoute
@@ -614,8 +581,6 @@ export interface FileRoutesById {
   '/$schema/resource/$resource': typeof SchemaResourceResourceRouteRouteWithChildren
   '/core/users/$userId': typeof CoreUsersUserIdRouteRouteWithChildren
   '/core/audit_logs/$auditLogId': typeof CoreAudit_logsAuditLogIdRoute
-  '/core/role_permissions/new': typeof CoreRole_permissionsNewRoute
-  '/core/user_roles/new': typeof CoreUser_rolesNewRoute
   '/core/users/invite': typeof CoreUsersInviteRoute
   '/core/users/new': typeof CoreUsersNewRoute
   '/storage/$bucketId/$': typeof StorageBucketIdSplatRoute
@@ -624,8 +589,6 @@ export interface FileRoutesById {
   '/$schema/report/': typeof SchemaReportIndexRoute
   '/$schema/template/': typeof SchemaTemplateIndexRoute
   '/core/audit_logs/': typeof CoreAudit_logsIndexRoute
-  '/core/role_permissions/': typeof CoreRole_permissionsIndexRoute
-  '/core/user_roles/': typeof CoreUser_rolesIndexRoute
   '/core/users/': typeof CoreUsersIndexRoute
   '/storage/$bucketId/': typeof StorageBucketIdIndexRoute
   '/$schema/resource/$resource/definition': typeof SchemaResourceResourceDefinitionRoute
@@ -687,8 +650,6 @@ export interface FileRouteTypes {
     | '/$schema/resource/$resource'
     | '/core/users/$userId'
     | '/core/audit_logs/$auditLogId'
-    | '/core/role_permissions/new'
-    | '/core/user_roles/new'
     | '/core/users/invite'
     | '/core/users/new'
     | '/storage/$bucketId/$'
@@ -697,8 +658,6 @@ export interface FileRouteTypes {
     | '/$schema/report/'
     | '/$schema/template/'
     | '/core/audit_logs/'
-    | '/core/role_permissions/'
-    | '/core/user_roles/'
     | '/core/users/'
     | '/storage/$bucketId/'
     | '/$schema/resource/$resource/definition'
@@ -751,8 +710,6 @@ export interface FileRouteTypes {
     | '/core'
     | '/storage'
     | '/core/audit_logs/$auditLogId'
-    | '/core/role_permissions/new'
-    | '/core/user_roles/new'
     | '/core/users/invite'
     | '/core/users/new'
     | '/storage/$bucketId/$'
@@ -761,8 +718,6 @@ export interface FileRouteTypes {
     | '/$schema/report'
     | '/$schema/template'
     | '/core/audit_logs'
-    | '/core/role_permissions'
-    | '/core/user_roles'
     | '/core/users'
     | '/storage/$bucketId'
     | '/$schema/resource/$resource/definition'
@@ -821,8 +776,6 @@ export interface FileRouteTypes {
     | '/$schema/resource/$resource'
     | '/core/users/$userId'
     | '/core/audit_logs/$auditLogId'
-    | '/core/role_permissions/new'
-    | '/core/user_roles/new'
     | '/core/users/invite'
     | '/core/users/new'
     | '/storage/$bucketId/$'
@@ -831,8 +784,6 @@ export interface FileRouteTypes {
     | '/$schema/report/'
     | '/$schema/template/'
     | '/core/audit_logs/'
-    | '/core/role_permissions/'
-    | '/core/user_roles/'
     | '/core/users/'
     | '/storage/$bucketId/'
     | '/$schema/resource/$resource/definition'
@@ -1041,20 +992,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoreUsersIndexRouteImport
       parentRoute: typeof CoreRouteRoute
     }
-    '/core/user_roles/': {
-      id: '/core/user_roles/'
-      path: '/user_roles'
-      fullPath: '/core/user_roles/'
-      preLoaderRoute: typeof CoreUser_rolesIndexRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
-    '/core/role_permissions/': {
-      id: '/core/role_permissions/'
-      path: '/role_permissions'
-      fullPath: '/core/role_permissions/'
-      preLoaderRoute: typeof CoreRole_permissionsIndexRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
     '/core/audit_logs/': {
       id: '/core/audit_logs/'
       path: '/audit_logs'
@@ -1109,20 +1046,6 @@ declare module '@tanstack/react-router' {
       path: '/users/invite'
       fullPath: '/core/users/invite'
       preLoaderRoute: typeof CoreUsersInviteRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
-    '/core/user_roles/new': {
-      id: '/core/user_roles/new'
-      path: '/user_roles/new'
-      fullPath: '/core/user_roles/new'
-      preLoaderRoute: typeof CoreUser_rolesNewRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
-    '/core/role_permissions/new': {
-      id: '/core/role_permissions/new'
-      path: '/role_permissions/new'
-      fullPath: '/core/role_permissions/new'
-      preLoaderRoute: typeof CoreRole_permissionsNewRouteImport
       parentRoute: typeof CoreRouteRoute
     }
     '/core/audit_logs/$auditLogId': {
@@ -1654,13 +1577,9 @@ interface CoreRouteRouteChildren {
   CoreIndexRoute: typeof CoreIndexRoute
   CoreUsersUserIdRouteRoute: typeof CoreUsersUserIdRouteRouteWithChildren
   CoreAudit_logsAuditLogIdRoute: typeof CoreAudit_logsAuditLogIdRoute
-  CoreRole_permissionsNewRoute: typeof CoreRole_permissionsNewRoute
-  CoreUser_rolesNewRoute: typeof CoreUser_rolesNewRoute
   CoreUsersInviteRoute: typeof CoreUsersInviteRoute
   CoreUsersNewRoute: typeof CoreUsersNewRoute
   CoreAudit_logsIndexRoute: typeof CoreAudit_logsIndexRoute
-  CoreRole_permissionsIndexRoute: typeof CoreRole_permissionsIndexRoute
-  CoreUser_rolesIndexRoute: typeof CoreUser_rolesIndexRoute
   CoreUsersIndexRoute: typeof CoreUsersIndexRoute
 }
 
@@ -1668,13 +1587,9 @@ const CoreRouteRouteChildren: CoreRouteRouteChildren = {
   CoreIndexRoute: CoreIndexRoute,
   CoreUsersUserIdRouteRoute: CoreUsersUserIdRouteRouteWithChildren,
   CoreAudit_logsAuditLogIdRoute: CoreAudit_logsAuditLogIdRoute,
-  CoreRole_permissionsNewRoute: CoreRole_permissionsNewRoute,
-  CoreUser_rolesNewRoute: CoreUser_rolesNewRoute,
   CoreUsersInviteRoute: CoreUsersInviteRoute,
   CoreUsersNewRoute: CoreUsersNewRoute,
   CoreAudit_logsIndexRoute: CoreAudit_logsIndexRoute,
-  CoreRole_permissionsIndexRoute: CoreRole_permissionsIndexRoute,
-  CoreUser_rolesIndexRoute: CoreUser_rolesIndexRoute,
   CoreUsersIndexRoute: CoreUsersIndexRoute,
 }
 

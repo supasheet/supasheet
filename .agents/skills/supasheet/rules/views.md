@@ -1,7 +1,7 @@
 ---
 name: supasheet/views
 description: >-
-  Creating plain views: security_invoker, revoke/grant, permission values,
+  Creating plain views: security_invoker, revoke/grant to native roles,
   replica views for cross-schema joins.
 type: sub-skill
 requires:
@@ -12,15 +12,15 @@ requires:
 
 Views serve three roles in Supasheet, all driven by their comment JSON:
 
-| Role                                                        | Comment `type`                                       | Permissions needed |
-| ------------------------------------------------------------- | ---------------------------------------------------- | ------------------- |
-| Feature view (dashboard widget / chart / report / template) | `dashboard_widget` / `chart` / `report` / `template` | `:select` only      |
-| Replica view (cross-schema embed fix)                       | none                                                  | `:select` only      |
-| Plain resource view (read-only listing)                     | none                                                  | `:select` only      |
+| Role                                                        | Comment `type`                                       | Grant needed |
+| ------------------------------------------------------------- | ---------------------------------------------------- | ------------- |
+| Feature view (dashboard widget / chart / report / template) | `dashboard_widget` / `chart` / `report` / `template` | `select` only |
+| Replica view (cross-schema embed fix)                       | none                                                  | `select` only |
+| Plain resource view (read-only listing)                     | none                                                  | `select` only |
 
 ## Canonical creation pattern
 
-Always `security_invoker = true` (the caller's RLS applies), always revoke-then-grant:
+Always `security_invoker = true` (the caller's RLS applies), always revoke-then-grant to specific native roles:
 
 ```sql
 create view app.my_view
@@ -29,17 +29,10 @@ select ...;
 
 revoke all on app.my_view from public, anon, authenticated, service_role;
 
-grant select on app.my_view to authenticated;
+grant select on app.my_view to "x-admin", "user";
 -- grant to anon as well only for intentionally public data
 
-alter type supasheet.app_permission add value if not exists 'app.my_view:select';
--- (in the committed enum block)
-
 comment on view app.my_view is '{...}';
-
-insert into supasheet.role_permissions (role, permission)
-values ('x-admin', 'app.my_view:select'), ('user', 'app.my_view:select')
-on conflict (role, permission) do nothing;
 ```
 
 Use `create or replace view` when redefining; note `or replace` cannot drop or reorder output columns — drop and recreate for that.
@@ -67,9 +60,8 @@ from
 
 grant
 select
-  on app.users to authenticated;
-
--- plus 'app.users:select' permission value + role_permissions seed
+  on app.users to "x-admin",
+"user";
 ```
 
 FK constraints still point at the real table — only `query.join`, `fields.lookups`, FK dropdowns, and view joins use the replica.

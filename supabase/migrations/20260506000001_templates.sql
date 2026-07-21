@@ -4,7 +4,12 @@
  * This migration creates the schema for templates.
  * -------------------------------------------------------
  */
-create or replace function supasheet.get_templates (p_schema text default null) returns table (
+drop function if exists supasheet.get_templates (text);
+
+create or replace function supasheet.get_templates (
+  p_schema text default null,
+  p_caller text default current_user
+) returns table (
   id bigint,
   schema text,
   name text,
@@ -16,21 +21,18 @@ set
   select
     v.*
   from supasheet.views v
-  inner join supasheet.role_permissions rp
-      ON rp.permission::text = v.schema || '.' || v.name || ':select'
-  inner join supasheet.user_roles ur
-      ON ur.role = rp.role
-  where ur.user_id = (select auth.uid())
-    and (v.schema = p_schema and v.comment::jsonb ->> 'type' = 'template');
+  where v.schema = p_schema
+    and v.comment::jsonb ->> 'type' = 'template'
+    and has_table_privilege(p_caller, v.id::oid, 'select');
 $$;
 
-revoke all on function supasheet.get_templates (text)
+revoke all on function supasheet.get_templates (text, text)
 from
   authenticated,
   service_role;
 
 grant
-execute on function supasheet.get_templates (text) to authenticated;
+execute on function supasheet.get_templates (text, text) to authenticated;
 
 create or replace function supasheet.apply_template (
   p_schema text,

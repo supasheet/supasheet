@@ -89,248 +89,6 @@ create type procurement.maintenance_status as enum(
   'cancelled'
 );
 
--- Suppliers
-alter type supasheet.app_permission
-add value 'procurement.suppliers:select';
-
-alter type supasheet.app_permission
-add value 'procurement.suppliers:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.suppliers:update';
-
-alter type supasheet.app_permission
-add value 'procurement.suppliers:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.suppliers:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.suppliers:comment';
-
--- Contracts
-alter type supasheet.app_permission
-add value 'procurement.contracts:select';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts:update';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts:comment';
-
--- Requisitions
-alter type supasheet.app_permission
-add value 'procurement.requisitions:select';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions:update';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions:comment';
-
--- Requisition items
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:select';
-
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:update';
-
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.requisition_items:comment';
-
--- RFQs
-alter type supasheet.app_permission
-add value 'procurement.rfqs:select';
-
-alter type supasheet.app_permission
-add value 'procurement.rfqs:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.rfqs:update';
-
-alter type supasheet.app_permission
-add value 'procurement.rfqs:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.rfqs:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.rfqs:comment';
-
--- Quotes
-alter type supasheet.app_permission
-add value 'procurement.quotes:select';
-
-alter type supasheet.app_permission
-add value 'procurement.quotes:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.quotes:update';
-
-alter type supasheet.app_permission
-add value 'procurement.quotes:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.quotes:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.quotes:comment';
-
--- Asset categories
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:select';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:update';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_categories:comment';
-
--- Assets
-alter type supasheet.app_permission
-add value 'procurement.assets:select';
-
-alter type supasheet.app_permission
-add value 'procurement.assets:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.assets:update';
-
-alter type supasheet.app_permission
-add value 'procurement.assets:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.assets:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.assets:comment';
-
--- Asset assignments
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:select';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:update';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_assignments:comment';
-
--- Asset maintenance
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:select';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:insert';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:update';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:delete';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:audit';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'procurement.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'procurement.suppliers_scorecard:select';
-
-alter type supasheet.app_permission
-add value 'procurement.requisitions_report:select';
-
-alter type supasheet.app_permission
-add value 'procurement.contracts_report:select';
-
-alter type supasheet.app_permission
-add value 'procurement.assets_register:select';
-
-alter type supasheet.app_permission
-add value 'procurement.asset_maintenance_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'procurement.asset_value_summary:select';
-
-alter type supasheet.app_permission
-add value 'procurement.supplier_qualification_split:select';
-
-alter type supasheet.app_permission
-add value 'procurement.open_requisitions_value:select';
-
-alter type supasheet.app_permission
-add value 'procurement.procurement_health:select';
-
-alter type supasheet.app_permission
-add value 'procurement.recent_requisitions:select';
-
-alter type supasheet.app_permission
-add value 'procurement.top_suppliers:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'procurement.requisitions_by_status_pie:select';
-
-alter type supasheet.app_permission
-add value 'procurement.assets_by_category_bar:select';
-
-alter type supasheet.app_permission
-add value 'procurement.procurement_spend_line:select';
-
-alter type supasheet.app_permission
-add value 'procurement.supplier_scorecard_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -351,7 +109,7 @@ from
 
 grant
 select
-  on procurement.users to authenticated;
+  on procurement.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Suppliers (with qualification + scorecard)
@@ -561,7 +319,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.suppliers to authenticated;
+delete on table procurement.suppliers to "x-admin";
 
 create index idx_proc_suppliers_user_id on procurement.suppliers (user_id);
 
@@ -575,29 +333,19 @@ alter table procurement.suppliers enable row level security;
 
 create policy suppliers_select on procurement.suppliers for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.suppliers:select')
-  );
+  to authenticated using (true);
 
 create policy suppliers_insert on procurement.suppliers for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.suppliers:insert')
-  );
+  check (true);
 
 create policy suppliers_update on procurement.suppliers
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.suppliers:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.suppliers:update')
-  );
+  check (true);
 
-create policy suppliers_delete on procurement.suppliers for delete to authenticated using (
-  supasheet.has_permission ('procurement.suppliers:delete')
-);
+create policy suppliers_delete on procurement.suppliers for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Contracts (supplier agreements)
@@ -783,7 +531,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.contracts to authenticated;
+delete on table procurement.contracts to "x-admin";
 
 create index idx_proc_contracts_user_id on procurement.contracts (user_id);
 
@@ -799,29 +547,19 @@ alter table procurement.contracts enable row level security;
 
 create policy contracts_select on procurement.contracts for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.contracts:select')
-  );
+  to authenticated using (true);
 
 create policy contracts_insert on procurement.contracts for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.contracts:insert')
-  );
+  check (true);
 
 create policy contracts_update on procurement.contracts
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.contracts:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.contracts:update')
-  );
+  check (true);
 
-create policy contracts_delete on procurement.contracts for delete to authenticated using (
-  supasheet.has_permission ('procurement.contracts:delete')
-);
+create policy contracts_delete on procurement.contracts for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Requisitions (internal purchase requests)
@@ -1011,7 +749,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.requisitions to authenticated;
+delete on table procurement.requisitions to "x-admin";
 
 create index idx_proc_requisitions_user_id on procurement.requisitions (user_id);
 
@@ -1029,29 +767,19 @@ alter table procurement.requisitions enable row level security;
 
 create policy requisitions_select on procurement.requisitions for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.requisitions:select')
-  );
+  to authenticated using (true);
 
 create policy requisitions_insert on procurement.requisitions for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.requisitions:insert')
-  );
+  check (true);
 
 create policy requisitions_update on procurement.requisitions
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.requisitions:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.requisitions:update')
-  );
+  check (true);
 
-create policy requisitions_delete on procurement.requisitions for delete to authenticated using (
-  supasheet.has_permission ('procurement.requisitions:delete')
-);
+create policy requisitions_delete on procurement.requisitions for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Requisition items
@@ -1161,7 +889,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.requisition_items to authenticated;
+delete on table procurement.requisition_items to "x-admin";
 
 create index idx_proc_req_items_req_id on procurement.requisition_items (requisition_id);
 
@@ -1173,29 +901,19 @@ alter table procurement.requisition_items enable row level security;
 
 create policy requisition_items_select on procurement.requisition_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.requisition_items:select')
-  );
+  to authenticated using (true);
 
 create policy requisition_items_insert on procurement.requisition_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.requisition_items:insert')
-  );
+  check (true);
 
 create policy requisition_items_update on procurement.requisition_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.requisition_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.requisition_items:update')
-  );
+  check (true);
 
-create policy requisition_items_delete on procurement.requisition_items for delete to authenticated using (
-  supasheet.has_permission ('procurement.requisition_items:delete')
-);
+create policy requisition_items_delete on procurement.requisition_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- RFQs (request for quotation / sourcing events)
@@ -1370,7 +1088,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.rfqs to authenticated;
+delete on table procurement.rfqs to "x-admin";
 
 create index idx_proc_rfqs_user_id on procurement.rfqs (user_id);
 
@@ -1386,29 +1104,19 @@ alter table procurement.rfqs enable row level security;
 
 create policy rfqs_select on procurement.rfqs for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.rfqs:select')
-  );
+  to authenticated using (true);
 
 create policy rfqs_insert on procurement.rfqs for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.rfqs:insert')
-  );
+  check (true);
 
 create policy rfqs_update on procurement.rfqs
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.rfqs:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.rfqs:update')
-  );
+  check (true);
 
-create policy rfqs_delete on procurement.rfqs for delete to authenticated using (
-  supasheet.has_permission ('procurement.rfqs:delete')
-);
+create policy rfqs_delete on procurement.rfqs for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Quotes (supplier responses to RFQs)
@@ -1560,7 +1268,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.quotes to authenticated;
+delete on table procurement.quotes to "x-admin";
 
 create index idx_proc_quotes_user_id on procurement.quotes (user_id);
 
@@ -1574,29 +1282,19 @@ alter table procurement.quotes enable row level security;
 
 create policy quotes_select on procurement.quotes for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.quotes:select')
-  );
+  to authenticated using (true);
 
 create policy quotes_insert on procurement.quotes for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.quotes:insert')
-  );
+  check (true);
 
 create policy quotes_update on procurement.quotes
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.quotes:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.quotes:update')
-  );
+  check (true);
 
-create policy quotes_delete on procurement.quotes for delete to authenticated using (
-  supasheet.has_permission ('procurement.quotes:delete')
-);
+create policy quotes_delete on procurement.quotes for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Asset categories
@@ -1696,7 +1394,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.asset_categories to authenticated;
+delete on table procurement.asset_categories to "x-admin";
 
 create index idx_proc_asset_cats_parent_id on procurement.asset_categories (parent_id);
 
@@ -1704,29 +1402,19 @@ alter table procurement.asset_categories enable row level security;
 
 create policy asset_categories_select on procurement.asset_categories for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_categories:select')
-  );
+  to authenticated using (true);
 
 create policy asset_categories_insert on procurement.asset_categories for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.asset_categories:insert')
-  );
+  check (true);
 
 create policy asset_categories_update on procurement.asset_categories
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_categories:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.asset_categories:update')
-  );
+  check (true);
 
-create policy asset_categories_delete on procurement.asset_categories for delete to authenticated using (
-  supasheet.has_permission ('procurement.asset_categories:delete')
-);
+create policy asset_categories_delete on procurement.asset_categories for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Assets (fixed asset register)
@@ -1973,7 +1661,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.assets to authenticated;
+delete on table procurement.assets to "x-admin";
 
 create index idx_proc_assets_user_id on procurement.assets (user_id);
 
@@ -1995,29 +1683,19 @@ alter table procurement.assets enable row level security;
 
 create policy assets_select on procurement.assets for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.assets:select')
-  );
+  to authenticated using (true);
 
 create policy assets_insert on procurement.assets for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.assets:insert')
-  );
+  check (true);
 
 create policy assets_update on procurement.assets
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.assets:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.assets:update')
-  );
+  check (true);
 
-create policy assets_delete on procurement.assets for delete to authenticated using (
-  supasheet.has_permission ('procurement.assets:delete')
-);
+create policy assets_delete on procurement.assets for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Asset assignments (custodian history)
@@ -2171,7 +1849,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.asset_assignments to authenticated;
+delete on table procurement.asset_assignments to "x-admin";
 
 create index idx_proc_asset_assignments_asset_id on procurement.asset_assignments (asset_id);
 
@@ -2185,29 +1863,19 @@ alter table procurement.asset_assignments enable row level security;
 
 create policy asset_assignments_select on procurement.asset_assignments for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_assignments:select')
-  );
+  to authenticated using (true);
 
 create policy asset_assignments_insert on procurement.asset_assignments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.asset_assignments:insert')
-  );
+  check (true);
 
 create policy asset_assignments_update on procurement.asset_assignments
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_assignments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.asset_assignments:update')
-  );
+  check (true);
 
-create policy asset_assignments_delete on procurement.asset_assignments for delete to authenticated using (
-  supasheet.has_permission ('procurement.asset_assignments:delete')
-);
+create policy asset_assignments_delete on procurement.asset_assignments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Asset maintenance
@@ -2386,7 +2054,7 @@ select
 ,
   insert,
 update,
-delete on table procurement.asset_maintenance to authenticated;
+delete on table procurement.asset_maintenance to "x-admin";
 
 create index idx_proc_maintenance_user_id on procurement.asset_maintenance (user_id);
 
@@ -2406,29 +2074,19 @@ alter table procurement.asset_maintenance enable row level security;
 
 create policy asset_maintenance_select on procurement.asset_maintenance for
 select
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_maintenance:select')
-  );
+  to authenticated using (true);
 
 create policy asset_maintenance_insert on procurement.asset_maintenance for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('procurement.asset_maintenance:insert')
-  );
+  check (true);
 
 create policy asset_maintenance_update on procurement.asset_maintenance
 for update
-  to authenticated using (
-    supasheet.has_permission ('procurement.asset_maintenance:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('procurement.asset_maintenance:update')
-  );
+  check (true);
 
-create policy asset_maintenance_delete on procurement.asset_maintenance for delete to authenticated using (
-  supasheet.has_permission ('procurement.asset_maintenance:delete')
-);
+create policy asset_maintenance_delete on procurement.asset_maintenance for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -2477,7 +2135,7 @@ from
 
 grant
 select
-  on procurement.suppliers_scorecard to authenticated;
+  on procurement.suppliers_scorecard to "x-admin";
 
 comment on view procurement.suppliers_scorecard is '{"type": "report", "name": "Supplier Scorecard", "description": "Suppliers with scores, contracts, and award history"}';
 
@@ -2523,7 +2181,7 @@ from
 
 grant
 select
-  on procurement.requisitions_report to authenticated;
+  on procurement.requisitions_report to "x-admin";
 
 comment on view procurement.requisitions_report is '{"type": "report", "name": "Requisitions Report", "description": "Requisitions with approver, line counts, and overdue days"}';
 
@@ -2562,7 +2220,7 @@ from
 
 grant
 select
-  on procurement.contracts_report to authenticated;
+  on procurement.contracts_report to "x-admin";
 
 comment on view procurement.contracts_report is '{"type": "report", "name": "Contracts Report", "description": "Contracts with supplier and renewal countdown"}';
 
@@ -2620,7 +2278,7 @@ from
 
 grant
 select
-  on procurement.assets_register to authenticated;
+  on procurement.assets_register to "x-admin";
 
 comment on view procurement.assets_register is '{"type": "report", "name": "Assets Register", "description": "Fixed asset register with category, value, and current custodian"}';
 
@@ -2657,7 +2315,7 @@ from
 
 grant
 select
-  on procurement.asset_maintenance_report to authenticated;
+  on procurement.asset_maintenance_report to "x-admin";
 
 comment on view procurement.asset_maintenance_report is '{"type": "report", "name": "Asset Maintenance Report", "description": "Maintenance records with asset, technician, and vendor info"}';
 
@@ -2688,7 +2346,7 @@ from
 
 grant
 select
-  on procurement.asset_value_summary to authenticated;
+  on procurement.asset_value_summary to "x-admin";
 
 -- card_2: qualified vs pending suppliers
 create or replace view procurement.supplier_qualification_split
@@ -2715,7 +2373,7 @@ from
 
 grant
 select
-  on procurement.supplier_qualification_split to authenticated;
+  on procurement.supplier_qualification_split to "x-admin";
 
 -- card_3: open requisitions value + approval rate
 create or replace view procurement.open_requisitions_value
@@ -2757,7 +2415,7 @@ from
 
 grant
 select
-  on procurement.open_requisitions_value to authenticated;
+  on procurement.open_requisitions_value to "x-admin";
 
 -- card_4: procurement health
 create or replace view procurement.procurement_health
@@ -2850,7 +2508,7 @@ from
 
 grant
 select
-  on procurement.procurement_health to authenticated;
+  on procurement.procurement_health to "x-admin";
 
 -- table_1: recent requisitions
 create or replace view procurement.recent_requisitions
@@ -2875,7 +2533,7 @@ from
 
 grant
 select
-  on procurement.recent_requisitions to authenticated;
+  on procurement.recent_requisitions to "x-admin";
 
 -- table_2: top suppliers by award value
 create or replace view procurement.top_suppliers
@@ -2914,7 +2572,7 @@ from
 
 grant
 select
-  on procurement.top_suppliers to authenticated;
+  on procurement.top_suppliers to "x-admin";
 
 comment on view procurement.asset_value_summary is '{"type": "dashboard_widget", "name": "Asset Value", "description": "Total current value of active assets", "widget_type": "card_1"}';
 
@@ -2959,7 +2617,7 @@ from
 
 grant
 select
-  on procurement.requisitions_by_status_pie to authenticated;
+  on procurement.requisitions_by_status_pie to "x-admin";
 
 -- Bar: assets by category (count + value)
 create or replace view procurement.assets_by_category_bar
@@ -2988,7 +2646,7 @@ from
 
 grant
 select
-  on procurement.assets_by_category_bar to authenticated;
+  on procurement.assets_by_category_bar to "x-admin";
 
 -- Line: monthly procurement spend (awarded RFQs)
 create or replace view procurement.procurement_spend_line
@@ -3016,7 +2674,7 @@ from
 
 grant
 select
-  on procurement.procurement_spend_line to authenticated;
+  on procurement.procurement_spend_line to "x-admin";
 
 -- Radar: supplier scorecard (averages by dimension across all suppliers)
 create or replace view procurement.supplier_scorecard_radar
@@ -3079,7 +2737,7 @@ from
 
 grant
 select
-  on procurement.supplier_scorecard_radar to authenticated;
+  on procurement.supplier_scorecard_radar to "x-admin";
 
 comment on view procurement.requisitions_by_status_pie is '{"type": "chart", "name": "Requisitions By Status", "description": "Requisition count grouped by status", "chart_type": "pie"}';
 
@@ -3088,134 +2746,6 @@ comment on view procurement.assets_by_category_bar is '{"type": "chart", "name":
 comment on view procurement.procurement_spend_line is '{"type": "chart", "name": "Procurement Spend", "description": "Monthly awarded value over the last 12 months", "chart_type": "line"}';
 
 comment on view procurement.supplier_scorecard_radar is '{"type": "chart", "name": "Supplier Scorecard", "description": "Average supplier scores across dimensions", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'procurement.suppliers:select'),
-  ('x-admin', 'procurement.suppliers:insert'),
-  ('x-admin', 'procurement.suppliers:update'),
-  ('x-admin', 'procurement.suppliers:delete'),
-  ('x-admin', 'procurement.suppliers:audit'),
-  ('x-admin', 'procurement.suppliers:comment'),
-  ('x-admin', 'procurement.contracts:select'),
-  ('x-admin', 'procurement.contracts:insert'),
-  ('x-admin', 'procurement.contracts:update'),
-  ('x-admin', 'procurement.contracts:delete'),
-  ('x-admin', 'procurement.contracts:audit'),
-  ('x-admin', 'procurement.contracts:comment'),
-  ('x-admin', 'procurement.requisitions:select'),
-  ('x-admin', 'procurement.requisitions:insert'),
-  ('x-admin', 'procurement.requisitions:update'),
-  ('x-admin', 'procurement.requisitions:delete'),
-  ('x-admin', 'procurement.requisitions:audit'),
-  ('x-admin', 'procurement.requisitions:comment'),
-  ('x-admin', 'procurement.requisition_items:select'),
-  ('x-admin', 'procurement.requisition_items:insert'),
-  ('x-admin', 'procurement.requisition_items:update'),
-  ('x-admin', 'procurement.requisition_items:delete'),
-  ('x-admin', 'procurement.requisition_items:audit'),
-  (
-    'x-admin',
-    'procurement.requisition_items:comment'
-  ),
-  ('x-admin', 'procurement.rfqs:select'),
-  ('x-admin', 'procurement.rfqs:insert'),
-  ('x-admin', 'procurement.rfqs:update'),
-  ('x-admin', 'procurement.rfqs:delete'),
-  ('x-admin', 'procurement.rfqs:audit'),
-  ('x-admin', 'procurement.rfqs:comment'),
-  ('x-admin', 'procurement.quotes:select'),
-  ('x-admin', 'procurement.quotes:insert'),
-  ('x-admin', 'procurement.quotes:update'),
-  ('x-admin', 'procurement.quotes:delete'),
-  ('x-admin', 'procurement.quotes:audit'),
-  ('x-admin', 'procurement.quotes:comment'),
-  ('x-admin', 'procurement.asset_categories:select'),
-  ('x-admin', 'procurement.asset_categories:insert'),
-  ('x-admin', 'procurement.asset_categories:update'),
-  ('x-admin', 'procurement.asset_categories:delete'),
-  ('x-admin', 'procurement.asset_categories:audit'),
-  ('x-admin', 'procurement.asset_categories:comment'),
-  ('x-admin', 'procurement.assets:select'),
-  ('x-admin', 'procurement.assets:insert'),
-  ('x-admin', 'procurement.assets:update'),
-  ('x-admin', 'procurement.assets:delete'),
-  ('x-admin', 'procurement.assets:audit'),
-  ('x-admin', 'procurement.assets:comment'),
-  ('x-admin', 'procurement.asset_assignments:select'),
-  ('x-admin', 'procurement.asset_assignments:insert'),
-  ('x-admin', 'procurement.asset_assignments:update'),
-  ('x-admin', 'procurement.asset_assignments:delete'),
-  ('x-admin', 'procurement.asset_assignments:audit'),
-  (
-    'x-admin',
-    'procurement.asset_assignments:comment'
-  ),
-  ('x-admin', 'procurement.asset_maintenance:select'),
-  ('x-admin', 'procurement.asset_maintenance:insert'),
-  ('x-admin', 'procurement.asset_maintenance:update'),
-  ('x-admin', 'procurement.asset_maintenance:delete'),
-  ('x-admin', 'procurement.asset_maintenance:audit'),
-  (
-    'x-admin',
-    'procurement.asset_maintenance:comment'
-  ),
-  ('x-admin', 'procurement.users:select'),
-  (
-    'x-admin',
-    'procurement.suppliers_scorecard:select'
-  ),
-  (
-    'x-admin',
-    'procurement.requisitions_report:select'
-  ),
-  ('x-admin', 'procurement.contracts_report:select'),
-  ('x-admin', 'procurement.assets_register:select'),
-  (
-    'x-admin',
-    'procurement.asset_maintenance_report:select'
-  ),
-  (
-    'x-admin',
-    'procurement.asset_value_summary:select'
-  ),
-  (
-    'x-admin',
-    'procurement.supplier_qualification_split:select'
-  ),
-  (
-    'x-admin',
-    'procurement.open_requisitions_value:select'
-  ),
-  (
-    'x-admin',
-    'procurement.procurement_health:select'
-  ),
-  (
-    'x-admin',
-    'procurement.recent_requisitions:select'
-  ),
-  ('x-admin', 'procurement.top_suppliers:select'),
-  (
-    'x-admin',
-    'procurement.requisitions_by_status_pie:select'
-  ),
-  (
-    'x-admin',
-    'procurement.assets_by_category_bar:select'
-  ),
-  (
-    'x-admin',
-    'procurement.procurement_spend_line:select'
-  ),
-  (
-    'x-admin',
-    'procurement.supplier_scorecard_radar:select'
-  );
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -3361,7 +2891,7 @@ begin
                    ' (' || coalesce(new.estimated_total::text, '0') || ' ' || new.currency ||
                    ') awaits approval.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('procurement.requisitions:update')
+            supasheet.get_users_with_table_privilege('procurement', 'requisitions', 'update')
                 || array[new.approver_user_id],
             null
         );
@@ -3425,7 +2955,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('procurement.contracts:select')
+        supasheet.get_users_with_table_privilege('procurement', 'contracts', 'select')
             || array[new.user_id, new.signed_by_user_id],
         null
     );

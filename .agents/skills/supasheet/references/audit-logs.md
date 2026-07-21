@@ -23,27 +23,26 @@ If the primary key column is not `id`, pass its name as a trigger argument (read
 ... execute function supasheet.audit_trigger_function ('ticket_no');
 ```
 
-### 2. Grant the `:audit` permission
+### 2. Nothing to grant per table
 
-The per-record Audit tab (`/$schema/resource/$resource/$id/audit`) appears only for users holding `<schema>.<table>:audit`:
+The per-record Audit tab (`/$schema/resource/$resource/$id/audit`) has no
+per-table permission to seed — `supasheet.get_audit_logs()` gates access with
+a single central check: `pg_has_role(current_user, 'x-admin', 'member')`.
+Attaching the triggers above is the entire setup; the tab shows up for
+x-admin automatically on any audited table.
 
-```sql
--- in the committed enum block
-alter type supasheet.app_permission add value if not exists 'app.tickets:audit';
-
--- seed
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'app.tickets:audit') on conflict (role, permission) do nothing;
-```
-
-Nothing needs declaring in the table comment — the Audit link is permission-driven.
+If a specific table needs a *different* role to see its audit trail (not
+x-admin), that's a deliberate one-off — edit the `pg_has_role` check inside
+`supasheet.get_audit_logs()` in `20250928062812_audit_logs.sql`, since it's
+shared across every table rather than seeded per resource.
 
 ## Related pieces
 
-- `supasheet.audit_logs:select` (seeded to `x-admin` in the base migration) gates the **global** Core → Audit Logs page; `:audit` gates the **per-record** tab.
-- Read helper: `supasheet.get_audit_logs(p_schema, p_table, p_record_id)` — security definer, checks the caller's `:audit` permission, joins actor name/email/picture.
+- The `supasheet.audit_logs` table itself: rows are visible to their own
+  `created_by`, plus x-admin sees all (`pg_has_role(current_user, 'x-admin',
+  'member')`) — this gates the **global** Core → Audit Logs page.
+- Read helper: `supasheet.get_audit_logs(p_schema, p_table, p_record_id)` —
+  security definer, gates on the same x-admin check, joins actor name/email/picture.
 - Manual/system events can be written with `supasheet.create_audit_log(p_operation, p_schema_name, p_table_name, p_record_id, p_old_data, p_new_data, p_metadata)`.
 - `changed_fields` stores only the delta between old and new — no need to trim payloads yourself.
 
@@ -51,7 +50,8 @@ Nothing needs declaring in the table comment — the Audit link is permission-dr
 
 - Trigger names: `audit_<table>_insert` / `_update` / `_delete` (demo prefixes the schema too: `audit_demo_tasks_insert`).
 - Audit high-value tables (business records); skip noisy ones (junction rows are optional).
-- Typical role split: `x-admin` gets `:audit` everywhere, `user` usually doesn't.
+- The per-record Audit tab is x-admin-only by default across the whole app —
+  it's a single shared check, not a per-table setting.
 
 ## Authoritative sources
 

@@ -18,7 +18,7 @@ id | key text unique | value jsonb | description text | is_public boolean
 
 ## Rules
 
-- Reads need no `role_permissions` entry — RLS handles it: `anon` sees only `is_public = true`, `authenticated` sees all rows.
+- Reads need no per-role grant setup — RLS handles it directly: `anon` sees only `is_public = true`, `authenticated` sees all rows.
 - Writes are revoked from all client roles — change values **by migration** (or direct DB access), never through the API.
 - Known keys consumed by the app: `app.name`, `app.description` (branding). Add your own namespaced keys (`app.*`, `<module>.*`) for feature flags or settings your SQL (or custom code) reads.
 

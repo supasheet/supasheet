@@ -60,229 +60,6 @@ create type lms.certificate_status as enum('issued', 'revoked', 'expired');
 
 create type lms.path_status as enum('draft', 'published', 'archived');
 
--- Courses
-alter type supasheet.app_permission
-add value 'lms.courses:select';
-
-alter type supasheet.app_permission
-add value 'lms.courses:insert';
-
-alter type supasheet.app_permission
-add value 'lms.courses:update';
-
-alter type supasheet.app_permission
-add value 'lms.courses:delete';
-
-alter type supasheet.app_permission
-add value 'lms.courses:audit';
-
-alter type supasheet.app_permission
-add value 'lms.courses:comment';
-
--- Modules
-alter type supasheet.app_permission
-add value 'lms.modules:select';
-
-alter type supasheet.app_permission
-add value 'lms.modules:insert';
-
-alter type supasheet.app_permission
-add value 'lms.modules:update';
-
-alter type supasheet.app_permission
-add value 'lms.modules:delete';
-
-alter type supasheet.app_permission
-add value 'lms.modules:audit';
-
-alter type supasheet.app_permission
-add value 'lms.modules:comment';
-
--- Lessons
-alter type supasheet.app_permission
-add value 'lms.lessons:select';
-
-alter type supasheet.app_permission
-add value 'lms.lessons:insert';
-
-alter type supasheet.app_permission
-add value 'lms.lessons:update';
-
-alter type supasheet.app_permission
-add value 'lms.lessons:delete';
-
-alter type supasheet.app_permission
-add value 'lms.lessons:audit';
-
-alter type supasheet.app_permission
-add value 'lms.lessons:comment';
-
--- Enrollments
-alter type supasheet.app_permission
-add value 'lms.enrollments:select';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments:insert';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments:update';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments:delete';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments:audit';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments:comment';
-
--- Lesson progress
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:select';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:insert';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:update';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:delete';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:audit';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_progress:comment';
-
--- Assignments
-alter type supasheet.app_permission
-add value 'lms.assignments:select';
-
-alter type supasheet.app_permission
-add value 'lms.assignments:insert';
-
-alter type supasheet.app_permission
-add value 'lms.assignments:update';
-
-alter type supasheet.app_permission
-add value 'lms.assignments:delete';
-
-alter type supasheet.app_permission
-add value 'lms.assignments:audit';
-
-alter type supasheet.app_permission
-add value 'lms.assignments:comment';
-
--- Submissions
-alter type supasheet.app_permission
-add value 'lms.submissions:select';
-
-alter type supasheet.app_permission
-add value 'lms.submissions:insert';
-
-alter type supasheet.app_permission
-add value 'lms.submissions:update';
-
-alter type supasheet.app_permission
-add value 'lms.submissions:delete';
-
-alter type supasheet.app_permission
-add value 'lms.submissions:audit';
-
-alter type supasheet.app_permission
-add value 'lms.submissions:comment';
-
--- Certificates
-alter type supasheet.app_permission
-add value 'lms.certificates:select';
-
-alter type supasheet.app_permission
-add value 'lms.certificates:insert';
-
-alter type supasheet.app_permission
-add value 'lms.certificates:update';
-
-alter type supasheet.app_permission
-add value 'lms.certificates:delete';
-
-alter type supasheet.app_permission
-add value 'lms.certificates:audit';
-
-alter type supasheet.app_permission
-add value 'lms.certificates:comment';
-
--- Learning paths
-alter type supasheet.app_permission
-add value 'lms.learning_paths:select';
-
-alter type supasheet.app_permission
-add value 'lms.learning_paths:insert';
-
-alter type supasheet.app_permission
-add value 'lms.learning_paths:update';
-
-alter type supasheet.app_permission
-add value 'lms.learning_paths:delete';
-
-alter type supasheet.app_permission
-add value 'lms.learning_paths:audit';
-
-alter type supasheet.app_permission
-add value 'lms.learning_paths:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'lms.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'lms.courses_report:select';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments_report:select';
-
-alter type supasheet.app_permission
-add value 'lms.learner_progress_report:select';
-
-alter type supasheet.app_permission
-add value 'lms.assignment_grades_report:select';
-
-alter type supasheet.app_permission
-add value 'lms.certificates_register:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'lms.active_enrollments:select';
-
-alter type supasheet.app_permission
-add value 'lms.completion_split:select';
-
-alter type supasheet.app_permission
-add value 'lms.completion_rate_summary:select';
-
-alter type supasheet.app_permission
-add value 'lms.lms_health:select';
-
-alter type supasheet.app_permission
-add value 'lms.recent_enrollments:select';
-
-alter type supasheet.app_permission
-add value 'lms.top_courses:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'lms.courses_by_category_pie:select';
-
-alter type supasheet.app_permission
-add value 'lms.enrollments_by_course_bar:select';
-
-alter type supasheet.app_permission
-add value 'lms.enrollment_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'lms.lesson_type_metrics_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -303,7 +80,7 @@ from
 
 grant
 select
-  on lms.users to authenticated;
+  on lms.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Courses
@@ -495,7 +272,7 @@ select
 ,
   insert,
 update,
-delete on table lms.courses to authenticated;
+delete on table lms.courses to "x-admin";
 
 create index idx_lms_courses_user_id on lms.courses (user_id);
 
@@ -513,19 +290,19 @@ alter table lms.courses enable row level security;
 
 create policy courses_select on lms.courses for
 select
-  to authenticated using (supasheet.has_permission ('lms.courses:select'));
+  to authenticated using (true);
 
 create policy courses_insert on lms.courses for insert to authenticated
 with
-  check (supasheet.has_permission ('lms.courses:insert'));
+  check (true);
 
 create policy courses_update on lms.courses
 for update
-  to authenticated using (supasheet.has_permission ('lms.courses:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('lms.courses:update'));
+  check (true);
 
-create policy courses_delete on lms.courses for delete to authenticated using (supasheet.has_permission ('lms.courses:delete'));
+create policy courses_delete on lms.courses for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Modules (course sections)
@@ -633,7 +410,7 @@ select
 ,
   insert,
 update,
-delete on table lms.modules to authenticated;
+delete on table lms.modules to "x-admin";
 
 create index idx_lms_modules_course_id on lms.modules (course_id);
 
@@ -643,19 +420,19 @@ alter table lms.modules enable row level security;
 
 create policy modules_select on lms.modules for
 select
-  to authenticated using (supasheet.has_permission ('lms.modules:select'));
+  to authenticated using (true);
 
 create policy modules_insert on lms.modules for insert to authenticated
 with
-  check (supasheet.has_permission ('lms.modules:insert'));
+  check (true);
 
 create policy modules_update on lms.modules
 for update
-  to authenticated using (supasheet.has_permission ('lms.modules:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('lms.modules:update'));
+  check (true);
 
-create policy modules_delete on lms.modules for delete to authenticated using (supasheet.has_permission ('lms.modules:delete'));
+create policy modules_delete on lms.modules for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Lessons (content items)
@@ -804,7 +581,7 @@ select
 ,
   insert,
 update,
-delete on table lms.lessons to authenticated;
+delete on table lms.lessons to "x-admin";
 
 create index idx_lms_lessons_module_id on lms.lessons (module_id);
 
@@ -816,19 +593,19 @@ alter table lms.lessons enable row level security;
 
 create policy lessons_select on lms.lessons for
 select
-  to authenticated using (supasheet.has_permission ('lms.lessons:select'));
+  to authenticated using (true);
 
 create policy lessons_insert on lms.lessons for insert to authenticated
 with
-  check (supasheet.has_permission ('lms.lessons:insert'));
+  check (true);
 
 create policy lessons_update on lms.lessons
 for update
-  to authenticated using (supasheet.has_permission ('lms.lessons:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('lms.lessons:update'));
+  check (true);
 
-create policy lessons_delete on lms.lessons for delete to authenticated using (supasheet.has_permission ('lms.lessons:delete'));
+create policy lessons_delete on lms.lessons for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Enrollments
@@ -978,7 +755,7 @@ select
 ,
   insert,
 update,
-delete on table lms.enrollments to authenticated;
+delete on table lms.enrollments to "x-admin";
 
 create index idx_lms_enrollments_user_id on lms.enrollments (user_id);
 
@@ -996,29 +773,19 @@ alter table lms.enrollments enable row level security;
 
 create policy enrollments_select on lms.enrollments for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.enrollments:select')
-  );
+  to authenticated using (true);
 
 create policy enrollments_insert on lms.enrollments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.enrollments:insert')
-  );
+  check (true);
 
 create policy enrollments_update on lms.enrollments
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.enrollments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.enrollments:update')
-  );
+  check (true);
 
-create policy enrollments_delete on lms.enrollments for delete to authenticated using (
-  supasheet.has_permission ('lms.enrollments:delete')
-);
+create policy enrollments_delete on lms.enrollments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Lesson progress (per-lesson tracking)
@@ -1143,7 +910,7 @@ select
 ,
   insert,
 update,
-delete on table lms.lesson_progress to authenticated;
+delete on table lms.lesson_progress to "x-admin";
 
 create index idx_lms_lesson_progress_enrollment_id on lms.lesson_progress (enrollment_id);
 
@@ -1155,29 +922,19 @@ alter table lms.lesson_progress enable row level security;
 
 create policy lesson_progress_select on lms.lesson_progress for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.lesson_progress:select')
-  );
+  to authenticated using (true);
 
 create policy lesson_progress_insert on lms.lesson_progress for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.lesson_progress:insert')
-  );
+  check (true);
 
 create policy lesson_progress_update on lms.lesson_progress
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.lesson_progress:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.lesson_progress:update')
-  );
+  check (true);
 
-create policy lesson_progress_delete on lms.lesson_progress for delete to authenticated using (
-  supasheet.has_permission ('lms.lesson_progress:delete')
-);
+create policy lesson_progress_delete on lms.lesson_progress for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Assignments
@@ -1342,7 +1099,7 @@ select
 ,
   insert,
 update,
-delete on table lms.assignments to authenticated;
+delete on table lms.assignments to "x-admin";
 
 create index idx_lms_assignments_user_id on lms.assignments (user_id);
 
@@ -1358,29 +1115,19 @@ alter table lms.assignments enable row level security;
 
 create policy assignments_select on lms.assignments for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.assignments:select')
-  );
+  to authenticated using (true);
 
 create policy assignments_insert on lms.assignments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.assignments:insert')
-  );
+  check (true);
 
 create policy assignments_update on lms.assignments
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.assignments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.assignments:update')
-  );
+  check (true);
 
-create policy assignments_delete on lms.assignments for delete to authenticated using (
-  supasheet.has_permission ('lms.assignments:delete')
-);
+create policy assignments_delete on lms.assignments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Submissions
@@ -1556,7 +1303,7 @@ select
 ,
   insert,
 update,
-delete on table lms.submissions to authenticated;
+delete on table lms.submissions to "x-admin";
 
 create index idx_lms_submissions_user_id on lms.submissions (user_id);
 
@@ -1576,29 +1323,19 @@ alter table lms.submissions enable row level security;
 
 create policy submissions_select on lms.submissions for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.submissions:select')
-  );
+  to authenticated using (true);
 
 create policy submissions_insert on lms.submissions for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.submissions:insert')
-  );
+  check (true);
 
 create policy submissions_update on lms.submissions
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.submissions:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.submissions:update')
-  );
+  check (true);
 
-create policy submissions_delete on lms.submissions for delete to authenticated using (
-  supasheet.has_permission ('lms.submissions:delete')
-);
+create policy submissions_delete on lms.submissions for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Certificates
@@ -1786,7 +1523,7 @@ select
 ,
   insert,
 update,
-delete on table lms.certificates to authenticated;
+delete on table lms.certificates to "x-admin";
 
 create index idx_lms_certificates_user_id on lms.certificates (user_id);
 
@@ -1806,29 +1543,19 @@ alter table lms.certificates enable row level security;
 
 create policy certificates_select on lms.certificates for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.certificates:select')
-  );
+  to authenticated using (true);
 
 create policy certificates_insert on lms.certificates for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.certificates:insert')
-  );
+  check (true);
 
 create policy certificates_update on lms.certificates
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.certificates:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.certificates:update')
-  );
+  check (true);
 
-create policy certificates_delete on lms.certificates for delete to authenticated using (
-  supasheet.has_permission ('lms.certificates:delete')
-);
+create policy certificates_delete on lms.certificates for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Learning paths (curated multi-course sequences)
@@ -1971,7 +1698,7 @@ select
 ,
   insert,
 update,
-delete on table lms.learning_paths to authenticated;
+delete on table lms.learning_paths to "x-admin";
 
 create index idx_lms_paths_user_id on lms.learning_paths (user_id);
 
@@ -1983,29 +1710,19 @@ alter table lms.learning_paths enable row level security;
 
 create policy learning_paths_select on lms.learning_paths for
 select
-  to authenticated using (
-    supasheet.has_permission ('lms.learning_paths:select')
-  );
+  to authenticated using (true);
 
 create policy learning_paths_insert on lms.learning_paths for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('lms.learning_paths:insert')
-  );
+  check (true);
 
 create policy learning_paths_update on lms.learning_paths
 for update
-  to authenticated using (
-    supasheet.has_permission ('lms.learning_paths:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('lms.learning_paths:update')
-  );
+  check (true);
 
-create policy learning_paths_delete on lms.learning_paths for delete to authenticated using (
-  supasheet.has_permission ('lms.learning_paths:delete')
-);
+create policy learning_paths_delete on lms.learning_paths for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -2058,7 +1775,7 @@ from
 
 grant
 select
-  on lms.courses_report to authenticated;
+  on lms.courses_report to "x-admin";
 
 comment on view lms.courses_report is '{"type": "report", "name": "Courses Report", "description": "Courses with enrollment counts, completion rate, and avg score"}';
 
@@ -2101,7 +1818,7 @@ from
 
 grant
 select
-  on lms.enrollments_report to authenticated;
+  on lms.enrollments_report to "x-admin";
 
 comment on view lms.enrollments_report is '{"type": "report", "name": "Enrollments Report", "description": "Enrollments with progress and recency metrics"}';
 
@@ -2147,7 +1864,7 @@ from
 
 grant
 select
-  on lms.learner_progress_report to authenticated;
+  on lms.learner_progress_report to "x-admin";
 
 comment on view lms.learner_progress_report is '{"type": "report", "name": "Learner Progress", "description": "Per-learner per-course progress with lesson rollups"}';
 
@@ -2196,7 +1913,7 @@ from
 
 grant
 select
-  on lms.assignment_grades_report to authenticated;
+  on lms.assignment_grades_report to "x-admin";
 
 comment on view lms.assignment_grades_report is '{"type": "report", "name": "Assignment Grades", "description": "Submissions with scores and grading aging"}';
 
@@ -2234,7 +1951,7 @@ from
 
 grant
 select
-  on lms.certificates_register to authenticated;
+  on lms.certificates_register to "x-admin";
 
 comment on view lms.certificates_register is '{"type": "report", "name": "Certificates Register", "description": "Issued certificates with expiry tracking"}';
 
@@ -2261,7 +1978,7 @@ from
 
 grant
 select
-  on lms.active_enrollments to authenticated;
+  on lms.active_enrollments to "x-admin";
 
 -- card_2: completed vs in-progress
 create or replace view lms.completion_split
@@ -2288,7 +2005,7 @@ from
 
 grant
 select
-  on lms.completion_split to authenticated;
+  on lms.completion_split to "x-admin";
 
 -- card_3: total minutes invested + completion rate %
 create or replace view lms.completion_rate_summary
@@ -2324,7 +2041,7 @@ from
 
 grant
 select
-  on lms.completion_rate_summary to authenticated;
+  on lms.completion_rate_summary to "x-admin";
 
 -- card_4: LMS health (overdue assignments, stale enrollments, expiring certs, late submissions)
 create or replace view lms.lms_health
@@ -2424,7 +2141,7 @@ from
 
 grant
 select
-  on lms.lms_health to authenticated;
+  on lms.lms_health to "x-admin";
 
 -- table_1: recent enrollments
 create or replace view lms.recent_enrollments
@@ -2450,7 +2167,7 @@ from
 
 grant
 select
-  on lms.recent_enrollments to authenticated;
+  on lms.recent_enrollments to "x-admin";
 
 -- table_2: top courses by enrollment
 create or replace view lms.top_courses
@@ -2483,7 +2200,7 @@ from
 
 grant
 select
-  on lms.top_courses to authenticated;
+  on lms.top_courses to "x-admin";
 
 comment on view lms.active_enrollments is '{"type": "dashboard_widget", "name": "Active Enrollments", "description": "Count of currently active enrollments", "widget_type": "card_1"}';
 
@@ -2523,7 +2240,7 @@ from
 
 grant
 select
-  on lms.courses_by_category_pie to authenticated;
+  on lms.courses_by_category_pie to "x-admin";
 
 -- Bar: enrollments by course (active vs completed)
 create or replace view lms.enrollments_by_course_bar
@@ -2559,7 +2276,7 @@ from
 
 grant
 select
-  on lms.enrollments_by_course_bar to authenticated;
+  on lms.enrollments_by_course_bar to "x-admin";
 
 -- Line: weekly enrollment trend (last 12 weeks)
 create or replace view lms.enrollment_trend_line
@@ -2589,7 +2306,7 @@ from
 
 grant
 select
-  on lms.enrollment_trend_line to authenticated;
+  on lms.enrollment_trend_line to "x-admin";
 
 -- Radar: lesson type metrics
 create or replace view lms.lesson_type_metrics_radar
@@ -2619,7 +2336,7 @@ from
 
 grant
 select
-  on lms.lesson_type_metrics_radar to authenticated;
+  on lms.lesson_type_metrics_radar to "x-admin";
 
 comment on view lms.courses_by_category_pie is '{"type": "chart", "name": "Courses By Category", "description": "Published course count per category", "chart_type": "pie"}';
 
@@ -2628,83 +2345,6 @@ comment on view lms.enrollments_by_course_bar is '{"type": "chart", "name": "Enr
 comment on view lms.enrollment_trend_line is '{"type": "chart", "name": "Enrollment Trend", "description": "Weekly enrollments and completions over 12 weeks", "chart_type": "line"}';
 
 comment on view lms.lesson_type_metrics_radar is '{"type": "chart", "name": "Lesson Type Metrics", "description": "Lesson counts and learner progress by lesson type", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'lms.courses:select'),
-  ('x-admin', 'lms.courses:insert'),
-  ('x-admin', 'lms.courses:update'),
-  ('x-admin', 'lms.courses:delete'),
-  ('x-admin', 'lms.courses:audit'),
-  ('x-admin', 'lms.courses:comment'),
-  ('x-admin', 'lms.modules:select'),
-  ('x-admin', 'lms.modules:insert'),
-  ('x-admin', 'lms.modules:update'),
-  ('x-admin', 'lms.modules:delete'),
-  ('x-admin', 'lms.modules:audit'),
-  ('x-admin', 'lms.modules:comment'),
-  ('x-admin', 'lms.lessons:select'),
-  ('x-admin', 'lms.lessons:insert'),
-  ('x-admin', 'lms.lessons:update'),
-  ('x-admin', 'lms.lessons:delete'),
-  ('x-admin', 'lms.lessons:audit'),
-  ('x-admin', 'lms.lessons:comment'),
-  ('x-admin', 'lms.enrollments:select'),
-  ('x-admin', 'lms.enrollments:insert'),
-  ('x-admin', 'lms.enrollments:update'),
-  ('x-admin', 'lms.enrollments:delete'),
-  ('x-admin', 'lms.enrollments:audit'),
-  ('x-admin', 'lms.enrollments:comment'),
-  ('x-admin', 'lms.lesson_progress:select'),
-  ('x-admin', 'lms.lesson_progress:insert'),
-  ('x-admin', 'lms.lesson_progress:update'),
-  ('x-admin', 'lms.lesson_progress:delete'),
-  ('x-admin', 'lms.lesson_progress:audit'),
-  ('x-admin', 'lms.lesson_progress:comment'),
-  ('x-admin', 'lms.assignments:select'),
-  ('x-admin', 'lms.assignments:insert'),
-  ('x-admin', 'lms.assignments:update'),
-  ('x-admin', 'lms.assignments:delete'),
-  ('x-admin', 'lms.assignments:audit'),
-  ('x-admin', 'lms.assignments:comment'),
-  ('x-admin', 'lms.submissions:select'),
-  ('x-admin', 'lms.submissions:insert'),
-  ('x-admin', 'lms.submissions:update'),
-  ('x-admin', 'lms.submissions:delete'),
-  ('x-admin', 'lms.submissions:audit'),
-  ('x-admin', 'lms.submissions:comment'),
-  ('x-admin', 'lms.certificates:select'),
-  ('x-admin', 'lms.certificates:insert'),
-  ('x-admin', 'lms.certificates:update'),
-  ('x-admin', 'lms.certificates:delete'),
-  ('x-admin', 'lms.certificates:audit'),
-  ('x-admin', 'lms.certificates:comment'),
-  ('x-admin', 'lms.learning_paths:select'),
-  ('x-admin', 'lms.learning_paths:insert'),
-  ('x-admin', 'lms.learning_paths:update'),
-  ('x-admin', 'lms.learning_paths:delete'),
-  ('x-admin', 'lms.learning_paths:audit'),
-  ('x-admin', 'lms.learning_paths:comment'),
-  ('x-admin', 'lms.users:select'),
-  ('x-admin', 'lms.courses_report:select'),
-  ('x-admin', 'lms.enrollments_report:select'),
-  ('x-admin', 'lms.learner_progress_report:select'),
-  ('x-admin', 'lms.assignment_grades_report:select'),
-  ('x-admin', 'lms.certificates_register:select'),
-  ('x-admin', 'lms.active_enrollments:select'),
-  ('x-admin', 'lms.completion_split:select'),
-  ('x-admin', 'lms.completion_rate_summary:select'),
-  ('x-admin', 'lms.lms_health:select'),
-  ('x-admin', 'lms.recent_enrollments:select'),
-  ('x-admin', 'lms.top_courses:select'),
-  ('x-admin', 'lms.courses_by_category_pie:select'),
-  ('x-admin', 'lms.enrollments_by_course_bar:select'),
-  ('x-admin', 'lms.enrollment_trend_line:select'),
-  ('x-admin', 'lms.lesson_type_metrics_radar:select');
 
 ----------------------------------------------------------------
 -- Audit triggers

@@ -23,37 +23,23 @@ Use this skill whenever implementing anything in a Supasheet project's database:
 Every feature follows the same migration shape. Order matters.
 
 1. **Create a migration** — `supabase/migrations/<YYYYMMDDHHMMSS>_<name>.sql`.
-2. **Create the schema** (one Postgres schema per domain) and `grant usage on schema <s> to authenticated;`.
-3. **Add permission enum values in a committed block** — enum values must commit before they can be used:
-
-   ```sql
-   begin;
-   
-   alter type supasheet.app_permission add value if not exists '<schema>.<resource>:select';
-   
-   alter type supasheet.app_permission add value if not exists '<schema>.<resource>:insert';
-   
-   -- ...update/delete/audit/comment as needed, one per resource
-   commit;
-   ```
-
-4. **Create tables/views** using Supasheet domain types (`supasheet.EMAIL`, `supasheet.FILE`, …) with JSON `COMMENT`s.
-5. **Lock down grants** — `revoke all ... from public, anon, authenticated, service_role;` then `grant` exactly the intended operations to `authenticated`.
-6. **Enable RLS** and add policies gated by `supasheet.has_permission('<schema>.<table>:<action>')`.
-7. **Index** FK columns, filtered columns, and sort columns.
-8. **Seed `supasheet.role_permissions`** so at least one role can see the resource.
-9. **Attach triggers** — audit and/or notification triggers as needed.
-10. **End the migration with `select supasheet.refresh_metadata();`** — the metadata catalog is materialized views and is NOT auto-refreshed.
-11. **Expose the schema** in `supabase/config.toml` under BOTH `[api].schemas` and `[api].extra_search_path`, then restart Supabase.
-12. **Regenerate types** — `npx supabase gen types typescript --local --schema public --schema supasheet --schema <yours> > src/lib/database.types.ts`.
+2. **Create the schema** (one Postgres schema per domain). Do **not** `grant usage` to `authenticated` — grant it to each native role that needs it instead (see `rules/roles-permissions.md`).
+3. **Create tables/views** using Supasheet domain types (`supasheet.EMAIL`, `supasheet.FILE`, …) with JSON `COMMENT`s.
+4. **Lock down grants** — `revoke all ... from public, anon, authenticated, service_role;` then `grant` exactly the intended operations directly to the specific native roles that should hold them (e.g. `grant select, insert, update, delete on <schema>.<table> to "x-admin";`). `authenticated` itself never holds a direct grant.
+5. **Enable RLS.** Most tables need only simple, role-agnostic policies (`using (true)` or ownership checks like `user_id = auth.uid()`) scoped `to authenticated` — the grants above already decide *who* can attempt the operation. Add a `pg_has_role(current_user, '<role>', 'member')` clause only when a specific native role needs a *row-level* override (e.g. an admin override that bypasses ownership).
+6. **Index** FK columns, filtered columns, and sort columns.
+7. **Attach triggers** — audit and/or notification triggers as needed.
+8. **End the migration with `select supasheet.refresh_metadata();`** — the metadata catalog is materialized views and is NOT auto-refreshed.
+9. **Expose the schema** in `supabase/config.toml` under BOTH `[api].schemas` and `[api].extra_search_path`, then restart Supabase.
+10. **Regenerate types** — `npx supabase gen types typescript --local --schema public --schema supasheet --schema <yours> > src/lib/database.types.ts`.
 
 ## Critical Gotchas
 
-- Permission strings are `"<schema>.<resource>:<action>"`; actions: `select`, `insert`, `update`, `delete`, `audit`, `comment` (plus `:select` for every widget/chart/report view).
+- Visibility (sidebar, dashboards, charts, reports) is computed live from `has_table_privilege`/`has_column_privilege` for the caller's active native role — there is no permission string to seed. A resource with no `select` grant to any role is simply invisible.
 - FKs must reference real tables (`references supasheet.users (id)`), but PostgREST cannot embed across schemas — every app schema needs a same-name **replica view**: `create view <schema>.users with (security_invoker = true) as select * from supasheet.users;`.
 - All feature views are created `with (security_invoker = true)`.
-- Table/column comments are JSON; keep them valid JSON (the UI parses them). Roles/permissions live in tables, never in the JWT.
-- Junction tables: no `:update` permission, `"inline_form": true`, `"display": "none"`. Singletons: `"singleton": true`, no `:delete`.
+- Table/column comments are JSON; keep them valid JSON (the UI parses them). Roles **are** derived from the JWT's `role` claim by design (see `rules/roles-permissions.md`) — that claim drives PostgREST's `SET ROLE`, which is what grants/RLS actually check via `current_user`.
+- Junction tables: no `update` grant, `"inline_form": true`, `"display": "none"`. Singletons: `"singleton": true`, no `delete` grant.
 - The audit DELETE trigger must be `BEFORE DELETE`; INSERT/UPDATE are `AFTER`.
 - `supasheet.create_notification()` is service_role-only — call it from a `security definer set search_path = ''` trigger function.
 
@@ -73,7 +59,7 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 | [rules/templates.md](rules/templates.md)                   | Template views: bulk-insert payloads applied via supasheet.apply_template                 |
 | [rules/policies.md](rules/policies.md)                     | RLS authoring: clauses per command, permissive vs restrictive, performance                |
 | [rules/triggers.md](rules/triggers.md)                     | Audit, notification, business (rollup), and maintenance triggers                          |
-| [rules/roles-permissions.md](rules/roles-permissions.md)   | Permission format, seeding matrix, custom roles                                           |
+| [rules/roles-permissions.md](rules/roles-permissions.md)   | Native roles, grant matrix, custom roles, the Custom Access Token Hook                    |
 | [rules/storage.md](rules/storage.md)                       | FILE/AVATAR columns, uploads bucket paths, custom buckets                                 |
 | [rules/configuration.md](rules/configuration.md)           | supasheet.configs key-value settings                                                      |
 
@@ -84,7 +70,7 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 | High     | [references/new-resource.md](references/new-resource.md)     | New table, module, or schema — the full end-to-end worked example                                            |
 | High     | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs |
 | High     | [references/data-types.md](references/data-types.md)         | Domain type definitions and all column comment options                                                       |
-| Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: enums, tables, helper functions, bootstrap                                                |
+| Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: native roles, grants, the auth hook, has_role/pg_has_role                                 |
 | Medium   | [references/notifications.md](references/notifications.md)   | create_notification internals, recipient resolvers, full trigger examples                                    |
 | Medium   | [references/audit-logs.md](references/audit-logs.md)         | audit_logs schema, TG_ARGV PK arg, global vs per-record permissions                                          |
 | Low      | [references/comments.md](references/comments.md)             | Per-record comments enablement and comment-notify pairing                                                    |

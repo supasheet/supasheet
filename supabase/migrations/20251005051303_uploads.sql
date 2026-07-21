@@ -22,8 +22,10 @@ select
   to authenticated using (
     bucket_id = 'uploads'
     and (storage.foldername (name)) [1] != 'auth'
-    and supasheet.has_permission (
-      format('%s.%s:select', path_tokens[1], path_tokens[2])::supasheet.app_permission
+    and has_table_privilege(
+      current_user,
+      format('%I.%I', path_tokens[1], path_tokens[2]),
+      'select'
     )
   );
 
@@ -34,8 +36,10 @@ with
   check (
     bucket_id = 'uploads'
     and (storage.foldername (name)) [1] != 'auth'
-    and supasheet.has_permission (
-      format('%s.%s:insert', path_tokens[1], path_tokens[2])::supasheet.app_permission
+    and has_table_privilege(
+      current_user,
+      format('%I.%I', path_tokens[1], path_tokens[2]),
+      'insert'
     )
   );
 
@@ -46,8 +50,10 @@ for update
   to authenticated using (
     bucket_id = 'uploads'
     and (storage.foldername (name)) [1] != 'auth'
-    and supasheet.has_permission (
-      format('%s.%s:update', path_tokens[1], path_tokens[2])::supasheet.app_permission
+    and has_table_privilege(
+      current_user,
+      format('%I.%I', path_tokens[1], path_tokens[2]),
+      'update'
     )
   );
 
@@ -56,8 +62,10 @@ drop policy IF exists enable_delete_authorized_uploads_objects on storage.object
 create policy enable_delete_authorized_uploads_objects on storage.objects as PERMISSIVE for DELETE to authenticated using (
   bucket_id = 'uploads'
   and (storage.foldername (name)) [1] != 'auth'
-  and supasheet.has_permission (
-    format('%s.%s:delete', path_tokens[1], path_tokens[2])::supasheet.app_permission
+  and has_table_privilege(
+    current_user,
+    format('%I.%I', path_tokens[1], path_tokens[2]),
+    'delete'
   )
 );
 

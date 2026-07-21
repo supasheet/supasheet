@@ -3,10 +3,8 @@ create schema if not exists quality;
 grant usage on schema quality to authenticated;
 
 ----------------------------------------------------------------
--- Enums + permissions (must commit before use)
+-- Enums
 ----------------------------------------------------------------
-begin;
-
 create type quality.standard_type as enum('iso', 'regulatory', 'internal', 'customer_spec');
 
 create type quality.standard_status as enum('draft', 'active', 'superseded', 'retired');
@@ -97,231 +95,6 @@ create type quality.complaint_status as enum(
   'rejected'
 );
 
--- Standards
-alter type supasheet.app_permission
-add value 'quality.standards:select';
-
-alter type supasheet.app_permission
-add value 'quality.standards:insert';
-
-alter type supasheet.app_permission
-add value 'quality.standards:update';
-
-alter type supasheet.app_permission
-add value 'quality.standards:delete';
-
-alter type supasheet.app_permission
-add value 'quality.standards:audit';
-
-alter type supasheet.app_permission
-add value 'quality.standards:comment';
-
--- Inspections
-alter type supasheet.app_permission
-add value 'quality.inspections:select';
-
-alter type supasheet.app_permission
-add value 'quality.inspections:insert';
-
-alter type supasheet.app_permission
-add value 'quality.inspections:update';
-
-alter type supasheet.app_permission
-add value 'quality.inspections:delete';
-
-alter type supasheet.app_permission
-add value 'quality.inspections:audit';
-
-alter type supasheet.app_permission
-add value 'quality.inspections:comment';
-
--- Inspection items
-alter type supasheet.app_permission
-add value 'quality.inspection_items:select';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_items:insert';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_items:update';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_items:delete';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_items:audit';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_items:comment';
-
--- Non-conformances
-alter type supasheet.app_permission
-add value 'quality.non_conformances:select';
-
-alter type supasheet.app_permission
-add value 'quality.non_conformances:insert';
-
-alter type supasheet.app_permission
-add value 'quality.non_conformances:update';
-
-alter type supasheet.app_permission
-add value 'quality.non_conformances:delete';
-
-alter type supasheet.app_permission
-add value 'quality.non_conformances:audit';
-
-alter type supasheet.app_permission
-add value 'quality.non_conformances:comment';
-
--- CAPA
-alter type supasheet.app_permission
-add value 'quality.capa:select';
-
-alter type supasheet.app_permission
-add value 'quality.capa:insert';
-
-alter type supasheet.app_permission
-add value 'quality.capa:update';
-
-alter type supasheet.app_permission
-add value 'quality.capa:delete';
-
-alter type supasheet.app_permission
-add value 'quality.capa:audit';
-
-alter type supasheet.app_permission
-add value 'quality.capa:comment';
-
--- Audits
-alter type supasheet.app_permission
-add value 'quality.audits:select';
-
-alter type supasheet.app_permission
-add value 'quality.audits:insert';
-
-alter type supasheet.app_permission
-add value 'quality.audits:update';
-
-alter type supasheet.app_permission
-add value 'quality.audits:delete';
-
-alter type supasheet.app_permission
-add value 'quality.audits:audit';
-
-alter type supasheet.app_permission
-add value 'quality.audits:comment';
-
--- Audit findings
-alter type supasheet.app_permission
-add value 'quality.audit_findings:select';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings:insert';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings:update';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings:delete';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings:audit';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings:comment';
-
--- Certifications
-alter type supasheet.app_permission
-add value 'quality.certifications:select';
-
-alter type supasheet.app_permission
-add value 'quality.certifications:insert';
-
-alter type supasheet.app_permission
-add value 'quality.certifications:update';
-
-alter type supasheet.app_permission
-add value 'quality.certifications:delete';
-
-alter type supasheet.app_permission
-add value 'quality.certifications:audit';
-
-alter type supasheet.app_permission
-add value 'quality.certifications:comment';
-
--- Complaints
-alter type supasheet.app_permission
-add value 'quality.complaints:select';
-
-alter type supasheet.app_permission
-add value 'quality.complaints:insert';
-
-alter type supasheet.app_permission
-add value 'quality.complaints:update';
-
-alter type supasheet.app_permission
-add value 'quality.complaints:delete';
-
-alter type supasheet.app_permission
-add value 'quality.complaints:audit';
-
-alter type supasheet.app_permission
-add value 'quality.complaints:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'quality.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'quality.inspections_report:select';
-
-alter type supasheet.app_permission
-add value 'quality.ncr_report:select';
-
-alter type supasheet.app_permission
-add value 'quality.capa_report:select';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings_report:select';
-
-alter type supasheet.app_permission
-add value 'quality.certifications_register:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'quality.open_ncrs:select';
-
-alter type supasheet.app_permission
-add value 'quality.pass_fail_split:select';
-
-alter type supasheet.app_permission
-add value 'quality.open_capa_value:select';
-
-alter type supasheet.app_permission
-add value 'quality.quality_health:select';
-
-alter type supasheet.app_permission
-add value 'quality.recent_inspections:select';
-
-alter type supasheet.app_permission
-add value 'quality.top_defect_reasons:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'quality.inspections_by_result_pie:select';
-
-alter type supasheet.app_permission
-add value 'quality.ncrs_by_severity_bar:select';
-
-alter type supasheet.app_permission
-add value 'quality.inspection_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'quality.audit_findings_radar:select';
-
-commit;
-
 ----------------------------------------------------------------
 -- Users mirror view
 ----------------------------------------------------------------
@@ -340,7 +113,7 @@ from
 
 grant
 select
-  on quality.users to authenticated;
+  on quality.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Standards (quality specs / regulatory references)
@@ -491,7 +264,7 @@ select
 ,
   insert,
 update,
-delete on table quality.standards to authenticated;
+delete on table quality.standards to "x-admin";
 
 create index idx_qms_standards_user_id on quality.standards (user_id);
 
@@ -505,29 +278,19 @@ alter table quality.standards enable row level security;
 
 create policy standards_select on quality.standards for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.standards:select')
-  );
+  to authenticated using (true);
 
 create policy standards_insert on quality.standards for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.standards:insert')
-  );
+  check (true);
 
 create policy standards_update on quality.standards
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.standards:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.standards:update')
-  );
+  check (true);
 
-create policy standards_delete on quality.standards for delete to authenticated using (
-  supasheet.has_permission ('quality.standards:delete')
-);
+create policy standards_delete on quality.standards for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Inspections
@@ -734,7 +497,7 @@ select
 ,
   insert,
 update,
-delete on table quality.inspections to authenticated;
+delete on table quality.inspections to "x-admin";
 
 create index idx_qms_inspections_user_id on quality.inspections (user_id);
 
@@ -756,29 +519,19 @@ alter table quality.inspections enable row level security;
 
 create policy inspections_select on quality.inspections for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.inspections:select')
-  );
+  to authenticated using (true);
 
 create policy inspections_insert on quality.inspections for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.inspections:insert')
-  );
+  check (true);
 
 create policy inspections_update on quality.inspections
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.inspections:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.inspections:update')
-  );
+  check (true);
 
-create policy inspections_delete on quality.inspections for delete to authenticated using (
-  supasheet.has_permission ('quality.inspections:delete')
-);
+create policy inspections_delete on quality.inspections for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Inspection items (line items checked)
@@ -878,7 +631,7 @@ select
 ,
   insert,
 update,
-delete on table quality.inspection_items to authenticated;
+delete on table quality.inspection_items to "x-admin";
 
 create index idx_qms_inspection_items_inspection_id on quality.inspection_items (inspection_id);
 
@@ -888,29 +641,19 @@ alter table quality.inspection_items enable row level security;
 
 create policy inspection_items_select on quality.inspection_items for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.inspection_items:select')
-  );
+  to authenticated using (true);
 
 create policy inspection_items_insert on quality.inspection_items for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.inspection_items:insert')
-  );
+  check (true);
 
 create policy inspection_items_update on quality.inspection_items
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.inspection_items:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.inspection_items:update')
-  );
+  check (true);
 
-create policy inspection_items_delete on quality.inspection_items for delete to authenticated using (
-  supasheet.has_permission ('quality.inspection_items:delete')
-);
+create policy inspection_items_delete on quality.inspection_items for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Non-conformances (NCRs)
@@ -1122,7 +865,7 @@ select
 ,
   insert,
 update,
-delete on table quality.non_conformances to authenticated;
+delete on table quality.non_conformances to "x-admin";
 
 create index idx_qms_ncr_user_id on quality.non_conformances (user_id);
 
@@ -1142,29 +885,19 @@ alter table quality.non_conformances enable row level security;
 
 create policy non_conformances_select on quality.non_conformances for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.non_conformances:select')
-  );
+  to authenticated using (true);
 
 create policy non_conformances_insert on quality.non_conformances for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.non_conformances:insert')
-  );
+  check (true);
 
 create policy non_conformances_update on quality.non_conformances
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.non_conformances:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.non_conformances:update')
-  );
+  check (true);
 
-create policy non_conformances_delete on quality.non_conformances for delete to authenticated using (
-  supasheet.has_permission ('quality.non_conformances:delete')
-);
+create policy non_conformances_delete on quality.non_conformances for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- CAPA (corrective and preventive actions)
@@ -1384,7 +1117,7 @@ select
 ,
   insert,
 update,
-delete on table quality.capa to authenticated;
+delete on table quality.capa to "x-admin";
 
 create index idx_qms_capa_user_id on quality.capa (user_id);
 
@@ -1404,19 +1137,19 @@ alter table quality.capa enable row level security;
 
 create policy capa_select on quality.capa for
 select
-  to authenticated using (supasheet.has_permission ('quality.capa:select'));
+  to authenticated using (true);
 
 create policy capa_insert on quality.capa for insert to authenticated
 with
-  check (supasheet.has_permission ('quality.capa:insert'));
+  check (true);
 
 create policy capa_update on quality.capa
 for update
-  to authenticated using (supasheet.has_permission ('quality.capa:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('quality.capa:update'));
+  check (true);
 
-create policy capa_delete on quality.capa for delete to authenticated using (supasheet.has_permission ('quality.capa:delete'));
+create policy capa_delete on quality.capa for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Audits
@@ -1609,7 +1342,7 @@ select
 ,
   insert,
 update,
-delete on table quality.audits to authenticated;
+delete on table quality.audits to "x-admin";
 
 create index idx_qms_audits_user_id on quality.audits (user_id);
 
@@ -1627,29 +1360,19 @@ alter table quality.audits enable row level security;
 
 create policy audits_select on quality.audits for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.audits:select')
-  );
+  to authenticated using (true);
 
 create policy audits_insert on quality.audits for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.audits:insert')
-  );
+  check (true);
 
 create policy audits_update on quality.audits
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.audits:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.audits:update')
-  );
+  check (true);
 
-create policy audits_delete on quality.audits for delete to authenticated using (
-  supasheet.has_permission ('quality.audits:delete')
-);
+create policy audits_delete on quality.audits for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Audit findings
@@ -1806,7 +1529,7 @@ select
 ,
   insert,
 update,
-delete on table quality.audit_findings to authenticated;
+delete on table quality.audit_findings to "x-admin";
 
 create index idx_qms_findings_audit_id on quality.audit_findings (audit_id);
 
@@ -1824,29 +1547,19 @@ alter table quality.audit_findings enable row level security;
 
 create policy audit_findings_select on quality.audit_findings for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.audit_findings:select')
-  );
+  to authenticated using (true);
 
 create policy audit_findings_insert on quality.audit_findings for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.audit_findings:insert')
-  );
+  check (true);
 
 create policy audit_findings_update on quality.audit_findings
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.audit_findings:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.audit_findings:update')
-  );
+  check (true);
 
-create policy audit_findings_delete on quality.audit_findings for delete to authenticated using (
-  supasheet.has_permission ('quality.audit_findings:delete')
-);
+create policy audit_findings_delete on quality.audit_findings for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Certifications (held by org)
@@ -2003,7 +1716,7 @@ select
 ,
   insert,
 update,
-delete on table quality.certifications to authenticated;
+delete on table quality.certifications to "x-admin";
 
 create index idx_qms_certs_user_id on quality.certifications (user_id);
 
@@ -2019,29 +1732,19 @@ alter table quality.certifications enable row level security;
 
 create policy certifications_select on quality.certifications for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.certifications:select')
-  );
+  to authenticated using (true);
 
 create policy certifications_insert on quality.certifications for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.certifications:insert')
-  );
+  check (true);
 
 create policy certifications_update on quality.certifications
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.certifications:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.certifications:update')
-  );
+  check (true);
 
-create policy certifications_delete on quality.certifications for delete to authenticated using (
-  supasheet.has_permission ('quality.certifications:delete')
-);
+create policy certifications_delete on quality.certifications for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Customer complaints
@@ -2235,7 +1938,7 @@ select
 ,
   insert,
 update,
-delete on table quality.complaints to authenticated;
+delete on table quality.complaints to "x-admin";
 
 create index idx_qms_complaints_user_id on quality.complaints (user_id);
 
@@ -2257,29 +1960,19 @@ alter table quality.complaints enable row level security;
 
 create policy complaints_select on quality.complaints for
 select
-  to authenticated using (
-    supasheet.has_permission ('quality.complaints:select')
-  );
+  to authenticated using (true);
 
 create policy complaints_insert on quality.complaints for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('quality.complaints:insert')
-  );
+  check (true);
 
 create policy complaints_update on quality.complaints
 for update
-  to authenticated using (
-    supasheet.has_permission ('quality.complaints:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('quality.complaints:update')
-  );
+  check (true);
 
-create policy complaints_delete on quality.complaints for delete to authenticated using (
-  supasheet.has_permission ('quality.complaints:delete')
-);
+create policy complaints_delete on quality.complaints for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -2325,7 +2018,7 @@ from
 
 grant
 select
-  on quality.inspections_report to authenticated;
+  on quality.inspections_report to "x-admin";
 
 comment on view quality.inspections_report is '{"type": "report", "name": "Inspections Report", "description": "Inspections with pass rate and inspector"}';
 
@@ -2371,7 +2064,7 @@ from
 
 grant
 select
-  on quality.ncr_report to authenticated;
+  on quality.ncr_report to "x-admin";
 
 comment on view quality.ncr_report is '{"type": "report", "name": "NCR Report", "description": "Non-conformance records with severity, status, and aging"}';
 
@@ -2413,7 +2106,7 @@ from
 
 grant
 select
-  on quality.capa_report to authenticated;
+  on quality.capa_report to "x-admin";
 
 comment on view quality.capa_report is '{"type": "report", "name": "CAPA Report", "description": "Corrective and preventive actions with overdue tracking"}';
 
@@ -2453,7 +2146,7 @@ from
 
 grant
 select
-  on quality.audit_findings_report to authenticated;
+  on quality.audit_findings_report to "x-admin";
 
 comment on view quality.audit_findings_report is '{"type": "report", "name": "Audit Findings Report", "description": "Audit findings with severity, owner, and linked CAPA"}';
 
@@ -2490,7 +2183,7 @@ from
 
 grant
 select
-  on quality.certifications_register to authenticated;
+  on quality.certifications_register to "x-admin";
 
 comment on view quality.certifications_register is '{"type": "report", "name": "Certifications Register", "description": "Certifications held with expiry countdown and contacts"}';
 
@@ -2517,7 +2210,7 @@ from
 
 grant
 select
-  on quality.open_ncrs to authenticated;
+  on quality.open_ncrs to "x-admin";
 
 -- card_2: pass vs fail (recent inspections)
 create or replace view quality.pass_fail_split
@@ -2546,7 +2239,7 @@ from
 
 grant
 select
-  on quality.pass_fail_split to authenticated;
+  on quality.pass_fail_split to "x-admin";
 
 -- card_3: open CAPA cost + closure rate
 create or replace view quality.open_capa_value
@@ -2588,7 +2281,7 @@ from
 
 grant
 select
-  on quality.open_capa_value to authenticated;
+  on quality.open_capa_value to "x-admin";
 
 -- card_4: quality health (overdue CAPA + expiring certs + critical NCRs + overdue findings)
 create or replace view quality.quality_health
@@ -2682,7 +2375,7 @@ from
 
 grant
 select
-  on quality.quality_health to authenticated;
+  on quality.quality_health to "x-admin";
 
 -- table_1: recent inspections
 create or replace view quality.recent_inspections
@@ -2710,7 +2403,7 @@ from
 
 grant
 select
-  on quality.recent_inspections to authenticated;
+  on quality.recent_inspections to "x-admin";
 
 -- table_2: top defect reasons (root_cause from NCRs, last 90d)
 create or replace view quality.top_defect_reasons
@@ -2740,7 +2433,7 @@ from
 
 grant
 select
-  on quality.top_defect_reasons to authenticated;
+  on quality.top_defect_reasons to "x-admin";
 
 comment on view quality.open_ncrs is '{"type": "dashboard_widget", "name": "Open NCRs", "description": "Count of non-conformances not yet closed", "widget_type": "card_1"}';
 
@@ -2784,7 +2477,7 @@ from
 
 grant
 select
-  on quality.inspections_by_result_pie to authenticated;
+  on quality.inspections_by_result_pie to "x-admin";
 
 -- Bar: NCRs by severity (open vs closed)
 create or replace view quality.ncrs_by_severity_bar
@@ -2818,7 +2511,7 @@ from
 
 grant
 select
-  on quality.ncrs_by_severity_bar to authenticated;
+  on quality.ncrs_by_severity_bar to "x-admin";
 
 -- Line: weekly inspection trend (last 12 weeks)
 create or replace view quality.inspection_trend_line
@@ -2862,7 +2555,7 @@ from
 
 grant
 select
-  on quality.inspection_trend_line to authenticated;
+  on quality.inspection_trend_line to "x-admin";
 
 -- Radar: audit findings by severity
 create or replace view quality.audit_findings_radar
@@ -2898,7 +2591,7 @@ from
 
 grant
 select
-  on quality.audit_findings_radar to authenticated;
+  on quality.audit_findings_radar to "x-admin";
 
 comment on view quality.inspections_by_result_pie is '{"type": "chart", "name": "Inspections By Result", "description": "Inspection count grouped by result", "chart_type": "pie"}';
 
@@ -2907,89 +2600,6 @@ comment on view quality.ncrs_by_severity_bar is '{"type": "chart", "name": "NCRs
 comment on view quality.inspection_trend_line is '{"type": "chart", "name": "Inspection Trend", "description": "Weekly passed vs failed over 12 weeks", "chart_type": "line"}';
 
 comment on view quality.audit_findings_radar is '{"type": "chart", "name": "Audit Findings", "description": "Findings count by severity with open vs resolved split", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'quality.standards:select'),
-  ('x-admin', 'quality.standards:insert'),
-  ('x-admin', 'quality.standards:update'),
-  ('x-admin', 'quality.standards:delete'),
-  ('x-admin', 'quality.standards:audit'),
-  ('x-admin', 'quality.standards:comment'),
-  ('x-admin', 'quality.inspections:select'),
-  ('x-admin', 'quality.inspections:insert'),
-  ('x-admin', 'quality.inspections:update'),
-  ('x-admin', 'quality.inspections:delete'),
-  ('x-admin', 'quality.inspections:audit'),
-  ('x-admin', 'quality.inspections:comment'),
-  ('x-admin', 'quality.inspection_items:select'),
-  ('x-admin', 'quality.inspection_items:insert'),
-  ('x-admin', 'quality.inspection_items:update'),
-  ('x-admin', 'quality.inspection_items:delete'),
-  ('x-admin', 'quality.inspection_items:audit'),
-  ('x-admin', 'quality.inspection_items:comment'),
-  ('x-admin', 'quality.non_conformances:select'),
-  ('x-admin', 'quality.non_conformances:insert'),
-  ('x-admin', 'quality.non_conformances:update'),
-  ('x-admin', 'quality.non_conformances:delete'),
-  ('x-admin', 'quality.non_conformances:audit'),
-  ('x-admin', 'quality.non_conformances:comment'),
-  ('x-admin', 'quality.capa:select'),
-  ('x-admin', 'quality.capa:insert'),
-  ('x-admin', 'quality.capa:update'),
-  ('x-admin', 'quality.capa:delete'),
-  ('x-admin', 'quality.capa:audit'),
-  ('x-admin', 'quality.capa:comment'),
-  ('x-admin', 'quality.audits:select'),
-  ('x-admin', 'quality.audits:insert'),
-  ('x-admin', 'quality.audits:update'),
-  ('x-admin', 'quality.audits:delete'),
-  ('x-admin', 'quality.audits:audit'),
-  ('x-admin', 'quality.audits:comment'),
-  ('x-admin', 'quality.audit_findings:select'),
-  ('x-admin', 'quality.audit_findings:insert'),
-  ('x-admin', 'quality.audit_findings:update'),
-  ('x-admin', 'quality.audit_findings:delete'),
-  ('x-admin', 'quality.audit_findings:audit'),
-  ('x-admin', 'quality.audit_findings:comment'),
-  ('x-admin', 'quality.certifications:select'),
-  ('x-admin', 'quality.certifications:insert'),
-  ('x-admin', 'quality.certifications:update'),
-  ('x-admin', 'quality.certifications:delete'),
-  ('x-admin', 'quality.certifications:audit'),
-  ('x-admin', 'quality.certifications:comment'),
-  ('x-admin', 'quality.complaints:select'),
-  ('x-admin', 'quality.complaints:insert'),
-  ('x-admin', 'quality.complaints:update'),
-  ('x-admin', 'quality.complaints:delete'),
-  ('x-admin', 'quality.complaints:audit'),
-  ('x-admin', 'quality.complaints:comment'),
-  ('x-admin', 'quality.users:select'),
-  ('x-admin', 'quality.inspections_report:select'),
-  ('x-admin', 'quality.ncr_report:select'),
-  ('x-admin', 'quality.capa_report:select'),
-  ('x-admin', 'quality.audit_findings_report:select'),
-  (
-    'x-admin',
-    'quality.certifications_register:select'
-  ),
-  ('x-admin', 'quality.open_ncrs:select'),
-  ('x-admin', 'quality.pass_fail_split:select'),
-  ('x-admin', 'quality.open_capa_value:select'),
-  ('x-admin', 'quality.quality_health:select'),
-  ('x-admin', 'quality.recent_inspections:select'),
-  ('x-admin', 'quality.top_defect_reasons:select'),
-  (
-    'x-admin',
-    'quality.inspections_by_result_pie:select'
-  ),
-  ('x-admin', 'quality.ncrs_by_severity_bar:select'),
-  ('x-admin', 'quality.inspection_trend_line:select'),
-  ('x-admin', 'quality.audit_findings_radar:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -3127,7 +2737,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('quality.non_conformances:update')
+        supasheet.get_users_with_table_privilege('quality', 'non_conformances', 'update')
             || array[new.user_id, new.assigned_user_id],
         null
     );
@@ -3224,7 +2834,7 @@ begin
     end if;
 
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('quality.certifications:update')
+        supasheet.get_users_with_table_privilege('quality', 'certifications', 'update')
             || array[new.user_id, new.contact_user_id],
         null
     );

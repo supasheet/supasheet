@@ -12,14 +12,20 @@ import { Skeleton } from "#/components/ui/skeleton"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
+import { userPermissionsQueryOptions } from "#/lib/supabase/data/core"
 import { resourceAuditLogsQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/audit"
 )({
-  beforeLoad: ({ context, params: { schema, resource } }) => {
-    const hasAudit = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:audit`
+  beforeLoad: async ({ context }) => {
+    const auditPermissions = context.authUser
+      ? await context.queryClient.ensureQueryData(
+          userPermissionsQueryOptions("supasheet")
+        )
+      : null
+    const hasAudit = auditPermissions?.some(
+      (p) => p.permission === "supasheet.audit_logs:select"
     )
     if (!hasAudit) throw notFound()
     const tableSchema = isTableSchema(context.resourceSchema)

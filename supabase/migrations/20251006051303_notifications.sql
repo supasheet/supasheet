@@ -1,18 +1,8 @@
 -- ─────────────────────────────────────────────
 -- Permissions
--- Admins can override the per-user RLS to view all notifications.
+-- x-admin overrides the per-user RLS to view all notifications.
 -- All other access is bounded by ownership (user_id = auth.uid()).
 -- ─────────────────────────────────────────────
-begin;
-
-alter type supasheet.app_permission
-add value 'supasheet.notifications:select';
-
-alter type supasheet.app_permission
-add value 'supasheet.user_notifications:select';
-
-commit;
-
 -- ─────────────────────────────────────────────
 -- Tables
 -- ─────────────────────────────────────────────
@@ -107,7 +97,7 @@ select
             auth.uid ()
         )
     )
-    or supasheet.has_permission ('supasheet.notifications:select')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy user_notifications_select on supasheet.user_notifications for
@@ -117,7 +107,7 @@ select
       select
         auth.uid ()
     )
-    or supasheet.has_permission ('supasheet.user_notifications:select')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 -- Recipients can mark read/archived on their own deliveries
@@ -202,53 +192,61 @@ execute on function supasheet.create_notification (text, text, text, uuid[], jso
 -- a given record.
 -- ─────────────────────────────────────────────
 -- All users currently holding a given role.
-create or replace function supasheet.get_users_with_role (p_role supasheet.app_role) returns uuid[] language sql stable security definer
+create or replace function supasheet.get_users_with_role (p_role text) returns uuid[] language sql stable security definer
 set
   search_path = '' as $$
-    select coalesce(array_agg(distinct user_id), '{}'::uuid[])
-    from supasheet.user_roles
-    where role = p_role
+    select coalesce(array_agg(id), '{}'::uuid[])
+    from auth.users
+    where raw_app_meta_data ->> 'role' = p_role
 $$;
 
 -- Resolver used only inside SECURITY DEFINER notification triggers, which run
 -- as the owner and keep the right to call it. Exposing it to client roles lets
--- any authenticated user enumerate the members of any role (e.g. all admin user
--- ids) via PostgREST, bypassing user_roles RLS. Revoke every client-reachable
--- role, including the default PUBLIC grant; only server-only service_role keeps it.
+-- any authenticated user enumerate the members of any role (e.g. all x-admin
+-- user ids) via PostgREST. Revoke every client-reachable role, including the
+-- default PUBLIC grant; only server-only service_role keeps it.
 revoke
-execute on function supasheet.get_users_with_role (supasheet.app_role)
+execute on function supasheet.get_users_with_role (text)
 from
   public,
   anon,
   authenticated;
 
 grant
-execute on function supasheet.get_users_with_role (supasheet.app_role) to service_role;
+execute on function supasheet.get_users_with_role (text) to service_role;
 
--- All users who hold a role that grants the given permission.
-create or replace function supasheet.get_users_with_permission (p_permission supasheet.app_permission) returns uuid[] language sql stable security definer
+-- All users whose assigned role currently holds the given table privilege.
+create or replace function supasheet.get_users_with_table_privilege (
+  p_schema text,
+  p_table text,
+  p_action text default 'select'
+) returns uuid[] language sql stable security definer
 set
   search_path = '' as $$
-    select coalesce(array_agg(distinct ur.user_id), '{}'::uuid[])
-    from supasheet.user_roles ur
-    join supasheet.role_permissions rp on rp.role = ur.role
-    where rp.permission = p_permission
+    select coalesce(array_agg(id), '{}'::uuid[])
+    from auth.users
+    where raw_app_meta_data ->> 'role' is not null
+      and has_table_privilege(
+        raw_app_meta_data ->> 'role',
+        format('%I.%I', p_schema, p_table),
+        p_action
+      )
 $$;
 
 -- Resolver used only inside SECURITY DEFINER notification triggers, which run
 -- as the owner and keep the right to call it. Exposing it to client roles lets
--- any authenticated user enumerate the holders of any permission via PostgREST,
--- bypassing user_roles/role_permissions RLS. Revoke every client-reachable role,
--- including the default PUBLIC grant; only server-only service_role keeps it.
+-- any authenticated user enumerate every holder of a table privilege via
+-- PostgREST. Revoke every client-reachable role, including the default PUBLIC
+-- grant; only server-only service_role keeps it.
 revoke
-execute on function supasheet.get_users_with_permission (supasheet.app_permission)
+execute on function supasheet.get_users_with_table_privilege (text, text, text)
 from
   public,
   anon,
   authenticated;
 
 grant
-execute on function supasheet.get_users_with_permission (supasheet.app_permission) to service_role;
+execute on function supasheet.get_users_with_table_privilege (text, text, text) to service_role;
 
 -- ─────────────────────────────────────────────
 -- Convenience helpers used by the UI
@@ -289,33 +287,30 @@ grant
 execute on function supasheet.unread_notifications_count () to authenticated;
 
 -- ─────────────────────────────────────────────
--- Sample trigger: notify a user when a role is granted
+-- Sample trigger: notify a user when their role changes
 -- Demonstrates the resolver + create_notification pattern.
 -- ─────────────────────────────────────────────
-create or replace function supasheet.trg_user_roles_notify () returns trigger language plpgsql security definer
+create or replace function supasheet.trg_user_role_changed_notify () returns trigger language plpgsql security definer
 set
   search_path = '' as $$
+declare
+    v_role text := new.raw_app_meta_data ->> 'role';
 begin
-    perform supasheet.create_notification(
-        'role_granted',
-        'Role assigned',
-        'You have been granted the "' || new.role::text || '" role.',
-        array[new.user_id],
-        jsonb_build_object('role', new.role, 'user_id', new.user_id)
-    );
+    if v_role is not null then
+        perform supasheet.create_notification(
+            'role_granted',
+            'Role assigned',
+            'You have been granted the "' || v_role || '" role.',
+            array[new.id],
+            jsonb_build_object('role', v_role, 'user_id', new.id)
+        );
+    end if;
     return new;
 end;
 $$;
 
-create trigger user_roles_notify
-after insert on supasheet.user_roles for each row
-execute function supasheet.trg_user_roles_notify ();
-
--- ─────────────────────────────────────────────
--- Grant admin override permissions
--- ─────────────────────────────────────────────
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'supasheet.notifications:select'),
-  ('x-admin', 'supasheet.user_notifications:select');
+create trigger user_role_changed_notify
+after update of raw_app_meta_data on auth.users for each row when (
+  old.raw_app_meta_data ->> 'role' is distinct from new.raw_app_meta_data ->> 'role'
+)
+execute function supasheet.trg_user_role_changed_notify ();

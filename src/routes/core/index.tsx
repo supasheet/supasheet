@@ -1,12 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router"
 
-import {
-  ClipboardListIcon,
-  KeyRoundIcon,
-  ShieldCheckIcon,
-  ShieldIcon,
-  UsersIcon,
-} from "lucide-react"
+import { ClipboardListIcon, ShieldCheckIcon, UsersIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import {
@@ -28,18 +22,6 @@ const sections = [
     description: "Manage user accounts, invite members, and control access.",
     url: "/core/users",
     icon: <UsersIcon className="size-5" />,
-  },
-  {
-    title: "User Roles",
-    description: "Assign roles to users to define their level of access.",
-    url: "/core/user_roles",
-    icon: <ShieldIcon className="size-5" />,
-  },
-  {
-    title: "Role Permissions",
-    description: "Configure what actions each role is permitted to perform.",
-    url: "/core/role_permissions",
-    icon: <KeyRoundIcon className="size-5" />,
   },
   {
     title: "Audit Logs",

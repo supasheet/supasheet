@@ -49,188 +49,6 @@ create type hr.candidate_status as enum(
   'withdrawn'
 );
 
--- Departments
-alter type supasheet.app_permission
-add value 'hr.departments:select';
-
-alter type supasheet.app_permission
-add value 'hr.departments:insert';
-
-alter type supasheet.app_permission
-add value 'hr.departments:update';
-
-alter type supasheet.app_permission
-add value 'hr.departments:delete';
-
-alter type supasheet.app_permission
-add value 'hr.departments:audit';
-
-alter type supasheet.app_permission
-add value 'hr.departments:comment';
-
--- Positions
-alter type supasheet.app_permission
-add value 'hr.positions:select';
-
-alter type supasheet.app_permission
-add value 'hr.positions:insert';
-
-alter type supasheet.app_permission
-add value 'hr.positions:update';
-
-alter type supasheet.app_permission
-add value 'hr.positions:delete';
-
-alter type supasheet.app_permission
-add value 'hr.positions:audit';
-
-alter type supasheet.app_permission
-add value 'hr.positions:comment';
-
--- Employees
-alter type supasheet.app_permission
-add value 'hr.employees:select';
-
-alter type supasheet.app_permission
-add value 'hr.employees:insert';
-
-alter type supasheet.app_permission
-add value 'hr.employees:update';
-
-alter type supasheet.app_permission
-add value 'hr.employees:delete';
-
-alter type supasheet.app_permission
-add value 'hr.employees:audit';
-
-alter type supasheet.app_permission
-add value 'hr.employees:comment';
-
--- Leave requests
-alter type supasheet.app_permission
-add value 'hr.leave_requests:select';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests:insert';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests:update';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests:delete';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests:audit';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests:comment';
-
--- Performance reviews
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:select';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:insert';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:update';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:delete';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:audit';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews:comment';
-
--- Job postings
-alter type supasheet.app_permission
-add value 'hr.job_postings:select';
-
-alter type supasheet.app_permission
-add value 'hr.job_postings:insert';
-
-alter type supasheet.app_permission
-add value 'hr.job_postings:update';
-
-alter type supasheet.app_permission
-add value 'hr.job_postings:delete';
-
-alter type supasheet.app_permission
-add value 'hr.job_postings:audit';
-
-alter type supasheet.app_permission
-add value 'hr.job_postings:comment';
-
--- Candidates
-alter type supasheet.app_permission
-add value 'hr.candidates:select';
-
-alter type supasheet.app_permission
-add value 'hr.candidates:insert';
-
-alter type supasheet.app_permission
-add value 'hr.candidates:update';
-
-alter type supasheet.app_permission
-add value 'hr.candidates:delete';
-
-alter type supasheet.app_permission
-add value 'hr.candidates:audit';
-
-alter type supasheet.app_permission
-add value 'hr.candidates:comment';
-
--- Users mirror
-alter type supasheet.app_permission
-add value 'hr.users:select';
-
--- Reports
-alter type supasheet.app_permission
-add value 'hr.employees_report:select';
-
-alter type supasheet.app_permission
-add value 'hr.leave_requests_report:select';
-
-alter type supasheet.app_permission
-add value 'hr.performance_reviews_report:select';
-
-alter type supasheet.app_permission
-add value 'hr.candidates_report:select';
-
--- Dashboard widgets
-alter type supasheet.app_permission
-add value 'hr.headcount_summary:select';
-
-alter type supasheet.app_permission
-add value 'hr.employee_status_split:select';
-
-alter type supasheet.app_permission
-add value 'hr.open_positions_value:select';
-
-alter type supasheet.app_permission
-add value 'hr.attrition_health:select';
-
-alter type supasheet.app_permission
-add value 'hr.recent_hires:select';
-
-alter type supasheet.app_permission
-add value 'hr.top_departments:select';
-
--- Charts
-alter type supasheet.app_permission
-add value 'hr.employees_by_department_pie:select';
-
-alter type supasheet.app_permission
-add value 'hr.headcount_by_department_bar:select';
-
-alter type supasheet.app_permission
-add value 'hr.hiring_trend_line:select';
-
-alter type supasheet.app_permission
-add value 'hr.leave_metrics_radar:select';
-
 commit;
 
 ----------------------------------------------------------------
@@ -251,7 +69,7 @@ from
 
 grant
 select
-  on hr.users to authenticated;
+  on hr.users to "x-admin";
 
 ----------------------------------------------------------------
 -- Departments
@@ -337,7 +155,7 @@ select
 ,
   insert,
 update,
-delete on table hr.departments to authenticated;
+delete on table hr.departments to "x-admin";
 
 create index idx_hr_departments_parent_id on hr.departments (parent_id);
 
@@ -347,29 +165,19 @@ alter table hr.departments enable row level security;
 
 create policy departments_select on hr.departments for
 select
-  to authenticated using (
-    supasheet.has_permission ('hr.departments:select')
-  );
+  to authenticated using (true);
 
 create policy departments_insert on hr.departments for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hr.departments:insert')
-  );
+  check (true);
 
 create policy departments_update on hr.departments
 for update
-  to authenticated using (
-    supasheet.has_permission ('hr.departments:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hr.departments:update')
-  );
+  check (true);
 
-create policy departments_delete on hr.departments for delete to authenticated using (
-  supasheet.has_permission ('hr.departments:delete')
-);
+create policy departments_delete on hr.departments for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Positions
@@ -466,7 +274,7 @@ select
 ,
   insert,
 update,
-delete on table hr.positions to authenticated;
+delete on table hr.positions to "x-admin";
 
 create index idx_hr_positions_department_id on hr.positions (department_id);
 
@@ -476,19 +284,19 @@ alter table hr.positions enable row level security;
 
 create policy positions_select on hr.positions for
 select
-  to authenticated using (supasheet.has_permission ('hr.positions:select'));
+  to authenticated using (true);
 
 create policy positions_insert on hr.positions for insert to authenticated
 with
-  check (supasheet.has_permission ('hr.positions:insert'));
+  check (true);
 
 create policy positions_update on hr.positions
 for update
-  to authenticated using (supasheet.has_permission ('hr.positions:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('hr.positions:update'));
+  check (true);
 
-create policy positions_delete on hr.positions for delete to authenticated using (supasheet.has_permission ('hr.positions:delete'));
+create policy positions_delete on hr.positions for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Employees
@@ -710,7 +518,7 @@ select
 ,
   insert,
 update,
-delete on table hr.employees to authenticated;
+delete on table hr.employees to "x-admin";
 
 create index idx_hr_employees_user_id on hr.employees (user_id);
 
@@ -730,19 +538,19 @@ alter table hr.employees enable row level security;
 
 create policy employees_select on hr.employees for
 select
-  to authenticated using (supasheet.has_permission ('hr.employees:select'));
+  to authenticated using (true);
 
 create policy employees_insert on hr.employees for insert to authenticated
 with
-  check (supasheet.has_permission ('hr.employees:insert'));
+  check (true);
 
 create policy employees_update on hr.employees
 for update
-  to authenticated using (supasheet.has_permission ('hr.employees:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('hr.employees:update'));
+  check (true);
 
-create policy employees_delete on hr.employees for delete to authenticated using (supasheet.has_permission ('hr.employees:delete'));
+create policy employees_delete on hr.employees for delete to authenticated using (true);
 
 -- Now that hr.employees exists, link departments.manager_id
 alter table hr.departments
@@ -914,7 +722,7 @@ select
 ,
   insert,
 update,
-delete on table hr.leave_requests to authenticated;
+delete on table hr.leave_requests to "x-admin";
 
 create index idx_hr_leave_requests_employee_id on hr.leave_requests (employee_id);
 
@@ -930,29 +738,19 @@ alter table hr.leave_requests enable row level security;
 
 create policy leave_requests_select on hr.leave_requests for
 select
-  to authenticated using (
-    supasheet.has_permission ('hr.leave_requests:select')
-  );
+  to authenticated using (true);
 
 create policy leave_requests_insert on hr.leave_requests for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hr.leave_requests:insert')
-  );
+  check (true);
 
 create policy leave_requests_update on hr.leave_requests
 for update
-  to authenticated using (
-    supasheet.has_permission ('hr.leave_requests:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hr.leave_requests:update')
-  );
+  check (true);
 
-create policy leave_requests_delete on hr.leave_requests for delete to authenticated using (
-  supasheet.has_permission ('hr.leave_requests:delete')
-);
+create policy leave_requests_delete on hr.leave_requests for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Performance reviews
@@ -1088,7 +886,7 @@ select
 ,
   insert,
 update,
-delete on table hr.performance_reviews to authenticated;
+delete on table hr.performance_reviews to "x-admin";
 
 create index idx_hr_performance_reviews_employee_id on hr.performance_reviews (employee_id);
 
@@ -1102,29 +900,19 @@ alter table hr.performance_reviews enable row level security;
 
 create policy performance_reviews_select on hr.performance_reviews for
 select
-  to authenticated using (
-    supasheet.has_permission ('hr.performance_reviews:select')
-  );
+  to authenticated using (true);
 
 create policy performance_reviews_insert on hr.performance_reviews for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hr.performance_reviews:insert')
-  );
+  check (true);
 
 create policy performance_reviews_update on hr.performance_reviews
 for update
-  to authenticated using (
-    supasheet.has_permission ('hr.performance_reviews:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hr.performance_reviews:update')
-  );
+  check (true);
 
-create policy performance_reviews_delete on hr.performance_reviews for delete to authenticated using (
-  supasheet.has_permission ('hr.performance_reviews:delete')
-);
+create policy performance_reviews_delete on hr.performance_reviews for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Job postings
@@ -1277,7 +1065,7 @@ select
 ,
   insert,
 update,
-delete on table hr.job_postings to authenticated;
+delete on table hr.job_postings to "x-admin";
 
 create index idx_hr_job_postings_department_id on hr.job_postings (department_id);
 
@@ -1291,29 +1079,19 @@ alter table hr.job_postings enable row level security;
 
 create policy job_postings_select on hr.job_postings for
 select
-  to authenticated using (
-    supasheet.has_permission ('hr.job_postings:select')
-  );
+  to authenticated using (true);
 
 create policy job_postings_insert on hr.job_postings for insert to authenticated
 with
-  check (
-    supasheet.has_permission ('hr.job_postings:insert')
-  );
+  check (true);
 
 create policy job_postings_update on hr.job_postings
 for update
-  to authenticated using (
-    supasheet.has_permission ('hr.job_postings:update')
-  )
+  to authenticated using (true)
 with
-  check (
-    supasheet.has_permission ('hr.job_postings:update')
-  );
+  check (true);
 
-create policy job_postings_delete on hr.job_postings for delete to authenticated using (
-  supasheet.has_permission ('hr.job_postings:delete')
-);
+create policy job_postings_delete on hr.job_postings for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Candidates
@@ -1478,7 +1256,7 @@ select
 ,
   insert,
 update,
-delete on table hr.candidates to authenticated;
+delete on table hr.candidates to "x-admin";
 
 create index idx_hr_candidates_posting_id on hr.candidates (posting_id);
 
@@ -1492,19 +1270,19 @@ alter table hr.candidates enable row level security;
 
 create policy candidates_select on hr.candidates for
 select
-  to authenticated using (supasheet.has_permission ('hr.candidates:select'));
+  to authenticated using (true);
 
 create policy candidates_insert on hr.candidates for insert to authenticated
 with
-  check (supasheet.has_permission ('hr.candidates:insert'));
+  check (true);
 
 create policy candidates_update on hr.candidates
 for update
-  to authenticated using (supasheet.has_permission ('hr.candidates:update'))
+  to authenticated using (true)
 with
-  check (supasheet.has_permission ('hr.candidates:update'));
+  check (true);
 
-create policy candidates_delete on hr.candidates for delete to authenticated using (supasheet.has_permission ('hr.candidates:delete'));
+create policy candidates_delete on hr.candidates for delete to authenticated using (true);
 
 ----------------------------------------------------------------
 -- Reports
@@ -1541,7 +1319,7 @@ from
 
 grant
 select
-  on hr.employees_report to authenticated;
+  on hr.employees_report to "x-admin";
 
 comment on view hr.employees_report is '{"type": "report", "name": "Employees Report", "description": "All employees with department, position, and manager"}';
 
@@ -1572,7 +1350,7 @@ from
 
 grant
 select
-  on hr.leave_requests_report to authenticated;
+  on hr.leave_requests_report to "x-admin";
 
 comment on view hr.leave_requests_report is '{"type": "report", "name": "Leave Requests Report", "description": "All leave requests with employee and reviewer"}';
 
@@ -1604,7 +1382,7 @@ from
 
 grant
 select
-  on hr.performance_reviews_report to authenticated;
+  on hr.performance_reviews_report to "x-admin";
 
 comment on view hr.performance_reviews_report is '{"type": "report", "name": "Performance Reviews Report", "description": "Performance reviews with employee and reviewer"}';
 
@@ -1635,7 +1413,7 @@ from
 
 grant
 select
-  on hr.candidates_report to authenticated;
+  on hr.candidates_report to "x-admin";
 
 comment on view hr.candidates_report is '{"type": "report", "name": "Candidates Report", "description": "Candidates with linked job posting"}';
 
@@ -1663,7 +1441,7 @@ from
 
 grant
 select
-  on hr.headcount_summary to authenticated;
+  on hr.headcount_summary to "x-admin";
 
 -- card_2: active vs on leave
 create or replace view hr.employee_status_split
@@ -1690,7 +1468,7 @@ from
 
 grant
 select
-  on hr.employee_status_split to authenticated;
+  on hr.employee_status_split to "x-admin";
 
 -- card_3: open postings + fill rate
 create or replace view hr.open_positions_value
@@ -1729,7 +1507,7 @@ from
 
 grant
 select
-  on hr.open_positions_value to authenticated;
+  on hr.open_positions_value to "x-admin";
 
 -- card_4: attrition health
 create or replace view hr.attrition_health
@@ -1784,7 +1562,7 @@ from
 
 grant
 select
-  on hr.attrition_health to authenticated;
+  on hr.attrition_health to "x-admin";
 
 -- table_1: recent hires
 create or replace view hr.recent_hires
@@ -1811,7 +1589,7 @@ from
 
 grant
 select
-  on hr.recent_hires to authenticated;
+  on hr.recent_hires to "x-admin";
 
 -- table_2: top departments by headcount
 create or replace view hr.top_departments
@@ -1842,7 +1620,7 @@ from
 
 grant
 select
-  on hr.top_departments to authenticated;
+  on hr.top_departments to "x-admin";
 
 comment on view hr.headcount_summary is '{"type": "dashboard_widget", "name": "Headcount", "description": "Total active employees", "widget_type": "card_1"}';
 
@@ -1883,7 +1661,7 @@ from
 
 grant
 select
-  on hr.employees_by_department_pie to authenticated;
+  on hr.employees_by_department_pie to "x-admin";
 
 -- Bar: headcount by department (active vs on leave)
 create or replace view hr.headcount_by_department_bar
@@ -1919,7 +1697,7 @@ from
 
 grant
 select
-  on hr.headcount_by_department_bar to authenticated;
+  on hr.headcount_by_department_bar to "x-admin";
 
 -- Line: monthly hiring trend (last 12 months)
 create or replace view hr.hiring_trend_line
@@ -1949,7 +1727,7 @@ from
 
 grant
 select
-  on hr.hiring_trend_line to authenticated;
+  on hr.hiring_trend_line to "x-admin";
 
 -- Radar: leave metrics by type
 create or replace view hr.leave_metrics_radar
@@ -1978,7 +1756,7 @@ from
 
 grant
 select
-  on hr.leave_metrics_radar to authenticated;
+  on hr.leave_metrics_radar to "x-admin";
 
 comment on view hr.employees_by_department_pie is '{"type": "chart", "name": "Employees By Department", "description": "Active employee headcount per department", "chart_type": "pie"}';
 
@@ -1987,76 +1765,6 @@ comment on view hr.headcount_by_department_bar is '{"type": "chart", "name": "He
 comment on view hr.hiring_trend_line is '{"type": "chart", "name": "Hiring Trend", "description": "Monthly hires over the last 12 months", "chart_type": "line"}';
 
 comment on view hr.leave_metrics_radar is '{"type": "chart", "name": "Leave Metrics", "description": "Leave counts across types and statuses", "chart_type": "radar"}';
-
-----------------------------------------------------------------
--- Role permissions (x-admin)
-----------------------------------------------------------------
-insert into
-  supasheet.role_permissions (role, permission)
-values
-  ('x-admin', 'hr.departments:select'),
-  ('x-admin', 'hr.departments:insert'),
-  ('x-admin', 'hr.departments:update'),
-  ('x-admin', 'hr.departments:delete'),
-  ('x-admin', 'hr.departments:audit'),
-  ('x-admin', 'hr.departments:comment'),
-  ('x-admin', 'hr.positions:select'),
-  ('x-admin', 'hr.positions:insert'),
-  ('x-admin', 'hr.positions:update'),
-  ('x-admin', 'hr.positions:delete'),
-  ('x-admin', 'hr.positions:audit'),
-  ('x-admin', 'hr.positions:comment'),
-  ('x-admin', 'hr.employees:select'),
-  ('x-admin', 'hr.employees:insert'),
-  ('x-admin', 'hr.employees:update'),
-  ('x-admin', 'hr.employees:delete'),
-  ('x-admin', 'hr.employees:audit'),
-  ('x-admin', 'hr.employees:comment'),
-  ('x-admin', 'hr.leave_requests:select'),
-  ('x-admin', 'hr.leave_requests:insert'),
-  ('x-admin', 'hr.leave_requests:update'),
-  ('x-admin', 'hr.leave_requests:delete'),
-  ('x-admin', 'hr.leave_requests:audit'),
-  ('x-admin', 'hr.leave_requests:comment'),
-  ('x-admin', 'hr.performance_reviews:select'),
-  ('x-admin', 'hr.performance_reviews:insert'),
-  ('x-admin', 'hr.performance_reviews:update'),
-  ('x-admin', 'hr.performance_reviews:delete'),
-  ('x-admin', 'hr.performance_reviews:audit'),
-  ('x-admin', 'hr.performance_reviews:comment'),
-  ('x-admin', 'hr.job_postings:select'),
-  ('x-admin', 'hr.job_postings:insert'),
-  ('x-admin', 'hr.job_postings:update'),
-  ('x-admin', 'hr.job_postings:delete'),
-  ('x-admin', 'hr.job_postings:audit'),
-  ('x-admin', 'hr.job_postings:comment'),
-  ('x-admin', 'hr.candidates:select'),
-  ('x-admin', 'hr.candidates:insert'),
-  ('x-admin', 'hr.candidates:update'),
-  ('x-admin', 'hr.candidates:delete'),
-  ('x-admin', 'hr.candidates:audit'),
-  ('x-admin', 'hr.candidates:comment'),
-  ('x-admin', 'hr.users:select'),
-  ('x-admin', 'hr.employees_report:select'),
-  ('x-admin', 'hr.leave_requests_report:select'),
-  ('x-admin', 'hr.performance_reviews_report:select'),
-  ('x-admin', 'hr.candidates_report:select'),
-  ('x-admin', 'hr.headcount_summary:select'),
-  ('x-admin', 'hr.employee_status_split:select'),
-  ('x-admin', 'hr.open_positions_value:select'),
-  ('x-admin', 'hr.attrition_health:select'),
-  ('x-admin', 'hr.recent_hires:select'),
-  ('x-admin', 'hr.top_departments:select'),
-  (
-    'x-admin',
-    'hr.employees_by_department_pie:select'
-  ),
-  (
-    'x-admin',
-    'hr.headcount_by_department_bar:select'
-  ),
-  ('x-admin', 'hr.hiring_trend_line:select'),
-  ('x-admin', 'hr.leave_metrics_radar:select');
 
 ----------------------------------------------------------------
 -- Audit triggers
@@ -2173,7 +1881,7 @@ begin
         v_title := 'New leave request';
         v_body  := coalesce(v_employee_name, 'An employee') || ' requested ' || new.type::text || ' leave.';
         v_recipients := array_remove(
-            supasheet.get_users_with_permission('hr.leave_requests:update') || array[v_reviewer_user],
+            supasheet.get_users_with_table_privilege('hr', 'leave_requests', 'update') || array[v_reviewer_user],
             null
         );
     elsif new.status is distinct from old.status then
@@ -2269,7 +1977,7 @@ declare
     v_body   text;
 begin
     v_recipients := array_remove(
-        supasheet.get_users_with_permission('hr.candidates:update') || array[new.user_id],
+        supasheet.get_users_with_table_privilege('hr', 'candidates', 'update') || array[new.user_id],
         null
     );
 
