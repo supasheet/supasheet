@@ -4,7 +4,7 @@
   </h1>
   <h3 align="center"><strong>Run your internal operations on Supabase</strong></h3>
   <p>Supasheet turns any Supabase project into a complete internal operations platform. Auto-generated CRUD, multiple data views (grid, data grid, kanban, calendar, gallery, list, tree), built-in auth with MFA, fine-grained RBAC, configurable dashboards, charts, AI chat, SQL editor, file storage, comments, templates, and audit logs — all in one open-source React app.</p>
-  <p>Try out Supasheet demo at <a href="https://fygtkjpcxbhorxnuovoq.supasheet.app" target="_blank">fygtkjpcxbhorxnuovoq.supasheet.app</a></p>
+  <p>Try out Supasheet demo at <a href="https://jdydxqrxntcdrxhqqmuv.supasheet.app" target="_blank">jdydxqrxntcdrxhqqmuv.supasheet.app</a></p>
 </div>
 
 <h1 align="center">
