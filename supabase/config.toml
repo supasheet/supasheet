@@ -10,10 +10,10 @@ enabled = true
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-schemas = ["public", "graphql_public", "supasheet"]
+schemas = ["public", "graphql_public", "supasheet", "demo"]
 # schemas = ["public", "graphql_public", "supasheet", "desk", "blog", "store", "crm", "hr", "finance", "inventory", "manufacturing", "procurement", "quality", "lms", "hostel", "demo"]
 # Extra schemas to add to the search_path of every request.
-extra_search_path = ["public", "extensions", "supasheet"]
+extra_search_path = ["public", "extensions", "supasheet", "demo"]
 # extra_search_path = ["public", "extensions", "supasheet", "desk", "blog", "store", "crm", "hr", "finance", "inventory", "manufacturing", "procurement", "quality", "lms", "hostel", "demo"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
 # for accidental or malicious requests.
@@ -266,9 +266,13 @@ max_frequency = "5s"
 # uri = "pg-functions://postgres/auth/before-user-created-hook"
 
 # This hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
-# [auth.hook.custom_access_token]
-# enabled = true
-# uri = "pg-functions://<database>/<schema>/<hook_name>"
+# Copies auth.users.raw_app_meta_data->>'role' into the JWT's top-level `role`
+# claim, which PostgREST reads to SET ROLE into the caller's native Postgres
+# role for the request. See supasheet.custom_access_token() in
+# 20250523000822_roles.sql.
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/supasheet/custom_access_token"
 
 # Configure one of the supported SMS providers: `twilio`, `twilio_verify`, `messagebird`, `textlocal`, `vonage`.
 [auth.sms.twilio]

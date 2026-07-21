@@ -43,7 +43,7 @@ this automatically; everyone else should read the files directly.
   JWT's `role` claim (via a Custom Access Token Hook) drives PostgREST's
   `SET ROLE`. Most policies are just `using (true)` since grants already gate
   who can attempt the operation; use `pg_has_role(current_user, '<role>',
-  'member')` for row-level admin overrides
+'member')` for row-level admin overrides
 - Revoke all default grants, then grant back exactly the intended operations
   directly to the specific native roles that should hold them — never to
   `authenticated` itself

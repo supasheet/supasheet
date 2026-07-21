@@ -36,7 +36,7 @@ with
   check (true);
 ```
 
-The JWT's `role` claim *is* meant to be read here (indirectly, via
+The JWT's `role` claim _is_ meant to be read here (indirectly, via
 PostgREST's `SET ROLE` → `current_user`) — that's the whole native-roles
 model. What you should never do is re-implement a permission check by hand
 from `auth.jwt()`; use `current_user`/`pg_has_role()`, which reflect the
@@ -47,16 +47,13 @@ already-verified active role.
 ```sql
 -- ownership (users see only their rows)
 using (user_id = auth.uid ())
-
 -- ownership OR admin override (owners always see theirs; x-admin sees all)
 using (
   user_id = auth.uid ()
   or pg_has_role (current_user, 'x-admin', 'member')
 )
-
 -- role-based row override
 using (pg_has_role (current_user, 'admin', 'member'))
-
 -- row-state condition (e.g. only drafts are editable) — grants already
 -- restrict who can UPDATE at all, this just restricts which rows
 using (status = 'draft')

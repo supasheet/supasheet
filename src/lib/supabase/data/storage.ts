@@ -21,9 +21,7 @@ export const storageBucketsQueryOptions = queryOptions({
     if (error) throw error
 
     return (data ?? []).map((bucket) => {
-      const icon: IconName = bucket.public
-        ? "FolderOpenIcon"
-        : "FolderLockIcon"
+      const icon: IconName = bucket.public ? "FolderOpenIcon" : "FolderLockIcon"
       return {
         name: bucket.name,
         id: bucket.id,

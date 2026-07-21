@@ -31,7 +31,7 @@ a single central check: `pg_has_role(current_user, 'x-admin', 'member')`.
 Attaching the triggers above is the entire setup; the tab shows up for
 x-admin automatically on any audited table.
 
-If a specific table needs a *different* role to see its audit trail (not
+If a specific table needs a _different_ role to see its audit trail (not
 x-admin), that's a deliberate one-off — edit the `pg_has_role` check inside
 `supasheet.get_audit_logs()` in `20250928062812_audit_logs.sql`, since it's
 shared across every table rather than seeded per resource.
@@ -40,7 +40,7 @@ shared across every table rather than seeded per resource.
 
 - The `supasheet.audit_logs` table itself: rows are visible to their own
   `created_by`, plus x-admin sees all (`pg_has_role(current_user, 'x-admin',
-  'member')`) — this gates the **global** Core → Audit Logs page.
+'member')`) — this gates the **global** Core → Audit Logs page.
 - Read helper: `supasheet.get_audit_logs(p_schema, p_table, p_record_id)` —
   security definer, gates on the same x-admin check, joins actor name/email/picture.
 - Manual/system events can be written with `supasheet.create_audit_log(p_operation, p_schema_name, p_table_name, p_record_id, p_old_data, p_new_data, p_metadata)`.

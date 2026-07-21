@@ -12,11 +12,11 @@ requires:
 
 Views serve three roles in Supasheet, all driven by their comment JSON:
 
-| Role                                                        | Comment `type`                                       | Grant needed |
-| ------------------------------------------------------------- | ---------------------------------------------------- | ------------- |
+| Role                                                        | Comment `type`                                       | Grant needed  |
+| ----------------------------------------------------------- | ---------------------------------------------------- | ------------- |
 | Feature view (dashboard widget / chart / report / template) | `dashboard_widget` / `chart` / `report` / `template` | `select` only |
-| Replica view (cross-schema embed fix)                       | none                                                  | `select` only |
-| Plain resource view (read-only listing)                     | none                                                  | `select` only |
+| Replica view (cross-schema embed fix)                       | none                                                 | `select` only |
+| Plain resource view (read-only listing)                     | none                                                 | `select` only |
 
 ## Canonical creation pattern
 
@@ -61,7 +61,7 @@ from
 grant
 select
   on app.users to "x-admin",
-"user";
+  "user";
 ```
 
 FK constraints still point at the real table — only `query.join`, `fields.lookups`, FK dropdowns, and view joins use the replica.

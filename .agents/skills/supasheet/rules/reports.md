@@ -44,7 +44,7 @@ from
 grant
 select
   on app.tickets_report to "x-admin",
-"user";
+  "user";
 
 comment on view app.tickets_report is '{"type": "report", "name": "Tickets Report", "description": "Tickets with owner and comment rollups"}';
 

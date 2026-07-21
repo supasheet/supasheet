@@ -32,13 +32,7 @@ import {
 } from "#/lib/supabase/data/resource"
 
 type TEventColor =
-  | "blue"
-  | "green"
-  | "red"
-  | "yellow"
-  | "purple"
-  | "orange"
-  | "gray"
+  "blue" | "green" | "red" | "yellow" | "purple" | "orange" | "gray"
 
 const COLORS: TEventColor[] = [
   "blue",

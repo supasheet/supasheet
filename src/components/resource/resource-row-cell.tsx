@@ -58,9 +58,7 @@ export const ResourceRowCell = memo(function ({
   if (joinConfig) {
     const embedKey = joinConfig.alias ?? joinConfig.table
     const joinedObj = row.original?.[embedKey] as
-      | Record<string, unknown>
-      | null
-      | undefined
+      Record<string, unknown> | null | undefined
     const joinedValue = joinedObj?.[joinConfig.columns[0]]
 
     return (

@@ -3,8 +3,7 @@ import { supabase } from "#/lib/supabase/client"
 import type { AIResponse, ChatMessage, MutationKind } from "./types"
 
 const PLATFORM_URL = import.meta.env.VITE_SUPASHEET_PLATFORM as
-  | string
-  | undefined
+  string | undefined
 
 async function platformHeaders(): Promise<Record<string, string>> {
   if (!PLATFORM_URL) {

@@ -16,7 +16,7 @@ real `CREATE ROLE ... nologin` Postgres roles; access is real `GRANT`s.
 `auth.users.raw_app_meta_data->>'role'` holds one role name per user, copied
 into the JWT's top-level `role` claim by `supasheet.custom_access_token()` —
 PostgREST reads that claim and does `SET ROLE` for the request, so
-`current_user` during any query/RLS check *is* the caller's active role. This
+`current_user` during any query/RLS check _is_ the caller's active role. This
 is deliberate: deriving the active role from the JWT is exactly the intended
 mechanism here (unlike a typical Supabase RLS setup where `auth.jwt() ->>
 'role'` is a smell — here it's what the whole model rests on).
@@ -34,9 +34,18 @@ from
   authenticated,
   service_role;
 
-grant select, insert, update, delete on table app.tickets to "x-admin";
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to "x-admin";
 
-grant select, insert, update on table app.tickets to "user";
+grant
+select
+,
+  insert,
+update on table app.tickets to "user";
 ```
 
 Grants are **additive, not subtractive** and **not inherited** between
@@ -48,12 +57,12 @@ explicitly rather than relying on one role being a superset of another.
 Same shape as before, just grants instead of table rows:
 
 | Resource kind            | x-admin                        | user                                       |
-| ------------------------ | ------------------------------- | ------------------------------------------- |
+| ------------------------ | ------------------------------ | ------------------------------------------ |
 | Table                    | select, insert, update, delete | select, insert, update (usually no delete) |
 | Junction table           | select, insert, delete         | select, insert, delete                     |
 | Singleton                | select, insert, update         | select (update if end-users may edit)      |
-| Widget/chart/report view | select                          | select                                     |
-| Replica users view       | select                          | select                                     |
+| Widget/chart/report view | select                         | select                                     |
+| Replica users view       | select                         | select                                     |
 
 A resource with no `select` grant to any role is invisible — the sidebar,
 dashboards, charts, and reports all derive visibility live from
@@ -99,7 +108,8 @@ an edge function — not a lookup table:
 
 ```sql
 -- audit_logs "view all" override
-create policy "x-admin can view all audit logs" on supasheet.audit_logs for select
+create policy "x-admin can view all audit logs" on supasheet.audit_logs for
+select
   to authenticated using (pg_has_role (current_user, 'x-admin', 'member'));
 ```
 

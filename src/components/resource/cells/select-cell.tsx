@@ -34,9 +34,7 @@ export function SelectCell({
     const { icon, variant } = enumMeta.enums[value]
     return (
       <Badge variant={variant ?? "secondary"}>
-        {icon && (
-          <LucideIconComponent iconName={icon} />
-        )}
+        {icon && <LucideIconComponent iconName={icon} />}
         {value}
       </Badge>
     )

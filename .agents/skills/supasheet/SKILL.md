@@ -26,7 +26,7 @@ Every feature follows the same migration shape. Order matters.
 2. **Create the schema** (one Postgres schema per domain). Do **not** `grant usage` to `authenticated` — grant it to each native role that needs it instead (see `rules/roles-permissions.md`).
 3. **Create tables/views** using Supasheet domain types (`supasheet.EMAIL`, `supasheet.FILE`, …) with JSON `COMMENT`s.
 4. **Lock down grants** — `revoke all ... from public, anon, authenticated, service_role;` then `grant` exactly the intended operations directly to the specific native roles that should hold them (e.g. `grant select, insert, update, delete on <schema>.<table> to "x-admin";`). `authenticated` itself never holds a direct grant.
-5. **Enable RLS.** Most tables need only simple, role-agnostic policies (`using (true)` or ownership checks like `user_id = auth.uid()`) scoped `to authenticated` — the grants above already decide *who* can attempt the operation. Add a `pg_has_role(current_user, '<role>', 'member')` clause only when a specific native role needs a *row-level* override (e.g. an admin override that bypasses ownership).
+5. **Enable RLS.** Most tables need only simple, role-agnostic policies (`using (true)` or ownership checks like `user_id = auth.uid()`) scoped `to authenticated` — the grants above already decide _who_ can attempt the operation. Add a `pg_has_role(current_user, '<role>', 'member')` clause only when a specific native role needs a _row-level_ override (e.g. an admin override that bypasses ownership).
 6. **Index** FK columns, filtered columns, and sort columns.
 7. **Attach triggers** — audit and/or notification triggers as needed.
 8. **End the migration with `select supasheet.refresh_metadata();`** — the metadata catalog is materialized views and is NOT auto-refreshed.
@@ -65,15 +65,15 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 
 ## References (deep dives)
 
-| Priority | File                                                         | When to load                                                                                                 |
-| -------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| High     | [references/new-resource.md](references/new-resource.md)     | New table, module, or schema — the full end-to-end worked example                                            |
+| Priority | File                                                         | When to load                                                                                       |
+| -------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| High     | [references/new-resource.md](references/new-resource.md)     | New table, module, or schema — the full end-to-end worked example                                  |
 | High     | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs |
-| High     | [references/data-types.md](references/data-types.md)         | Domain type definitions and all column comment options                                                       |
-| Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: native roles, grants, the auth hook, has_role/pg_has_role                                 |
-| Medium   | [references/notifications.md](references/notifications.md)   | create_notification internals, recipient resolvers, full trigger examples                                    |
-| Medium   | [references/audit-logs.md](references/audit-logs.md)         | audit_logs schema, TG_ARGV PK arg, global vs per-record permissions                                          |
-| Low      | [references/comments.md](references/comments.md)             | Per-record comments enablement and comment-notify pairing                                                    |
+| High     | [references/data-types.md](references/data-types.md)         | Domain type definitions and all column comment options                                             |
+| Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: native roles, grants, the auth hook, has_role/pg_has_role                       |
+| Medium   | [references/notifications.md](references/notifications.md)   | create_notification internals, recipient resolvers, full trigger examples                          |
+| Medium   | [references/audit-logs.md](references/audit-logs.md)         | audit_logs schema, TG_ARGV PK arg, global vs per-record permissions                                |
+| Low      | [references/comments.md](references/comments.md)             | Per-record comments enablement and comment-notify pairing                                          |
 
 ## Canonical In-Repo Examples
 

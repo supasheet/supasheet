@@ -16,7 +16,7 @@ A Comments link appears automatically at `/$schema/resource/$resource/$id/commen
 - Reading goes through `supasheet.get_comments(p_schema, p_table, p_record_id)` (security definer) which enforces the same `has_table_privilege` check and joins author name/email/picture.
 - UPDATE/DELETE are limited to the comment's author.
 
-If a resource needs comment access *narrower* than its select grant (e.g. a
+If a resource needs comment access _narrower_ than its select grant (e.g. a
 role can view records but shouldn't be able to comment), that's a deliberate
 departure from the standard mechanism and needs its own dedicated check —
 most modules don't need this.

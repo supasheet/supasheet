@@ -36,8 +36,7 @@ export interface DynamicIconProps {
 export function DynamicIcon({ iconName, className }: DynamicIconProps) {
   if (!iconName) return null
   const Icon = LucideIcons[iconName as keyof typeof LucideIcons] as
-    | LucideIcon
-    | undefined
+    LucideIcon | undefined
   if (!Icon) return null
   return <Icon className={className ?? "size-4 shrink-0"} />
 }

@@ -62,8 +62,7 @@ export type ViewSchema<S extends DatabaseSchemas = DatabaseSchemas> =
   }
 
 export type ResourceSchema<S extends DatabaseSchemas = DatabaseSchemas> =
-  | TableSchema<S>
-  | ViewSchema<S>
+  TableSchema<S> | ViewSchema<S>
 
 export function isTableSchema<S extends DatabaseSchemas>(
   schema: ResourceSchema<S>
@@ -136,8 +135,7 @@ export type LookupConfig = {
 }
 
 export type FieldSectionFields =
-  | ColumnName[]
-  | Partial<Record<FormMode, ColumnName[]>>
+  ColumnName[] | Partial<Record<FormMode, ColumnName[]>>
 
 export type FieldSection = {
   id: string
@@ -220,11 +218,7 @@ export type TreeLayout = BaseViewLayout & {
 }
 
 export type ViewLayout =
-  | KanbanLayout
-  | CalendarLayout
-  | GalleryLayout
-  | ListLayout
-  | TreeLayout
+  KanbanLayout | CalendarLayout | GalleryLayout | ListLayout | TreeLayout
 
 export type ViewLayoutType = ViewLayout["type"]
 
@@ -273,12 +267,7 @@ export type TableMetadata = BaseResourceMetadata & {
 export type ViewMetadata = BaseResourceMetadata
 
 export type DashboardWidgetType =
-  | "card_1"
-  | "card_2"
-  | "card_3"
-  | "card_4"
-  | "table_1"
-  | "table_2"
+  "card_1" | "card_2" | "card_3" | "card_4" | "table_1" | "table_2"
 
 export type DashboardWidgetMeta = {
   name: string
@@ -313,12 +302,7 @@ export type EnumColumnMetadata = ColumnMetadata & {
     [key: string]: {
       icon?: IconName
       variant:
-        | "default"
-        | "secondary"
-        | "success"
-        | "warning"
-        | "destructive"
-        | "info"
+        "default" | "secondary" | "success" | "warning" | "destructive" | "info"
     }
   }
 }

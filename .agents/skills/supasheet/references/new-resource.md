@@ -54,7 +54,7 @@ from
 grant
 select
   on app.users to "x-admin",
-"user";
+  "user";
 ```
 
 Apply the same pattern for any other cross-schema table you need to join/lookup.
@@ -108,9 +108,18 @@ from
   authenticated,
   service_role;
 
-grant select, insert, update, delete on table app.tickets to "x-admin";
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to "x-admin";
 
-grant select, insert, update on table app.tickets to "user";
+grant
+select
+,
+  insert,
+update on table app.tickets to "user";
 ```
 
 Variants: junction tables get `select, insert, delete` (no update); singletons get `select, insert, update` (no delete); report/widget/chart views get `select` only.
@@ -122,11 +131,18 @@ Grants already decided who can attempt an operation, so most policies are trivia
 ```sql
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated using (true);
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (true);
 
-create policy tickets_insert on app.tickets for insert to authenticated with check (true);
+create policy tickets_insert on app.tickets for insert to authenticated
+with
+  check (true);
 
-create policy tickets_update on app.tickets for update to authenticated using (true) with check (true);
+create policy tickets_update on app.tickets for
+update to authenticated using (true)
+with
+  check (true);
 
 create policy tickets_delete on app.tickets for delete to authenticated using (true);
 ```

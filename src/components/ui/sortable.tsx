@@ -503,8 +503,7 @@ type SortableOverlayProps = Omit<
 > & {
   container?: Element | DocumentFragment | null
   children?:
-    | ((params: { value: UniqueIdentifier }) => React.ReactNode)
-    | React.ReactNode
+    ((params: { value: UniqueIdentifier }) => React.ReactNode) | React.ReactNode
 }
 
 function SortableOverlay({

@@ -42,9 +42,18 @@ from
   authenticated,
   service_role;
 
-grant select, insert, update, delete on table app.tickets to "x-admin";
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to "x-admin";
 
-grant select, insert, update on table app.tickets to "user";
+grant
+select
+,
+  insert,
+update on table app.tickets to "user";
 ```
 
 - `authenticated` never holds a direct grant — every role that needs access
@@ -62,11 +71,18 @@ One policy per operation, named `<table>_<action>` (demo style) or `<table>_<act
 ```sql
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated using (true);
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (true);
 
-create policy tickets_insert on app.tickets for insert to authenticated with check (true);
+create policy tickets_insert on app.tickets for insert to authenticated
+with
+  check (true);
 
-create policy tickets_update on app.tickets for update to authenticated using (true) with check (true);
+create policy tickets_update on app.tickets for
+update to authenticated using (true)
+with
+  check (true);
 
 create policy tickets_delete on app.tickets for delete to authenticated using (true);
 ```

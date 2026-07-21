@@ -2,10 +2,10 @@
 
 Authorization is database-backed, but with no `user_roles`/`role_permissions`
 tables. Roles are real Postgres roles; access is real `GRANT`s; the JWT's
-`role` claim (read by PostgREST to `SET ROLE`) *is* the mechanism — this is
+`role` claim (read by PostgREST to `SET ROLE`) _is_ the mechanism — this is
 one of the rare cases where deriving authorization from the JWT is correct,
 because the claim only ever selects among roles that already have real,
-independently-verified Postgres grants. Nothing sensitive is *decided* by the
+independently-verified Postgres grants. Nothing sensitive is _decided_ by the
 claim itself.
 
 ## The pieces (base migration `20250523000822_roles.sql`)
@@ -14,16 +14,25 @@ claim itself.
 -- real, nologin Postgres roles — no app-level enum wraps them, pg_roles is
 -- the source of truth for which roles exist
 create role "x-admin" nologin;
+
 create role "admin" nologin;
+
 create role "user" nologin;
 
-grant "x-admin", "admin", "user" to authenticator;   -- lets PostgREST SET ROLE
-grant authenticated to "x-admin", "admin", "user";   -- `to authenticated` policies still apply
+grant "x-admin",
+"admin",
+"user" to authenticator;
 
-supasheet.has_role(requested_role text) returns boolean           -- pg_has_role(current_user, requested_role, 'member')
-supasheet.whoami() returns jsonb                                  -- { user_id, role, current_user } — debug/UI helper
-supasheet.custom_access_token(event jsonb) returns jsonb          -- the Auth Hook (see below)
-supasheet.assign_default_role() -- before insert on auth.users trigger, defaults role to 'user'
+-- lets PostgREST SET ROLE
+grant authenticated to "x-admin",
+"admin",
+"user";
+
+-- `to authenticated` policies still apply
+supasheet.has_role (requested_role text) returns boolean -- pg_has_role(current_user, requested_role, 'member')
+supasheet.whoami () returns jsonb -- { user_id, role, current_user } — debug/UI helper
+supasheet.custom_access_token (event jsonb) returns jsonb -- the Auth Hook (see below)
+supasheet.assign_default_role () -- before insert on auth.users trigger, defaults role to 'user'
 ```
 
 Neither `app_permission` nor `app_role` exist — there's nothing to validate a permission
@@ -73,17 +82,33 @@ from
   authenticated,
   service_role;
 
-grant select, insert, update, delete on table app.tickets to "x-admin";
+grant
+select
+,
+  insert,
+update,
+delete on table app.tickets to "x-admin";
 
-grant select, insert, update on table app.tickets to "user";
+grant
+select
+,
+  insert,
+update on table app.tickets to "user";
 
 alter table app.tickets enable row level security;
 
-create policy tickets_select on app.tickets for select to authenticated using (true);
+create policy tickets_select on app.tickets for
+select
+  to authenticated using (true);
 
-create policy tickets_insert on app.tickets for insert to authenticated with check (true);
+create policy tickets_insert on app.tickets for insert to authenticated
+with
+  check (true);
 
-create policy tickets_update on app.tickets for update to authenticated using (true) with check (true);
+create policy tickets_update on app.tickets for
+update to authenticated using (true)
+with
+  check (true);
 
 create policy tickets_delete on app.tickets for delete to authenticated using (true);
 ```
@@ -99,7 +124,8 @@ Admin-style row override — a specific role sees rows an ownership check would
 otherwise hide, as an additional permissive policy:
 
 ```sql
-create policy "x-admin can view all tickets" on app.tickets for select
+create policy "x-admin can view all tickets" on app.tickets for
+select
   to authenticated using (pg_has_role (current_user, 'x-admin', 'member'));
 ```
 
@@ -108,8 +134,10 @@ create policy "x-admin can view all tickets" on app.tickets for select
 ```sql
 -- one role per user, stored in auth.users, read by the Custom Access Token Hook
 update auth.users
-set raw_app_meta_data = raw_app_meta_data || jsonb_build_object('role', 'admin')
-where id = '<user-uuid>';
+set
+  raw_app_meta_data = raw_app_meta_data || jsonb_build_object ('role', 'admin')
+where
+  id = '<user-uuid>';
 ```
 
 Client-facing equivalent: the `admin-set-user-role` edge function (x-admin

@@ -142,8 +142,7 @@ export function getColumnMetadata(
 ): ColumnFieldMetadata {
   const commentMeta = JSON.parse(columnSchema.comment ?? "{}") as ColumnMetadata
   const commentIconName = commentMeta.icon as
-    | keyof typeof LucideIcons
-    | undefined
+    keyof typeof LucideIcons | undefined
   const ColumnIcon = commentIconName
     ? (LucideIcons[commentIconName] as LucideIcon | undefined)
     : undefined

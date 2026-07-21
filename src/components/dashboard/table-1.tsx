@@ -1,8 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
+
+import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { ArrowRight } from "lucide-react"
 
+import { Button } from "#/components/ui/button"
 import {
   Card,
   CardContent,
@@ -10,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
-import { Button } from "#/components/ui/button"
 import { Skeleton } from "#/components/ui/skeleton"
 import {
   Table,

@@ -12,10 +12,7 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  const denied = await requireRole(
-    req.headers.get("Authorization"),
-    "x-admin"
-  )
+  const denied = await requireRole(req.headers.get("Authorization"), "x-admin")
   if (denied) return denied
 
   const { userId } = await req.json().catch(() => ({}))

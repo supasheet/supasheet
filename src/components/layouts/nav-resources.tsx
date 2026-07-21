@@ -72,9 +72,7 @@ function ResourceMenuItem({
 
   const icon = (
     <LucideIconComponent
-      iconName={
-        item.meta?.icon || (item.type === "table" ? "Table2" : "Eye")
-      }
+      iconName={item.meta?.icon || (item.type === "table" ? "Table2" : "Eye")}
     />
   )
   const url = `/${schema}/${item.id}`

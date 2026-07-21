@@ -14,18 +14,10 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
   "singleton": false, // true = settings-style single record
   "inline_form": false, // true = editable section on parent detail page (junction/line-item tables)
   "primary_view": "kanban", // id of default view (omit = sheet/table view)
-  "views": [
-    /* ViewLayout[] */
-  ],
-  "filter_presets": [
-    /* FilterPreset[] */
-  ],
-  "fields": {
-    /* see Fields */
-  },
-  "query": {
-    /* see Query */
-  },
+  "views": [/* ViewLayout[] */],
+  "filter_presets": [/* FilterPreset[] */],
+  "fields": {/* see Fields */},
+  "query": {/* see Query */},
   "tabs": ["tasks", "invoices"], // allowlist of related-table tabs on the detail page
 }
 ```

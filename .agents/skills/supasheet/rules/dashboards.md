@@ -93,7 +93,7 @@ from
 grant
 select
   on app.open_tickets_count to "x-admin",
-"user";
+  "user";
 
 comment on view app.open_tickets_count is '{"type": "dashboard_widget", "name": "Open Tickets", "description": "Tickets currently open", "widget_type": "card_1"}';
 
