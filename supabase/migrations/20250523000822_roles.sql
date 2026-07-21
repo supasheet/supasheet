@@ -32,6 +32,27 @@ grant
 execute on function supasheet.has_role (text) to authenticated,
 service_role;
 
+create or replace function supasheet.get_roles () returns table (role text) language sql stable security definer
+set
+  search_path = '' as $$
+  select r.rolname::text
+  from pg_auth_members m
+  join pg_roles a on a.oid = m.member and a.rolname = 'authenticator'
+  join pg_roles r on r.oid = m.roleid
+  where r.rolname not in ('anon', 'authenticated', 'service_role')
+  order by r.rolname;
+$$;
+
+revoke all on function supasheet.get_roles ()
+from
+  anon,
+  authenticated,
+  service_role;
+
+grant
+execute on function supasheet.get_roles () to authenticated,
+service_role;
+
 create or replace function supasheet.whoami () returns jsonb language sql stable
 set
   search_path = '' as $$

@@ -535,6 +535,12 @@ export type Database = {
           schema: string
         }[]
       }
+      get_roles: {
+        Args: never
+        Returns: {
+          role: string
+        }[]
+      }
       get_schemas: {
         Args: { p_caller?: string }
         Returns: {
@@ -753,6 +759,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

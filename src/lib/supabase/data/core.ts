@@ -116,6 +116,16 @@ export const whoamiQueryOptions = queryOptions({
   staleTime: 1000 * 60 * 5,
 })
 
+export const rolesQueryOptions = queryOptions({
+  queryKey: ["supasheet", "roles"] as const,
+  queryFn: async () => {
+    const { data, error } = await supabase.schema("supasheet").rpc("get_roles")
+    if (error) throw error
+    return data.map((row) => row.role)
+  },
+  staleTime: 1000 * 60 * 5,
+})
+
 export const hasRoleQueryOptions = (role: AppRole) =>
   queryOptions({
     queryKey: ["supasheet", "has_role", role],

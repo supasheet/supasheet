@@ -8,7 +8,10 @@ import { Skeleton } from "#/components/ui/skeleton"
 import { UserSecurity } from "#/components/users/user-security"
 import { pageTitle } from "#/lib/page-title"
 import { adminGetUserQueryOptions } from "#/lib/supabase/data/admin-auth"
-import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
+import {
+  hasRoleQueryOptions,
+  rolesQueryOptions,
+} from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/$userId/security")({
   head: () => ({ meta: [{ title: pageTitle("User Security") }] }),
@@ -24,6 +27,8 @@ export const Route = createFileRoute("/core/users/$userId/security")({
       adminGetUserQueryOptions(params.userId)
     )
     if (!data?.user) throw notFound()
+
+    context.queryClient.ensureQueryData(rolesQueryOptions)
   },
   pendingComponent: () => (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-4">

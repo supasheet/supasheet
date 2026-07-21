@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import type { User as AuthUser } from "@supabase/supabase-js"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import { toast } from "sonner"
 
@@ -22,8 +22,7 @@ import {
   adminGenerateLinkMutationOptions,
   adminSetUserRoleMutationOptions,
 } from "#/lib/supabase/data/admin-auth"
-
-const ROLES = ["x-admin", "admin", "user"] as const
+import { rolesQueryOptions } from "#/lib/supabase/data/core"
 
 function isBanned(user: AuthUser): boolean {
   return !!user.banned_until && new Date(user.banned_until) > new Date()
@@ -36,6 +35,11 @@ export function UserSecurity({ user }: { user: AuthUser }) {
   const canBan = useHasRole("x-admin")
   const canGenerateLink = useHasRole("x-admin")
   const canSetRole = useHasRole("x-admin")
+
+  const { data: roles } = useQuery({
+    ...rolesQueryOptions,
+    enabled: canSetRole,
+  })
 
   const currentRole = (user.app_metadata?.role as string | undefined) ?? "user"
 
@@ -92,7 +96,7 @@ export function UserSecurity({ user }: { user: AuthUser }) {
             </div>
             <Select
               value={currentRole}
-              disabled={isSettingRole}
+              disabled={isSettingRole || !roles}
               onValueChange={(val) => {
                 if (val !== null) setUserRole({ userId: user.id, role: val })
               }}
@@ -101,7 +105,7 @@ export function UserSecurity({ user }: { user: AuthUser }) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ROLES.map((role) => (
+                {roles?.map((role) => (
                   <SelectItem key={role} value={role}>
                     {role}
                   </SelectItem>
