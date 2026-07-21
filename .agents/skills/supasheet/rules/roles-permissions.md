@@ -19,7 +19,7 @@ Format: `"<schema>.<resource>:<action>"`.
 | Action                         | Applies to              | Grants access to                                                |
 | ------------------------------ | ----------------------- | --------------------------------------------------------------- |
 | `select`                       | tables, views, matviews | reading; also controls sidebar/dashboard/chart/report discovery |
-| `insert` / `update` / `delete` | tables, updatable views | writes                                                          |
+| `insert` / `update` / `delete` | tables                  | writes                                                          |
 | `audit`                        | tables                  | the per-record Audit tab                                        |
 | `comment`                      | tables                  | reading + posting record comments                               |
 

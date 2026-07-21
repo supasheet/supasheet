@@ -141,27 +141,6 @@ Default list-view query configuration:
 
 `"tabs": ["tasks", "milestones", "invoices"]` — allowlist which related tables (by FK) appear as tabs on the detail page. Omit to show all related tables. Does not affect the Audit/Comments pages (those are permission-driven).
 
-## Updatable table views (`based_on`)
-
-A simple single-table view (subset of columns, no joins/aggregates) is auto-updatable through PostgREST and can act as a full sub-resource with its own permissions. Add `"based_on": "<table>"` so the UI reuses the parent table's form machinery; the rest of the table-metadata shape (views, sections, presets) applies on top:
-
-```sql
-create view app.ticket_triage
-with
-  (security_invoker = true) as
-select
-  id,
-  title,
-  status,
-  priority
-from
-  app.tickets;
-
-comment on view app.ticket_triage is '{"based_on": "tickets", "name": "Triage", "description": "Status and priority only"}';
-```
-
-Grant and permit only the actions the slice should expose (e.g. `select, update`). Use this for role-scoped subsets of wide tables. The view must be Postgres auto-updatable (single table, no joins/aggregates) and must expose the base table's primary key (or a unique column), or detail/create pages won't resolve. See `rules/views.md` for the full recipe.
-
 ## Special table modes
 
 - **Singleton**: `"singleton": true` — UI opens the single row directly (settings tables). Don't grant/permit `:delete`.

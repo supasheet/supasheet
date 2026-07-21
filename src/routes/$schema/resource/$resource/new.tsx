@@ -27,7 +27,6 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import { viewSchemaQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/new")({
   validateSearch: (
@@ -67,16 +66,9 @@ export const Route = createFileRoute("/$schema/resource/$resource/new")({
       : hasPrivilege
     if (!canInsert) throw notFound()
   },
-  loader: async ({ context, params: { schema, resource } }) => {
-    const { resourceSchema, columnsSchema, baseTable } = context
+  loader: async ({ context }) => {
+    const { resourceSchema, columnsSchema } = context
     if (!isTableSchema(resourceSchema)) throw notFound()
-
-    if (baseTable !== resource) {
-      const viewSchema = await context.queryClient.ensureQueryData(
-        viewSchemaQueryOptions(schema, resource)
-      )
-      if (!viewSchema?.is_updatable) throw notFound()
-    }
 
     return { columnsSchema, tableSchema: resourceSchema }
   },

@@ -270,10 +270,6 @@ export type TableMetadata = BaseResourceMetadata & {
   fields?: TableFieldsConfig
 }
 
-export type UpdatableViewMetadata = {
-  based_on: DatabaseTables<DatabaseSchemas>
-} & TableMetadata
-
 export type ViewMetadata = BaseResourceMetadata
 
 export type DashboardWidgetType =

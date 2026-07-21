@@ -64,7 +64,7 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 | Rule                                                       | Covers                                                                                    |
 | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | [rules/tables.md](rules/tables.md)                         | Creating/altering tables: order of operations, grants, RLS set, constraints, indexes, FKs |
-| [rules/views.md](rules/views.md)                           | Plain views, updatable `based_on` table views, replica views for cross-schema joins       |
+| [rules/views.md](rules/views.md)                           | Plain views, replica views for cross-schema joins                                         |
 | [rules/materialized-views.md](rules/materialized-views.md) | Matviews as resources/reports; catalog vs data refresh                                    |
 | [rules/types.md](rules/types.md)                           | Custom enums, committed-transaction rule, enum badge comments, domain usage               |
 | [rules/dashboards.md](rules/dashboards.md)                 | Widget contracts card_1..card_4 / table_1 / table_2 with starter SQL                      |
@@ -82,7 +82,7 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 | Priority | File                                                         | When to load                                                                                                 |
 | -------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | High     | [references/new-resource.md](references/new-resource.md)     | New table, module, or schema — the full end-to-end worked example                                            |
-| High     | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs, based_on |
+| High     | [references/table-metadata.md](references/table-metadata.md) | The complete table comment JSON language: views, sections, presets, behavior, lookups, query, tabs |
 | High     | [references/data-types.md](references/data-types.md)         | Domain type definitions and all column comment options                                                       |
 | Medium   | [references/rbac.md](references/rbac.md)                     | RBAC architecture: enums, tables, helper functions, bootstrap                                                |
 | Medium   | [references/notifications.md](references/notifications.md)   | create_notification internals, recipient resolvers, full trigger examples                                    |

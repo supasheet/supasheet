@@ -25,10 +25,7 @@ import {
 } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs"
-import type {
-  TableMetadata,
-  UpdatableViewMetadata,
-} from "#/lib/database-meta.types"
+import type { TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
@@ -210,8 +207,6 @@ function RouteComponent() {
   const navigate = useNavigate()
 
   const tableMeta = JSON.parse(tableSchema.comment ?? "{}") as TableMetadata
-  const actualResource =
-    (tableMeta as UpdatableViewMetadata).based_on ?? resource
   const resourceDisplayName = tableMeta.name ?? formatTitle(resource)
   const allowedTabs = tableMeta.tabs
 
@@ -251,7 +246,7 @@ function RouteComponent() {
       >
         <ResourceRecordActions
           schema={schema}
-          resource={actualResource}
+          resource={resource}
           resourceId={resourceId}
         />
       </DefaultHeader>
