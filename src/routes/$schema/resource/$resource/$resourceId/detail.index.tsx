@@ -5,7 +5,10 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { ResourceFullDetail } from "#/components/resource/detail/resource-full-detail"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"
 import { useHasPermission } from "#/hooks/use-permissions"
-import { singleResourceDataQueryOptions } from "#/lib/supabase/data/resource"
+import {
+  columnsSchemaQueryOptions,
+  singleResourceDataQueryOptions,
+} from "#/lib/supabase/data/resource"
 
 const parentRoute = getRouteApi(
   "/$schema/resource/$resource/$resourceId/detail"
@@ -24,6 +27,12 @@ export const Route = createFileRoute(
       singleResourceDataQueryOptions(schema, resource, pk)
     )
     if (!record) throw notFound()
+
+    const updateColumnsSchema = await context.queryClient.ensureQueryData(
+      columnsSchemaQueryOptions(schema, resource, "update")
+    )
+
+    return { updateColumnsSchema }
   },
   component: RouteComponent,
 })
@@ -31,6 +40,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
   const { pkName, primaryKeys } = parentRoute.useLoaderData()
+  const { updateColumnsSchema } = Route.useLoaderData()
   const { tableSchema, columnsSchema } = Route.useRouteContext()
 
   const pk = { [pkName]: resourceId }
@@ -52,7 +62,7 @@ function RouteComponent() {
   if (canEdit) {
     return (
       <ResourceUpdateForm
-        columnsSchema={columnsSchema}
+        columnsSchema={updateColumnsSchema}
         primaryKeys={primaryKeys}
         record={record}
         tableSchema={tableSchema}

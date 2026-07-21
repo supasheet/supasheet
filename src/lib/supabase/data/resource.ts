@@ -121,14 +121,15 @@ export const resourcePrivilegesQueryOptions = <S extends DatabaseSchemas>(
 
 export const columnsSchemaQueryOptions = <S extends DatabaseSchemas>(
   schema: S,
-  id: DatabaseTables<S> | DatabaseViews<S>
+  id: DatabaseTables<S> | DatabaseViews<S>,
+  action: ResourcePrivilege = "select"
 ) =>
   queryOptions({
-    queryKey: ["supasheet", "schema", "columns", schema, id],
+    queryKey: ["supasheet", "schema", "columns", schema, id, action],
     queryFn: async () => {
       const { data, error } = await supabase
         .schema("supasheet")
-        .rpc("get_columns", { schema_name: schema, table_name: id })
+        .rpc("get_columns", { schema_name: schema, table_name: id, action })
       if (error) throw error
       return (data as unknown as ColumnSchema<S>[]) ?? []
     },
