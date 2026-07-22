@@ -2,8 +2,8 @@
   <h1 align="center">
   Supasheet
   </h1>
-  <h3 align="center"><strong>Run your internal operations on Supabase</strong></h3>
-  <p>Supasheet turns any Supabase project into a complete internal operations platform. Auto-generated CRUD, multiple data views (grid, data grid, kanban, calendar, gallery, list, tree), built-in auth with MFA, fine-grained RBAC, configurable dashboards, charts, AI chat, SQL editor, file storage, comments, templates, and audit logs — all in one open-source React app.</p>
+  <h3 align="center"><strong>Turn your Postgres schema into any business app.</strong></h3>
+  <p>Supasheet turns any Supabase project into a complete application platform, not just an admin panel. Auto-generated CRUD, multiple data views (grid, data grid, kanban, calendar, gallery, list, tree), built-in auth with MFA, RBAC and RLS enforced natively by Supabase Postgres, configurable dashboards, charts, AI chat, SQL editor, file storage, comments, templates, and audit logs. All in one open-source React app. The <a href="./supabase/examples">supabase/examples/</a> directory ships ready-made schemas for CRM, HR, Finance, Inventory, Manufacturing, Procurement, Quality, LMS, Hostel, Helpdesk, Store, and Blog: proof it scales from a weekend internal tool to a full ERP or B2B product.</p>
   <p>Try out Supasheet demo at <a href="https://jdydxqrxntcdrxhqqmuv.supasheet.app" target="_blank">jdydxqrxntcdrxhqqmuv.supasheet.app</a></p>
 </div>
 
@@ -15,6 +15,8 @@
 </h1>
 
 ## Features
+
+Use it as an internal admin panel, or as the backend and UI for a CRM, ERP module, or B2B customer portal. RBAC, RLS, and audit trails are enforced by Supabase Postgres itself, so it's safe to build real business systems on top.
 
 - **Authentication** — Sign in, sign up, MFA, password reset, OAuth providers
 - **User Management** — Create, invite, edit, and delete users via Supabase Admin API
