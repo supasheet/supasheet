@@ -150,9 +150,9 @@ export function getColumnMetadata(
     <ColumnIcon className="size-4 shrink-0 text-muted-foreground" />
   ) : null
 
-  const dataType = columnSchema.data_type?.startsWith("_")
-    ? columnSchema.data_type?.slice(1)
-    : columnSchema.data_type
+  const dataType = columnSchema.actual_type?.startsWith("_")
+    ? columnSchema.actual_type?.slice(1)
+    : columnSchema.actual_type
 
   let defaultValue: string | null = null
 

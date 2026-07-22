@@ -94,12 +94,12 @@ export function ResourceFormField<S extends DatabaseSchemas>({
             )}
           </FieldLabel>
           <div>
-            {columnSchema.format === "file" ? (
+            {columnSchema.actual_type === "file" ? (
               <FileField
                 columnMetadata={columnMetadata}
                 columnSchema={columnSchema}
               />
-            ) : columnSchema.format === "avatar" ? (
+            ) : columnSchema.actual_type === "avatar" ? (
               <AvatarField
                 columnMetadata={columnMetadata}
                 columnSchema={columnSchema}
