@@ -30,6 +30,16 @@ import {
   PopoverTrigger,
 } from "#/components/ui/popover"
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "#/components/ui/sheet"
+import { useIsMobile } from "#/hooks/use-mobile"
+import {
   decodeFilterValue,
   encodeFilterValue,
   getDefaultFilterOperator,
@@ -45,6 +55,8 @@ interface DataTableFilterProps<TData> {
 export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
   const [open, setOpen] = useState(false)
   const addButtonRef = useRef<HTMLButtonElement>(null)
+  const isMobile = useIsMobile()
+  const side = isMobile ? "bottom" : "right"
 
   const columnFilters = table.getState().columnFilters
   const filterableColumns = table
@@ -90,8 +102,8 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
   if (filterableColumns.length === 0) return null
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
         render={<Button variant="outline" size="sm" className="font-normal" />}
       >
         <ListFilterIcon
@@ -107,45 +119,43 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
             {columnFilters.length}
           </Badge>
         )}
-      </PopoverTrigger>
+      </SheetTrigger>
 
-      <PopoverContent
-        className="flex w-full max-w-[calc(100vw-2rem)] flex-col gap-3.5 p-4 sm:min-w-[380px]"
-        align="start"
+      <SheetContent
+        side={side}
+        className={cn(
+          "gap-0",
+          side === "right" && "w-full! sm:max-w-lg!",
+          side === "bottom" && "max-h-[80vh]"
+        )}
       >
-        <div className="flex flex-col gap-1">
-          <h4 className="leading-none font-medium">
+        <SheetHeader className="border-b">
+          <SheetTitle>
             {columnFilters.length > 0 ? "Filters" : "No filters applied"}
-          </h4>
-          <p
-            className={cn(
-              "text-sm text-muted-foreground",
-              columnFilters.length > 0 && "sr-only"
-            )}
-          >
+          </SheetTitle>
+          <SheetDescription className={cn(columnFilters.length > 0 && "sr-only")}>
             Add filters to refine your rows.
-          </p>
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-4">
+          {columnFilters.length > 0 && (
+            <div role="list" className="flex flex-col gap-2">
+              {columnFilters.map((filter) => (
+                <DataTableFilterItem
+                  key={filter.id}
+                  filter={filter}
+                  filterableColumns={filterableColumns}
+                  onUpdate={(newEncoded) => onFilterUpdate(filter.id, newEncoded)}
+                  onFieldChange={(newId) => onFilterFieldChange(filter.id, newId)}
+                  onRemove={() => onFilterRemove(filter.id)}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {columnFilters.length > 0 && (
-          <div
-            role="list"
-            className="flex max-h-[300px] flex-col gap-2 overflow-y-auto px-0.5"
-          >
-            {columnFilters.map((filter) => (
-              <DataTableFilterItem
-                key={filter.id}
-                filter={filter}
-                filterableColumns={filterableColumns}
-                onUpdate={(newEncoded) => onFilterUpdate(filter.id, newEncoded)}
-                onFieldChange={(newId) => onFilterFieldChange(filter.id, newId)}
-                onRemove={() => onFilterRemove(filter.id)}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-center gap-2">
+        <SheetFooter className="flex-row border-t">
           <Button size="sm" ref={addButtonRef} onClick={onFilterAdd}>
             Add filter
           </Button>
@@ -158,9 +168,9 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
               Reset filters
             </Button>
           )}
-        </div>
-      </PopoverContent>
-    </Popover>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
 
@@ -207,7 +217,7 @@ function DataTableFilterItem<TData>({
   }
 
   return (
-    <div role="listitem" className="flex items-center gap-2">
+    <div role="listitem" className="flex flex-wrap items-center gap-2">
       {/* Field selector */}
       <Popover open={fieldOpen} onOpenChange={setFieldOpen}>
         <PopoverTrigger
@@ -215,7 +225,7 @@ function DataTableFilterItem<TData>({
             <Button
               variant="outline"
               size="sm"
-              className="w-32 justify-between font-normal"
+              className="min-w-28 flex-1 justify-between font-normal sm:max-w-40"
             />
           }
         >
@@ -252,7 +262,7 @@ function DataTableFilterItem<TData>({
         size="sm"
         value={operator}
         onChange={(e) => handleOperatorChange(e.target.value as FilterOperator)}
-        className="w-36"
+        className="min-w-28 flex-1 sm:max-w-40"
       >
         {filterOperators.map((op) => (
           <NativeSelectOption key={op.value} value={op.value}>
@@ -262,7 +272,7 @@ function DataTableFilterItem<TData>({
       </NativeSelect>
 
       {/* Value input */}
-      <div className="max-w-60 min-w-36 flex-1">
+      <div className="min-w-36 flex-[2] sm:max-w-60">
         {isEmptyOp ? (
           <div className="h-7 w-full rounded-md border bg-transparent" />
         ) : (
@@ -283,7 +293,7 @@ function DataTableFilterItem<TData>({
       </div>
 
       {/* Remove */}
-      <Button variant="outline" size="icon-sm" onClick={onRemove}>
+      <Button variant="outline" size="icon-sm" onClick={onRemove} className="shrink-0">
         <Trash2Icon />
       </Button>
     </div>
