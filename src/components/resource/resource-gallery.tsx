@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Eye, Image as ImageIcon, Trash } from "lucide-react"
 import { toast } from "sonner"
 
+import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Badge } from "#/components/ui/badge"
 import {
   Card,
@@ -27,6 +28,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
+import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   DatabaseSchemas,
@@ -92,7 +94,7 @@ export function ResourceGallery({
                 primaryKeys={primaryKeys}
                 isTable={isTable}
               >
-                <Card className="cursor-pointer h-full">
+                <Card className="h-full cursor-pointer shadow-xs">
                   <CardHeader>
                     <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-muted">
                       {item.cover ? (
@@ -168,9 +170,9 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
     deleteResourceMutationOptions(schema, resource)
   )
 
-  async function handleDelete() {
+  const deleteConfirm = useDeleteConfirm(async (target: GalleryViewData) => {
     const pk = Object.fromEntries(
-      primaryKeys.map((pkField) => [pkField.name, item.data[pkField.name]])
+      primaryKeys.map((pkField) => [pkField.name, target.data[pkField.name]])
     )
     try {
       await deleteRow(pk)
@@ -183,33 +185,45 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
         err instanceof Error ? err.message : "Failed to delete record"
       )
     }
-  }
+  })
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-52">
-        <ContextMenuItem
-          onClick={() =>
-            navigate({
-              to: "/$schema/resource/$resource/$resourceId/detail",
-              params: { schema, resource, resourceId },
-            })
-          }
-        >
-          <Eye className="size-4" />
-          View Details
-        </ContextMenuItem>
-        {isTable && canDelete && (
-          <>
-            <ContextMenuSeparator />
-            <ContextMenuItem variant="destructive" onClick={handleDelete}>
-              <Trash className="size-4" />
-              Delete Item
-            </ContextMenuItem>
-          </>
-        )}
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger>{children}</ContextMenuTrigger>
+        <ContextMenuContent className="w-52">
+          <ContextMenuItem
+            onClick={() =>
+              navigate({
+                to: "/$schema/resource/$resource/$resourceId/detail",
+                params: { schema, resource, resourceId },
+              })
+            }
+          >
+            <Eye className="size-4" />
+            View details
+          </ContextMenuItem>
+          {isTable && canDelete && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                variant="destructive"
+                onClick={() => deleteConfirm.requestDelete(item)}
+              >
+                <Trash className="size-4" />
+                Delete
+              </ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      <ConfirmDeleteDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => !open && deleteConfirm.cancel()}
+        onConfirm={deleteConfirm.confirm}
+        title="Delete record?"
+        pending={deleteConfirm.pending}
+      />
+    </>
   )
 }

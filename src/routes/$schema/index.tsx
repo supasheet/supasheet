@@ -88,12 +88,12 @@ function RouteComponent() {
         <div className="flex items-center gap-3">
           <DatabaseIcon className="size-6 text-muted-foreground" />
           <div>
-            <h1 className="text-xl font-semibold capitalize">
-              {params.schema}
+            <h1 className="text-xl font-semibold tracking-tight">
+              {formatTitle(params.schema)}
             </h1>
             <p className="text-sm text-muted-foreground">
               {isPending
-                ? "Loading schema..."
+                ? "Loading schema…"
                 : `${tables.length} table${tables.length !== 1 ? "s" : ""}, ${views.length} view${views.length !== 1 ? "s" : ""}`}
             </p>
           </div>
@@ -102,26 +102,28 @@ function RouteComponent() {
         {/* Quick links */}
         {navPending ? (
           <section>
-            <h2 className="mb-3 text-sm font-medium tracking-wide text-muted-foreground uppercase">
+            <h2 className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Sections
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-xl border bg-card p-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="size-5 rounded" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-3 w-40" />
+                <Card key={i}>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="size-5 rounded-md" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-40" />
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </CardHeader>
+                </Card>
               ))}
             </div>
           </section>
         ) : visibleLinks.length > 0 ? (
           <section>
-            <h2 className="mb-3 text-sm font-medium tracking-wide text-muted-foreground uppercase">
+            <h2 className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Sections
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -156,22 +158,21 @@ function RouteComponent() {
 
         {/* Resources */}
         <section>
-          <h2 className="mb-3 text-sm font-medium tracking-wide text-muted-foreground uppercase">
+          <h2 className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
             Resources
           </h2>
           {isPending ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="space-y-2 rounded-xl border bg-card p-4"
-                >
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="size-4 rounded" />
-                    <Skeleton className="h-4 w-28" />
-                    <Skeleton className="ml-auto h-5 w-12 rounded-full" />
-                  </div>
-                </div>
+                <Card key={i}>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="size-4 rounded-md" />
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="ml-auto h-5 w-12 rounded-full" />
+                    </div>
+                  </CardHeader>
+                </Card>
               ))}
             </div>
           ) : resources.length === 0 ? (

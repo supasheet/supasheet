@@ -42,7 +42,7 @@ function AuthLayout() {
       {/* Right panel — form area */}
       <div className="flex items-center justify-center p-6 lg:p-10">
         <div className="w-full max-w-sm">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div>Loading…</div>}>
             <Outlet />
           </Suspense>
         </div>

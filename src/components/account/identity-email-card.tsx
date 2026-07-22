@@ -102,7 +102,7 @@ export function IdentityEmailCard() {
                 size="sm"
                 disabled={!isDirty || !canSubmit || isSubmitting}
               >
-                {isSubmitting ? "Saving…" : "Update email"}
+                {isSubmitting ? "Saving…" : "Save email"}
               </Button>
             )}
           </form.Subscribe>

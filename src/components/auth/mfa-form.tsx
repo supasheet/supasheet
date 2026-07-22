@@ -120,7 +120,7 @@ export function MfaForm() {
                 className="w-full"
                 disabled={isSubmitting || code.length < 6}
               >
-                {isSubmitting ? "Verifying..." : "Verify"}
+                {isSubmitting ? "Verifying…" : "Verify"}
               </Button>
             )}
           </form.Subscribe>

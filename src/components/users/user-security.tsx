@@ -51,7 +51,8 @@ export function UserSecurity({ user }: { user: AuthUser }) {
       })
       toast.success("Role updated")
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to update role"),
   })
 
   const { mutateAsync: banUser, isPending: isBanning } = useMutation({
@@ -64,7 +65,8 @@ export function UserSecurity({ user }: { user: AuthUser }) {
         vars.ban_duration === "none" ? "User unbanned" : "User banned"
       )
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to update user"),
   })
 
   const { mutateAsync: generateLink, isPending: isGeneratingLink } =
@@ -74,7 +76,10 @@ export function UserSecurity({ user }: { user: AuthUser }) {
         await navigator.clipboard.writeText(data.properties.action_link)
         toast.success("Link copied to clipboard")
       },
-      onError: (err) => toast.error(err.message),
+      onError: (err) =>
+        toast.error(
+          err instanceof Error ? err.message : "Failed to generate link"
+        ),
     })
 
   const banned = isBanned(user)

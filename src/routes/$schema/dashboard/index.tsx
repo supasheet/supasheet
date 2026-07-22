@@ -6,6 +6,7 @@ import { AlertCircleIcon, LayoutDashboardIcon } from "lucide-react"
 import { DashboardWidget } from "#/components/dashboard/dashboard-widget"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { Button } from "#/components/ui/button"
+import { Card, CardContent, CardHeader } from "#/components/ui/card"
 import {
   Empty,
   EmptyDescription,
@@ -33,17 +34,19 @@ export const Route = createFileRoute("/$schema/dashboard/")({
       <DefaultHeader breadcrumbs={[{ title: "Dashboard" }]} />
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-2.5 p-4 md:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="space-y-3 rounded-xl border bg-card p-4">
-            <div className="flex items-start justify-between">
+          <Card key={i}>
+            <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-3 w-32" />
               </div>
-              <Skeleton className="h-4 w-4 rounded" />
-            </div>
-            <Skeleton className="h-8 w-20" />
-            <Skeleton className="h-3 w-28" />
-          </div>
+              <Skeleton className="h-4 w-4 rounded-md" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="mb-1 h-8 w-20" />
+              <Skeleton className="h-3 w-28" />
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

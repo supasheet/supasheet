@@ -107,7 +107,10 @@ export function ResourceTree({
   }
 
   return (
-    <div className="flex flex-col" role="tree">
+    <div
+      className="flex flex-col overflow-hidden rounded-md border bg-card"
+      role="tree"
+    >
       {roots.map((row) => (
         <TreeRow
           key={String(row[pkColumn])}

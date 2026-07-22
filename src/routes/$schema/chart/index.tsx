@@ -15,7 +15,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import { Skeleton } from "#/components/ui/skeleton"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import { chartsQueryOptions } from "#/lib/supabase/data/chart"
@@ -35,15 +34,7 @@ export const Route = createFileRoute("/$schema/chart/")({
       <DefaultHeader breadcrumbs={[{ title: "Chart" }]} />
       <div className="mx-auto grid max-w-6xl gap-2.5 p-4 md:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="col-span-2 rounded-xl border bg-card p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <Skeleton className="h-5 w-24" />
-            </div>
-            <Skeleton className="mb-2 h-4 w-40" />
-            <div className="mt-4">
-              <Skeleton className="h-40 w-full" />
-            </div>
-          </div>
+          <ChartSkeleton key={i} />
         ))}
       </div>
     </div>

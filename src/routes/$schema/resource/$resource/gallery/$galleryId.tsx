@@ -82,7 +82,10 @@ export const Route = createFileRoute(
         <div className="flex flex-1 flex-col gap-4 px-4 py-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="rounded-xl border bg-card shadow-xs">
+              <div
+                key={i}
+                className="rounded-lg bg-card shadow-xs ring-1 ring-foreground/10"
+              >
                 {/* Cover image area */}
                 <div className="p-4 pb-0">
                   <Skeleton className="aspect-4/3 w-full rounded-md" />

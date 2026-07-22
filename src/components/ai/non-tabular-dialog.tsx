@@ -1,13 +1,13 @@
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "#/components/ui/alert-dialog"
+import { Button } from "#/components/ui/button"
 import type { AIResponse } from "#/lib/ai/types"
 
 export function NonTabularDialog({
@@ -44,7 +44,9 @@ export function NonTabularDialog({
           </div>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onRefine}>Refine query</AlertDialogCancel>
+          <Button variant="outline" onClick={onRefine}>
+            Refine query
+          </Button>
           <AlertDialogAction onClick={onShowAnyway}>
             Show anyway
           </AlertDialogAction>

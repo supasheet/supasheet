@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { RolesPermissionsCard } from "#/components/account/roles-permissions-card"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { PageContainer } from "#/components/layouts/page-container"
 import { pageTitle } from "#/lib/page-title"
 import {
   userPermissionsQueryOptions,
@@ -25,9 +26,9 @@ function RolesPermissionsPage() {
           { title: "Roles & Permissions", url: "/account/roles-permissions" },
         ]}
       />
-      <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
+      <PageContainer size="narrow">
         <RolesPermissionsCard />
-      </div>
+      </PageContainer>
     </div>
   )
 }

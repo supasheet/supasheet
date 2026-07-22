@@ -16,13 +16,13 @@ import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
 export function Card1Skeleton() {
   return (
-    <Card>
+    <Card size="sm">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <div className="space-y-1">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-3 w-32" />
         </div>
-        <Skeleton className="h-4 w-4 rounded" />
+        <Skeleton className="h-4 w-4 rounded-md" />
       </CardHeader>
       <CardContent>
         <Skeleton className="mb-1 h-8 w-20" />
@@ -45,10 +45,10 @@ export function Card1<S extends DatabaseSchemas>({
   if (!widgetData) return null
 
   return (
-    <Card>
+    <Card size="sm">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <div>
-          <CardTitle className="text-sm font-medium">{widget.name}</CardTitle>
+          <CardTitle>{widget.name}</CardTitle>
           <CardDescription>{widget.description}</CardDescription>
         </div>
         <DynamicIcon

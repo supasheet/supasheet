@@ -69,11 +69,11 @@ export function RenameDialog({
       await queryClient.invalidateQueries({
         queryKey: ["storage", "files", bucketId],
       })
-      toast.success("Renamed successfully")
+      toast.success("Item renamed")
       onOpenChange(false)
       onSuccess?.()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Rename failed")
+      toast.error(err instanceof Error ? err.message : "Failed to rename item")
     }
   }
 

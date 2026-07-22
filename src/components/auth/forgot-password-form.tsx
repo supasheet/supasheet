@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
                 !value
                   ? "Email is required"
                   : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                    ? "Invalid email"
+                    ? "Enter a valid email address"
                     : undefined,
             }}
           >
@@ -81,7 +81,7 @@ export function ForgotPasswordForm() {
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send reset link"}
+                {isSubmitting ? "Sending…" : "Send reset link"}
               </Button>
             )}
           </form.Subscribe>

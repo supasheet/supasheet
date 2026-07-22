@@ -55,7 +55,7 @@ export function SignUpForm() {
                 !value
                   ? "Email is required"
                   : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                    ? "Invalid email"
+                    ? "Enter a valid email address"
                     : undefined,
             }}
           >
@@ -145,7 +145,7 @@ export function SignUpForm() {
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Creating account..." : "Create account"}
+                {isSubmitting ? "Creating account…" : "Create account"}
               </Button>
             )}
           </form.Subscribe>

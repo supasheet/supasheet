@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
+import { Empty, EmptyHeader, EmptyTitle } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
 import {
   Table,
@@ -65,7 +66,11 @@ export function Table1Widget<S extends DatabaseSchemas>({
           <CardDescription>{widget.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">No data available</p>
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>No data to display</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
         </CardContent>
       </Card>
     )

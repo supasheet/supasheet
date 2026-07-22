@@ -56,10 +56,12 @@ export function StorageToolbar({
       await queryClient.invalidateQueries({
         queryKey: ["storage", "files", bucketId],
       })
-      toast.success(`${paths.length} item(s) deleted`)
+      toast.success(
+        `${paths.length} ${paths.length === 1 ? "item" : "items"} deleted`
+      )
       onClearSelection()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed")
+      toast.error(err instanceof Error ? err.message : "Failed to delete items")
     } finally {
       setDeleteOpen(false)
     }
@@ -104,7 +106,8 @@ export function StorageToolbar({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete {selectedItems.size} item(s)?
+              Delete {selectedItems.size}{" "}
+              {selectedItems.size === 1 ? "item" : "items"}?
             </AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone.
@@ -115,7 +118,7 @@ export function StorageToolbar({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              variant="destructive"
               onClick={handleDeleteSelected}
               disabled={isDeleting}
             >

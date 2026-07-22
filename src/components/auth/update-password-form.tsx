@@ -32,7 +32,7 @@ export function UpdatePasswordForm() {
         return
       }
       queryClient.setQueryData(authUserQueryOptions.queryKey, data.user)
-      toast.success("Password updated successfully")
+      toast.success("Password updated")
       navigate({ to: "/", replace: true })
     },
   })
@@ -123,7 +123,7 @@ export function UpdatePasswordForm() {
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update password"}
+                {isSubmitting ? "Updating…" : "Update password"}
               </Button>
             )}
           </form.Subscribe>

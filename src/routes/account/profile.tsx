@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { ProfileAvatarCard } from "#/components/account/profile-avatar-card"
 import { ProfileNameCard } from "#/components/account/profile-name-card"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { PageContainer } from "#/components/layouts/page-container"
 import { pageTitle } from "#/lib/page-title"
 
 export const Route = createFileRoute("/account/profile")({
@@ -16,10 +17,10 @@ function ProfilePage() {
       <DefaultHeader
         breadcrumbs={[{ title: "Profile", url: "/account/profile" }]}
       />
-      <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
+      <PageContainer size="narrow">
         <ProfileAvatarCard />
         <ProfileNameCard />
-      </div>
+      </PageContainer>
     </div>
   )
 }

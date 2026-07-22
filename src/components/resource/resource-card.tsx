@@ -37,13 +37,13 @@ export function ResourceCard({ resource }: { resource: Resource }) {
       to="/$schema/resource/$resource"
       params={{ schema: resource.schema, resource: resource.id }}
     >
-      <Card className="transition-colors hover:bg-accent/50">
+      <Card size="sm" className="transition-colors hover:bg-accent/50">
         <CardHeader>
           <div className="flex items-center gap-2.5">
             <ResourceIcon
               item={{ type: resource.type, meta: { icon: resource.meta.icon } }}
             />
-            <CardTitle className="truncate text-sm">
+            <CardTitle className="truncate">
               {resource.meta?.name ?? formatTitle(resource.name)}
             </CardTitle>
             <Badge

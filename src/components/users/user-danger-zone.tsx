@@ -38,7 +38,8 @@ export function UserDangerZone({ user }: { user: AuthUser }) {
         to: "/core/users",
       })
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to delete user"),
   })
 
   return (
@@ -67,7 +68,8 @@ export function UserDangerZone({ user }: { user: AuthUser }) {
                 <AlertDialogTitle>Delete user?</AlertDialogTitle>
                 <AlertDialogDescription>
                   This will permanently delete{" "}
-                  <strong>{user.email ?? user.id}</strong> and cannot be undone.
+                  <strong>{user.email ?? user.id}</strong>. This action cannot
+                  be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

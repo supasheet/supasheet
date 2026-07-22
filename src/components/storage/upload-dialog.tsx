@@ -128,11 +128,13 @@ export function UploadDialog({ bucketId, path, onSuccess }: UploadDialogProps) {
       await queryClient.invalidateQueries({
         queryKey: ["storage", "files", bucketId],
       })
-      toast.success(`${files.length} file(s) uploaded`)
+      toast.success(
+        `${files.length} ${files.length === 1 ? "file" : "files"} uploaded`
+      )
       setOpen(false)
       onSuccess?.()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed")
+      toast.error(err instanceof Error ? err.message : "Failed to upload files")
     }
   }
 

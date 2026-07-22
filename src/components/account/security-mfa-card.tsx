@@ -82,9 +82,7 @@ export function SecurityMfaCard() {
       toast.success("Two-factor authentication enabled")
     },
     onError: (err) => {
-      toast.error(
-        err instanceof Error ? err.message : "Invalid code, please try again"
-      )
+      toast.error(err instanceof Error ? err.message : "Invalid code")
     },
   })
 

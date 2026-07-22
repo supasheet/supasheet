@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 
+import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Badge } from "#/components/ui/badge"
 import { Button } from "#/components/ui/button"
 import { ButtonGroup } from "#/components/ui/button-group"
@@ -36,6 +37,7 @@ import {
   KanbanItem,
   KanbanOverlay,
 } from "#/components/ui/kanban"
+import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   DatabaseSchemas,
@@ -217,14 +219,14 @@ export function ResourceKanban({
                         isTable={isTable}
                       >
                         <KanbanItem value={buildId(task)} asHandle asChild>
-                          <div className="rounded-md border bg-card p-3 shadow-xs">
+                          <div className="rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10">
                             <div className="flex flex-col gap-2">
                               <div className="flex items-center justify-between gap-2">
                                 <span className="line-clamp-1 text-sm font-medium">
                                   {task.title ?? "Untitled"}
                                 </span>
                                 {task.badge && (
-                                  <Badge className="pointer-events-none h-5 rounded-sm px-1.5 text-[11px] capitalize">
+                                  <Badge className="pointer-events-none h-5 px-1.5 text-[11px] capitalize">
                                     {task.badge}
                                   </Badge>
                                 )}
@@ -284,9 +286,9 @@ function KanbanContextMenu<S extends DatabaseSchemas>({
     deleteResourceMutationOptions(schema, resource)
   )
 
-  async function handleDelete() {
+  const deleteConfirm = useDeleteConfirm(async (item: KanbanViewData) => {
     const pk = Object.fromEntries(
-      primaryKeys.map((pkField) => [pkField.name, task.data[pkField.name]])
+      primaryKeys.map((pkField) => [pkField.name, item.data[pkField.name]])
     )
     try {
       await deleteRow(pk)
@@ -299,33 +301,45 @@ function KanbanContextMenu<S extends DatabaseSchemas>({
         err instanceof Error ? err.message : "Failed to delete record"
       )
     }
-  }
+  })
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-52">
-        <ContextMenuItem
-          onClick={() =>
-            navigate({
-              to: "/$schema/resource/$resource/$resourceId/detail",
-              params: { schema, resource, resourceId },
-            })
-          }
-        >
-          <Eye className="size-4" />
-          View Details
-        </ContextMenuItem>
-        {isTable && canDelete && (
-          <>
-            <ContextMenuSeparator />
-            <ContextMenuItem variant="destructive" onClick={handleDelete}>
-              <Trash className="size-4" />
-              Delete Item
-            </ContextMenuItem>
-          </>
-        )}
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger>{children}</ContextMenuTrigger>
+        <ContextMenuContent className="w-52">
+          <ContextMenuItem
+            onClick={() =>
+              navigate({
+                to: "/$schema/resource/$resource/$resourceId/detail",
+                params: { schema, resource, resourceId },
+              })
+            }
+          >
+            <Eye className="size-4" />
+            View details
+          </ContextMenuItem>
+          {isTable && canDelete && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                variant="destructive"
+                onClick={() => deleteConfirm.requestDelete(task)}
+              >
+                <Trash className="size-4" />
+                Delete
+              </ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      <ConfirmDeleteDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => !open && deleteConfirm.cancel()}
+        onConfirm={deleteConfirm.confirm}
+        title="Delete record?"
+        pending={deleteConfirm.pending}
+      />
+    </>
   )
 }

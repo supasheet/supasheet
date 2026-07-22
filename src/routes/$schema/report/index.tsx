@@ -40,16 +40,18 @@ export const Route = createFileRoute("/$schema/report/")({
     return (
       <div className="w-full flex-1">
         <DefaultHeader breadcrumbs={[{ title: "Report" }]} />
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 p-4 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-2.5 p-4 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-xl border bg-card p-6">
-              <div className="mb-2 flex items-center gap-3">
-                <Skeleton className="size-5 rounded" />
-                <Skeleton className="h-5 w-32" />
-                <Skeleton className="h-5 w-14 rounded-full" />
-              </div>
-              <Skeleton className="h-4 w-48" />
-            </div>
+            <Card key={i}>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-5 rounded-md" />
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                </div>
+                <Skeleton className="h-4 w-48" />
+              </CardHeader>
+            </Card>
           ))}
         </div>
       </div>
@@ -116,7 +118,7 @@ function RouteComponent() {
   return (
     <div className="w-full flex-1">
       <DefaultHeader breadcrumbs={[{ title: "Report" }]} />
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 p-4 md:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-2.5 p-4 md:grid-cols-2">
         {reports.map((report) => (
           <Link
             key={report.view_name}

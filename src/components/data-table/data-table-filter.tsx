@@ -102,7 +102,7 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
         {columnFilters.length > 0 && (
           <Badge
             variant="secondary"
-            className="h-[18px] rounded-sm px-1.5 font-mono text-[10px] font-normal"
+            className="h-[18px] px-1.5 font-mono text-[10px] font-normal"
           >
             {columnFilters.length}
           </Badge>

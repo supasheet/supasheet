@@ -13,7 +13,7 @@ export function ResourceDefinitionField({
   field,
 }: ResourceDefinitionFieldProps) {
   return (
-    <div className="flex h-12 items-center justify-between gap-3 px-4">
+    <div className="flex items-center justify-between gap-3 px-4 py-3">
       <div className="flex min-w-0 items-center gap-2">
         {field.icon ? (
           <DynamicIcon
@@ -36,14 +36,23 @@ export function ResourceDefinitionField({
       <div className="flex shrink-0 items-center gap-1.5">
         <Badge variant="outline">{field.type}</Badge>
         {field.isIdentifier ? (
-          <Badge variant="info">Identifier</Badge>
+          <Badge variant="outline" className="border-blue-600 text-blue-600">
+            Identifier
+          </Badge>
         ) : field.required ? (
-          <Badge variant="warning">Required</Badge>
+          <Badge
+            variant="outline"
+            className="border-orange-600 text-orange-600"
+          >
+            Required
+          </Badge>
         ) : (
           <Badge variant="ghost">Optional</Badge>
         )}
         {field.unique && !field.isIdentifier && (
-          <Badge variant="success">Unique</Badge>
+          <Badge variant="outline" className="border-green-600 text-green-600">
+            Unique
+          </Badge>
         )}
       </div>
     </div>

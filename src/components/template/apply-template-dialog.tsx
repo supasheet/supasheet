@@ -68,7 +68,7 @@ export function ApplyTemplateDialog({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Apply Template</DialogTitle>
+            <DialogTitle>Apply template</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Alert variant="destructive">
@@ -76,7 +76,7 @@ export function ApplyTemplateDialog({
               <AlertTitle>This will insert data</AlertTitle>
               <AlertDescription>
                 Applying this template will INSERT rows into the target table.
-                This action cannot be undone automatically.
+                This action cannot be undone.
               </AlertDescription>
             </Alert>
             <div className="space-y-2">

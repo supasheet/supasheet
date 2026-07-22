@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CalendarRange, Columns, Grid2x2, Grid3x3, List } from "lucide-react"
 import { toast } from "sonner"
 
+import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Button } from "#/components/ui/button"
 import { ButtonGroup } from "#/components/ui/button-group"
 import {
@@ -18,6 +19,7 @@ import {
   EventCalendarYearView,
 } from "#/components/ui/event-calendar"
 import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
+import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   CalendarLayout,
@@ -155,7 +157,7 @@ export function ResourceCalendar({
     })
   }
 
-  async function onEventDelete(event: IEvent) {
+  const deleteConfirm = useDeleteConfirm(async (event: IEvent) => {
     try {
       await deleteRow(getPk(event))
       queryClient.invalidateQueries({
@@ -167,7 +169,7 @@ export function ResourceCalendar({
         err instanceof Error ? err.message : "Failed to delete record"
       )
     }
-  }
+  })
 
   const hasPk = primaryKeys.length > 0
   const canUpdate = useHasPermission(`${schema}.${resource}:update`)
@@ -175,33 +177,44 @@ export function ResourceCalendar({
 
   return (
     <div className="flex h-full flex-col gap-2">
-      <EventCalendarRoot
-        view={view}
-        events={data}
-        onViewUpdate={(v) =>
-          void navigate({
-            search: (prev: Record<string, unknown>) => ({
-              ...prev,
-              view: v,
-            }),
-          })
-        }
-        onDragEvent={canUpdate ? onDragEvent : undefined}
-        onAddEvent={hasPk ? onAddEvent : undefined}
-        onEventView={hasPk ? onEventView : undefined}
-        onEventDelete={hasPk && canDelete ? onEventDelete : undefined}
-      >
-        <EventCalendarHeader>
-          <EventCalendarNavigation view={view} />
-        </EventCalendarHeader>
-        <EventCalendarContainer>
-          <EventCalendarDayView />
-          <EventCalendarWeekView />
-          <EventCalendarMonthView />
-          <EventCalendarYearView />
-          <EventCalendarAgendaView />
-        </EventCalendarContainer>
-      </EventCalendarRoot>
+      <div className="rounded-xl bg-card">
+        <EventCalendarRoot
+          view={view}
+          events={data}
+          onViewUpdate={(v) =>
+            void navigate({
+              search: (prev: Record<string, unknown>) => ({
+                ...prev,
+                view: v,
+              }),
+            })
+          }
+          onDragEvent={canUpdate ? onDragEvent : undefined}
+          onAddEvent={hasPk ? onAddEvent : undefined}
+          onEventView={hasPk ? onEventView : undefined}
+          onEventDelete={
+            hasPk && canDelete ? deleteConfirm.requestDelete : undefined
+          }
+        >
+          <EventCalendarHeader>
+            <EventCalendarNavigation view={view} />
+          </EventCalendarHeader>
+          <EventCalendarContainer>
+            <EventCalendarDayView />
+            <EventCalendarWeekView />
+            <EventCalendarMonthView />
+            <EventCalendarYearView />
+            <EventCalendarAgendaView />
+          </EventCalendarContainer>
+        </EventCalendarRoot>
+      </div>
+      <ConfirmDeleteDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => !open && deleteConfirm.cancel()}
+        onConfirm={deleteConfirm.confirm}
+        title="Delete record?"
+        pending={deleteConfirm.pending}
+      />
     </div>
   )
 }

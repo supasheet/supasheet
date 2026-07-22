@@ -63,7 +63,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-11 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-1.5 text-sm font-medium">
           <TableIcon className="size-4" />
           <span>{appName}</span>

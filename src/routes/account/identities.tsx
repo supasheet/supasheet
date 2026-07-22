@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { IdentityEmailCard } from "#/components/account/identity-email-card"
 import { IdentityProvidersCard } from "#/components/account/identity-providers-card"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { PageContainer } from "#/components/layouts/page-container"
 import { pageTitle } from "#/lib/page-title"
 import { identitiesQueryOptions } from "#/lib/supabase/data/identities"
 
@@ -20,10 +21,10 @@ function IdentitiesPage() {
       <DefaultHeader
         breadcrumbs={[{ title: "Identities", url: "/account/identities" }]}
       />
-      <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
+      <PageContainer size="narrow">
         <IdentityEmailCard />
         <IdentityProvidersCard />
-      </div>
+      </PageContainer>
     </div>
   )
 }

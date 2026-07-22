@@ -29,7 +29,8 @@ export function UserEditForm({ user }: { user: AuthUser }) {
       })
       toast.success("User updated")
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Failed to update user"),
   })
 
   const form = useForm({

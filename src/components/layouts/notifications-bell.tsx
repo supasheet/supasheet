@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 
+import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Badge } from "#/components/ui/badge"
 import { Button } from "#/components/ui/button"
 import {
@@ -36,6 +37,7 @@ import {
   SheetTrigger,
 } from "#/components/ui/sheet"
 import { Skeleton } from "#/components/ui/skeleton"
+import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
 import { useIsMobile } from "#/hooks/use-mobile"
 import type { UserNotificationRow } from "#/lib/supabase/data/core"
 import {
@@ -111,7 +113,10 @@ function MarkAllReadButton({ unreadCount }: { unreadCount: number }) {
       queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_KEY })
       toast.success("All notifications marked as read")
     },
-    onError: (e) => toast.error(e.message),
+    onError: (e) =>
+      toast.error(
+        e instanceof Error ? e.message : "Failed to mark notifications as read"
+      ),
   })
 
   return (
@@ -149,17 +154,29 @@ function NotificationsList({ onNavigate }: { onNavigate: () => void }) {
   const markRead = useMutation({
     ...markNotificationReadMutationOptions,
     onSuccess: invalidate,
-    onError: (e) => toast.error(e.message),
+    onError: (e) =>
+      toast.error(
+        e instanceof Error ? e.message : "Failed to mark notification as read"
+      ),
   })
   const archive = useMutation({
     ...archiveNotificationMutationOptions,
     onSuccess: invalidate,
-    onError: (e) => toast.error(e.message),
+    onError: (e) =>
+      toast.error(
+        e instanceof Error ? e.message : "Failed to archive notification"
+      ),
   })
   const remove = useMutation({
     ...deleteNotificationMutationOptions,
     onSuccess: invalidate,
-    onError: (e) => toast.error(e.message),
+    onError: (e) =>
+      toast.error(
+        e instanceof Error ? e.message : "Failed to delete notification"
+      ),
+  })
+  const deleteConfirm = useDeleteConfirm((id: string) => {
+    remove.mutate(id)
   })
 
   if (notifications.length === 0) {
@@ -181,23 +198,32 @@ function NotificationsList({ onNavigate }: { onNavigate: () => void }) {
   }
 
   return (
-    <ul className="flex flex-1 flex-col gap-2 overflow-y-auto p-4">
-      {notifications.map((item) => (
-        <NotificationItem
-          key={item.id}
-          item={item}
-          onOpen={() => {
-            if (!item.notification.link) return
-            if (!item.read_at) markRead.mutate(item.id)
-            router.history.push(item.notification.link)
-            onNavigate()
-          }}
-          onMarkRead={() => markRead.mutate(item.id)}
-          onArchive={() => archive.mutate(item.id)}
-          onDelete={() => remove.mutate(item.id)}
-        />
-      ))}
-    </ul>
+    <>
+      <ul className="flex flex-1 flex-col gap-2 overflow-y-auto p-4">
+        {notifications.map((item) => (
+          <NotificationItem
+            key={item.id}
+            item={item}
+            onOpen={() => {
+              if (!item.notification.link) return
+              if (!item.read_at) markRead.mutate(item.id)
+              router.history.push(item.notification.link)
+              onNavigate()
+            }}
+            onMarkRead={() => markRead.mutate(item.id)}
+            onArchive={() => archive.mutate(item.id)}
+            onDelete={() => deleteConfirm.requestDelete(item.id)}
+          />
+        ))}
+      </ul>
+      <ConfirmDeleteDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => !open && deleteConfirm.cancel()}
+        onConfirm={deleteConfirm.confirm}
+        title="Delete notification?"
+        pending={deleteConfirm.pending}
+      />
+    </>
   )
 }
 

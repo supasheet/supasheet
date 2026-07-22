@@ -15,7 +15,7 @@ import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
 export function Card4Skeleton() {
   return (
-    <Card>
+    <Card className="@container/card">
       <CardHeader>
         <Skeleton className="h-3 w-24" />
         <div className="flex items-baseline gap-2">
@@ -48,11 +48,13 @@ export function Card4<S extends DatabaseSchemas>({
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0
 
   return (
-    <Card>
+    <Card className="@container/card">
       <CardHeader>
         <CardDescription>{widget.name}</CardDescription>
         <div className="flex items-baseline gap-2">
-          <CardTitle className="text-3xl font-bold">{current}</CardTitle>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            {current}
+          </CardTitle>
           <span className="text-sm text-muted-foreground">/ {total}</span>
         </div>
       </CardHeader>

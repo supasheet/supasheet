@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 
+import { Card, CardContent, CardHeader } from "#/components/ui/card"
 import { Skeleton } from "#/components/ui/skeleton"
 import type { ChartMeta, DatabaseSchemas } from "#/lib/database-meta.types"
 import { chartDataQueryOptions } from "#/lib/supabase/data/chart"
@@ -13,15 +14,15 @@ import { RadarChartWidget } from "./radar-chart"
 
 export function ChartSkeleton() {
   return (
-    <div className="col-span-2 rounded-xl border bg-card p-6">
-      <div className="mb-4 flex items-center justify-between">
+    <Card className="col-span-2">
+      <CardHeader>
         <Skeleton className="h-5 w-24" />
-      </div>
-      <Skeleton className="mb-2 h-4 w-40" />
-      <div className="mt-4">
+        <Skeleton className="h-4 w-40" />
+      </CardHeader>
+      <CardContent>
         <Skeleton className="h-40 w-full" />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 

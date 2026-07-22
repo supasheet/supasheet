@@ -115,7 +115,7 @@ export function SignInForm() {
                 !value
                   ? "Email is required"
                   : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                    ? "Invalid email"
+                    ? "Enter a valid email address"
                     : undefined,
             }}
           >
@@ -176,7 +176,7 @@ export function SignInForm() {
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Signing in..." : "Sign in"}
+                {isSubmitting ? "Signing in…" : "Sign in"}
               </Button>
             )}
           </form.Subscribe>

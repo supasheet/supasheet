@@ -85,7 +85,7 @@ export function IdentityProvidersCard() {
     ...linkIdentityMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth", "identities"] })
-      toast.success("Identity linked successfully")
+      toast.success("Identity linked")
     },
     onError: (err) => {
       toast.error(

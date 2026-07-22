@@ -110,7 +110,7 @@ export const Route = createFileRoute(
                 }).map((__, row) => (
                   <div
                     key={row}
-                    className="flex flex-col gap-2 rounded-md border bg-card p-3 shadow-xs"
+                    className="flex flex-col gap-2 rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <Skeleton className="h-4 w-3/4" />

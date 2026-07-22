@@ -358,9 +358,7 @@ function RouteComponent() {
                     ) : (
                       <FilterIcon className="size-4 shrink-0 text-muted-foreground" />
                     )}
-                    <CardTitle className="truncate text-sm font-medium">
-                      {preset.name}
-                    </CardTitle>
+                    <CardTitle className="truncate">{preset.name}</CardTitle>
                   </div>
                   <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
                 </CardHeader>

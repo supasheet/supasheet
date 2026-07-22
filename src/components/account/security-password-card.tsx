@@ -21,7 +21,7 @@ export function SecurityPasswordCard() {
   const { mutateAsync: updatePassword } = useMutation({
     ...updatePasswordMutationOptions,
     onSuccess: () => {
-      toast.success("Password updated successfully")
+      toast.success("Password updated")
     },
     onError: (err) => {
       toast.error(
@@ -132,7 +132,7 @@ export function SecurityPasswordCard() {
                 size="sm"
                 disabled={!isDirty || !canSubmit || isSubmitting}
               >
-                {isSubmitting ? "Saving…" : "Update password"}
+                {isSubmitting ? "Saving…" : "Save password"}
               </Button>
             )}
           </form.Subscribe>

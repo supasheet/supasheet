@@ -76,7 +76,7 @@ export function FileActionsMenu({
       toast.success(`"${item.name}" deleted`)
       onNavigate?.()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed")
+      toast.error(err instanceof Error ? err.message : "Failed to delete item")
     } finally {
       setDeleteOpen(false)
     }
@@ -110,7 +110,9 @@ export function FileActionsMenu({
       a.click()
       URL.revokeObjectURL(url)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Download failed")
+      toast.error(
+        err instanceof Error ? err.message : "Failed to download item"
+      )
     }
   }
 
@@ -196,7 +198,7 @@ export function FileActionsMenu({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              variant="destructive"
               onClick={handleDelete}
               disabled={isDeleting}
             >

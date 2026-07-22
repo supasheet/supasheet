@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { SecurityMfaCard } from "#/components/account/security-mfa-card"
 import { SecurityPasswordCard } from "#/components/account/security-password-card"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { PageContainer } from "#/components/layouts/page-container"
 import { pageTitle } from "#/lib/page-title"
 import { mfaFactorsQueryOptions } from "#/lib/supabase/data/security"
 
@@ -20,10 +21,10 @@ function SecurityPage() {
       <DefaultHeader
         breadcrumbs={[{ title: "Security", url: "/account/security" }]}
       />
-      <div className="mx-auto w-full max-w-2xl space-y-4 p-6">
+      <PageContainer size="narrow">
         <SecurityPasswordCard />
         <SecurityMfaCard />
-      </div>
+      </PageContainer>
     </div>
   )
 }

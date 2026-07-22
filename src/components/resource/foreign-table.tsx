@@ -146,7 +146,7 @@ export function ForeignTableSheet({
                     <line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
                 </EmptyMedia>
-                <EmptyTitle>Access Denied</EmptyTitle>
+                <EmptyTitle>Access denied</EmptyTitle>
               </EmptyHeader>
               <EmptyContent>
                 <EmptyDescription>

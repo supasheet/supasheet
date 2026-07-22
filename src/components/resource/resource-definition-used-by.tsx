@@ -16,7 +16,7 @@ export function ResourceDefinitionUsedBy({
   if (resources.length === 0) return null
   return (
     <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-      <span className="text-xs font-medium text-muted-foreground uppercase">
+      <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
         Used by
       </span>
       {resources.map((r) => (

@@ -14,7 +14,7 @@ import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
 export function Card2Skeleton() {
   return (
-    <Card>
+    <Card size="sm">
       <CardHeader>
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-3 w-32" />
@@ -55,10 +55,10 @@ export function Card2<S extends DatabaseSchemas>({
   const secondaryLabel = widgetData.secondary_label ?? "Secondary"
 
   return (
-    <Card>
+    <Card size="sm">
       <CardHeader>
         <div>
-          <CardTitle className="text-sm font-medium">{widget.name}</CardTitle>
+          <CardTitle>{widget.name}</CardTitle>
           <CardDescription>{widget.description}</CardDescription>
         </div>
       </CardHeader>

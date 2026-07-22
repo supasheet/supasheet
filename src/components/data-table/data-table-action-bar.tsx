@@ -105,7 +105,7 @@ export function DataTableActionBar<TData>({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirm}>
+            <AlertDialogAction variant="destructive" onClick={handleConfirm}>
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
