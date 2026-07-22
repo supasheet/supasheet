@@ -9,10 +9,13 @@ import {
 } from "@tanstack/react-router"
 import type { ErrorComponentProps } from "@tanstack/react-router"
 
+import { useSuspenseQuery } from "@tanstack/react-query"
+
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { addEmbedKeys } from "#/components/resource/detail/add-embed-keys"
+import { ResourceDetailHeader } from "#/components/resource/detail/resource-detail-header"
 import { ResourceRecordActions } from "#/components/resource/resource-record-actions"
 import { Button } from "#/components/ui/button"
 import { Card, CardContent, CardHeader } from "#/components/ui/card"
@@ -29,7 +32,10 @@ import type { TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import { relatedTablesSchemaQueryOptions } from "#/lib/supabase/data/resource"
+import {
+  relatedTablesSchemaQueryOptions,
+  singleResourceDataQueryOptions,
+} from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/detail"
@@ -50,7 +56,7 @@ export const Route = createFileRoute(
     return { tableSchema, resourceSchema: undefined }
   },
   loader: async ({ context, params }) => {
-    const { schema, resource } = params
+    const { schema, resource, resourceId } = params
     const relatedTablesSchema = await context.queryClient.ensureQueryData(
       relatedTablesSchemaQueryOptions(schema, resource)
     )
@@ -58,6 +64,12 @@ export const Route = createFileRoute(
     const primaryKeys = context.tableSchema.primary_keys ?? []
     if (primaryKeys?.length === 0) throw notFound()
     const pkName = primaryKeys[0].name
+
+    context.queryClient.ensureQueryData(
+      singleResourceDataQueryOptions(schema, resource, {
+        [pkName]: resourceId,
+      })
+    )
 
     const metaJoins = (
       JSON.parse(context.tableSchema.comment ?? "{}") as TableMetadata
@@ -201,10 +213,14 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const { embeddedTables } = Route.useLoaderData()
-  const { tableSchema } = Route.useRouteContext()
+  const { embeddedTables, pkName } = Route.useLoaderData()
+  const { tableSchema, columnsSchema } = Route.useRouteContext()
   const location = useLocation()
   const navigate = useNavigate()
+
+  const { data: record } = useSuspenseQuery(
+    singleResourceDataQueryOptions(schema, resource, { [pkName]: resourceId })
+  )
 
   const tableMeta = JSON.parse(tableSchema.comment ?? "{}") as TableMetadata
   const resourceDisplayName = tableMeta.name ?? formatTitle(resource)
@@ -252,6 +268,14 @@ function RouteComponent() {
       </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="mx-auto w-full max-w-5xl px-4 py-4">
+          {record && (
+            <ResourceDetailHeader
+              resourceSchema={tableSchema}
+              columnsSchema={columnsSchema ?? []}
+              record={record}
+              fallbackId={resourceId}
+            />
+          )}
           {tabs.length > 1 ? (
             <Tabs
               value={currentTab}
@@ -262,7 +286,7 @@ function RouteComponent() {
               className="mb-4"
             >
               <div className="w-full overflow-x-auto">
-                <TabsList variant="line">
+                <TabsList>
                   {tabs.map((t) => (
                     <TabsTrigger key={t.id} value={t.id}>
                       {t.label}

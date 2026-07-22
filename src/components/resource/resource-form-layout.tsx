@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
@@ -18,8 +17,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "#/components/ui/collapsible"
-import { Field, FieldLabel } from "#/components/ui/field"
-import { Input } from "#/components/ui/input"
 import type {
   ColumnSchema,
   FormMode,
@@ -36,14 +33,11 @@ import {
   getColumnFieldSpan,
 } from "./resource-form-utils"
 
-type PrimaryKeyDisplay = { name: string; value: string }
-
 type ResourceFormLayoutProps = {
   tableSchema: TableSchema
   writableCols: ColumnSchema[]
   form: ResourceFormApi
   mode: FormMode
-  primaryKeyDisplay?: PrimaryKeyDisplay[]
   headerTitle: string
   saveOnly?: boolean
 }
@@ -53,7 +47,6 @@ export function ResourceFormLayout({
   writableCols,
   form,
   mode,
-  primaryKeyDisplay,
   headerTitle,
   saveOnly,
 }: ResourceFormLayoutProps) {
@@ -133,26 +126,14 @@ export function ResourceFormLayout({
     </div>
   )
 
-  // Fallback: no layout metadata. Preserve the original single-card UX so
-  // unmigrated tables don't change visually.
   if (!plan) {
     return (
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-5xl space-y-4">
         <Card>
-          <CardHeader className="border-b">
+          <CardHeader>
             <CardTitle>{headerTitle}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
-            {primaryKeyDisplay?.map((pk) => (
-              <Field key={pk.name} className="md:col-span-2">
-                <FieldLabel>{pk.name}</FieldLabel>
-                <Input
-                  value={pk.value}
-                  disabled
-                  className="font-mono text-xs text-muted-foreground"
-                />
-              </Field>
-            ))}
             {writableCols.map((col) => {
               const span = getColumnFieldSpan(col, tableSchema)
               const spanClass = span === 2 ? "md:col-span-2" : undefined
@@ -167,41 +148,14 @@ export function ResourceFormLayout({
               )
             })}
           </CardContent>
-          <CardFooter className="flex-wrap justify-end gap-2 border-t pt-4">
-            <Button type="button" variant="outline" onClick={handleCancel}>
-              Cancel
-            </Button>
-            {submitButtons}
-          </CardFooter>
         </Card>
+        {footer}
       </div>
     )
   }
 
-  const pkCard =
-    primaryKeyDisplay && primaryKeyDisplay.length ? (
-      <Card>
-        <CardHeader>
-          <CardTitle>Identifiers</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">
-          {primaryKeyDisplay.map((pk) => (
-            <Field key={pk.name} className="md:col-span-2">
-              <FieldLabel>{pk.name}</FieldLabel>
-              <Input
-                value={pk.value}
-                disabled
-                className="font-mono text-xs text-muted-foreground"
-              />
-            </Field>
-          ))}
-        </CardContent>
-      </Card>
-    ) : null
-
   return (
     <div className="mx-auto w-full max-w-5xl space-y-4">
-      {pkCard}
       {plan.sections.map((s) => (
         <SectionCard
           key={s.id}

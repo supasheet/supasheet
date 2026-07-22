@@ -11,6 +11,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { ResourceDetailHeader } from "#/components/resource/detail/resource-detail-header"
 import { ResourceNewForm } from "#/components/resource/resource-new-form"
 import { ResourceSingle } from "#/components/resource/resource-single"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"
@@ -188,11 +189,26 @@ function RouteComponent() {
   )
   const record = data?.result[0]
 
+  const fallbackId =
+    record && primaryKeys.length > 0
+      ? primaryKeys.map((k) => String(record[k.name] ?? "")).join(" / ")
+      : null
+
   return (
     <>
       <DefaultHeader breadcrumbs={[{ title: resourceDisplayName }]} />
       <div className="flex flex-1 flex-col">
         <div className="mx-auto w-full max-w-7xl px-4 py-4">
+          {record && fallbackId && (
+            <div className="mx-auto w-full max-w-5xl">
+              <ResourceDetailHeader
+                resourceSchema={resourceSchema}
+                columnsSchema={columnsSchema}
+                record={record}
+                fallbackId={fallbackId}
+              />
+            </div>
+          )}
           {tableSchema ? (
             record ? (
               <ResourceUpdateForm

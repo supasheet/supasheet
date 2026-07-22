@@ -222,6 +222,11 @@ export type ViewLayout =
 
 export type ViewLayoutType = ViewLayout["type"]
 
+export type DetailHeaderMeta = {
+  title?: ColumnName
+  badges?: ColumnName[]
+}
+
 export type FilterPreset = {
   id: string
   name: string
@@ -255,6 +260,7 @@ type BaseResourceMetadata = {
   views?: ViewLayout[]
   filter_presets?: FilterPreset[]
   fields?: FieldsConfig
+  detail?: DetailHeaderMeta
 }
 
 export type TableMetadata = BaseResourceMetadata & {

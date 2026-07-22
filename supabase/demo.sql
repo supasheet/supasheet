@@ -152,6 +152,10 @@ comment on table demo.clients is '{
     "icon": "Building2",
     "display": "block",
     "primary_view": "kanban",
+    "detail": {
+        "title": "name",
+        "badges": ["status", "tags"]
+    },
     "views": [
         {
             "id": "kanban",
@@ -288,6 +292,10 @@ comment on table demo.team_members is '{
     "icon": "Users",
     "display": "block",
     "primary_view": "tree",
+    "detail": {
+        "title": "name",
+        "badges": ["department", "employment_status"]
+    },
     "views": [
         {
             "id": "tree",
@@ -490,6 +498,10 @@ comment on table demo.projects is '{
     "display": "block",
     "primary_view": "kanban",
     "tabs": ["tasks", "milestones", "invoices", "project_members"],
+    "detail": {
+        "title": "name",
+        "badges": ["status", "priority", "tags"]
+    },
     "views": [
         {
             "id": "kanban",
@@ -686,6 +698,10 @@ comment on table demo.milestones is '{
     "icon": "Milestone",
     "display": "block",
     "primary_view": "calendar",
+    "detail": {
+        "title": "title",
+        "badges": ["status"]
+    },
     "views": [
         {
             "id": "calendar",
@@ -810,6 +826,10 @@ comment on table demo.tasks is '{
     "icon": "ListTodo",
     "display": "block",
     "primary_view": "kanban",
+    "detail": {
+        "title": "title",
+        "badges": ["status", "priority", "tags"]
+    },
     "views": [
         {
             "id": "kanban",
@@ -971,6 +991,10 @@ comment on table demo.portfolio_items is '{
     "icon": "Image",
     "display": "block",
     "primary_view": "gallery",
+    "detail": {
+        "title": "title",
+        "badges": ["category", "tags"]
+    },
     "views": [
         {
             "id": "gallery",
@@ -1091,6 +1115,10 @@ comment on table demo.services is '{
     "icon": "Wrench",
     "display": "block",
     "primary_view": "list",
+    "detail": {
+        "title": "name",
+        "badges": ["category"]
+    },
     "views": [
         {
             "id": "list",
@@ -1200,6 +1228,10 @@ comment on table demo.invoices is '{
     "display": "block",
     "primary_view": "kanban",
     "tabs": ["invoice_items"],
+    "detail": {
+        "title": "invoice_number",
+        "badges": ["status"]
+    },
     "views": [
         {
             "id": "kanban",

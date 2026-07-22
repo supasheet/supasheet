@@ -45,9 +45,6 @@ export function ResourceUpdateForm({
     primaryKeys.map((k) => [k.name, record[k.name]])
   )
 
-  const primaryKeyCols = columnsSchema.filter((col) =>
-    primaryKeys.some((key) => key.name === col.name)
-  )
   const editableCols = columnsSchema.filter(
     (col) => !isSkippedForUpdate(col, primaryKeys) && (col.is_updatable ?? true)
   )
@@ -84,11 +81,6 @@ export function ResourceUpdateForm({
     },
   })
 
-  const primaryKeyDisplay = primaryKeyCols.map((col) => {
-    const name = col.name ?? col.id ?? ""
-    return { name, value: String(record[name] ?? "") }
-  })
-
   return (
     <form
       onSubmit={(e) => {
@@ -101,7 +93,6 @@ export function ResourceUpdateForm({
         writableCols={editableCols}
         form={form}
         mode="update"
-        primaryKeyDisplay={primaryKeyDisplay}
         headerTitle="Edit record"
         saveOnly={saveOnly}
       />
