@@ -193,6 +193,7 @@ export function getColumnMetadata(
 
   const baseOptions = {
     name,
+    description: commentMeta.description,
     defaultValue,
     disabled,
     required,

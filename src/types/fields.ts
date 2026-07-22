@@ -31,6 +31,7 @@ export type ColumnFieldMetadata = {
     | "array"
   filterVariant: FilterVariant
   icon: ReactElement | null
+  description?: string
   defaultValue: string | null
   required: boolean
   disabled: boolean

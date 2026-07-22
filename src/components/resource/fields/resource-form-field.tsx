@@ -117,10 +117,8 @@ export function ResourceFormField<S extends DatabaseSchemas>({
               <AllFields columnMetadata={columnMetadata} />
             )}
           </div>
-          {columnMetadata.defaultValue && (
-            <FieldDescription>
-              DEFAULT: {columnMetadata.defaultValue}
-            </FieldDescription>
+          {columnMetadata.description && (
+            <FieldDescription>{columnMetadata.description}</FieldDescription>
           )}
           <FieldErrors />
         </Field>
