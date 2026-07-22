@@ -10,10 +10,10 @@ enabled = true
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-schemas = ["public", "graphql_public", "supasheet", "demo"]
+schemas = ["public", "graphql_public", "supasheet"]
 # schemas = ["public", "graphql_public", "supasheet", "desk", "blog", "store", "crm", "hr", "finance", "inventory", "manufacturing", "procurement", "quality", "lms", "hostel", "demo"]
 # Extra schemas to add to the search_path of every request.
-extra_search_path = ["public", "extensions", "supasheet", "demo"]
+extra_search_path = ["public", "extensions", "supasheet"]
 # extra_search_path = ["public", "extensions", "supasheet", "desk", "blog", "store", "crm", "hr", "finance", "inventory", "manufacturing", "procurement", "quality", "lms", "hostel", "demo"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
 # for accidental or malicious requests.
