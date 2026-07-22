@@ -133,7 +133,9 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
           <SheetTitle>
             {columnFilters.length > 0 ? "Filters" : "No filters applied"}
           </SheetTitle>
-          <SheetDescription className={cn(columnFilters.length > 0 && "sr-only")}>
+          <SheetDescription
+            className={cn(columnFilters.length > 0 && "sr-only")}
+          >
             Add filters to refine your rows.
           </SheetDescription>
         </SheetHeader>
@@ -146,8 +148,12 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
                   key={filter.id}
                   filter={filter}
                   filterableColumns={filterableColumns}
-                  onUpdate={(newEncoded) => onFilterUpdate(filter.id, newEncoded)}
-                  onFieldChange={(newId) => onFilterFieldChange(filter.id, newId)}
+                  onUpdate={(newEncoded) =>
+                    onFilterUpdate(filter.id, newEncoded)
+                  }
+                  onFieldChange={(newId) =>
+                    onFilterFieldChange(filter.id, newId)
+                  }
                   onRemove={() => onFilterRemove(filter.id)}
                 />
               ))}
@@ -293,7 +299,12 @@ function DataTableFilterItem<TData>({
       </div>
 
       {/* Remove */}
-      <Button variant="outline" size="icon-sm" onClick={onRemove} className="shrink-0">
+      <Button
+        variant="outline"
+        size="icon-sm"
+        onClick={onRemove}
+        className="shrink-0"
+      >
         <Trash2Icon />
       </Button>
     </div>
