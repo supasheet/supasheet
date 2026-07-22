@@ -150,9 +150,9 @@ export function getColumnMetadata(
     <ColumnIcon className="size-4 shrink-0 text-muted-foreground" />
   ) : null
 
-  const format = columnSchema.format?.startsWith("_")
-    ? columnSchema.format?.slice(1)
-    : columnSchema.format
+  const dataType = columnSchema.data_type?.startsWith("_")
+    ? columnSchema.data_type?.slice(1)
+    : columnSchema.data_type
 
   let defaultValue: string | null = null
 
@@ -212,7 +212,7 @@ export function getColumnMetadata(
       })) ?? [],
   }
 
-  if (format === "file") {
+  if (dataType === "file") {
     return {
       ...baseOptions,
       isArray: false, // special case for file upload
@@ -224,7 +224,7 @@ export function getColumnMetadata(
     }
   }
 
-  if (format === "avatar") {
+  if (dataType === "avatar") {
     return {
       ...baseOptions,
       variant: "avatar",
@@ -246,7 +246,7 @@ export function getColumnMetadata(
     }
   }
 
-  switch (format) {
+  switch (dataType) {
     case "email":
       return {
         ...baseOptions,
