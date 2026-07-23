@@ -12,7 +12,7 @@ import type {
   TableMetadata,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
-import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
+import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
 import { ResourceColumnHeader } from "./resource-column-header"
 import { ResourceRowActions } from "./resource-row-actions"
@@ -25,7 +25,7 @@ export function getResourceTableColumns({
 }: {
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
-  actions?: ResourceActionSchema[]
+  actions?: ResourceActionRow[]
 }) {
   const tableSchema = isTableSchema(resourceSchema) ? resourceSchema : null
 

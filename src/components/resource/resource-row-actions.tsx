@@ -14,20 +14,23 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
-import { useResourceRowActions } from "#/hooks/use-resource-row-actions"
+import {
+  getActionMeta,
+  useResourceRowActions,
+} from "#/hooks/use-resource-row-actions"
 import type {
   ColumnSchema,
   EnumColumnMetadata,
   IconName,
 } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
-import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
+import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
 interface ResourceRowActionsProps {
   schema: string
   resource: string
   record: Record<string, unknown>
-  actions: ResourceActionSchema[]
+  actions: ResourceActionRow[]
   columnsSchema?: ColumnSchema[]
   variant?: "compact" | "menu"
 }
@@ -82,22 +85,31 @@ export function ResourceRowActions({
   const singleAction =
     variant === "menu" &&
     visibleActions.length === 1 &&
-    visibleActions[0].action_type !== "picker"
+    getActionMeta(visibleActions[0]).action_type !== "picker"
       ? visibleActions[0]
       : null
+  const singleActionMeta = singleAction ? getActionMeta(singleAction) : null
+
+  const confirmMeta = confirm.target
+    ? getActionMeta(confirm.target.action)
+    : null
 
   return (
     <>
-      {singleAction ? (
+      {singleAction && singleActionMeta ? (
         <Button
           size="sm"
           variant={
-            singleAction.variant === "destructive" ? "destructive" : "outline"
+            singleActionMeta.variant === "destructive"
+              ? "destructive"
+              : "outline"
           }
           onClick={() => selectAction(singleAction)}
         >
-          {singleAction.icon && <DynamicIcon iconName={singleAction.icon} />}
-          {singleAction.name}
+          {singleActionMeta.icon && (
+            <DynamicIcon iconName={singleActionMeta.icon} />
+          )}
+          {singleActionMeta.name}
         </Button>
       ) : (
         <DropdownMenu>
@@ -121,17 +133,19 @@ export function ResourceRowActions({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
             {visibleActions.map((action) => {
-              if (action.action_type === "picker") {
+              const meta = getActionMeta(action)
+
+              if (meta.action_type === "picker") {
                 const col = getPickerColumn(action)
                 const options = getEnumOptions(col)
                 const columnName = col?.name ?? col?.id
                 const currentValue = columnName ? record[columnName] : null
 
                 return (
-                  <DropdownMenuSub key={action.function_name}>
+                  <DropdownMenuSub key={action.name}>
                     <DropdownMenuSubTrigger>
-                      {action.icon && <DynamicIcon iconName={action.icon} />}
-                      {action.name}
+                      {meta.icon && <DynamicIcon iconName={meta.icon} />}
+                      {meta.name}
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       <DropdownMenuRadioGroup
@@ -157,14 +171,14 @@ export function ResourceRowActions({
 
               return (
                 <DropdownMenuItem
-                  key={action.function_name}
+                  key={action.name}
                   variant={
-                    action.variant === "destructive" ? "destructive" : "default"
+                    meta.variant === "destructive" ? "destructive" : "default"
                   }
                   onClick={() => selectAction(action)}
                 >
-                  {action.icon && <DynamicIcon iconName={action.icon} />}
-                  {action.name}
+                  {meta.icon && <DynamicIcon iconName={meta.icon} />}
+                  {meta.name}
                 </DropdownMenuItem>
               )
             })}
@@ -177,13 +191,10 @@ export function ResourceRowActions({
         onOpenChange={(open) => !open && confirm.cancel()}
         onConfirm={confirm.confirm}
         pending={confirm.pending}
-        title={
-          confirm.target?.action.confirm?.title ??
-          `${confirm.target?.action.name}?`
-        }
-        description={confirm.target?.action.confirm?.description}
-        confirmLabel={confirm.target?.action.name ?? "Confirm"}
-        destructive={confirm.target?.action.variant === "destructive"}
+        title={confirmMeta?.confirm?.title ?? `${confirmMeta?.name}?`}
+        description={confirmMeta?.confirm?.description}
+        confirmLabel={confirmMeta?.name ?? "Confirm"}
+        destructive={confirmMeta?.variant === "destructive"}
       />
     </>
   )

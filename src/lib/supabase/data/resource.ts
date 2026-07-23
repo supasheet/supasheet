@@ -8,7 +8,6 @@ import type {
   DatabaseSchemas,
   DatabaseTables,
   DatabaseViews,
-  RowActionMeta,
   TableMetadata,
   TableSchema,
   ViewMetadata,
@@ -683,12 +682,12 @@ export const relatedTablesSchemaQueryOptions = <S extends DatabaseSchemas>(
     staleTime: 1000 * 60 * 5,
   })
 
-export type ResourceActionSchema<S extends DatabaseSchemas = DatabaseSchemas> =
-  {
-    schema: S
-    function_name: string
-    arguments: string
-  } & RowActionMeta
+export type ResourceActionRow<S extends DatabaseSchemas = DatabaseSchemas> = {
+  schema: S
+  name: string
+  arguments: string
+  comment: string | null
+}
 
 export const resourceActionsQueryOptions = <S extends DatabaseSchemas>(
   schema: S,
@@ -705,18 +704,7 @@ export const resourceActionsQueryOptions = <S extends DatabaseSchemas>(
         .schema("supasheet")
         .rpc("get_actions", args)
       if (error) throw error
-
-      return data.map((row) => {
-        const meta = (
-          row.comment ? JSON.parse(row.comment) : {}
-        ) as RowActionMeta
-        return {
-          schema: row.schema,
-          function_name: row.name,
-          arguments: row.arguments,
-          ...meta,
-        } as ResourceActionSchema<typeof schema>
-      })
+      return (data ?? []) as unknown as ResourceActionRow<S>[]
     },
     staleTime: 1000 * 60 * 5,
   })

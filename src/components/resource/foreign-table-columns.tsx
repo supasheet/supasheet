@@ -5,7 +5,7 @@ import type {
   ColumnSchema,
   ResourceDataSchema,
 } from "#/lib/database-meta.types"
-import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
+import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
 import { ResourceRowActions } from "./resource-row-actions"
 
@@ -20,7 +20,7 @@ export function foreignTableColumns({
   resource: string
   columnsSchema: ColumnSchema[]
   setRecord: (record: ResourceDataSchema) => void
-  actions?: ResourceActionSchema[]
+  actions?: ResourceActionRow[]
 }) {
   const cols: ColumnDef<ResourceDataSchema, unknown>[] = []
 

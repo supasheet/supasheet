@@ -4,9 +4,13 @@ import { toast } from "sonner"
 
 import { evaluateConditionalField } from "#/components/resource/resource-form-utils"
 import { useConfirmAction } from "#/hooks/use-confirm-action"
-import type { ColumnSchema } from "#/lib/database-meta.types"
-import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
+import type { ColumnSchema, RowActionMeta } from "#/lib/database-meta.types"
+import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 import { runResourceActionMutationOptions } from "#/lib/supabase/data/resource"
+
+export function getActionMeta(action: ResourceActionRow): RowActionMeta {
+  return (action.comment ? JSON.parse(action.comment) : {}) as RowActionMeta
+}
 
 function argParamNames(argumentsText: string): string[] {
   return argumentsText
@@ -35,7 +39,7 @@ function resolveActionParams(
   return resolved
 }
 
-type ConfirmTarget = { action: ResourceActionSchema; value?: string }
+type ConfirmTarget = { action: ResourceActionRow; value?: string }
 
 export function useResourceRowActions({
   schema,
@@ -47,7 +51,7 @@ export function useResourceRowActions({
   schema: string
   resource: string
   record: Record<string, unknown>
-  actions: ResourceActionSchema[]
+  actions: ResourceActionRow[]
   columnsSchema?: ColumnSchema[]
 }) {
   const queryClient = useQueryClient()
@@ -55,16 +59,15 @@ export function useResourceRowActions({
     runResourceActionMutationOptions()
   )
 
-  const visibleActions = actions.filter(
-    (action) =>
-      !action.visible?.length ||
-      evaluateConditionalField(action.visible, record)
-  )
+  const visibleActions = actions.filter((action) => {
+    const visible = getActionMeta(action).visible
+    return !visible?.length || evaluateConditionalField(visible, record)
+  })
 
   function getPickerColumn(
-    action: ResourceActionSchema
+    action: ResourceActionRow
   ): ColumnSchema | undefined {
-    if (action.action_type !== "picker") return undefined
+    if (getActionMeta(action).action_type !== "picker") return undefined
     for (const paramName of argParamNames(action.arguments)) {
       const columnName = paramName.startsWith("p_")
         ? paramName.slice(2)
@@ -75,7 +78,8 @@ export function useResourceRowActions({
     return undefined
   }
 
-  async function runAction(action: ResourceActionSchema, value?: string) {
+  async function runAction(action: ResourceActionRow, value?: string) {
+    const meta = getActionMeta(action)
     const pickerColumn =
       value !== undefined ? getPickerColumn(action) : undefined
     const paramsRecord = pickerColumn
@@ -84,16 +88,16 @@ export function useResourceRowActions({
     try {
       await runResourceAction({
         schema: action.schema,
-        functionName: action.function_name,
+        functionName: action.name,
         params: resolveActionParams(action.arguments, paramsRecord),
       })
       queryClient.invalidateQueries({
         queryKey: ["supasheet", "resource-data", schema, resource],
       })
-      toast.success(action.success_message ?? `${action.name} succeeded`)
+      toast.success(meta.success_message ?? `${meta.name} succeeded`)
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : `Failed to run ${action.name}`
+        err instanceof Error ? err.message : `Failed to run ${meta.name}`
       )
     }
   }
@@ -102,8 +106,8 @@ export function useResourceRowActions({
     runAction(action, value)
   )
 
-  function selectAction(action: ResourceActionSchema, value?: string) {
-    if (action.confirm) {
+  function selectAction(action: ResourceActionRow, value?: string) {
+    if (getActionMeta(action).confirm) {
       confirm.request({ action, value })
     } else {
       runAction(action, value)

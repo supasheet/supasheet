@@ -11,7 +11,7 @@ import { ArrowUpRightIcon } from "lucide-react"
 
 import { Checkbox } from "#/components/ui/checkbox"
 import { getColumnMetadata } from "#/lib/columns"
-import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
+import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
 import { ResourceRowActions } from "../resource-row-actions"
 import { ResourceRowCell } from "../resource-row-cell"
@@ -24,7 +24,7 @@ export function getResourceForeignTableColumns({
 }: {
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
-  actions?: ResourceActionSchema[]
+  actions?: ResourceActionRow[]
 }) {
   const tableSchema = isTableSchema(resourceSchema) ? resourceSchema : null
   const primaryKeys = tableSchema?.primary_keys ?? []
