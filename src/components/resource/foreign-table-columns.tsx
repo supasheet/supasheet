@@ -5,44 +5,15 @@ import type {
   ColumnSchema,
   ResourceDataSchema,
 } from "#/lib/database-meta.types"
-import type { ResourceActionRow } from "#/lib/supabase/data/resource"
-
-import { ResourceRowActions } from "./resource-row-actions"
 
 export function foreignTableColumns({
-  schema,
-  resource,
   columnsSchema,
   setRecord,
-  actions = [],
 }: {
-  schema: string
-  resource: string
   columnsSchema: ColumnSchema[]
   setRecord: (record: ResourceDataSchema) => void
-  actions?: ResourceActionRow[]
 }) {
   const cols: ColumnDef<ResourceDataSchema, unknown>[] = []
-
-  if (actions.length > 0) {
-    cols.push({
-      id: "actions",
-      header: () => null,
-      cell: ({ row }) => (
-        <ResourceRowActions
-          schema={schema}
-          resource={resource}
-          record={row.original}
-          actions={actions}
-          columnsSchema={columnsSchema}
-        />
-      ),
-      size: 40,
-      enableSorting: false,
-      enableHiding: false,
-      enableColumnFilter: false,
-    })
-  }
 
   cols.push(
     ...((columnsSchema ?? []).map((c) => {
