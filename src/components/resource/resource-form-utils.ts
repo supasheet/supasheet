@@ -1,6 +1,7 @@
 import { getColumnMetadata } from "#/lib/columns"
 import type {
   ColumnSchema,
+  EnumColumnMetadata,
   FieldBehavior,
   FieldCondition,
   FieldSection,
@@ -161,6 +162,18 @@ export function getColumnFieldSpan(
   const meta = getColumnMetadata(tableSchema, col)
   if (FULL_WIDTH_VARIANTS.has(meta.variant)) return 2
   return 1
+}
+
+export type ProgressField = { col: ColumnSchema; meta: EnumColumnMetadata }
+
+export function getProgressFields(cols: ColumnSchema[]): ProgressField[] {
+  return cols
+    .map((col) => {
+      const meta = JSON.parse(col.comment ?? "{}") as EnumColumnMetadata
+      if (!meta?.progress || !meta.enums) return null
+      return { col, meta }
+    })
+    .filter((x): x is ProgressField => Boolean(x))
 }
 
 export function getSectionFields(

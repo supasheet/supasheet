@@ -1,9 +1,11 @@
 import { useMemo } from "react"
 
-import { buildLayoutPlan } from "#/components/resource/resource-form-utils"
+import {
+  buildLayoutPlan,
+  getProgressFields,
+} from "#/components/resource/resource-form-utils"
 import type {
   ColumnSchema,
-  EnumColumnMetadata,
   ResourceSchema,
   TableMetadata,
 } from "#/lib/database-meta.types"
@@ -42,15 +44,7 @@ export function ResourceFullDetail({
       "read"
     )
     const byName = new Map(columnsSchema.map((c) => [c.name ?? c.id ?? "", c]))
-    const progress = columnsSchema
-      .map((col) => {
-        const meta = JSON.parse(col.comment ?? "{}") as EnumColumnMetadata
-        if (!meta?.progress || !meta.enums) return null
-        return { col, meta }
-      })
-      .filter((x): x is { col: ColumnSchema; meta: EnumColumnMetadata } =>
-        Boolean(x)
-      )
+    const progress = getProgressFields(columnsSchema)
     const progressNames = new Set(progress.map(({ col }) => col.name))
     const filtered = plan
       ? {

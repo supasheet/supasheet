@@ -19,11 +19,13 @@ import {
 } from "#/components/ui/collapsible"
 import type {
   ColumnSchema,
+  EnumColumnMetadata,
   FormMode,
   TableMetadata,
   TableSchema,
 } from "#/lib/database-meta.types"
 
+import { ResourceProgressField } from "./detail/resource-progress-field"
 import { ResourceFormField } from "./fields/resource-form-field"
 import type { ResourceFormApi } from "./form-hook"
 import type { ResolvedFieldSection } from "./resource-form-utils"
@@ -31,6 +33,7 @@ import {
   buildLayoutPlan,
   evaluateConditionalField,
   getColumnFieldSpan,
+  getProgressFields,
 } from "./resource-form-utils"
 
 type ResourceFormLayoutProps = {
@@ -60,11 +63,13 @@ export function ResourceFormLayout({
     () => JSON.parse(tableSchema?.comment ?? "{}") as TableMetadata,
     [tableSchema?.comment]
   )
-  const { plan, colByName } = useMemo(() => {
+  const { plan, colByName, progressFields } = useMemo(() => {
     const writableNames = new Set(writableCols.map((c) => c.name ?? c.id ?? ""))
+
     return {
       plan: buildLayoutPlan(tableMeta.fields?.sections, writableNames, mode),
       colByName: new Map(writableCols.map((c) => [c.name ?? c.id ?? "", c])),
+      progressFields: getProgressFields(writableCols),
     }
   }, [tableMeta.fields?.sections, writableCols, mode])
 
@@ -129,6 +134,14 @@ export function ResourceFormLayout({
   if (!plan) {
     return (
       <div className="mx-auto w-full max-w-5xl space-y-4">
+        {progressFields.map(({ col, meta }) => (
+          <ProgressFieldPreview
+            key={col.id}
+            column={col}
+            enumMeta={meta}
+            form={form}
+          />
+        ))}
         <Card>
           <CardHeader>
             <CardTitle>{headerTitle}</CardTitle>
@@ -156,6 +169,14 @@ export function ResourceFormLayout({
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-4">
+      {progressFields.map(({ col, meta }) => (
+        <ProgressFieldPreview
+          key={col.id}
+          column={col}
+          enumMeta={meta}
+          form={form}
+        />
+      ))}
       {plan.sections.map((s) => (
         <SectionCard
           key={s.id}
@@ -167,6 +188,28 @@ export function ResourceFormLayout({
       ))}
       {footer}
     </div>
+  )
+}
+
+function ProgressFieldPreview({
+  column,
+  enumMeta,
+  form,
+}: {
+  column: ColumnSchema
+  enumMeta: EnumColumnMetadata
+  form: ResourceFormApi
+}) {
+  return (
+    <form.Subscribe selector={(s) => s.values[column.name] as string | null}>
+      {(value) => (
+        <ResourceProgressField
+          column={column}
+          value={value ?? null}
+          enumMeta={enumMeta}
+        />
+      )}
+    </form.Subscribe>
   )
 }
 
