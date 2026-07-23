@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
 
@@ -57,6 +57,7 @@ export function Table2Widget<S extends DatabaseSchemas>({
   const { data } = useSuspenseQuery(
     widgetDataQueryOptions(widget.schema, widget.view_name)
   )
+  const navigate = useNavigate()
 
   if (!data || data.length === 0) {
     return (
@@ -76,7 +77,8 @@ export function Table2Widget<S extends DatabaseSchemas>({
     )
   }
 
-  const columns = Object.keys(data[0])
+  const columns = Object.keys(data[0]).filter((column) => column !== "link")
+  const rows = data.slice(0, 10)
 
   return (
     <Card className="col-span-1 md:col-span-2 lg:col-span-4">
@@ -114,8 +116,16 @@ export function Table2Widget<S extends DatabaseSchemas>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.slice(0, 10).map((row, index) => (
-                <TableRow key={index}>
+              {rows.map((row, index) => (
+                <TableRow
+                  key={index}
+                  onClick={
+                    row.link
+                      ? () => navigate({ to: row.link as never })
+                      : undefined
+                  }
+                  className={row.link ? "cursor-pointer" : undefined}
+                >
                   {columns.map((column) => (
                     <TableCell key={column}>{row[column] || "-"}</TableCell>
                   ))}

@@ -273,7 +273,14 @@ export type TableMetadata = BaseResourceMetadata & {
 export type ViewMetadata = BaseResourceMetadata
 
 export type DashboardWidgetType =
-  "card_1" | "card_2" | "card_3" | "card_4" | "table_1" | "table_2"
+  "card_1"
+  | "card_2"
+  | "card_3"
+  | "card_4"
+  | "table_1"
+  | "table_2"
+  | "list_1"
+  | "list_2"
 
 export type DashboardWidgetMeta = {
   name: string

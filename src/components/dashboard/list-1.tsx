@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
 
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, ChevronRightIcon } from "lucide-react"
+import { DynamicIcon } from "lucide-react/dynamic"
 
 import { Button } from "#/components/ui/button"
 import {
@@ -14,19 +15,39 @@ import {
 } from "#/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "#/components/ui/table"
 import type { DatabaseSchemas } from "#/lib/database-meta.types"
 import { widgetDataQueryOptions } from "#/lib/supabase/data/dashboard"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
-export function Table1Skeleton() {
+export const LIST_ITEM_VARIANT_CLASSES: Record<string, string> = {
+  default: "text-foreground",
+  secondary: "text-muted-foreground",
+  success: "text-emerald-600 dark:text-emerald-500",
+  warning: "text-amber-600 dark:text-amber-500",
+  destructive: "text-destructive",
+  info: "text-blue-600 dark:text-blue-500",
+}
+
+export function ListItemIcon({
+  icon,
+  variant,
+}: {
+  icon?: string
+  variant?: string
+}) {
+  if (!icon) return null
+  return (
+    <DynamicIcon
+      name={icon as never}
+      className={`size-4 shrink-0 ${
+        LIST_ITEM_VARIANT_CLASSES[variant ?? "default"] ??
+        LIST_ITEM_VARIANT_CLASSES.default
+      }`}
+    />
+  )
+}
+
+export function List1Skeleton() {
   return (
     <Card className="col-span-1 md:col-span-2">
       <CardHeader>
@@ -41,7 +62,7 @@ export function Table1Skeleton() {
       <CardContent>
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-full" />
+            <Skeleton key={i} className="h-14 w-full rounded-lg" />
           ))}
         </div>
       </CardContent>
@@ -49,7 +70,7 @@ export function Table1Skeleton() {
   )
 }
 
-export function Table1Widget<S extends DatabaseSchemas>({
+export function List1Widget<S extends DatabaseSchemas>({
   widget,
 }: {
   widget: DashboardWidgetSchema<S>
@@ -57,7 +78,6 @@ export function Table1Widget<S extends DatabaseSchemas>({
   const { data } = useSuspenseQuery(
     widgetDataQueryOptions(widget.schema, widget.view_name)
   )
-  const navigate = useNavigate()
 
   if (!data || data.length === 0) {
     return (
@@ -76,9 +96,6 @@ export function Table1Widget<S extends DatabaseSchemas>({
       </Card>
     )
   }
-
-  const columns = Object.keys(data[0]).filter((column) => column !== "link")
-  const rows = data.slice(0, 10)
 
   return (
     <Card className="col-span-1 md:col-span-2">
@@ -103,36 +120,38 @@ export function Table1Widget<S extends DatabaseSchemas>({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableHead key={column} className="font-medium">
-                    {column.charAt(0).toUpperCase() +
-                      column.slice(1).replace(/_/g, " ")}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row, index) => (
-                <TableRow
-                  key={index}
-                  onClick={
-                    row.link
-                      ? () => navigate({ to: row.link as never })
-                      : undefined
-                  }
-                  className={row.link ? "cursor-pointer" : undefined}
-                >
-                  {columns.map((column) => (
-                    <TableCell key={column}>{row[column] || "-"}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="space-y-2">
+          {data.slice(0, 10).map((row, index) => {
+            const content = (
+              <>
+                <ListItemIcon icon={row.icon} variant={row.variant} />
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <p className="truncate text-sm font-medium">{row.title}</p>
+                  {row.description && (
+                    <p className="truncate text-xs text-muted-foreground">
+                      {row.description}
+                    </p>
+                  )}
+                </div>
+                {row.link && (
+                  <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />
+                )}
+              </>
+            )
+            const className =
+              "flex items-center gap-3 rounded-lg border p-3" +
+              (row.link ? " hover:bg-muted/50 transition-colors" : "")
+
+            return row.link ? (
+              <Link key={index} to={row.link as never} className={className}>
+                {content}
+              </Link>
+            ) : (
+              <div key={index} className={className}>
+                {content}
+              </div>
+            )
+          })}
         </div>
         {widget.caption && (
           <p className="mt-2 text-xs text-muted-foreground">{widget.caption}</p>

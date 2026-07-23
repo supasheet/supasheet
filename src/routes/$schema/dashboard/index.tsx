@@ -19,6 +19,8 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import { dashboardWidgetsQueryOptions } from "#/lib/supabase/data/dashboard"
 
+const TABLE_WIDGET_ORDER = ["list_1", "table_1", "list_2", "table_2"]
+
 export const Route = createFileRoute("/$schema/dashboard/")({
   loader: async ({ context, params }) => {
     const widgets = await context.queryClient.ensureQueryData(
@@ -110,7 +112,10 @@ function RouteComponent() {
   }
 
   const cardWidgets = widgets.filter((w) => w.widget_type.startsWith("card_"))
-  const tableWidgets = widgets.filter((w) => w.widget_type.startsWith("table_"))
+  const tableWidgets = widgets.filter(
+    (w) =>
+      w.widget_type.startsWith("table_") || w.widget_type.startsWith("list_")
+  )
 
   return (
     <div className="w-full flex-1">
@@ -126,7 +131,12 @@ function RouteComponent() {
         {tableWidgets.length > 0 && (
           <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-4">
             {tableWidgets
-              .sort((a, b) => a.widget_type.localeCompare(b.widget_type))
+              .slice()
+              .sort(
+                (a, b) =>
+                  TABLE_WIDGET_ORDER.indexOf(a.widget_type) -
+                  TABLE_WIDGET_ORDER.indexOf(b.widget_type)
+              )
               .map((widget) => (
                 <DashboardWidget key={widget.view_name} widget={widget} />
               ))}

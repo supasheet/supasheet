@@ -7,6 +7,8 @@ import { Card1, Card1Skeleton } from "./card-1"
 import { Card2, Card2Skeleton } from "./card-2"
 import { Card3, Card3Skeleton } from "./card-3"
 import { Card4, Card4Skeleton } from "./card-4"
+import { List1Skeleton, List1Widget } from "./list-1"
+import { List2Skeleton, List2Widget } from "./list-2"
 import { Table1Skeleton, Table1Widget } from "./table-1"
 import { Table2Skeleton, Table2Widget } from "./table-2"
 
@@ -50,6 +52,18 @@ export function DashboardWidget<S extends DatabaseSchemas>({
       return (
         <Suspense fallback={<Table2Skeleton />}>
           <Table2Widget widget={widget} />
+        </Suspense>
+      )
+    case "list_1":
+      return (
+        <Suspense fallback={<List1Skeleton />}>
+          <List1Widget widget={widget} />
+        </Suspense>
+      )
+    case "list_2":
+      return (
+        <Suspense fallback={<List2Skeleton />}>
+          <List2Widget widget={widget} />
         </Suspense>
       )
     default:

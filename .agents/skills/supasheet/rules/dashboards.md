@@ -1,8 +1,8 @@
 ---
 name: supasheet/dashboards
 description: >-
-  Dashboard widget views: the six widget_type contracts (card_1..card_4,
-  table_1, table_2) with required output columns and starter SQL.
+  Dashboard widget views: the eight widget_type contracts (card_1..card_4,
+  table_1, table_2, list_1, list_2) with required output columns and starter SQL.
 type: sub-skill
 requires:
   - supasheet
@@ -14,14 +14,16 @@ A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "d
 
 ## Widget contracts (exact required columns)
 
-| widget_type | Renders          | Required columns                                                               |
-| ----------- | ---------------- | ------------------------------------------------------------------------------ |
-| `card_1`    | single metric    | `value` (number), `icon` (lucide slug, kebab-case), `label` (string)           |
-| `card_2`    | comparison       | `primary`, `secondary` (numbers), `primary_label`, `secondary_label` (strings) |
-| `card_3`    | metric + percent | `value` (number), `percent` (0–100)                                            |
-| `card_4`    | progress         | `current` (subset), `total`, `segments` (JSON array of `{label, value}`)       |
-| `table_1`   | flat list        | any flat columns, `order by` + `limit 10`                                      |
-| `table_2`   | aggregated table | grouped/joined query with computed columns, `limit 10`                         |
+| widget_type | Renders                  | Required columns                                                                                       |
+| ----------- | ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `card_1`    | single metric            | `value` (number), `icon` (lucide slug, kebab-case), `label` (string)                                    |
+| `card_2`    | comparison                | `primary`, `secondary` (numbers), `primary_label`, `secondary_label` (strings)                          |
+| `card_3`    | metric + percent          | `value` (number), `percent` (0–100)                                                                     |
+| `card_4`    | progress                  | `current` (subset), `total`, `segments` (JSON array of `{label, value}`)                                |
+| `table_1`   | flat list (narrow table)  | any flat columns, `order by` + `limit 10`; optional `link` (row href — excluded from rendered columns, makes the whole row clickable) |
+| `table_2`   | aggregated table (wide)   | grouped/joined query with computed columns, `limit 10`; optional `link` (same as `table_1`)             |
+| `list_1`    | alert/feed list (narrow)  | `title` (string); optional `description`, `icon` (lucide slug), `variant` (default/secondary/success/warning/destructive/info), `link` (row href) |
+| `list_2`    | alert/feed list (wide)    | same as `list_1` plus optional `field_1`, `field_2` (extra values shown before the chevron)              |
 
 ## Starter SQL per type
 
@@ -54,17 +56,51 @@ select
   ) as segments
 from app.tickets;
 
--- table_1
-select title, status, created_at::date as date
+-- table_1 (link is optional — makes each row click-through)
+select
+  title,
+  status,
+  created_at::date as date,
+  '/app/resource/tickets/' || id || '/detail' as link
 from app.tickets
 order by created_at desc
 limit 10;
 
--- table_2
-select p.name as project, count(*) as total, count(*) filter (where t.status = 'done') as done
+-- table_2 (link is optional, same as table_1)
+select
+  p.name as project,
+  count(*) as total,
+  count(*) filter (where t.status = 'done') as done,
+  '/app/resource/projects/' || p.id || '/detail' as link
 from app.tasks t join app.projects p on p.id = t.project_id
-group by p.name
+group by p.id, p.name
 order by total desc
+limit 10;
+
+-- list_1
+select
+  title,
+  assignee || ' · ' || reason as description,
+  'triangle-alert' as icon,
+  'warning' as variant,
+  '/app/resource/tickets/' || id || '/detail' as link
+from app.tickets
+where status = 'blocked'
+order by updated_at desc
+limit 10;
+
+-- list_2 (adds field_1 / field_2 for extra columns before the chevron)
+select
+  title,
+  assignee as description,
+  'circle-alert' as icon,
+  'destructive' as variant,
+  priority as field_1,
+  to_char(due_date, 'MM/DD') as field_2,
+  '/app/resource/tickets/' || id || '/detail' as link
+from app.tickets
+where status not in ('done', 'cancelled')
+order by due_date asc nulls last
 limit 10;
 ```
 
@@ -107,4 +143,4 @@ select
 - Always `security_invoker = true` — the widget respects the viewer's RLS.
 - `select` is the only grant a widget needs; grant to `anon` only for intentionally public dashboards.
 - Widgets are per-schema — they appear on that schema's dashboard.
-- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.
+- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`, `task_alerts`, `recent_invoices`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.

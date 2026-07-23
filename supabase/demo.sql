@@ -1917,7 +1917,8 @@ select
   title,
   status,
   coalesce(due_date::text, 'no due date') as amount,
-  to_char(created_at, 'MM/DD') as date
+  to_char(created_at, 'MM/DD') as date,
+  '/demo/resource/tasks/' || id || '/detail' as link
 from
   demo.tasks
 order by
@@ -1973,7 +1974,8 @@ select
   c.name as client,
   c.industry,
   count(i.id) as invoices,
-  coalesce(sum(i.total), 0) as revenue
+  coalesce(sum(i.total), 0) as revenue,
+  '/demo/resource/clients/' || c.id || '/detail' as link
 from
   demo.clients c
   left join demo.invoices i on i.client_id = c.id
@@ -1996,6 +1998,93 @@ from
 grant
 select
   on demo.top_clients to "x-admin",
+  "user";
+
+-- list_1: task alerts (blocked or overdue high/critical tasks)
+create or replace view demo.task_alerts
+with
+  (security_invoker = true) as
+select
+  t.title,
+  p.name || ' · ' || coalesce(
+    t.blocked_reason,
+    'due ' || to_char(t.due_date, 'MM/DD')
+  ) as description,
+  case
+    when t.blocked_reason is not null then 'octagon-alert'
+    when t.due_date < current_date then 'clock-alert'
+    else 'triangle-alert'
+  end as icon,
+  case
+    when t.blocked_reason is not null then 'destructive'
+    when t.due_date < current_date then 'warning'
+    else 'info'
+  end as variant,
+  '/demo/resource/tasks/' || t.id || '/detail' as link
+from
+  demo.tasks t
+  left join demo.projects p on p.id = t.project_id
+where
+  t.status not in ('done', 'cancelled')
+  and (
+    t.blocked_reason is not null
+    or t.priority in ('high', 'critical')
+    or (
+      t.due_date is not null
+      and t.due_date < current_date
+    )
+  )
+order by
+  t.due_date asc nulls last
+limit
+  5;
+
+revoke all on demo.task_alerts
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.task_alerts to "x-admin",
+  "user";
+
+-- list_2: recent invoices (wider list with amount + due date fields)
+create or replace view demo.recent_invoices
+with
+  (security_invoker = true) as
+select
+  i.invoice_number as title,
+  c.name || ' · ' || initcap(i.status::text) as description,
+  case
+    when i.status = 'overdue' then 'circle-alert'
+    when i.status = 'paid' then 'circle-check'
+    else 'file-text'
+  end as icon,
+  case
+    when i.status = 'overdue' then 'destructive'
+    when i.status = 'paid' then 'success'
+    else 'secondary'
+  end as variant,
+  to_char(i.total, 'FM$999,999,990.00') as field_1,
+  coalesce('due ' || to_char(i.due_date, 'MM/DD/YY'), '—') as field_2,
+  '/demo/resource/invoices/' || i.id || '/detail' as link
+from
+  demo.invoices i
+  join demo.clients c on c.id = i.client_id
+order by
+  i.created_at desc
+limit
+  5;
+
+revoke all on demo.recent_invoices
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.recent_invoices to "x-admin",
   "user";
 
 -- card_2: client pipeline (active vs lead) — shown on the clients resource page
@@ -2124,6 +2213,10 @@ comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Rece
 comment on view demo.upcoming_milestones is '{"type": "dashboard_widget", "name": "Upcoming Milestones", "description": "Next 10 milestones due across active projects", "widget_type": "table_1"}';
 
 comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2", "link": "/demo/resource/clients"}';
+
+comment on view demo.task_alerts is '{"type": "dashboard_widget", "name": "Task Alerts", "description": "Blocked or overdue high-priority tasks", "widget_type": "list_1", "link": "/demo/resource/tasks"}';
+
+comment on view demo.recent_invoices is '{"type": "dashboard_widget", "name": "Recent Invoices", "description": "Latest invoices with amount and due date", "widget_type": "list_2", "link": "/demo/resource/invoices"}';
 
 comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Active clients vs. new leads", "widget_type": "card_2", "resource": "clients"}';
 
