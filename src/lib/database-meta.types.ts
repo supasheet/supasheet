@@ -277,6 +277,8 @@ export type DashboardWidgetType =
   | "card_2"
   | "card_3"
   | "card_4"
+  | "card_5"
+  | "card_6"
   | "table_1"
   | "table_2"
   | "list_1"

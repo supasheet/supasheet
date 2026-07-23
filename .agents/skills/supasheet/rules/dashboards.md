@@ -1,7 +1,7 @@
 ---
 name: supasheet/dashboards
 description: >-
-  Dashboard widget views: the eight widget_type contracts (card_1..card_4,
+  Dashboard widget views: the ten widget_type contracts (card_1..card_6,
   table_1, table_2, list_1, list_2) with required output columns and starter SQL.
 type: sub-skill
 requires:
@@ -20,6 +20,8 @@ A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "d
 | `card_2`    | comparison                | `primary`, `secondary` (numbers), `primary_label`, `secondary_label` (strings)                          |
 | `card_3`    | metric + percent          | `value` (number), `percent` (0–100)                                                                     |
 | `card_4`    | progress                  | `current` (subset), `total`, `segments` (JSON array of `{label, value}`)                                |
+| `card_5`    | headline + ranked breakdown, 2x width | `value`, `label`, `icon` (headline stat, same shape as `card_1`); `breakdown` (JSON array of `{label, value, variant?}`, rendered as a ranked list with per-item bars) — one total from a single table, sliced by one dimension of that same total |
+| `card_6`    | metric grid, 4x width (full row) | `metrics` (JSON array of `{label, value, trend?, icon?}`, 4–6 items)                                    |
 | `table_1`   | flat list (narrow table)  | any flat columns, `order by` + `limit 10`; optional `link` (row href — excluded from rendered columns, makes the whole row clickable) |
 | `table_2`   | aggregated table (wide)   | grouped/joined query with computed columns, `limit 10`; optional `link` (same as `table_1`)             |
 | `list_1`    | alert/feed list (narrow)  | `title` (string); optional `description`, `icon` (lucide slug), `variant` (default/secondary/success/warning/destructive/info), `link` (row href) |
@@ -54,6 +56,30 @@ select
     json_build_object('label', 'Open', 'value', count(*) filter (where status = 'open')),
     json_build_object('label', 'Resolved', 'value', count(*) filter (where status = 'resolved'))
   ) as segments
+from app.tickets;
+
+-- card_5 (2x the width of card_1 — a headline total plus a ranked breakdown
+-- of that SAME total, from one table, one query, no joins)
+select
+  count(*) filter (where status not in ('resolved', 'closed')) as value,
+  'Open Tickets' as label,
+  'inbox' as icon,
+  json_build_array(
+    json_build_object('label', 'Low', 'value', count(*) filter (where priority = 'low' and status not in ('resolved', 'closed')), 'variant', 'secondary'),
+    json_build_object('label', 'Medium', 'value', count(*) filter (where priority = 'medium' and status not in ('resolved', 'closed')), 'variant', 'info'),
+    json_build_object('label', 'High', 'value', count(*) filter (where priority = 'high' and status not in ('resolved', 'closed')), 'variant', 'warning'),
+    json_build_object('label', 'Critical', 'value', count(*) filter (where priority = 'critical' and status not in ('resolved', 'closed')), 'variant', 'destructive')
+  ) as breakdown
+from app.tickets;
+
+-- card_6 (4x the width of card_1, full row — for 4-6 related metrics in one card)
+select
+  json_build_array(
+    json_build_object('label', 'Open', 'value', count(*) filter (where status = 'open')),
+    json_build_object('label', 'In Progress', 'value', count(*) filter (where status = 'in_progress'), 'trend', 12.4),
+    json_build_object('label', 'Resolved', 'value', count(*) filter (where status = 'resolved')),
+    json_build_object('label', 'Avg Response', 'value', '2.4h')
+  ) as metrics
 from app.tickets;
 
 -- table_1 (link is optional — makes each row click-through)
@@ -143,4 +169,4 @@ select
 - Always `security_invoker = true` — the widget respects the viewer's RLS.
 - `select` is the only grant a widget needs; grant to `anon` only for intentionally public dashboards.
 - Widgets are per-schema — they appear on that schema's dashboard.
-- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`, `task_alerts`, `recent_invoices`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.
+- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`, `task_alerts`, `recent_invoices`, `task_velocity`, `client_snapshot`, `task_board_overview`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.

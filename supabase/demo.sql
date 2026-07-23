@@ -2087,6 +2087,215 @@ select
   on demo.recent_invoices to "x-admin",
   "user";
 
+-- card_5: task board overview (2x width — a headline total plus a single
+-- ranked breakdown of that SAME pool, all from demo.tasks alone)
+create or replace view demo.task_board_overview
+with
+  (security_invoker = true) as
+select
+  count(*) filter (
+    where
+      status not in ('done', 'cancelled')
+  ) as value,
+  'Open Tasks' as label,
+  'list-checks' as icon,
+  json_build_array(
+    json_build_object(
+      'label',
+      'Low',
+      'value',
+      count(*) filter (
+        where
+          priority = 'low'
+          and status not in ('done', 'cancelled')
+      ),
+      'variant',
+      'secondary'
+    ),
+    json_build_object(
+      'label',
+      'Medium',
+      'value',
+      count(*) filter (
+        where
+          priority = 'medium'
+          and status not in ('done', 'cancelled')
+      ),
+      'variant',
+      'info'
+    ),
+    json_build_object(
+      'label',
+      'High',
+      'value',
+      count(*) filter (
+        where
+          priority = 'high'
+          and status not in ('done', 'cancelled')
+      ),
+      'variant',
+      'warning'
+    ),
+    json_build_object(
+      'label',
+      'Critical',
+      'value',
+      count(*) filter (
+        where
+          priority = 'critical'
+          and status not in ('done', 'cancelled')
+      ),
+      'variant',
+      'destructive'
+    )
+  ) as breakdown
+from
+  demo.tasks;
+
+revoke all on demo.task_board_overview
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.task_board_overview to "x-admin",
+  "user";
+
+-- card_5: client snapshot (2x width — a headline total plus a single ranked
+-- breakdown of that SAME pool, all from demo.clients alone)
+create or replace view demo.client_snapshot
+with
+  (security_invoker = true) as
+select
+  count(*) as value,
+  'Clients' as label,
+  'building-2' as icon,
+  json_build_array(
+    json_build_object(
+      'label',
+      'Active',
+      'value',
+      count(*) filter (
+        where
+          status = 'active'
+      ),
+      'variant',
+      'success'
+    ),
+    json_build_object(
+      'label',
+      'Leads',
+      'value',
+      count(*) filter (
+        where
+          status = 'lead'
+      ),
+      'variant',
+      'info'
+    ),
+    json_build_object(
+      'label',
+      'On Hold',
+      'value',
+      count(*) filter (
+        where
+          status = 'on_hold'
+      ),
+      'variant',
+      'warning'
+    ),
+    json_build_object(
+      'label',
+      'Churned',
+      'value',
+      count(*) filter (
+        where
+          status = 'churned'
+      ),
+      'variant',
+      'secondary'
+    )
+  ) as breakdown
+from
+  demo.clients;
+
+revoke all on demo.client_snapshot
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.client_snapshot to "x-admin",
+  "user";
+
+-- card_6: task velocity (4x width, full row — related task counts in one card)
+create or replace view demo.task_velocity
+with
+  (security_invoker = true) as
+select
+  json_build_array(
+    json_build_object(
+      'label',
+      'Todo',
+      'value',
+      count(*) filter (
+        where
+          status = 'todo'
+      ),
+      'icon',
+      'circle'
+    ),
+    json_build_object(
+      'label',
+      'In Progress',
+      'value',
+      count(*) filter (
+        where
+          status = 'in_progress'
+      ),
+      'icon',
+      'loader-circle'
+    ),
+    json_build_object(
+      'label',
+      'Blocked',
+      'value',
+      count(*) filter (
+        where
+          blocked_reason is not null
+          and status not in ('done', 'cancelled')
+      ),
+      'icon',
+      'octagon-alert'
+    ),
+    json_build_object(
+      'label',
+      'Overdue',
+      'value',
+      count(*) filter (
+        where
+          due_date < current_date
+          and status not in ('done', 'cancelled')
+      ),
+      'icon',
+      'clock-alert'
+    )
+  ) as metrics
+from
+  demo.tasks;
+
+revoke all on demo.task_velocity
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.task_velocity to "x-admin",
+  "user";
+
 -- card_2: client pipeline (active vs lead) — shown on the clients resource page
 create or replace view demo.client_pipeline
 with
@@ -2217,6 +2426,12 @@ comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top C
 comment on view demo.task_alerts is '{"type": "dashboard_widget", "name": "Task Alerts", "description": "Blocked or overdue high-priority tasks", "widget_type": "list_1", "link": "/demo/resource/tasks"}';
 
 comment on view demo.recent_invoices is '{"type": "dashboard_widget", "name": "Recent Invoices", "description": "Latest invoices with amount and due date", "widget_type": "list_2", "link": "/demo/resource/invoices"}';
+
+comment on view demo.task_board_overview is '{"type": "dashboard_widget", "name": "Task Board Overview", "description": "Open tasks by priority", "widget_type": "card_5"}';
+
+comment on view demo.client_snapshot is '{"type": "dashboard_widget", "name": "Client Snapshot", "description": "Clients by status", "widget_type": "card_5"}';
+
+comment on view demo.task_velocity is '{"type": "dashboard_widget", "name": "Task Velocity", "description": "Tasks by workflow stage", "widget_type": "card_6"}';
 
 comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Active clients vs. new leads", "widget_type": "card_2", "resource": "clients"}';
 
