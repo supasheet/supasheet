@@ -1,26 +1,21 @@
+-- Only "x-admin" is created here — it's the one custom role that core
+-- migrations running after this one structurally depend on (this
+-- file's own policies check it via pg_has_role, and audit_logs.sql
+-- grants to it directly). "user" and "admin" are created in
+-- supabase/seed.sql instead, along with every grant that targets them
+-- specifically, since neither is needed by anything before seed.sql
+-- runs.
 do $$
 begin
   if not exists (select 1 from pg_roles where rolname = 'x-admin') then
     create role "x-admin" nologin;
   end if;
-
-  if not exists (select 1 from pg_roles where rolname = 'admin') then
-    create role "admin" nologin;
-  end if;
-
-  if not exists (select 1 from pg_roles where rolname = 'user') then
-    create role "user" nologin;
-  end if;
 end;
 $$;
 
-grant "x-admin",
-"admin",
-"user" to authenticator;
+grant "x-admin" to authenticator;
 
-grant authenticated to "x-admin",
-"admin",
-"user";
+grant authenticated to "x-admin";
 
 create or replace function supasheet.has_role (requested_role text) returns boolean language sql stable
 set
@@ -112,6 +107,9 @@ create trigger on_auth_user_created_assign_role
 before insert on auth.users for each row
 execute function supasheet.assign_default_role ();
 
+-- RLS is enabled on supasheet.users in 20250523000814_users.sql. The
+-- grant to "user" on this table lives in supabase/seed.sql instead of
+-- here, since "user" isn't created until seed.sql runs.
 revoke all on table supasheet.users
 from
   authenticated,
@@ -123,11 +121,6 @@ select
   insert,
 update,
 delete on table supasheet.users to "x-admin";
-
-grant
-select
-,
-update on table supasheet.users to "user";
 
 grant
 select

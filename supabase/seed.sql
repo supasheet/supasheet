@@ -1,3 +1,49 @@
+-- ================================================================
+-- Custom Postgres roles ("user", "admin") not needed by core migrations
+-- ================================================================
+-- "x-admin" is created in supabase/migrations/20250523000822_roles.sql
+-- (along with its grants/policies on supasheet.users and
+-- supasheet.audit_logs) because core migrations that run after it
+-- structurally depend on it existing. "user" and "admin" have no such
+-- dependency — nothing in supabase/migrations/ needs either of them to
+-- exist before seed.sql runs — so they're created here instead, kept
+-- out of the versioned migration chain.
+--
+-- NOTE: this reruns on every `supabase db reset` (unlike a migration,
+-- which only ever runs once against a given database), so every
+-- statement here must be idempotent — `if not exists` guards on
+-- `create role`, plain `grant`/`revoke` (safe to repeat).
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'user') then
+    create role "user" nologin;
+  end if;
+
+  if not exists (select 1 from pg_roles where rolname = 'admin') then
+    create role "admin" nologin;
+  end if;
+end;
+$$;
+
+grant "user",
+"admin" to authenticator;
+
+grant authenticated to "user",
+"admin";
+
+-- "user"'s grants on tables whose base revoke/x-admin-grant already
+-- happened in migrations (20250523000822_roles.sql,
+-- 20250928062812_audit_logs.sql) — added here since "user" doesn't
+-- exist yet when those migrations run.
+grant
+select
+,
+update on table supasheet.users to "user";
+
+grant
+select
+  on supasheet.audit_logs to "user";
+
 insert into
   "auth"."users" (
     "instance_id",

@@ -169,6 +169,11 @@ $$ LANGUAGE plpgsql
 set
   search_path = '';
 
+-- The grant to "user" on this table lives in supabase/seed.sql instead
+-- of here, since "user" isn't created until seed.sql runs (see the
+-- note at the top of 20250523000822_roles.sql). "x-admin" is created
+-- earlier in that same migration, so it's safe to grant to it directly
+-- here.
 revoke all on supasheet.audit_logs
 from
   authenticated,
@@ -176,12 +181,11 @@ from
 
 grant
 select
-  on supasheet.audit_logs to "x-admin",
-  "user";
+  on supasheet.audit_logs to "x-admin";
 
 grant
 select
-  on supasheet.audit_logs to service_role;
+  on supasheet.audit_logs to authenticated, service_role;
 
 alter table supasheet.audit_logs ENABLE row LEVEL SECURITY;
 
