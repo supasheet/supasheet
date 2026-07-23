@@ -129,7 +129,7 @@ export function ResourceRowActions({
               )
             }
           >
-            {variant === "compact" && <MoreHorizontalIcon />}
+            {variant === "compact" && <MoreHorizontalIcon className="size-3" />}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
             {visibleActions.map((action) => {
