@@ -12,16 +12,20 @@ import type {
   TableMetadata,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
 
 import { ResourceColumnHeader } from "./resource-column-header"
+import { ResourceRowActions } from "./resource-row-actions"
 import { ResourceRowCell } from "./resource-row-cell"
 
 export function getResourceTableColumns({
   columnsSchema,
   resourceSchema,
+  actions = [],
 }: {
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
+  actions?: ResourceActionSchema[]
 }) {
   const tableSchema = isTableSchema(resourceSchema) ? resourceSchema : null
 
@@ -72,6 +76,25 @@ export function getResourceTableColumns({
       },
       enableSorting: false,
       enableHiding: false,
+    })
+  }
+
+  if (actions.length > 0) {
+    cols.push({
+      id: "actions",
+      header: () => null,
+      cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+        <ResourceRowActions
+          schema={resourceSchema.schema}
+          resource={resourceSchema.name}
+          record={row.original}
+          actions={actions}
+        />
+      ),
+      size: 40,
+      enableSorting: false,
+      enableHiding: false,
+      enableColumnFilter: false,
     })
   }
 

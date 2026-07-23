@@ -432,6 +432,78 @@ create unique index on supasheet.materialized_views (schema, name);
 
 create index on supasheet.materialized_views (schema);
 
+----------------------------------------------------------------
+-- Materialized View: supasheet.functions
+----------------------------------------------------------------
+create materialized view if not exists supasheet.functions as
+select
+  p.oid::int8 as id,
+  n.nspname::text as schema,
+  p.proname::text as name,
+  pg_get_function_arguments(p.oid) as arguments,
+  pg_get_function_result(p.oid) as return_type,
+  case
+    when p.prosecdef then 'DEFINER'
+    else 'INVOKER'
+  end as security_type,
+  l.lanname::text as language,
+  coalesce(
+    (
+      select
+        jsonb_agg(
+          distinct r.rolname
+          order by
+            r.rolname
+        )
+      from
+        aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) as acl
+        join pg_roles r on r.oid = acl.grantee
+      where
+        acl.privilege_type = 'EXECUTE'
+    ),
+    '[]'
+  ) as roles,
+  obj_description(p.oid, 'pg_proc') as comment
+from
+  pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+  join pg_language l on l.oid = p.prolang
+where
+  p.prokind = 'f'
+  and not pg_is_other_temp_schema(n.oid)
+  and n.nspname not in (
+    'vault',
+    'supabase_migrations',
+    'pg_catalog',
+    'realtime',
+    'storage',
+    'supabase_functions',
+    '_realtime',
+    'information_schema',
+    'net',
+    'auth',
+    'extensions'
+  )
+  and (
+    pg_has_role(p.proowner, 'USAGE')
+    or has_function_privilege(p.oid, 'EXECUTE')
+  )
+order by
+  p.oid
+with
+  no data;
+
+revoke all on supasheet.functions
+from
+  public,
+  anon,
+  authenticated,
+  service_role;
+
+create unique index on supasheet.functions (id);
+
+create index on supasheet.functions (schema, name);
+
 -- Initial population
 refresh materialized view supasheet.columns;
 
@@ -440,6 +512,8 @@ refresh materialized view supasheet.tables;
 refresh materialized view supasheet.views;
 
 refresh materialized view supasheet.materialized_views;
+
+refresh materialized view supasheet.functions;
 
 ----------------------------------------------------------------
 -- Manual refresh function for all metadata materialized views
@@ -454,6 +528,7 @@ BEGIN
     REFRESH MATERIALIZED VIEW supasheet.columns;
     REFRESH MATERIALIZED VIEW supasheet.views;
     REFRESH MATERIALIZED VIEW supasheet.materialized_views;
+    REFRESH MATERIALIZED VIEW supasheet.functions;
 END;
 $$ LANGUAGE plpgsql
 set

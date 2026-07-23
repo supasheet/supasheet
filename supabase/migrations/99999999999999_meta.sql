@@ -350,6 +350,46 @@ grant
 execute on FUNCTION supasheet.get_nav_items (text, text) to authenticated;
 
 ----------------------------------------------------------------
+-- Function: supasheet.get_actions
+----------------------------------------------------------------
+drop function if exists supasheet.get_actions (text, text, text);
+
+create or replace function supasheet.get_actions (
+  p_schema text default null,
+  p_resource text default null,
+  p_caller text default current_user
+) returns table (
+  id bigint,
+  schema text,
+  name text,
+  arguments text,
+  return_type text,
+  security_type text,
+  language text,
+  roles jsonb,
+  comment text
+) language sql security definer
+set
+  search_path = '' as $$
+    SELECT
+        f.*
+    FROM supasheet.functions f
+    WHERE f.schema = p_schema
+        AND f.comment::jsonb ->> 'type' = 'action'
+        AND f.comment::jsonb ->> 'resource' = p_resource
+        AND has_function_privilege(p_caller, f.id::oid, 'execute');
+$$;
+
+revoke all on FUNCTION supasheet.get_actions (text, text, text)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on FUNCTION supasheet.get_actions (text, text, text) to authenticated;
+
+----------------------------------------------------------------
 -- Function: supasheet.set_updated_at
 ----------------------------------------------------------------
 create or replace function supasheet.set_updated_at () returns trigger as $$

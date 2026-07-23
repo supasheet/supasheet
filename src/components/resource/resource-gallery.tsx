@@ -28,7 +28,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
+import { useConfirmAction } from "#/hooks/use-confirm-action"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   DatabaseSchemas,
@@ -170,7 +170,7 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
     deleteResourceMutationOptions(schema, resource)
   )
 
-  const deleteConfirm = useDeleteConfirm(async (target: GalleryViewData) => {
+  const deleteConfirm = useConfirmAction(async (target: GalleryViewData) => {
     const pk = Object.fromEntries(
       primaryKeys.map((pkField) => [pkField.name, target.data[pkField.name]])
     )
@@ -208,7 +208,7 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
               <ContextMenuSeparator />
               <ContextMenuItem
                 variant="destructive"
-                onClick={() => deleteConfirm.requestDelete(item)}
+                onClick={() => deleteConfirm.request(item)}
               >
                 <Trash className="size-4" />
                 Delete

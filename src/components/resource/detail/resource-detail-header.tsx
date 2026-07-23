@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query"
+
+import { ResourceRowActions } from "#/components/resource/resource-row-actions"
 import { Badge } from "#/components/ui/badge"
 import { getColumnMetadata } from "#/lib/columns"
 import type {
@@ -5,6 +8,7 @@ import type {
   ResourceSchema,
   TableMetadata,
 } from "#/lib/database-meta.types"
+import { resourceActionsQueryOptions } from "#/lib/supabase/data/resource"
 
 import { AllCells } from "../cells/all-cells"
 
@@ -58,17 +62,33 @@ export function ResourceDetailHeader({
     ]
   })
 
+  const { data: actions = [] } = useQuery(
+    resourceActionsQueryOptions(
+      resourceSchema.schema as never,
+      resourceSchema.name
+    )
+  )
+
   return (
-    <div className="mb-4 space-y-2">
-      {hasTitle && (
-        <div className="truncate font-mono text-xs tracking-wide text-muted-foreground">
-          {fallbackId}
-        </div>
-      )}
-      <h1 className="truncate text-xl font-bold tracking-tight">{heading}</h1>
-      {badges.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">{badges}</div>
-      )}
+    <div className="mb-4 flex items-center justify-between gap-4">
+      <div className="min-w-0 space-y-2">
+        {hasTitle && (
+          <div className="truncate font-mono text-xs tracking-wide text-muted-foreground">
+            {fallbackId}
+          </div>
+        )}
+        <h1 className="truncate text-xl font-bold tracking-tight">{heading}</h1>
+        {badges.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">{badges}</div>
+        )}
+      </div>
+      <ResourceRowActions
+        schema={resourceSchema.schema}
+        resource={resourceSchema.name}
+        record={record}
+        actions={actions}
+        variant="menu"
+      />
     </div>
   )
 }

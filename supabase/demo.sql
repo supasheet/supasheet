@@ -610,6 +610,50 @@ with
 create policy projects_delete on demo.projects for delete to authenticated using (true);
 
 ----------------------------------------------------------------
+-- Row action: cancel a project
+----------------------------------------------------------------
+create or replace function demo.cancel_project (p_id uuid, p_reason text default null) returns void language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_status demo.project_status;
+begin
+  select status into v_status from demo.projects where id = p_id;
+
+  if v_status in ('completed', 'cancelled') then
+    raise exception 'Cannot cancel a % project', v_status;
+  end if;
+
+  update demo.projects
+  set status = 'cancelled',
+      notes = coalesce(notes || E'\n', '') || coalesce('Cancelled: ' || p_reason, 'Cancelled')
+  where id = p_id;
+end;
+$$;
+
+comment on function demo.cancel_project (uuid, text) is '{
+    "type": "action",
+    "resource": "projects",
+    "name": "Cancel project",
+    "description": "Mark this project as cancelled",
+    "icon": "XCircle",
+    "variant": "destructive",
+    "visible": [{"id": "status", "operator": "not.in", "value": ["completed", "cancelled"]}],
+    "confirm": {"title": "Cancel this project?", "description": "This sets the project status to cancelled."},
+    "success_message": "Project cancelled"
+}';
+
+revoke all on function demo.cancel_project (uuid, text)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.cancel_project (uuid, text) to "x-admin",
+"user";
+
+----------------------------------------------------------------
 -- Project ↔ Team member junction (many-to-many, inline form)
 ----------------------------------------------------------------
 create table demo.project_members (
@@ -1084,6 +1128,43 @@ with
   check (true);
 
 create policy portfolio_items_delete on demo.portfolio_items for delete to authenticated using (true);
+
+----------------------------------------------------------------
+-- Row action: publish a portfolio item
+----------------------------------------------------------------
+create or replace function demo.publish_portfolio_item (p_id uuid) returns void language plpgsql security invoker
+set
+  search_path = '' as $$
+begin
+  update demo.portfolio_items
+  set is_published = true, published_at = current_date
+  where id = p_id;
+
+  if not found then
+    raise exception 'Portfolio item not found';
+  end if;
+end;
+$$;
+
+comment on function demo.publish_portfolio_item (uuid) is '{
+    "type": "action",
+    "resource": "portfolio_items",
+    "name": "Publish",
+    "description": "Make this portfolio item visible on the public site",
+    "icon": "Globe",
+    "visible": [{"id": "is_published", "operator": "eq", "value": "false"}],
+    "success_message": "Portfolio item published"
+}';
+
+revoke all on function demo.publish_portfolio_item (uuid)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.publish_portfolio_item (uuid) to "x-admin",
+"user";
 
 ----------------------------------------------------------------
 -- Services (billable catalog — list view)

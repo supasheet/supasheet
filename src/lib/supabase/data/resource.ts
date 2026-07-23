@@ -8,6 +8,7 @@ import type {
   DatabaseSchemas,
   DatabaseTables,
   DatabaseViews,
+  RowActionMeta,
   TableMetadata,
   TableSchema,
   ViewMetadata,
@@ -680,4 +681,61 @@ export const relatedTablesSchemaQueryOptions = <S extends DatabaseSchemas>(
       return data as unknown as TableSchema[]
     },
     staleTime: 1000 * 60 * 5,
+  })
+
+export type ResourceActionSchema<S extends DatabaseSchemas = DatabaseSchemas> =
+  {
+    schema: S
+    function_name: string
+    arguments: string
+  } & RowActionMeta
+
+export const resourceActionsQueryOptions = <S extends DatabaseSchemas>(
+  schema: S,
+  resource: DatabaseTables<S> | DatabaseViews<S>
+) =>
+  queryOptions({
+    queryKey: ["supasheet", "resource-actions", schema, resource],
+    queryFn: async () => {
+      const args: { p_schema: string; p_resource: string } = {
+        p_schema: schema,
+        p_resource: resource,
+      }
+      const { data, error } = await supabase
+        .schema("supasheet")
+        .rpc("get_actions", args)
+      if (error) throw error
+
+      return data.map((row) => {
+        const meta = (
+          row.comment ? JSON.parse(row.comment) : {}
+        ) as RowActionMeta
+        return {
+          schema: row.schema,
+          function_name: row.name,
+          arguments: row.arguments,
+          ...meta,
+        } as ResourceActionSchema<typeof schema>
+      })
+    },
+    staleTime: 1000 * 60 * 5,
+  })
+
+export const runResourceActionMutationOptions = () =>
+  mutationOptions({
+    mutationFn: async ({
+      schema,
+      functionName,
+      params,
+    }: {
+      schema: DatabaseSchemas
+      functionName: string
+      params: Record<string, unknown>
+    }) => {
+      const { data, error } = await supabase
+        .schema(schema)
+        .rpc(functionName as never, params as never)
+      if (error) throw error
+      return data
+    },
   })

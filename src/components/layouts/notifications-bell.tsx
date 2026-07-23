@@ -37,7 +37,7 @@ import {
   SheetTrigger,
 } from "#/components/ui/sheet"
 import { Skeleton } from "#/components/ui/skeleton"
-import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
+import { useConfirmAction } from "#/hooks/use-confirm-action"
 import { useIsMobile } from "#/hooks/use-mobile"
 import type { UserNotificationRow } from "#/lib/supabase/data/core"
 import {
@@ -175,7 +175,7 @@ function NotificationsList({ onNavigate }: { onNavigate: () => void }) {
         e instanceof Error ? e.message : "Failed to delete notification"
       ),
   })
-  const deleteConfirm = useDeleteConfirm((id: string) => {
+  const deleteConfirm = useConfirmAction((id: string) => {
     remove.mutate(id)
   })
 
@@ -212,7 +212,7 @@ function NotificationsList({ onNavigate }: { onNavigate: () => void }) {
             }}
             onMarkRead={() => markRead.mutate(item.id)}
             onArchive={() => archive.mutate(item.id)}
-            onDelete={() => deleteConfirm.requestDelete(item.id)}
+            onDelete={() => deleteConfirm.request(item.id)}
           />
         ))}
       </ul>

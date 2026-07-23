@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
@@ -35,6 +36,7 @@ import {
   deleteBulkResourceMutationOptions,
   foreignTableDataQueryOptions,
   insertBulkResourceMutationOptions,
+  resourceActionsQueryOptions,
 } from "#/lib/supabase/data/resource"
 
 import { getResourceForeignTableColumns } from "./resource-foreign-table-columns"
@@ -78,6 +80,10 @@ export function ResourceForeignTable({
 
   const canDelete = useHasPermission(`${schema}.${table}:delete`)
   const canInsert = useHasPermission(`${schema}.${table}:insert`)
+
+  const { data: actions = [] } = useQuery(
+    resourceActionsQueryOptions(schema as never, table)
+  )
 
   const hasParentValue =
     parentValue !== undefined && parentValue !== null && parentValue !== ""
@@ -180,8 +186,9 @@ export function ResourceForeignTable({
       getResourceForeignTableColumns({
         columnsSchema,
         resourceSchema,
+        actions,
       }),
-    [data, columnsSchema, resourceSchema]
+    [data, columnsSchema, resourceSchema, actions]
   )
 
   const tableInstance = useReactTable({

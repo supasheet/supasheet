@@ -273,7 +273,7 @@ export type TableMetadata = BaseResourceMetadata & {
 export type ViewMetadata = BaseResourceMetadata
 
 export type DashboardWidgetType =
-  "card_1"
+  | "card_1"
   | "card_2"
   | "card_3"
   | "card_4"
@@ -305,6 +305,18 @@ export type ChartMeta = {
   type: "chart"
   chart_type: ChartType
   resource?: string
+}
+
+export type RowActionMeta = {
+  type: "action"
+  resource: string
+  name: string
+  description?: string
+  icon?: IconName
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost"
+  confirm?: { title?: string; description?: string }
+  visible?: FieldCondition[]
+  success_message?: string
 }
 
 export type ColumnMetadata = {

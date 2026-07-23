@@ -37,7 +37,7 @@ import {
   KanbanItem,
   KanbanOverlay,
 } from "#/components/ui/kanban"
-import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
+import { useConfirmAction } from "#/hooks/use-confirm-action"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   DatabaseSchemas,
@@ -286,7 +286,7 @@ function KanbanContextMenu<S extends DatabaseSchemas>({
     deleteResourceMutationOptions(schema, resource)
   )
 
-  const deleteConfirm = useDeleteConfirm(async (item: KanbanViewData) => {
+  const deleteConfirm = useConfirmAction(async (item: KanbanViewData) => {
     const pk = Object.fromEntries(
       primaryKeys.map((pkField) => [pkField.name, item.data[pkField.name]])
     )
@@ -324,7 +324,7 @@ function KanbanContextMenu<S extends DatabaseSchemas>({
               <ContextMenuSeparator />
               <ContextMenuItem
                 variant="destructive"
-                onClick={() => deleteConfirm.requestDelete(task)}
+                onClick={() => deleteConfirm.request(task)}
               >
                 <Trash className="size-4" />
                 Delete

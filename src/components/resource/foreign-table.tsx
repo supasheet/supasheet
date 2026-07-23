@@ -29,6 +29,7 @@ import type {
 } from "#/lib/database-meta.types"
 import {
   columnsSchemaQueryOptions,
+  resourceActionsQueryOptions,
   resourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
@@ -81,13 +82,29 @@ export function ForeignTableSheet({
     )
   )
 
+  const { data: actions = [] } = useQuery(
+    resourceActionsQueryOptions(
+      relationship.target_table_schema,
+      relationship.target_table_name
+    )
+  )
+
   const columns = useMemo(
     () =>
       foreignTableColumns({
+        schema: relationship.target_table_schema,
+        resource: relationship.target_table_name,
         columnsSchema: columnsSchema ?? [],
         setRecord,
+        actions,
       }),
-    [columnsSchema, setRecord]
+    [
+      relationship.target_table_schema,
+      relationship.target_table_name,
+      columnsSchema,
+      setRecord,
+      actions,
+    ]
   )
 
   const table = useReactTable({

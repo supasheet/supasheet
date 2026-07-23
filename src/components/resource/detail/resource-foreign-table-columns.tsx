@@ -11,16 +11,20 @@ import { ArrowUpRightIcon } from "lucide-react"
 
 import { Checkbox } from "#/components/ui/checkbox"
 import { getColumnMetadata } from "#/lib/columns"
+import type { ResourceActionSchema } from "#/lib/supabase/data/resource"
 
+import { ResourceRowActions } from "../resource-row-actions"
 import { ResourceRowCell } from "../resource-row-cell"
 import { DetailRecordTrigger } from "../sheet/detail-record-trigger"
 
 export function getResourceForeignTableColumns({
   columnsSchema,
   resourceSchema,
+  actions = [],
 }: {
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
+  actions?: ResourceActionSchema[]
 }) {
   const tableSchema = isTableSchema(resourceSchema) ? resourceSchema : null
   const primaryKeys = tableSchema?.primary_keys ?? []
@@ -78,6 +82,26 @@ export function getResourceForeignTableColumns({
 
   return [
     ...(selectColumn ? [selectColumn] : []),
+    ...(actions.length > 0
+      ? [
+          {
+            id: "actions",
+            header: () => null,
+            cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+              <ResourceRowActions
+                schema={resourceSchema.schema}
+                resource={resourceSchema.name}
+                record={row.original}
+                actions={actions}
+              />
+            ),
+            size: 40,
+            enableSorting: false,
+            enableHiding: false,
+            enableColumnFilter: false,
+          },
+        ]
+      : []),
     ...(columnsSchema ?? []).map((c) => {
       const meta = getColumnMetadata(resourceSchema, c)
 

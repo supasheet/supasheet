@@ -19,7 +19,7 @@ import {
   EventCalendarYearView,
 } from "#/components/ui/event-calendar"
 import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
-import { useDeleteConfirm } from "#/hooks/use-delete-confirm"
+import { useConfirmAction } from "#/hooks/use-confirm-action"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   CalendarLayout,
@@ -157,7 +157,7 @@ export function ResourceCalendar({
     })
   }
 
-  const deleteConfirm = useDeleteConfirm(async (event: IEvent) => {
+  const deleteConfirm = useConfirmAction(async (event: IEvent) => {
     try {
       await deleteRow(getPk(event))
       queryClient.invalidateQueries({
@@ -192,9 +192,7 @@ export function ResourceCalendar({
           onDragEvent={canUpdate ? onDragEvent : undefined}
           onAddEvent={hasPk ? onAddEvent : undefined}
           onEventView={hasPk ? onEventView : undefined}
-          onEventDelete={
-            hasPk && canDelete ? deleteConfirm.requestDelete : undefined
-          }
+          onEventDelete={hasPk && canDelete ? deleteConfirm.request : undefined}
         >
           <EventCalendarHeader>
             <EventCalendarNavigation view={view} />

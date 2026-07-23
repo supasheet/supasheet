@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import type {
   ColumnFiltersState,
@@ -25,6 +25,7 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import {
   deleteBulkResourceMutationOptions,
   insertBulkResourceMutationOptions,
+  resourceActionsQueryOptions,
 } from "#/lib/supabase/data/resource"
 
 import { ResourceFilterPresets } from "./resource-filter-presets"
@@ -60,6 +61,10 @@ export function ResourceTable({
 
   const canDelete = useHasPermission(`${schema}.${resource}:delete`)
   const canInsert = useHasPermission(`${schema}.${resource}:insert`)
+
+  const { data: actions = [] } = useQuery(
+    resourceActionsQueryOptions(schema, resource)
+  )
 
   const { mutateAsync: deleteRows } = useMutation(
     deleteBulkResourceMutationOptions(schema, resource)
@@ -125,8 +130,8 @@ export function ResourceTable({
   }
 
   const columns = useMemo(
-    () => getResourceTableColumns({ columnsSchema, resourceSchema }),
-    [columnsSchema, resourceSchema]
+    () => getResourceTableColumns({ columnsSchema, resourceSchema, actions }),
+    [columnsSchema, resourceSchema, actions]
   )
 
   const table = useDataTable({

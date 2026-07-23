@@ -327,6 +327,20 @@ export type Database = {
         }
         Relationships: []
       }
+      functions: {
+        Row: {
+          arguments: string | null
+          comment: string | null
+          id: number | null
+          language: string | null
+          name: string | null
+          return_type: string | null
+          roles: Json | null
+          schema: string | null
+          security_type: string | null
+        }
+        Relationships: []
+      }
       materialized_views: {
         Row: {
           comment: string | null
@@ -400,6 +414,20 @@ export type Database = {
         Returns: string
       }
       custom_access_token: { Args: { event: Json }; Returns: Json }
+      get_actions: {
+        Args: { p_caller?: string; p_resource?: string; p_schema?: string }
+        Returns: {
+          arguments: string
+          comment: string
+          id: number
+          language: string
+          name: string
+          return_type: string
+          roles: Json
+          schema: string
+          security_type: string
+        }[]
+      }
       get_charts: {
         Args: { p_caller?: string; p_resource?: string; p_schema?: string }
         Returns: {
@@ -759,9 +787,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
