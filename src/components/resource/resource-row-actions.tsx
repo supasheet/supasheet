@@ -124,7 +124,7 @@ export function ResourceRowActions({
                 <Button
                   variant="outline"
                   size="icon-xs"
-                  className="opacity-0 transition-opacity group-hover:opacity-100"
+                  className="opacity-0 transition-opacity group-hover:opacity-100 size-5"
                 />
               )
             }
@@ -156,6 +156,7 @@ export function ResourceRowActions({
                           <DropdownMenuRadioItem
                             key={option.value}
                             value={option.value}
+                            closeOnClick
                           >
                             {option.icon && (
                               <DynamicIcon iconName={option.icon} />
