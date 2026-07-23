@@ -265,9 +265,6 @@ function NotificationItem({
         <div className="flex flex-1 flex-col gap-1">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">{notification.title}</p>
-            <Badge variant="outline" className="font-mono text-[10px]">
-              {notification.type}
-            </Badge>
             {isUnread && (
               <span
                 aria-label="Unread"
@@ -275,6 +272,9 @@ function NotificationItem({
               />
             )}
           </div>
+          <Badge variant="outline" className="font-mono text-[10px]">
+            {notification.type}
+          </Badge>
           {notification.body && (
             <p className="text-sm text-muted-foreground">{notification.body}</p>
           )}
