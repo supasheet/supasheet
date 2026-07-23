@@ -317,6 +317,7 @@ export type RowActionMeta = {
   confirm?: { title?: string; description?: string }
   visible?: FieldCondition[]
   success_message?: string
+  action_type?: "default" | "picker"
 }
 
 export type ColumnMetadata = {

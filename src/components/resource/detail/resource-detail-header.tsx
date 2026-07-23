@@ -87,6 +87,7 @@ export function ResourceDetailHeader({
         resource={resourceSchema.name}
         record={record}
         actions={actions}
+        columnsSchema={columnsSchema}
         variant="menu"
       />
     </div>

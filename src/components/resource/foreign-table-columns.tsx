@@ -34,6 +34,7 @@ export function foreignTableColumns({
           resource={resource}
           record={row.original}
           actions={actions}
+          columnsSchema={columnsSchema}
         />
       ),
       size: 40,

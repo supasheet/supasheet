@@ -654,6 +654,35 @@ execute on function demo.cancel_project (uuid, text) to "x-admin",
 "user";
 
 ----------------------------------------------------------------
+-- Row action: set a project's priority (value-picker, no hardcoded value)
+----------------------------------------------------------------
+create or replace function demo.set_project_priority (p_id uuid, p_priority demo.priority_level) returns void language plpgsql security invoker
+set
+  search_path = '' as $$
+begin
+  update demo.projects set priority = p_priority where id = p_id;
+end;
+$$;
+
+comment on function demo.set_project_priority (uuid, demo.priority_level) is '{
+    "type": "action",
+    "resource": "projects",
+    "name": "Set priority",
+    "icon": "Flag",
+    "action_type": "picker"
+}';
+
+revoke all on function demo.set_project_priority (uuid, demo.priority_level)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.set_project_priority (uuid, demo.priority_level) to "x-admin",
+"user";
+
+----------------------------------------------------------------
 -- Project ↔ Team member junction (many-to-many, inline form)
 ----------------------------------------------------------------
 create table demo.project_members (
