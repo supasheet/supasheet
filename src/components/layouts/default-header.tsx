@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
+
+import { LogInIcon } from "lucide-react"
 
 import {
   Breadcrumb,
@@ -8,8 +10,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "#/components/ui/breadcrumb"
+import { Button } from "#/components/ui/button"
 import { Separator } from "#/components/ui/separator"
 import { SidebarTrigger } from "#/components/ui/sidebar"
+import { useAuthUser } from "#/hooks/use-user"
 
 export function DefaultHeader({
   breadcrumbs,
@@ -21,6 +25,8 @@ export function DefaultHeader({
   }[]
   children?: React.ReactNode
 }) {
+  const authUser = useAuthUser()
+  const redirect = useRouterState({ select: (state) => state.location.href })
   const items = breadcrumbs.slice(0, -1)
   const lastItem = breadcrumbs.at(-1)
 
@@ -28,13 +34,15 @@ export function DefaultHeader({
     <div className="w-full">
       <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
         <div className="flex flex-1 items-center gap-2">
-          <SidebarTrigger />
+          {authUser && <SidebarTrigger />}
           {lastItem && (
             <>
-              <Separator
-                orientation="vertical"
-                className="mt-1.5 mr-2 data-[orientation=vertical]:!h-4"
-              />
+              {authUser && (
+                <Separator
+                  orientation="vertical"
+                  className="mt-1.5 mr-2 data-[orientation=vertical]:!h-4"
+                />
+              )}
               <Breadcrumb>
                 <BreadcrumbList>
                   {items.map((item) => (
@@ -58,6 +66,16 @@ export function DefaultHeader({
           )}
         </div>
         {children}
+        {!authUser && (
+          <Button
+            size="sm"
+            nativeButton={false}
+            render={<Link to="/auth/sign-in" search={{ redirect }} />}
+          >
+            <LogInIcon />
+            Sign in
+          </Button>
+        )}
       </header>
     </div>
   )
