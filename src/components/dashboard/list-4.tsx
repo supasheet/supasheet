@@ -122,7 +122,7 @@ export function List4Widget<S extends DatabaseSchemas>({
                       {row.value}
                     </span>
                   </div>
-                  {(row.label !== undefined && row.label !== null) && (
+                  {row.label !== undefined && row.label !== null && (
                     <p className="truncate text-xs text-muted-foreground">
                       {row.label}
                     </p>
@@ -154,9 +154,7 @@ export function List4Widget<S extends DatabaseSchemas>({
           })}
         </div>
         {widget.caption && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {widget.caption}
-          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{widget.caption}</p>
         )}
       </CardContent>
     </Card>

@@ -106,12 +106,12 @@ export function List2Widget<S extends DatabaseSchemas>({
                     </p>
                   )}
                 </div>
-                {(row.field_1 !== undefined && row.field_1 !== null) && (
+                {row.field_1 !== undefined && row.field_1 !== null && (
                   <div className="hidden min-w-24 shrink-0 text-right sm:block">
                     <p className="text-sm font-medium">{row.field_1}</p>
                   </div>
                 )}
-                {(row.field_2 !== undefined && row.field_2 !== null) && (
+                {row.field_2 !== undefined && row.field_2 !== null && (
                   <div className="hidden min-w-24 shrink-0 text-right md:block">
                     <p className="text-sm text-muted-foreground">
                       {row.field_2}

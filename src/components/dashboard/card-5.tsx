@@ -124,9 +124,7 @@ export function Card5<S extends DatabaseSchemas>({
           )}
         </div>
         {widget.caption && (
-          <p className="mt-4 text-xs text-muted-foreground">
-            {widget.caption}
-          </p>
+          <p className="mt-4 text-xs text-muted-foreground">{widget.caption}</p>
         )}
       </CardContent>
     </Card>

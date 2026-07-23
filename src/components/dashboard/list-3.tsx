@@ -124,7 +124,7 @@ export function List3Widget<S extends DatabaseSchemas>({
                     {row.entity}
                   </span>
                 </p>
-                {(row.date !== undefined && row.date !== null) && (
+                {row.date !== undefined && row.date !== null && (
                   <span className="shrink-0 text-xs whitespace-nowrap text-muted-foreground">
                     {row.date}
                   </span>
@@ -149,9 +149,7 @@ export function List3Widget<S extends DatabaseSchemas>({
           })}
         </div>
         {widget.caption && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {widget.caption}
-          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{widget.caption}</p>
         )}
       </CardContent>
     </Card>
