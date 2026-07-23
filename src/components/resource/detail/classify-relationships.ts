@@ -27,9 +27,9 @@ export type OneToOneRelation = RelatedTable & {
 }
 
 export type ClassifiedRelationships = {
-  oneToOneRelationships: OneToOneRelation[]
-  oneToManyRelationships: ManyRelation[]
-  manyToManyRelationships: ManyRelation[]
+  oneToOne: OneToOneRelation | undefined
+  oneToMany: ManyRelation | undefined
+  manyToMany: ManyRelation | undefined
 }
 
 export function classifyRelationships(
@@ -45,29 +45,20 @@ export function classifyRelationships(
     primary_keys: tableSchema.primary_keys ?? [],
   } as RelatedTable
 
-  const oneToOneRelationships: OneToOneRelation[] = []
-  const oneToManyRelationships: ManyRelation[] = []
-  const manyToManyRelationships: ManyRelation[] = []
-
-  const classification = {
-    oneToOneRelationships,
-    oneToManyRelationships,
-    manyToManyRelationships,
-  }
-
-  const oneToOneAsSourceList = table.relationships.filter(
+  const oneToOneAsSource = table.relationships.find(
     (rel) => rel.source_schema === schema && rel.source_table_name === resource
   )
-  if (oneToOneAsSourceList.length > 0) {
-    for (const rel of oneToOneAsSourceList) {
-      oneToOneRelationships.push({
+  if (oneToOneAsSource) {
+    return {
+      oneToOne: {
         ...table,
-        __fkColumn: rel.source_column_name,
-        __foreignMatchColumn: rel.target_column_name,
-        __parentMatchColumn: rel.source_column_name,
-      })
+        __fkColumn: oneToOneAsSource.source_column_name,
+        __foreignMatchColumn: oneToOneAsSource.target_column_name,
+        __parentMatchColumn: oneToOneAsSource.source_column_name,
+      },
+      oneToMany: undefined,
+      manyToMany: undefined,
     }
-    return classification
   }
 
   const oneToOneAsTarget = table.relationships.find(
@@ -83,13 +74,16 @@ export function classifyRelationships(
           table.primary_keys.length === 1))
   )
   if (oneToOneAsTarget) {
-    oneToOneRelationships.push({
-      ...table,
-      __fkColumn: oneToOneAsTarget.source_column_name,
-      __foreignMatchColumn: oneToOneAsTarget.source_column_name,
-      __parentMatchColumn: oneToOneAsTarget.target_column_name,
-    })
-    return classification
+    return {
+      oneToOne: {
+        ...table,
+        __fkColumn: oneToOneAsTarget.source_column_name,
+        __foreignMatchColumn: oneToOneAsTarget.source_column_name,
+        __parentMatchColumn: oneToOneAsTarget.target_column_name,
+      },
+      oneToMany: undefined,
+      manyToMany: undefined,
+    }
   }
 
   const m2mRel = table.relationships.find(
@@ -106,13 +100,18 @@ export function classifyRelationships(
         table.primary_keys.some((k) => k.name === r.source_column_name) &&
         !(r.target_table_schema === schema && r.target_table_name === resource)
     )
-    manyToManyRelationships.push({
-      ...table,
-      __parentColumn: m2mRel.source_column_name,
-      __targetColumn: m2mRel.target_column_name,
-      __selectClause: otherRel ? `*, ...${otherRel.target_table_name}(*)` : "*",
-    })
-    return classification
+    return {
+      oneToOne: undefined,
+      oneToMany: undefined,
+      manyToMany: {
+        ...table,
+        __parentColumn: m2mRel.source_column_name,
+        __targetColumn: m2mRel.target_column_name,
+        __selectClause: otherRel
+          ? `*, ...${otherRel.target_table_name}(*)`
+          : "*",
+      },
+    }
   }
 
   const oneToManyRel = table.relationships.find(
@@ -126,14 +125,17 @@ export function classifyRelationships(
         table.primary_keys.some((key) => key.name === rel.source_column_name)
       )
   )
-  if (oneToManyRel) {
-    oneToManyRelationships.push({
-      ...table,
-      __parentColumn: oneToManyRel.source_column_name,
-      __targetColumn: oneToManyRel.target_column_name,
-      __selectClause: "*",
-    })
-  }
 
-  return classification
+  return {
+    oneToOne: undefined,
+    manyToMany: undefined,
+    oneToMany: oneToManyRel
+      ? {
+          ...table,
+          __parentColumn: oneToManyRel.source_column_name,
+          __targetColumn: oneToManyRel.target_column_name,
+          __selectClause: "*",
+        }
+      : undefined,
+  }
 }

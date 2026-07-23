@@ -54,7 +54,7 @@ export const Route = createFileRoute(
       columnsSchema
     )
 
-    const oneToOne = classification.oneToOneRelationships[0]
+    const oneToOne = classification.oneToOne
     if (oneToOne) {
       const primaryKeys = context.tableSchema?.primary_keys ?? []
       const pkName = primaryKeys[0]?.name ?? "id"
@@ -73,9 +73,7 @@ export const Route = createFileRoute(
       return classification
     }
 
-    const many =
-      classification.oneToManyRelationships[0] ??
-      classification.manyToManyRelationships[0]
+    const many = classification.oneToMany ?? classification.manyToMany
     if (!many) throw notFound()
 
     const primaryKeys = context.tableSchema?.primary_keys ?? []
@@ -92,17 +90,12 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const {
-    oneToOneRelationships,
-    oneToManyRelationships,
-    manyToManyRelationships,
-  } = Route.useLoaderData()
+  const { oneToOne, oneToMany, manyToMany } = Route.useLoaderData()
   const { pkName } = parentRoute.useLoaderData()
 
   const pk = { [pkName]: resourceId }
 
-  const oneToOne = oneToOneRelationships[0]
-  const many = oneToManyRelationships[0] ?? manyToManyRelationships[0]
+  const many = oneToMany ?? manyToMany
 
   const { data: record } = useSuspenseQuery(
     singleResourceDataQueryOptions(schema, resource, pk)

@@ -1,4 +1,4 @@
-import type { ColumnDef, Row } from "@tanstack/react-table"
+import type { Column, ColumnDef, Row } from "@tanstack/react-table"
 
 import type {
   ColumnSchema,
@@ -6,13 +6,13 @@ import type {
   ResourceSchema,
 } from "@/lib/database-meta.types"
 import { isTableSchema } from "@/lib/database-meta.types"
-import { formatTitle } from "@/lib/format"
 import { ArrowUpRightIcon } from "lucide-react"
 
 import { Checkbox } from "#/components/ui/checkbox"
 import { getColumnMetadata } from "#/lib/columns"
 import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
+import { ResourceColumnHeader } from "../resource-column-header"
 import { ResourceRowActions } from "../resource-row-actions"
 import { ResourceRowCell } from "../resource-row-cell"
 import { DetailRecordTrigger } from "../sheet/detail-record-trigger"
@@ -109,8 +109,16 @@ export function getResourceForeignTableColumns({
       return {
         id: c.name,
         accessorKey: c.name,
-        header: () => (
-          <div className="truncate select-none">{formatTitle(meta.name)}</div>
+        header: ({
+          column,
+        }: {
+          column: Column<ResourceDataSchema, unknown>
+        }) => (
+          <ResourceColumnHeader
+            column={column}
+            title={meta.name}
+            isSorted={column.getIsSorted()}
+          />
         ),
         cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
           <ResourceRowCell

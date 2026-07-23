@@ -1028,10 +1028,7 @@ with
 create policy tasks_delete on demo.tasks for delete to authenticated using (true);
 
 ----------------------------------------------------------------
--- Row action: duplicate a task (deliberately resets status/dates
--- instead of a blind column copy — the point of a SQL-backed action
--- over a generic "copy configured fields" client feature is exactly
--- this kind of per-resource control)
+-- Row action: duplicate a task
 ----------------------------------------------------------------
 create or replace function demo.duplicate_task (p_id uuid) returns uuid language plpgsql security invoker
 set
