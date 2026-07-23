@@ -35,7 +35,6 @@ import { isTableSchema } from "#/lib/database-meta.types"
 import {
   deleteBulkResourceMutationOptions,
   foreignTableDataQueryOptions,
-  insertBulkResourceMutationOptions,
   resourceActionsQueryOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -121,44 +120,6 @@ export function ResourceForeignTable({
   const { mutateAsync: deleteRows } = useMutation(
     deleteBulkResourceMutationOptions(schema, table)
   )
-  const { mutateAsync: insertBulkRows } = useMutation(
-    insertBulkResourceMutationOptions(schema, table)
-  )
-
-  const duplicated = resourceSchema.comment
-    ? (JSON.parse(resourceSchema.comment) as TableMetadata).fields?.duplicated
-    : undefined
-
-  const handleDuplicate = async (rows: Record<string, unknown>[]) => {
-    try {
-      const pkNames = new Set(primaryKeys.map((k) => k.name))
-      const columnNames = new Set(
-        columnsSchema.map((c) => c.name).filter((n): n is string => n !== null)
-      )
-      const fields = duplicated ?? [...columnNames]
-      const stripped = rows.map((row) =>
-        Object.fromEntries(
-          fields
-            .filter((f) => !pkNames.has(f) && columnNames.has(f))
-            .map((f) => [f, row[f]])
-        )
-      )
-      await insertBulkRows(stripped)
-      queryClient.invalidateQueries({
-        queryKey: ["supasheet", "resource-data", schema, table],
-      })
-      toast.success(
-        rows.length === 1
-          ? "Record duplicated"
-          : `${rows.length} records duplicated`
-      )
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to duplicate records"
-      )
-    }
-  }
-
   const handleDelete = async (rows: Record<string, unknown>[]) => {
     try {
       await deleteRows(
@@ -245,9 +206,6 @@ export function ResourceForeignTable({
       </DataTableToolbar>
       <DataTableActionBar
         table={tableInstance}
-        onDuplicate={
-          canInsert && primaryKeys.length ? handleDuplicate : undefined
-        }
         onDelete={canDelete && primaryKeys.length ? handleDelete : undefined}
       />
     </DataTable>

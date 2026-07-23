@@ -2,7 +2,7 @@ import { useCallback, useState } from "react"
 
 import type { Table } from "@tanstack/react-table"
 
-import { CopyIcon, Trash2Icon } from "lucide-react"
+import { Trash2Icon } from "lucide-react"
 
 import {
   ActionBar,
@@ -24,13 +24,11 @@ import {
 
 interface DataTableActionBarProps<TData> {
   table: Table<TData>
-  onDuplicate?: (rows: TData[]) => void | Promise<void>
   onDelete?: (rows: TData[]) => void | Promise<void>
 }
 
 export function DataTableActionBar<TData>({
   table,
-  onDuplicate,
   onDelete,
 }: DataTableActionBarProps<TData>) {
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -45,18 +43,13 @@ export function DataTableActionBar<TData>({
     [table]
   )
 
-  async function handleDuplicate() {
-    await onDuplicate?.(rows.map((r) => r.original))
-    table.toggleAllRowsSelected(false)
-  }
-
   async function handleConfirm() {
     await onDelete?.(rows.map((r) => r.original))
     table.toggleAllRowsSelected(false)
     setConfirmOpen(false)
   }
 
-  if (!onDuplicate && !onDelete) {
+  if (!onDelete) {
     return null
   }
 
@@ -67,30 +60,16 @@ export function DataTableActionBar<TData>({
           {rows.length} selected
         </ActionBarSelection>
         <ActionBarSeparator className="hidden sm:block" />
-        {onDuplicate && (
-          <ActionBarGroup>
-            <ActionBarItem
-              onSelect={(e) => e.preventDefault()}
-              onClick={handleDuplicate}
-            >
-              <CopyIcon className="size-4" />
-              Duplicate ({rows.length})
-            </ActionBarItem>
-          </ActionBarGroup>
-        )}
-        {onDuplicate && onDelete && <ActionBarSeparator />}
-        {onDelete && (
-          <ActionBarGroup>
-            <ActionBarItem
-              variant="destructive"
-              onSelect={(e) => e.preventDefault()}
-              onClick={() => setConfirmOpen(true)}
-            >
-              <Trash2Icon className="size-4" />
-              Delete ({rows.length})
-            </ActionBarItem>
-          </ActionBarGroup>
-        )}
+        <ActionBarGroup>
+          <ActionBarItem
+            variant="destructive"
+            onSelect={(e) => e.preventDefault()}
+            onClick={() => setConfirmOpen(true)}
+          >
+            <Trash2Icon className="size-4" />
+            Delete ({rows.length})
+          </ActionBarItem>
+        </ActionBarGroup>
       </ActionBar>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>

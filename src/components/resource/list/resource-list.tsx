@@ -19,13 +19,9 @@ import type {
   ColumnSchema,
   FilterPreset,
   ResourceSchema,
-  TableMetadata,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
-import {
-  deleteBulkResourceMutationOptions,
-  insertBulkResourceMutationOptions,
-} from "#/lib/supabase/data/resource"
+import { deleteBulkResourceMutationOptions } from "#/lib/supabase/data/resource"
 
 import { ResourceFilterPresets } from "../resource-filter-presets"
 import { getResourceTableColumns } from "../resource-table-columns"
@@ -73,48 +69,10 @@ export function ResourceList({
     : []
 
   const canDelete = useHasPermission(`${schema}.${resource}:delete`)
-  const canInsert = useHasPermission(`${schema}.${resource}:insert`)
 
   const { mutateAsync: deleteRows } = useMutation(
     deleteBulkResourceMutationOptions(schema, resource)
   )
-  const { mutateAsync: insertBulkRows } = useMutation(
-    insertBulkResourceMutationOptions(schema, resource)
-  )
-
-  const duplicated = resourceSchema.comment
-    ? (JSON.parse(resourceSchema.comment) as TableMetadata).fields?.duplicated
-    : undefined
-
-  const handleDuplicate = async (rows: Record<string, unknown>[]) => {
-    try {
-      const pkNames = new Set(primaryKeys.map((k) => k.name))
-      const columnNames = new Set(
-        columnsSchema.map((c) => c.name).filter((n): n is string => n !== null)
-      )
-      const fields = duplicated ?? [...columnNames]
-      const stripped = rows.map((row) =>
-        Object.fromEntries(
-          fields
-            .filter((f) => !pkNames.has(f) && columnNames.has(f))
-            .map((f) => [f, row[f]])
-        )
-      )
-      await insertBulkRows(stripped)
-      queryClient.invalidateQueries({
-        queryKey: ["supasheet", "resource-data", schema, resource],
-      })
-      toast.success(
-        rows.length === 1
-          ? "Record duplicated"
-          : `${rows.length} records duplicated`
-      )
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to duplicate records"
-      )
-    }
-  }
 
   const handleDelete = async (rows: Record<string, unknown>[]) => {
     try {
@@ -163,7 +121,6 @@ export function ResourceList({
       </DataTableToolbar>
       <DataTableActionBar
         table={table}
-        onDuplicate={canInsert ? handleDuplicate : undefined}
         onDelete={canDelete ? handleDelete : undefined}
       />
       {rows.length === 0 ? (

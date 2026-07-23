@@ -12,7 +12,7 @@
 --   - All column data types: URL, TEL, EMAIL, RICH_TEXT, COLOR,
 --     PERCENTAGE, DURATION, file, AVATAR, enums, arrays
 --   - All view layouts: kanban, calendar, gallery, list, tree
---   - Field sections, filter presets, quick_create, duplicated,
+--   - Field sections, filter presets, quick_create,
 --     conditional field behavior, lookup fill + lookup filter
 --   - Singleton resource (workspace_settings)
 --   - Many-to-many junction with inline form (project_members)
@@ -23,6 +23,8 @@
 --   - Notifications (fan-out on create/status change)
 --   - Audit logging and per-resource comments
 --   - Detail page "tabs" allowlist
+--   - Row actions backed by SQL functions (publish, cancel, set
+--     priority via enum picker, duplicate)
 --
 -- Apply directly against a local Supabase Postgres instance, e.g.:
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/demo.sql
@@ -941,7 +943,6 @@ comment on table demo.tasks is '{
     ],
     "fields": {
         "quick_create": ["title", "project_id", "assignee_id", "due_date", "priority"],
-        "duplicated": ["title", "description", "status", "priority", "project_id", "milestone_id", "assignee_id", "estimated_hours", "tags"],
         "sections": [
             {"id": "summary", "title": "Summary", "fields": ["title", "description", "project_id", "milestone_id", "parent_task_id"]},
             {"id": "assignment", "title": "Assignment", "fields": ["assignee_id", "status", "priority"]},
@@ -1025,6 +1026,56 @@ with
   check (true);
 
 create policy tasks_delete on demo.tasks for delete to authenticated using (true);
+
+----------------------------------------------------------------
+-- Row action: duplicate a task (deliberately resets status/dates
+-- instead of a blind column copy — the point of a SQL-backed action
+-- over a generic "copy configured fields" client feature is exactly
+-- this kind of per-resource control)
+----------------------------------------------------------------
+create or replace function demo.duplicate_task (p_id uuid) returns uuid language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_new_id uuid;
+begin
+  insert into demo.tasks (
+    project_id, milestone_id, parent_task_id, assignee_id,
+    title, description, status, priority, estimated_hours, tags
+  )
+  select
+    project_id, milestone_id, parent_task_id, assignee_id,
+    title || ' (copy)', description, 'todo', priority, estimated_hours, tags
+  from demo.tasks
+  where id = p_id
+  returning id into v_new_id;
+
+  if v_new_id is null then
+    raise exception 'Task not found';
+  end if;
+
+  return v_new_id;
+end;
+$$;
+
+comment on function demo.duplicate_task (uuid) is '{
+    "type": "action",
+    "resource": "tasks",
+    "name": "Duplicate",
+    "description": "Create a copy of this task as a new to-do",
+    "icon": "Copy",
+    "success_message": "Task duplicated"
+}';
+
+revoke all on function demo.duplicate_task (uuid)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.duplicate_task (uuid) to "x-admin",
+"user";
 
 ----------------------------------------------------------------
 -- Portfolio items (published case studies — gallery is the natural

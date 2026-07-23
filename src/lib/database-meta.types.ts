@@ -244,7 +244,6 @@ export type FieldsConfig = {
 // Table-only: includes form-specific options
 export type TableFieldsConfig = FieldsConfig & {
   quick_create?: ColumnName[]
-  duplicated?: ColumnName[]
   behavior?: Record<ColumnName, FieldBehavior>
   lookups?: Record<ColumnName, LookupConfig>
 }
