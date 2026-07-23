@@ -10,11 +10,11 @@ import { Button } from "#/components/ui/button"
 import { Textarea } from "#/components/ui/textarea"
 import {
   Timeline,
-  TimelineConnector,
   TimelineContent,
-  TimelineDot,
+  TimelineDate,
+  TimelineIndicator,
   TimelineItem,
-  TimelineTime,
+  TimelineSeparator,
   TimelineTitle,
 } from "#/components/ui/timeline"
 import { useAuthUser } from "#/hooks/use-user"
@@ -38,19 +38,21 @@ function userInitials(name: string | null) {
 
 function CommentTimelineItem({
   comment,
+  step,
   isOwner,
   onEdit,
   onDelete,
 }: {
   comment: ResourceComment
+  step: number
   isOwner: boolean
   onEdit: (comment: ResourceComment) => void
   onDelete: (id: string) => void
 }) {
   return (
-    <TimelineItem>
-      <TimelineDot className={isOwner ? "border-primary" : ""} />
-      <TimelineConnector />
+    <TimelineItem step={step}>
+      <TimelineIndicator className={isOwner ? "border-primary" : ""} />
+      <TimelineSeparator />
       <TimelineContent>
         <div className="rounded-lg border bg-card p-3">
           <div className="flex items-start justify-between gap-2">
@@ -66,7 +68,10 @@ function CommentTimelineItem({
               <TimelineTitle className="text-sm">
                 {comment.created_by_name ?? "Unknown"}
               </TimelineTitle>
-              <TimelineTime dateTime={comment.created_at} className="text-xs">
+              <TimelineDate
+                dateTime={comment.created_at}
+                className="mb-0 inline text-xs"
+              >
                 {formatDistanceToNow(new Date(comment.created_at), {
                   addSuffix: true,
                 })}
@@ -75,7 +80,7 @@ function CommentTimelineItem({
                     · edited
                   </span>
                 )}
-              </TimelineTime>
+              </TimelineDate>
             </div>
             {isOwner && (
               <div className="flex shrink-0 gap-0.5">
@@ -109,11 +114,13 @@ function CommentTimelineItem({
 
 function EditCommentForm({
   comment,
+  step,
   onSave,
   onCancel,
   isPending,
 }: {
   comment: ResourceComment
+  step: number
   onSave: (id: string, content: string) => void
   onCancel: () => void
   isPending: boolean
@@ -121,9 +128,9 @@ function EditCommentForm({
   const [value, setValue] = useState(comment.content)
 
   return (
-    <TimelineItem>
-      <TimelineDot className="border-primary" />
-      <TimelineConnector />
+    <TimelineItem step={step}>
+      <TimelineIndicator className="border-primary" />
+      <TimelineSeparator />
       <TimelineContent>
         <div className="rounded-lg border bg-card p-3">
           <div className="mb-2 flex items-center gap-2">
@@ -228,9 +235,9 @@ export function ResourceComments({
   return (
     <Timeline className="px-1 py-2">
       {comments.length === 0 && (
-        <TimelineItem>
-          <TimelineDot className="border-muted-foreground/30" />
-          <TimelineConnector />
+        <TimelineItem step={1}>
+          <TimelineIndicator className="border-muted-foreground/30" />
+          <TimelineSeparator />
           <TimelineContent>
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <p className="text-sm font-medium">No comments yet</p>
@@ -241,11 +248,12 @@ export function ResourceComments({
           </TimelineContent>
         </TimelineItem>
       )}
-      {comments.map((comment) =>
+      {comments.map((comment, index) =>
         editingComment?.id === comment.id ? (
           <EditCommentForm
             key={comment.id}
             comment={comment}
+            step={index + 1}
             onSave={(id, content) => updateMutation.mutate({ id, content })}
             onCancel={() => setEditingComment(null)}
             isPending={updateMutation.isPending}
@@ -254,6 +262,7 @@ export function ResourceComments({
           <CommentTimelineItem
             key={comment.id}
             comment={comment}
+            step={index + 1}
             isOwner={comment.created_by === authUser?.id}
             onEdit={setEditingComment}
             onDelete={(id) => deleteMutation.mutate(id)}
@@ -261,8 +270,8 @@ export function ResourceComments({
         )
       )}
 
-      <TimelineItem>
-        <TimelineDot className="border-muted-foreground/30" />
+      <TimelineItem step={comments.length + 1}>
+        <TimelineIndicator className="border-muted-foreground/30" />
         <TimelineContent>
           <NewCommentForm
             value={newContent}

@@ -15,13 +15,12 @@ import {
 } from "#/components/ui/sheet"
 import {
   Timeline,
-  TimelineConnector,
   TimelineContent,
-  TimelineDescription,
-  TimelineDot,
+  TimelineDate,
   TimelineHeader,
+  TimelineIndicator,
   TimelineItem,
-  TimelineTime,
+  TimelineSeparator,
   TimelineTitle,
 } from "#/components/ui/timeline"
 import { useIsMobile } from "#/hooks/use-mobile"
@@ -36,7 +35,7 @@ function opIcon(op: string) {
   return null
 }
 
-function opDotClass(op: string) {
+function opIndicatorClass(op: string) {
   if (op === "INSERT") return "border-green-500"
   if (op === "DELETE") return "border-destructive"
   return ""
@@ -54,9 +53,11 @@ function userInitials(name: string | null) {
 
 function AuditTimelineItem({
   entry,
+  step,
   onClick,
 }: {
   entry: ResourceAuditLog
+  step: number
   onClick: () => void
 }) {
   const description = () => {
@@ -69,9 +70,9 @@ function AuditTimelineItem({
   }
 
   return (
-    <TimelineItem>
-      <TimelineDot className={opDotClass(entry.operation)} />
-      <TimelineConnector />
+    <TimelineItem step={step}>
+      <TimelineIndicator className={opIndicatorClass(entry.operation)} />
+      <TimelineSeparator />
       <TimelineContent>
         <button
           type="button"
@@ -79,32 +80,30 @@ function AuditTimelineItem({
           className="group w-full rounded-lg border bg-card p-3 text-left transition-colors hover:bg-accent hover:text-accent-foreground"
         >
           <TimelineHeader>
-            <TimelineTime dateTime={entry.created_at}>
+            <TimelineDate dateTime={entry.created_at}>
               {formatDistanceToNow(new Date(entry.created_at), {
                 addSuffix: true,
               })}
               <span className="ml-1 text-muted-foreground/60">
                 · {format(new Date(entry.created_at), "MMM d, HH:mm")}
               </span>
-            </TimelineTime>
-            <div className="flex items-center gap-2">
-              <TimelineTitle className="flex items-center gap-1.5">
-                <Badge
-                  variant={opVariant(entry.operation)}
-                  className="gap-1 px-1.5 py-0 text-xs"
-                >
-                  {opIcon(entry.operation)}
-                  {entry.operation}
-                </Badge>
-                {entry.is_error ? (
-                  <XCircle className="h-3.5 w-3.5 text-destructive" />
-                ) : (
-                  <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                )}
-              </TimelineTitle>
-            </div>
+            </TimelineDate>
+            <TimelineTitle className="flex items-center gap-1.5">
+              <Badge
+                variant={opVariant(entry.operation)}
+                className="gap-1 px-1.5 py-0 text-xs"
+              >
+                {opIcon(entry.operation)}
+                {entry.operation}
+              </Badge>
+              {entry.is_error ? (
+                <XCircle className="h-3.5 w-3.5 text-destructive" />
+              ) : (
+                <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+              )}
+            </TimelineTitle>
           </TimelineHeader>
-          <TimelineDescription className="mt-1.5 flex items-center gap-2">
+          <div className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground">
             <Avatar className="h-4 w-4 shrink-0">
               <AvatarImage src={entry.created_by_picture_url ?? undefined} />
               <AvatarFallback className="text-[8px]">
@@ -114,7 +113,7 @@ function AuditTimelineItem({
             <span>{entry.created_by_name ?? entry.created_by ?? "System"}</span>
             <span className="text-muted-foreground/50">·</span>
             <span>{description()}</span>
-          </TimelineDescription>
+          </div>
         </button>
       </TimelineContent>
     </TimelineItem>
@@ -140,10 +139,11 @@ export function ResourceAuditTimeline({ logs }: { logs: ResourceAuditLog[] }) {
   return (
     <>
       <Timeline className="px-1 py-2">
-        {logs.map((entry) => (
+        {logs.map((entry, index) => (
           <AuditTimelineItem
             key={entry.id}
             entry={entry}
+            step={index + 1}
             onClick={() => setSelected(entry)}
           />
         ))}
