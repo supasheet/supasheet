@@ -2,8 +2,7 @@ import { Link } from "@tanstack/react-router"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
 
-import { ArrowRight, ChevronRightIcon } from "lucide-react"
-import { DynamicIcon } from "lucide-react/dynamic"
+import { ArrowRight } from "lucide-react"
 
 import { Button } from "#/components/ui/button"
 import {
@@ -19,50 +18,41 @@ import type { DatabaseSchemas } from "#/lib/database-meta.types"
 import { widgetDataQueryOptions } from "#/lib/supabase/data/dashboard"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
-export const LIST_ITEM_VARIANT_CLASSES: Record<string, string> = {
-  default: "text-foreground",
-  secondary: "text-muted-foreground",
-  success: "text-emerald-600 dark:text-emerald-500",
-  warning: "text-amber-600 dark:text-amber-500",
-  destructive: "text-destructive",
-  info: "text-blue-600 dark:text-blue-500",
+export function initials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
 }
 
-export function ListItemIcon({
-  icon,
-  variant,
-}: {
-  icon?: string
-  variant?: string
-}) {
-  if (!icon) return null
+export function ActorAvatar({ name }: { name: string }) {
   return (
-    <DynamicIcon
-      name={icon as never}
-      className={`size-4 shrink-0 ${
-        LIST_ITEM_VARIANT_CLASSES[variant ?? "default"] ??
-        LIST_ITEM_VARIANT_CLASSES.default
-      }`}
-    />
+    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+      {initials(name) || "?"}
+    </div>
   )
 }
 
-export function List1Skeleton() {
+export function List3Skeleton() {
   return (
     <Card className="col-span-1 md:col-span-2">
       <CardHeader>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
-            <Skeleton className="h-5 w-32" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-          <Skeleton className="h-7 w-24" />
+        <div className="space-y-1">
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-4 w-48" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="divide-y">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 w-full rounded-lg" />
+            <div key={i} className="flex items-center gap-3 py-3">
+              <Skeleton className="size-8 shrink-0 rounded-full" />
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 w-16 shrink-0" />
+            </div>
           ))}
         </div>
       </CardContent>
@@ -70,7 +60,7 @@ export function List1Skeleton() {
   )
 }
 
-export function List1Widget<S extends DatabaseSchemas>({
+export function List3Widget<S extends DatabaseSchemas>({
   widget,
 }: {
   widget: DashboardWidgetSchema<S>
@@ -89,7 +79,7 @@ export function List1Widget<S extends DatabaseSchemas>({
         <CardContent>
           <Empty>
             <EmptyHeader>
-              <EmptyTitle>No data to display</EmptyTitle>
+              <EmptyTitle>No recent activity</EmptyTitle>
             </EmptyHeader>
           </Empty>
         </CardContent>
@@ -120,27 +110,32 @@ export function List1Widget<S extends DatabaseSchemas>({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="divide-y">
           {data.map((row, index) => {
             const content = (
               <>
-                <ListItemIcon icon={row.icon} variant={row.variant} />
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <p className="truncate text-sm font-medium">{row.title}</p>
-                  {row.description && (
-                    <p className="truncate text-xs text-muted-foreground">
-                      {row.description}
-                    </p>
-                  )}
-                </div>
-                {row.link && (
-                  <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />
+                <ActorAvatar name={row.actor} />
+                <p className="min-w-0 flex-1 truncate text-sm">
+                  <span className="font-medium text-foreground">
+                    {row.actor}
+                  </span>{" "}
+                  <span className="text-muted-foreground">{row.action}</span>{" "}
+                  <span className="font-medium text-foreground">
+                    {row.entity}
+                  </span>
+                </p>
+                {(row.date !== undefined && row.date !== null) && (
+                  <span className="shrink-0 text-xs whitespace-nowrap text-muted-foreground">
+                    {row.date}
+                  </span>
                 )}
               </>
             )
             const className =
-              "flex items-center gap-3 rounded-lg border p-3" +
-              (row.link ? " hover:bg-muted/50 transition-colors" : "")
+              "flex items-center gap-3 py-3" +
+              (row.link
+                ? " -mx-2 rounded-none px-2 transition-colors hover:bg-muted/50"
+                : "")
 
             return row.link ? (
               <Link key={index} to={row.link as never} className={className}>
@@ -154,7 +149,9 @@ export function List1Widget<S extends DatabaseSchemas>({
           })}
         </div>
         {widget.caption && (
-          <p className="mt-2 text-xs text-muted-foreground">{widget.caption}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            {widget.caption}
+          </p>
         )}
       </CardContent>
     </Card>

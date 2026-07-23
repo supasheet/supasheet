@@ -1,8 +1,8 @@
 ---
 name: supasheet/dashboards
 description: >-
-  Dashboard widget views: the ten widget_type contracts (card_1..card_6,
-  table_1, table_2, list_1, list_2) with required output columns and starter SQL.
+  Dashboard widget views: the twelve widget_type contracts (card_1..card_6,
+  table_1, table_2, list_1..list_4) with required output columns and starter SQL.
 type: sub-skill
 requires:
   - supasheet
@@ -26,6 +26,8 @@ A widget = a view whose comment is `{"type": "dashboard_widget", "name": ..., "d
 | `table_2`   | aggregated table (wide)   | grouped/joined query with computed columns, `limit 10`; optional `link` (same as `table_1`)             |
 | `list_1`    | alert/feed list (narrow)  | `title` (string); optional `description`, `icon` (lucide slug), `variant` (default/secondary/success/warning/destructive/info), `link` (row href) |
 | `list_2`    | alert/feed list (wide)    | same as `list_1` plus optional `field_1`, `field_2` (extra values shown before the chevron)              |
+| `list_3`    | activity feed, avatar per row (narrow) | `actor` (string, avatar initials derived from it, bold), `action` (string, plain text), `entity` (string, bold); optional `date` (right-aligned), `link` — one row per event: "`actor` `action` `entity`" |
+| `list_4`    | ranked leaderboard, avatar per row (narrow) | `name` (string), `value` (number); optional `label` (subtext), `variant` (bar color, same palette as `card_5`), `link` — order the query by `value desc`; no rank number is rendered, just a relative bar against the top value |
 
 ## Starter SQL per type
 
@@ -81,6 +83,37 @@ select
     json_build_object('label', 'Avg Response', 'value', '2.4h')
   ) as metrics
 from app.tickets;
+
+-- list_3 (activity feed, narrow — one total activity source, ordered newest
+-- first; avatar initials are derived client-side from `actor`, no image needed)
+select
+  tm.name as actor,
+  case
+    when t.status = 'done' then 'completed'
+    when t.status = 'in_review' then 'submitted for review'
+    else 'updated'
+  end as action,
+  t.title as entity,
+  to_char(t.updated_at, 'Mon DD, YYYY') as date,
+  '/app/resource/tickets/' || t.id || '/detail' as link
+from app.tickets t
+join app.team_members tm on tm.id = t.assignee_id
+order by t.updated_at desc
+limit 5;
+
+-- list_4 (leaderboard — ranked by `value` and row order alone, no index
+-- column needed; bars are relative to the top row)
+select
+  tm.name,
+  count(*) as value,
+  tm.job_title as label,
+  '/app/resource/team_members/' || tm.id || '/detail' as link
+from app.tickets t
+join app.team_members tm on tm.id = t.assignee_id
+where t.status = 'done'
+group by tm.id, tm.name, tm.job_title
+order by value desc
+limit 5;
 
 -- table_1 (link is optional — makes each row click-through)
 select
@@ -169,4 +202,4 @@ select
 - Always `security_invoker = true` — the widget respects the viewer's RLS.
 - `select` is the only grant a widget needs; grant to `anon` only for intentionally public dashboards.
 - Widgets are per-schema — they appear on that schema's dashboard.
-- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`, `task_alerts`, `recent_invoices`, `task_velocity`, `client_snapshot`, `task_board_overview`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.
+- Sources: `supabase/demo.sql` (`active_projects_count`, `task_completion`, `revenue_summary`, `project_health`, `recent_tasks`, `top_clients`, `task_alerts`, `recent_invoices`, `task_velocity`, `client_snapshot`, `task_board_overview`, `recent_task_activity`, `top_task_closers`); `supasheet.get_widgets()` in `supabase/migrations/20250707023128_dashboards.sql`.

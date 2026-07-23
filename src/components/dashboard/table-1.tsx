@@ -78,7 +78,7 @@ export function Table1Widget<S extends DatabaseSchemas>({
   }
 
   const columns = Object.keys(data[0]).filter((column) => column !== "link")
-  const rows = data.slice(0, 10)
+  const rows = data
 
   return (
     <Card className="col-span-1 md:col-span-2">

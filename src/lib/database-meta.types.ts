@@ -283,6 +283,8 @@ export type DashboardWidgetType =
   | "table_2"
   | "list_1"
   | "list_2"
+  | "list_3"
+  | "list_4"
 
 export type DashboardWidgetMeta = {
   name: string

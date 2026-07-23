@@ -94,7 +94,7 @@ export function List2Widget<S extends DatabaseSchemas>({
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          {data.slice(0, 10).map((row, index) => {
+          {data.map((row, index) => {
             const content = (
               <>
                 <ListItemIcon icon={row.icon} variant={row.variant} />

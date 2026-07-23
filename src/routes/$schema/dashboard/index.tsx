@@ -19,7 +19,14 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import { dashboardWidgetsQueryOptions } from "#/lib/supabase/data/dashboard"
 
-const TABLE_WIDGET_ORDER = ["list_1", "table_1", "list_2", "table_2"]
+const TABLE_WIDGET_ORDER = [
+  "list_1",
+  "list_3",
+  "list_4",
+  "table_1",
+  "list_2",
+  "table_2",
+]
 
 export const Route = createFileRoute("/$schema/dashboard/")({
   loader: async ({ context, params }) => {

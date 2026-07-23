@@ -18,8 +18,8 @@
 --   - Many-to-many junction with inline form (project_members)
 --   - One-to-many detail lines with lookup-fill + a business
 --     trigger that keeps parent totals in sync (invoice_items)
---   - Reports, dashboard widgets (card_1..4, table_1..2), charts
---     (pie/bar/line/radar)
+--   - Reports, dashboard widgets (card_1..6, table_1..2, list_1..4),
+--     charts (pie/bar/line/radar)
 --   - Notifications (fan-out on create/status change)
 --   - Audit logging and per-resource comments
 --   - Detail page "tabs" allowlist
@@ -2088,6 +2088,77 @@ select
   on demo.recent_invoices to "x-admin",
   "user";
 
+-- list_3: recent task activity (avatar feed, narrow — one activity source,
+-- ordered newest first; avatar initials are derived client-side from `actor`)
+create or replace view demo.recent_task_activity
+with
+  (security_invoker = true) as
+select
+  tm.name as actor,
+  case
+    when t.status = 'done' then 'completed'
+    when t.status = 'in_review' then 'submitted for review on'
+    when t.status = 'blocked' then 'flagged as blocked on'
+    when t.status = 'in_progress' then 'started work on'
+    else 'updated'
+  end as action,
+  t.title as entity,
+  to_char(t.updated_at, 'Mon DD, YYYY') as date,
+  '/demo/resource/tasks/' || t.id || '/detail' as link
+from
+  demo.tasks t
+  join demo.team_members tm on tm.id = t.assignee_id
+where
+  t.status <> 'cancelled'
+order by
+  t.updated_at desc
+limit
+  5;
+
+revoke all on demo.recent_task_activity
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.recent_task_activity to "x-admin",
+  "user";
+
+-- list_4: top task closers (leaderboard, narrow — ranked by completed task
+-- count; the bar for each row is relative to the top row's value)
+create or replace view demo.top_task_closers
+with
+  (security_invoker = true) as
+select
+  tm.name,
+  count(*) as value,
+  tm.job_title as label,
+  '/demo/resource/team_members/' || tm.id || '/detail' as link
+from
+  demo.tasks t
+  join demo.team_members tm on tm.id = t.assignee_id
+where
+  t.status = 'done'
+group by
+  tm.id,
+  tm.name,
+  tm.job_title
+order by
+  value desc
+limit
+  5;
+
+revoke all on demo.top_task_closers
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.top_task_closers to "x-admin",
+  "user";
+
 -- card_5: task board overview (2x width — a headline total plus a single
 -- ranked breakdown of that SAME pool, all from demo.tasks alone)
 create or replace view demo.task_board_overview
@@ -2427,6 +2498,10 @@ comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top C
 comment on view demo.task_alerts is '{"type": "dashboard_widget", "name": "Task Alerts", "description": "Blocked or overdue high-priority tasks", "widget_type": "list_1", "link": "/demo/resource/tasks"}';
 
 comment on view demo.recent_invoices is '{"type": "dashboard_widget", "name": "Recent Invoices", "description": "Latest invoices with amount and due date", "widget_type": "list_2", "link": "/demo/resource/invoices"}';
+
+comment on view demo.recent_task_activity is '{"type": "dashboard_widget", "name": "Recent Activity", "description": "Latest task actions across the team", "widget_type": "list_3", "link": "/demo/resource/tasks"}';
+
+comment on view demo.top_task_closers is '{"type": "dashboard_widget", "name": "Top Task Closers", "description": "Team members ranked by completed tasks", "widget_type": "list_4", "link": "/demo/resource/team_members"}';
 
 comment on view demo.task_board_overview is '{"type": "dashboard_widget", "name": "Task Board Overview", "description": "Open tasks by priority", "widget_type": "card_5"}';
 
