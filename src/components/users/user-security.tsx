@@ -41,7 +41,8 @@ export function UserSecurity({ user }: { user: AuthUser }) {
     enabled: canSetRole,
   })
 
-  const currentRole = (user.app_metadata?.role as string | undefined) ?? "user"
+  const currentRole =
+    (user.app_metadata?.role as string | null | undefined) ?? null
 
   const { mutateAsync: setUserRole, isPending: isSettingRole } = useMutation({
     ...adminSetUserRoleMutationOptions,
@@ -96,20 +97,22 @@ export function UserSecurity({ user }: { user: AuthUser }) {
               <p className="text-sm font-medium">Role</p>
               <p className="text-xs text-muted-foreground">
                 Takes effect next time this user signs in or refreshes their
-                session
+                session. None falls back to the default authenticated role
+                with no elevated access.
               </p>
             </div>
             <Select
               value={currentRole}
               disabled={isSettingRole || !roles}
-              onValueChange={(val) => {
-                if (val !== null) setUserRole({ userId: user.id, role: val })
-              }}
+              onValueChange={(val) =>
+                setUserRole({ userId: user.id, role: val })
+              }
             >
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value={null}>None</SelectItem>
                 {roles?.map((role) => (
                   <SelectItem key={role} value={role}>
                     {role}

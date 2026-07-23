@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router"
 
 import type { ColumnDef } from "@tanstack/react-table"
 
-import { ArrowUpRightIcon, PencilIcon, UserIcon } from "lucide-react"
+import { ArrowUpRightIcon, UserIcon } from "lucide-react"
 
 import { DataTableColumnHeader } from "#/components/data-table/data-table-column-header"
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar"
@@ -16,11 +16,9 @@ export type User = Database["supasheet"]["Tables"]["users"]["Row"]
 
 export function getUsersTableColumns({
   columnsSchema,
-  canUpdate = false,
   canViewAll = false,
 }: {
   columnsSchema: ColumnSchema<"supasheet">[]
-  canUpdate?: boolean
   canViewAll?: boolean
 }): ColumnDef<User, unknown>[] {
   return [
@@ -46,26 +44,16 @@ export function getUsersTableColumns({
             onCheckedChange={(checked) => row.toggleSelected(!!checked)}
             aria-label="Select row"
           />
-          {canViewAll &&
-            (canUpdate ? (
-              <Link
-                to="/core/users/$userId/edit"
-                params={{ userId: row.original.id }}
-                className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <PencilIcon className="size-3" />
-              </Link>
-            ) : (
-              <Link
-                to="/core/users/$userId"
-                params={{ userId: row.original.id }}
-                className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ArrowUpRightIcon className="size-3" />
-              </Link>
-            ))}
+          {canViewAll && (
+            <Link
+              to="/core/users/$userId"
+              params={{ userId: row.original.id }}
+              className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ArrowUpRightIcon className="size-3" />
+            </Link>
+          )}
         </div>
       ),
       enableSorting: false,

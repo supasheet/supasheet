@@ -26,15 +26,17 @@ Deno.serve(async (req) => {
 
   const adminClient = createAdminClient()
 
-  const { data: roles, error: rolesError } = await adminClient
-    .schema("supasheet")
-    .rpc("get_roles")
-  if (rolesError) {
-    console.error("admin-set-user-role get_roles", rolesError)
-    return errorResponse("Could not verify role", 500)
-  }
-  if (!roles.some((r: { role: string }) => r.role === role)) {
-    return errorResponse(`Invalid role: ${role}`, 400)
+  if (role !== null) {
+    const { data: roles, error: rolesError } = await adminClient
+      .schema("supasheet")
+      .rpc("get_roles")
+    if (rolesError) {
+      console.error("admin-set-user-role get_roles", rolesError)
+      return errorResponse("Could not verify role", 500)
+    }
+    if (!roles.some((r: { role: string }) => r.role === role)) {
+      return errorResponse(`Invalid role: ${role}`, 400)
+    }
   }
 
   const { data, error } = await adminClient.auth.admin.updateUserById(userId, {

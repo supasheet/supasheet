@@ -108,6 +108,6 @@ export const adminGenerateLinkMutationOptions = mutationOptions({
 })
 
 export const adminSetUserRoleMutationOptions = mutationOptions({
-  mutationFn: ({ userId, role }: { userId: string; role: string }) =>
+  mutationFn: ({ userId, role }: { userId: string; role: string | null }) =>
     invoke<{ user: User }>("admin-set-user-role", { userId, role }),
 })

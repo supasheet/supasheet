@@ -40,11 +40,10 @@ export function UsersTable({
 }: UsersTableProps) {
   const queryClient = useQueryClient()
   const canDelete = useHasRole("x-admin")
-  const canUpdate = useHasRole("x-admin")
   const canViewAll = useHasRole("x-admin")
   const columns = useMemo(
-    () => getUsersTableColumns({ columnsSchema, canUpdate, canViewAll }),
-    [columnsSchema, canUpdate, canViewAll]
+    () => getUsersTableColumns({ columnsSchema, canViewAll }),
+    [columnsSchema, canViewAll]
   )
   const table = useDataTable({
     columns,
