@@ -2,7 +2,7 @@ import { useCallback, useState } from "react"
 
 import type { Table } from "@tanstack/react-table"
 
-import { Trash2Icon } from "lucide-react"
+import { DownloadIcon, Trash2Icon } from "lucide-react"
 
 import {
   ActionBar,
@@ -21,6 +21,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "#/components/ui/alert-dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "#/components/ui/dropdown-menu"
+import { EXPORT_FORMATS, exportTable } from "#/lib/export"
 
 interface DataTableActionBarProps<TData> {
   table: Table<TData>
@@ -33,6 +40,7 @@ export function DataTableActionBar<TData>({
 }: DataTableActionBarProps<TData>) {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const rows = table.getFilteredSelectedRowModel().rows
+  const filename = table.options.meta?.filename
 
   const onOpenChange = useCallback(
     (open: boolean) => {
@@ -49,10 +57,6 @@ export function DataTableActionBar<TData>({
     setConfirmOpen(false)
   }
 
-  if (!onDelete) {
-    return null
-  }
-
   return (
     <>
       <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
@@ -61,15 +65,47 @@ export function DataTableActionBar<TData>({
         </ActionBarSelection>
         <ActionBarSeparator className="hidden sm:block" />
         <ActionBarGroup>
-          <ActionBarItem
-            variant="destructive"
-            onSelect={(e) => e.preventDefault()}
-            onClick={() => setConfirmOpen(true)}
-          >
-            <Trash2Icon className="size-4" />
-            Delete ({rows.length})
-          </ActionBarItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <ActionBarItem onSelect={(e) => e.preventDefault()}>
+                  <DownloadIcon className="size-4" />
+                  Export
+                </ActionBarItem>
+              }
+            />
+            <DropdownMenuContent align="start">
+              {EXPORT_FORMATS.map(({ format, label }) => (
+                <DropdownMenuItem
+                  key={format}
+                  onClick={() =>
+                    exportTable(table, {
+                      format,
+                      filename,
+                      excludeColumns: ["select", "actions"],
+                      onlySelected: true,
+                    })
+                  }
+                >
+                  Export as {label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </ActionBarGroup>
+        {onDelete && <ActionBarSeparator />}
+        {onDelete && (
+          <ActionBarGroup>
+            <ActionBarItem
+              variant="destructive"
+              onSelect={(e) => e.preventDefault()}
+              onClick={() => setConfirmOpen(true)}
+            >
+              <Trash2Icon className="size-4" />
+              Delete ({rows.length})
+            </ActionBarItem>
+          </ActionBarGroup>
+        )}
       </ActionBar>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
