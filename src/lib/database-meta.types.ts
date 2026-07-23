@@ -313,6 +313,7 @@ export type ColumnMetadata = {
 
 export type EnumColumnMetadata = ColumnMetadata & {
   progress?: boolean
+  iconOnly?: boolean
   enums?: {
     [key: string]: {
       icon?: IconName

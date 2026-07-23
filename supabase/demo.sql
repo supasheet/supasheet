@@ -814,6 +814,7 @@ comment on column demo.tasks.status is '{
 
 comment on column demo.tasks.priority is '{
     "progress": false,
+    "iconOnly": true,
     "enums": {
         "low": {"variant": "outline", "icon": "ArrowDown"},
         "medium": {"variant": "info", "icon": "Minus"},

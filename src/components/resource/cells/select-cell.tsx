@@ -2,6 +2,11 @@ import type { LucideIcon } from "lucide-react"
 import * as LucideIcons from "lucide-react"
 
 import { Badge } from "#/components/ui/badge"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "#/components/ui/tooltip"
 import type { EnumColumnMetadata } from "#/lib/database-meta.types"
 import type { ColumnFieldMetadata } from "#/types/fields"
 
@@ -32,6 +37,20 @@ export function SelectCell({
 
   if (enumMeta?.enums && enumMeta.enums[value]) {
     const { icon, variant } = enumMeta.enums[value]
+
+    if (enumMeta.iconOnly && icon) {
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <Badge variant={variant ?? "secondary"} className="[&>svg]:me-0">
+              <LucideIconComponent iconName={icon} />
+            </Badge>
+          </TooltipTrigger>
+          <TooltipContent>{value}</TooltipContent>
+        </Tooltip>
+      )
+    }
+
     return (
       <Badge variant={variant ?? "secondary"}>
         {icon && <LucideIconComponent iconName={icon} />}
