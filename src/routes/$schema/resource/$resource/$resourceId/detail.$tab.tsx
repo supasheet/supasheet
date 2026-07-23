@@ -10,6 +10,7 @@ import type { TableMetadata } from "#/lib/database-meta.types"
 import {
   columnsSchemaQueryOptions,
   relatedTablesSchemaQueryOptions,
+  resourceActionsQueryOptions,
   resourcePrivilegesQueryOptions,
   singleForeignTableDataQueryOptions,
   singleResourceDataQueryOptions,
@@ -81,6 +82,9 @@ export const Route = createFileRoute(
     const pk = { [pkName]: resourceId }
     await context.queryClient.ensureQueryData(
       singleResourceDataQueryOptions(schema, resource, pk)
+    )
+    context.queryClient.ensureQueryData(
+      resourceActionsQueryOptions(many.schema, many.name)
     )
 
     return classification

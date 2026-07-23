@@ -29,7 +29,10 @@ import type { ViewMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
+import {
+  resourceActionsQueryOptions,
+  resourceDataQueryOptions,
+} from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/single")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
@@ -45,6 +48,9 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
   loader: async ({ context, params: { schema, resource } }) => {
     context.queryClient.ensureQueryData(
       resourceDataQueryOptions(schema, resource, undefined, 1, 1)
+    )
+    context.queryClient.ensureQueryData(
+      resourceActionsQueryOptions(schema, resource)
     )
     return { resourceSchema: context.resourceSchema }
   },

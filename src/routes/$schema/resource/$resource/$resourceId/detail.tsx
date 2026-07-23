@@ -34,6 +34,7 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
   relatedTablesSchemaQueryOptions,
+  resourceActionsQueryOptions,
   singleResourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"
 
@@ -69,6 +70,9 @@ export const Route = createFileRoute(
       singleResourceDataQueryOptions(schema, resource, {
         [pkName]: resourceId,
       })
+    )
+    context.queryClient.ensureQueryData(
+      resourceActionsQueryOptions(schema, resource)
     )
 
     const metaJoins = (

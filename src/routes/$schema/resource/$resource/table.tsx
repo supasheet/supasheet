@@ -36,7 +36,10 @@ import type { TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
+import {
+  resourceActionsQueryOptions,
+  resourceDataQueryOptions,
+} from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/resource/$resource/table")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
@@ -99,6 +102,9 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
         sortDesc,
         filters
       )
+    )
+    context.queryClient.ensureQueryData(
+      resourceActionsQueryOptions(schema, resource)
     )
   },
   head: ({ params }) => ({
