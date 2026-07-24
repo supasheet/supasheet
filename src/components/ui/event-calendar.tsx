@@ -2576,7 +2576,7 @@ export function EventCalendarDayView() {
                             onAddEvent?.({
                               startDate: selectedDate,
                               hour,
-                              minute: 45,
+                              minute: 30,
                             })
                           }
                         />

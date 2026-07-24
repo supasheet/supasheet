@@ -35,6 +35,7 @@ import {
   createSignedUrl,
   downloadFile,
   getPublicUrl,
+  storageDeleteFolderMutationOptions,
   storageDeleteMutationOptions,
 } from "#/lib/supabase/data/storage"
 import type { FileObject } from "#/lib/supabase/data/storage"
@@ -62,14 +63,20 @@ export function FileActionsMenu({
   const fullPath = [...currentPath, item.name].join("/")
 
   const queryClient = useQueryClient()
-  const { mutateAsync: deleteFiles, isPending: isDeleting } = useMutation(
+  const { mutateAsync: deleteFiles, isPending: isDeletingFile } = useMutation(
     storageDeleteMutationOptions
   )
+  const { mutateAsync: deleteFolder, isPending: isDeletingFolder } =
+    useMutation(storageDeleteFolderMutationOptions)
+  const isDeleting = isDeletingFile || isDeletingFolder
 
   const handleDelete = async () => {
-    const paths = isFolder ? [`${fullPath}/.keep`] : [fullPath]
     try {
-      await deleteFiles({ bucketId, paths })
+      if (isFolder) {
+        await deleteFolder({ bucketId, folderPath: fullPath })
+      } else {
+        await deleteFiles({ bucketId, paths: [fullPath] })
+      }
       await queryClient.invalidateQueries({
         queryKey: ["storage", "files", bucketId],
       })
@@ -190,7 +197,9 @@ export function FileActionsMenu({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete "{item.name}"?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone.
+              {isFolder
+                ? "This will permanently delete the folder and everything inside it. This action cannot be undone."
+                : "This action cannot be undone."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

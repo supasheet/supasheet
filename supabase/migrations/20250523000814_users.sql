@@ -161,6 +161,27 @@ create trigger on_auth_user_created
 after insert on auth.users for each row
 execute procedure supasheet.new_user_created_setup ();
 
+-- Backfill: populate supasheet.users with any pre-existing auth.users
+-- (e.g. when this migration runs against a project that already has users)
+insert into supasheet.users (id, name, picture_url, email, created_at, updated_at)
+select
+  au.id,
+  coalesce(
+    nullif(au.raw_user_meta_data ->> 'name', ''),
+    nullif(split_part(au.email, '@', 1), ''),
+    ''
+  ),
+  au.raw_user_meta_data ->> 'avatar_url',
+  au.email,
+  now(),
+  now()
+from auth.users au
+where not exists (
+  select 1
+  from supasheet.users u
+  where u.id = au.id
+);
+
 -- Function: get the storage filename as a UUID.
 -- Useful if you want to name files with UUIDs related to an user
 create or replace function supasheet.get_storage_filename_as_uuid (name text) returns uuid

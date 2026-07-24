@@ -140,22 +140,6 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
     [field]
   )
 
-  const handleRemoveAll = useCallback(async () => {
-    await Promise.all(
-      files.map((file) => {
-        if (!(file.file instanceof File)) {
-          const fileUrl = file.file.url
-          return deleteFileFromStorage(supabase, fileUrl).catch(console.error)
-        }
-        return Promise.resolve()
-      })
-    )
-
-    setUploadProgress([])
-    field.handleChange(null as unknown as FileObject[])
-    clearFiles()
-  }, [field])
-
   const [
     { files, isDragging, errors },
     {
@@ -176,6 +160,22 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
     initialFiles: loadInitialFiles(),
     onFilesAdded: handleFilesAdded,
   })
+
+  const handleRemoveAll = useCallback(async () => {
+    await Promise.all(
+      files.map((file) => {
+        if (!(file.file instanceof File)) {
+          const fileUrl = file.file.url
+          return deleteFileFromStorage(supabase, fileUrl).catch(console.error)
+        }
+        return Promise.resolve()
+      })
+    )
+
+    setUploadProgress([])
+    field.handleChange(null as unknown as FileObject[])
+    clearFiles()
+  }, [field, files, clearFiles])
 
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border p-3">

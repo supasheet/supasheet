@@ -35,7 +35,7 @@ import {
 type EnrollState =
   | { step: "idle" }
   | { step: "setup"; factorId: string; qrCode: string; secret: string }
-  | { step: "verify"; factorId: string }
+  | { step: "verify"; factorId: string; qrCode: string; secret: string }
 
 export function SecurityMfaCard() {
   const queryClient = useQueryClient()
@@ -209,6 +209,8 @@ export function SecurityMfaCard() {
                       setEnrollState({
                         step: "verify",
                         factorId: enrollState.factorId,
+                        qrCode: enrollState.qrCode,
+                        secret: enrollState.secret,
                       })
                     }
                   >
@@ -269,8 +271,8 @@ export function SecurityMfaCard() {
                         setEnrollState({
                           step: "setup",
                           factorId: enrollState.factorId,
-                          qrCode: "",
-                          secret: "",
+                          qrCode: enrollState.qrCode,
+                          secret: enrollState.secret,
                         })
                       }
                     >

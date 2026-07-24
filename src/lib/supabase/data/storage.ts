@@ -95,6 +95,45 @@ export const storageDeleteMutationOptions = mutationOptions({
   },
 })
 
+async function listFolderPathsRecursive(
+  bucketId: string,
+  folder: string
+): Promise<string[]> {
+  const { data, error } = await supabase.storage
+    .from(bucketId)
+    .list(folder, { limit: 1000 })
+  if (error) throw error
+
+  const paths = await Promise.all(
+    (data ?? []).map(async (item) => {
+      const itemPath = `${folder}/${item.name}`
+      if (!item.id) {
+        return listFolderPathsRecursive(bucketId, itemPath)
+      }
+      return [itemPath]
+    })
+  )
+
+  return paths.flat()
+}
+
+export const storageDeleteFolderMutationOptions = mutationOptions({
+  mutationFn: async ({
+    bucketId,
+    folderPath,
+  }: {
+    bucketId: string
+    folderPath: string
+  }) => {
+    const paths = await listFolderPathsRecursive(bucketId, folderPath)
+    if (paths.length === 0) return null
+
+    const { data, error } = await supabase.storage.from(bucketId).remove(paths)
+    if (error) throw error
+    return data
+  },
+})
+
 export const storageMoveMutationOptions = mutationOptions({
   mutationFn: async ({
     bucketId,

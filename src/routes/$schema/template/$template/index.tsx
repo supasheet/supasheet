@@ -9,6 +9,8 @@ import type {
   SearchSchemaInput,
 } from "@tanstack/react-router"
 
+import { useSuspenseQuery } from "@tanstack/react-query"
+
 import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 
 import { AlertCircleIcon, FileXIcon, LayoutTemplateIcon } from "lucide-react"
@@ -83,7 +85,7 @@ export const Route = createFileRoute("/$schema/template/$template/")({
     const template = templates.find((t) => t.view_name === params.template)
     if (!template || !columnsSchema?.length) throw notFound()
 
-    const templateData = await context.queryClient.ensureQueryData(
+    context.queryClient.ensureQueryData(
       templateDataQueryOptions(
         params.schema,
         params.template,
@@ -94,7 +96,7 @@ export const Route = createFileRoute("/$schema/template/$template/")({
         filters
       )
     )
-    return { templateData, columnsSchema, template }
+    return { columnsSchema, template }
   },
   head: ({ params }) => ({
     meta: [{ title: pageTitle(`${formatTitle(params.template)} | Templates`) }],
@@ -188,7 +190,18 @@ function RouteComponent() {
   const params = Route.useParams()
   const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
 
-  const { templateData, columnsSchema, template } = Route.useLoaderData()
+  const { columnsSchema, template } = Route.useLoaderData()
+  const { data: templateData } = useSuspenseQuery(
+    templateDataQueryOptions(
+      params.schema,
+      params.template,
+      page,
+      pageSize,
+      sortId,
+      sortDesc,
+      filters
+    )
+  )
 
   const sorting = (
     sortId ? [{ id: sortId, desc: sortDesc }] : []

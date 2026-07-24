@@ -63,16 +63,18 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
     .getAllColumns()
     .filter((col) => col.getCanFilter() && col.columnDef.meta?.variant)
 
+  const usedFilterIds = new Set(columnFilters.map((f) => f.id))
+  const hasAvailableColumn = filterableColumns.some(
+    (c) => !usedFilterIds.has(c.id)
+  )
+
   const onFilterAdd = () => {
-    // Pick first column that doesn't already have a filter
-    const used = new Set(columnFilters.map((f) => f.id))
-    const col =
-      filterableColumns.find((c) => !used.has(c.id)) ?? filterableColumns[0]
+    const col = filterableColumns.find((c) => !usedFilterIds.has(c.id))
     if (!col) return
     const variant = col.columnDef.meta?.filterVariant ?? "text"
     const defaultOp = getDefaultFilterOperator(variant)
     table.setColumnFilters([
-      ...columnFilters.filter((f) => f.id !== col.id),
+      ...columnFilters,
       { id: col.id, value: encodeFilterValue(defaultOp, "") },
     ])
   }
@@ -162,7 +164,12 @@ export function DataTableFilter<TData>({ table }: DataTableFilterProps<TData>) {
         </div>
 
         <SheetFooter className="flex-row border-t">
-          <Button size="sm" ref={addButtonRef} onClick={onFilterAdd}>
+          <Button
+            size="sm"
+            ref={addButtonRef}
+            onClick={onFilterAdd}
+            disabled={!hasAvailableColumn}
+          >
             Add filter
           </Button>
           {columnFilters.length > 0 && (

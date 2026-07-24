@@ -26,13 +26,6 @@ export function ResourceCardGrid({ resources }: { resources: Resource[] }) {
 
   return (
     <div className="space-y-6">
-      {ungrouped.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {ungrouped.map((resource) => (
-            <ResourceCard key={resource.id} resource={resource} />
-          ))}
-        </div>
-      )}
       {namedGroups.map(([group, groupResources]) => (
         <div key={group}>
           <h3 className="mb-3 text-sm font-medium text-muted-foreground">
@@ -45,6 +38,13 @@ export function ResourceCardGrid({ resources }: { resources: Resource[] }) {
           </div>
         </div>
       ))}
+      {ungrouped.length > 0 && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {ungrouped.map((resource) => (
+            <ResourceCard key={resource.id} resource={resource} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

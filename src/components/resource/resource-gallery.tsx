@@ -82,11 +82,11 @@ export function ResourceGallery({
         </Empty>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {data.map((item, index) => {
+          {data.map((item) => {
             const resourceId = getPkValue(item.data, primaryKeys)
             return (
               <GalleryContextMenu
-                key={index}
+                key={resourceId}
                 item={item}
                 schema={schema}
                 resource={resource}

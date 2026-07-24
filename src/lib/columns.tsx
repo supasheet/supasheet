@@ -21,7 +21,11 @@ import {
 } from "lucide-react"
 import * as LucideIcons from "lucide-react"
 
-import { getMetaFields, isTableSchema } from "#/lib/database-meta.types"
+import {
+  getMetaFields,
+  isTableSchema,
+  parseComment,
+} from "#/lib/database-meta.types"
 import type {
   ColumnMetadata,
   ColumnSchema,
@@ -116,7 +120,10 @@ export function coerceColumnValue(
         /* fall through */
       }
     }
-    return null
+    return val
+      .split(",")
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0)
   }
 
   return val
@@ -140,7 +147,7 @@ export function getColumnMetadata(
   tableSchema: TableSchema | ViewSchema | null,
   columnSchema = {} as ColumnSchema
 ): ColumnFieldMetadata {
-  const commentMeta = JSON.parse(columnSchema.comment ?? "{}") as ColumnMetadata
+  const commentMeta = parseComment<ColumnMetadata>(columnSchema.comment, {})
   const commentIconName = commentMeta.icon as
     keyof typeof LucideIcons | undefined
   const ColumnIcon = commentIconName

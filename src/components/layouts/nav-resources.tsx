@@ -8,6 +8,7 @@ import {
   ListIcon,
   MoreHorizontalIcon,
   PlusIcon,
+  Table2Icon,
 } from "lucide-react"
 
 import {
@@ -44,7 +45,7 @@ function LucideIconComponent({
 }: {
   iconName: keyof typeof LucideIcons
 }) {
-  const Icon = LucideIcons[iconName] as LucideIcon
+  const Icon = (LucideIcons[iconName] as LucideIcon | undefined) ?? Table2Icon
 
   return <Icon className="size-4 shrink-0" />
 }

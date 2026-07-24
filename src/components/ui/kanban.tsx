@@ -79,16 +79,16 @@ const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
     const filteredContainers: DroppableContainer[] = []
 
     for (const entry of droppableContainers.getEnabled()) {
-      if (!entry || entry?.disabled) return
+      if (!entry || entry?.disabled) continue
 
       const rect = droppableRects.get(entry.id)
-      if (!rect) return
+      if (!rect) continue
 
       const data = entry.data.current
       if (data) {
         const { type, children } = data
         if (type === "container" && children?.length > 0) {
-          if (active.data.current?.type !== "container") return
+          if (active.data.current?.type !== "container") continue
         }
       }
 

@@ -9,6 +9,8 @@ import type {
   SearchSchemaInput,
 } from "@tanstack/react-router"
 
+import { useSuspenseQuery } from "@tanstack/react-query"
+
 import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
@@ -82,7 +84,7 @@ export const Route = createFileRoute("/$schema/report/$report/")({
     const report = reports.find((r) => r.view_name === params.report)
     if (!report || !columnsSchema?.length) throw notFound()
 
-    const reportData = await context.queryClient.ensureQueryData(
+    context.queryClient.ensureQueryData(
       reportDataQueryOptions(
         params.schema,
         params.report,
@@ -93,7 +95,7 @@ export const Route = createFileRoute("/$schema/report/$report/")({
         filters
       )
     )
-    return { reportData, columnsSchema }
+    return { columnsSchema }
   },
   head: ({ params }) => ({
     meta: [{ title: pageTitle(`${formatTitle(params.report)} | Reports`) }],
@@ -187,7 +189,18 @@ function RouteComponent() {
   const params = Route.useParams()
   const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
 
-  const { reportData, columnsSchema } = Route.useLoaderData()
+  const { columnsSchema } = Route.useLoaderData()
+  const { data: reportData } = useSuspenseQuery(
+    reportDataQueryOptions(
+      params.schema,
+      params.report,
+      page,
+      pageSize,
+      sortId,
+      sortDesc,
+      filters
+    )
+  )
 
   const sorting = (
     sortId ? [{ id: sortId, desc: sortDesc }] : []

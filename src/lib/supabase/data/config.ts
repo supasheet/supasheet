@@ -9,8 +9,7 @@ export interface AppConfig {
 
 export const DEFAULT_APP_CONFIG: AppConfig = {
   name: "Supasheet",
-  description:
-    "A complete, opinionated open-source CMS platform built on Supabase",
+  description: "Turn your Postgres schema into any business app.",
 }
 
 function asString(value: unknown, fallback: string): string {

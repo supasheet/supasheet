@@ -7,11 +7,13 @@ import {
   ImageNode,
 } from "@/components/editor/nodes/image-node"
 import type { ImagePayload } from "@/components/editor/nodes/image-node"
+import { uploadFileToStorage } from "@/components/resource/fields/file-field-storage"
 import { Button } from "@/components/ui/button"
 import { DialogFooter } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { supabase } from "@/lib/supabase/client"
 import {
   $isAutoLinkNode,
   $isLinkNode,
@@ -92,6 +94,8 @@ export function InsertImageUriDialogBody({
   )
 }
 
+const EDITOR_UPLOADS_STORAGE_PATH = "editor"
+
 export function InsertImageUploadedDialogBody({
   onClick,
 }: {
@@ -99,19 +103,30 @@ export function InsertImageUploadedDialogBody({
 }) {
   const [src, setSrc] = useState("")
   const [altText, setAltText] = useState("")
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
-  const isDisabled = src === ""
+  const isDisabled = src === "" || isUploading
 
-  const loadImage = (files: FileList | null) => {
-    const reader = new FileReader()
-    reader.onload = function () {
-      if (typeof reader.result === "string") {
-        setSrc(reader.result)
-      }
-      return ""
-    }
-    if (files !== null) {
-      reader.readAsDataURL(files[0])
+  const loadImage = async (files: FileList | null) => {
+    const file = files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    setUploadError(null)
+    try {
+      const url = await uploadFileToStorage(
+        supabase,
+        file,
+        EDITOR_UPLOADS_STORAGE_PATH
+      )
+      setSrc(url)
+    } catch (err) {
+      setUploadError(
+        err instanceof Error ? err.message : "Failed to upload image"
+      )
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -126,6 +141,12 @@ export function InsertImageUploadedDialogBody({
           accept="image/*"
           data-test-id="image-modal-file-upload"
         />
+        {isUploading && (
+          <p className="text-xs text-muted-foreground">Uploading…</p>
+        )}
+        {uploadError && (
+          <p className="text-xs text-destructive">{uploadError}</p>
+        )}
       </Field>
       <Field>
         <FieldLabel htmlFor="alt-text">Alt Text</FieldLabel>

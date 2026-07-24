@@ -70,13 +70,23 @@ export function isTableSchema<S extends DatabaseSchemas>(
   return "primary_keys" in schema
 }
 
+export function parseComment<T>(
+  comment: string | null | undefined,
+  fallback: T
+): T {
+  if (!comment) return fallback
+  try {
+    return JSON.parse(comment) as T
+  } catch {
+    return fallback
+  }
+}
+
 export function getMetaFields(
   resourceSchema: ResourceSchema | null
 ): ColumnName[] {
   if (!resourceSchema || !isTableSchema(resourceSchema)) return METADATA_COLUMNS
-  const meta = resourceSchema.comment
-    ? (JSON.parse(resourceSchema.comment) as TableMetadata)
-    : {}
+  const meta = parseComment<TableMetadata>(resourceSchema.comment, {})
   return meta.fields?.metadata ?? METADATA_COLUMNS
 }
 

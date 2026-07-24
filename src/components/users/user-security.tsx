@@ -74,8 +74,14 @@ export function UserSecurity({ user }: { user: AuthUser }) {
     useMutation({
       ...adminGenerateLinkMutationOptions,
       onSuccess: async (data) => {
-        await navigator.clipboard.writeText(data.properties.action_link)
-        toast.success("Link copied to clipboard")
+        try {
+          await navigator.clipboard.writeText(data.properties.action_link)
+          toast.success("Link copied to clipboard")
+        } catch {
+          toast.error(
+            "Link generated but couldn't be copied to clipboard. Check your browser's clipboard permissions."
+          )
+        }
       },
       onError: (err) =>
         toast.error(

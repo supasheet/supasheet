@@ -31,6 +31,15 @@ type ImageStatus =
   { error: true } | { error: false; width: number; height: number }
 
 const imageCache = new Map<string, Promise<ImageStatus> | ImageStatus>()
+const MAX_IMAGE_CACHE_SIZE = 200
+
+function setCachedImage(src: string, value: Promise<ImageStatus> | ImageStatus) {
+  imageCache.set(src, value)
+  if (imageCache.size > MAX_IMAGE_CACHE_SIZE) {
+    const oldestKey = imageCache.keys().next().value
+    if (oldestKey !== undefined) imageCache.delete(oldestKey)
+  }
+}
 
 export const RIGHT_CLICK_IMAGE_COMMAND: LexicalCommand<MouseEvent> =
   createCommand("RIGHT_CLICK_IMAGE_COMMAND")
@@ -51,10 +60,10 @@ function useSuspenseImage(src: string): ImageStatus {
         })
       img.onerror = () => resolve({ error: true })
     }).then((rval) => {
-      imageCache.set(src, rval)
+      setCachedImage(src, rval)
       return rval
     })
-    imageCache.set(src, cached)
+    setCachedImage(src, cached)
     throw cached
   }
   throw cached

@@ -13,6 +13,7 @@ import type {
   ViewMetadata,
   ViewSchema,
 } from "#/lib/database-meta.types"
+import { parseComment } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
 import { applyFilters } from "#/lib/supabase/filter"
 
@@ -62,9 +63,7 @@ export const resourcesQueryOptions = (schema: DatabaseSchemas) =>
           id: resource.name as DatabaseTables<typeof schema>,
           schema: resource.schema as typeof schema,
           type: "table" as const,
-          meta: (resource.comment
-            ? JSON.parse(resource.comment)
-            : {}) as TableMetadata,
+          meta: parseComment<TableMetadata>(resource.comment, {}),
         }))
         .filter((resource) => resource.meta.display !== "none")
 
@@ -74,9 +73,7 @@ export const resourcesQueryOptions = (schema: DatabaseSchemas) =>
           id: resource.name as DatabaseViews<typeof schema>,
           schema: resource.schema as typeof schema,
           type: "view" as const,
-          meta: (resource.comment
-            ? JSON.parse(resource.comment)
-            : {}) as ViewMetadata,
+          meta: parseComment<ViewMetadata>(resource.comment, {}),
         }))
         .filter((resource) => resource.meta.display === "block")
 
@@ -86,9 +83,7 @@ export const resourcesQueryOptions = (schema: DatabaseSchemas) =>
           id: resource.name as DatabaseViews<typeof schema>,
           schema: resource.schema as typeof schema,
           type: "view" as const,
-          meta: (resource.comment
-            ? JSON.parse(resource.comment)
-            : {}) as ViewMetadata,
+          meta: parseComment<ViewMetadata>(resource.comment, {}),
         }))
         .filter((resource) => resource.meta.display === "block")
 
@@ -457,38 +452,19 @@ export const deleteResourceMutationOptions = <S extends DatabaseSchemas>(
 ) =>
   mutationOptions({
     mutationFn: async (pk: Record<string, unknown>) => {
-      let query = supabase.schema(schema).from(resource).delete()
+      let query = supabase.schema(schema).from(resource).delete().select()
       for (const [col, val] of Object.entries(pk)) {
         query = query.eq(col as never, val as never)
       }
-      const { error } = await query
+      const { data, error } = await query
       if (error) throw error
-
-      // Verify the delete (hard or soft) actually took effect by checking
-      // whether the row is still visible. If it is, RLS denied the operation.
-      let checkQuery = supabase
-        .schema(schema)
-        .from(resource)
-        .select("*", { head: true, count: "exact" })
-      for (const [col, val] of Object.entries(pk)) {
-        checkQuery = checkQuery.eq(col as never, val as never)
-      }
-      const { count, error: checkError } = await checkQuery
-      if (checkError) throw checkError
-      if (count && count > 0) {
+      if (!data || data.length === 0) {
         throw new Error(
           "Delete failed: you may not have permission to delete this record"
         )
       }
     },
   })
-
-const toPostgrestLiteral = (val: unknown): string => {
-  if (typeof val === "string") {
-    return `"${val.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`
-  }
-  return String(val)
-}
 
 export const deleteBulkResourceMutationOptions = <S extends DatabaseSchemas>(
   schema: S,
@@ -499,36 +475,36 @@ export const deleteBulkResourceMutationOptions = <S extends DatabaseSchemas>(
       if (pks.length === 0) return
       const keys = Object.keys(pks[0])
 
-      let query = supabase.schema(schema).from(resource).delete()
-      let checkQuery = supabase
-        .schema(schema)
-        .from(resource)
-        .select("*", { head: true, count: "exact" })
-
       if (keys.length === 1) {
         const col = keys[0]
         const values = pks.map((pk) => pk[col])
-        query = query.in(col as never, values)
-        checkQuery = checkQuery.in(col as never, values)
-      } else {
-        const orFilter = pks
-          .map(
-            (pk) =>
-              `and(${keys
-                .map((col) => `${col}.eq.${toPostgrestLiteral(pk[col])}`)
-                .join(",")})`
+        const { data, error } = await supabase
+          .schema(schema)
+          .from(resource)
+          .delete()
+          .select()
+          .in(col as never, values)
+        if (error) throw error
+        if (!data || data.length < pks.length) {
+          throw new Error(
+            "Delete failed: you may not have permission to delete some records"
           )
-          .join(",")
-        query = query.or(orFilter)
-        checkQuery = checkQuery.or(orFilter)
+        }
+        return
       }
 
-      const { error } = await query
-      if (error) throw error
-
-      const { count, error: checkError } = await checkQuery
-      if (checkError) throw checkError
-      if (count && count > 0) {
+      const results = await Promise.all(
+        pks.map(async (pk) => {
+          let query = supabase.schema(schema).from(resource).delete().select()
+          for (const [col, val] of Object.entries(pk)) {
+            query = query.eq(col as never, val as never)
+          }
+          const { data, error } = await query
+          if (error) throw error
+          return !!data && data.length > 0
+        })
+      )
+      if (results.some((deleted) => !deleted)) {
         throw new Error(
           "Delete failed: you may not have permission to delete some records"
         )
