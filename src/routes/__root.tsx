@@ -72,7 +72,7 @@ function ErrorScreen({ error, reset }: ErrorComponentProps) {
   const router = useRouter()
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-4">
+    <div className="flex h-svh flex-col items-center justify-center gap-4">
       <p className="text-sm text-muted-foreground">
         {error?.message ?? "An unexpected error occurred."}
       </p>
@@ -96,7 +96,7 @@ function ErrorScreen({ error, reset }: ErrorComponentProps) {
 
 function LoadingScreen() {
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex h-svh items-center justify-center">
       <Spinner className="size-6" />
     </div>
   )
