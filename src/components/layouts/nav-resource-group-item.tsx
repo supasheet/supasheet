@@ -119,6 +119,7 @@ export function ResourceGroupMenuItem({
   const isGroupActive = items.some((item) =>
     location.pathname.startsWith(`/${schema}/${item.id}/`)
   )
+  const groupIcon = items[0]?.meta?.icon
 
   return (
     <Collapsible key={group} defaultOpen={isGroupActive}>
@@ -126,6 +127,7 @@ export function ResourceGroupMenuItem({
         <CollapsibleTrigger
           render={
             <SidebarMenuButton tooltip={group} className="group/collapsible">
+              {groupIcon && <LucideIconComponent iconName={groupIcon} />}
               <span>{group}</span>
               <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
             </SidebarMenuButton>
