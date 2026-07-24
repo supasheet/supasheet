@@ -4,7 +4,7 @@ import type { Database } from "../database.types"
 
 declare global {
   interface Window {
-    __CONFIG__?: { supabaseUrl: string; anonKey: string }
+    __CONFIG__?: { supabaseUrl: string; publishableKey: string }
   }
 }
 
@@ -12,5 +12,5 @@ const config = typeof window !== "undefined" ? window.__CONFIG__ : undefined
 
 export const supabase = createClient<Database>(
   config?.supabaseUrl ?? import.meta.env.VITE_SUPABASE_URL,
-  config?.anonKey ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+  config?.publishableKey ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 )

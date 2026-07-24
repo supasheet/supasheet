@@ -41,7 +41,7 @@ export default {
 
     const config = JSON.stringify({
       supabaseUrl: `https://${projectRef}.supabase.co`,
-      anonKey: publishableKey,
+      publishableKey,
     })
     const html = (await indexResponse.text()).replace(
       "<head>",
