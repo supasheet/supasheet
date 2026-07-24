@@ -41,3 +41,28 @@ export function getFileIcon(
     return PresentationIcon
   return FileIcon
 }
+
+export function getFileTypeLabel(type: string): string {
+  if (type.startsWith("image/")) return "Image"
+  if (type.startsWith("video/")) return "Video"
+  if (type.startsWith("audio/")) return "Audio"
+  if (type.includes("pdf")) return "PDF"
+  if (type.includes("zip") || type.includes("rar")) return "Archive"
+  if (
+    type.includes("word") ||
+    type.includes("document") ||
+    type.includes("doc")
+  )
+    return "Word"
+  if (type.includes("sheet") || type.includes("excel") || type.includes("xls"))
+    return "Excel"
+  if (
+    type.includes("presentation") ||
+    type.includes("powerpoint") ||
+    type.includes("ppt")
+  )
+    return "PowerPoint"
+  if (type.includes("json")) return "JSON"
+  if (type.includes("text")) return "Text"
+  return "File"
+}
