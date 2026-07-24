@@ -33,7 +33,10 @@ type ImageStatus =
 const imageCache = new Map<string, Promise<ImageStatus> | ImageStatus>()
 const MAX_IMAGE_CACHE_SIZE = 200
 
-function setCachedImage(src: string, value: Promise<ImageStatus> | ImageStatus) {
+function setCachedImage(
+  src: string,
+  value: Promise<ImageStatus> | ImageStatus
+) {
   imageCache.set(src, value)
   if (imageCache.size > MAX_IMAGE_CACHE_SIZE) {
     const oldestKey = imageCache.keys().next().value

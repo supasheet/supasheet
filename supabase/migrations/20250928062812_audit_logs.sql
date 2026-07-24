@@ -185,7 +185,8 @@ select
 
 grant
 select
-  on supasheet.audit_logs to authenticated, service_role;
+  on supasheet.audit_logs to authenticated,
+  service_role;
 
 alter table supasheet.audit_logs ENABLE row LEVEL SECURITY;
 

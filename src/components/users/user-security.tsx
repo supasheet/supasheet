@@ -103,8 +103,8 @@ export function UserSecurity({ user }: { user: AuthUser }) {
               <p className="text-sm font-medium">Role</p>
               <p className="text-xs text-muted-foreground">
                 Takes effect next time this user signs in or refreshes their
-                session. None falls back to the default authenticated role
-                with no elevated access.
+                session. None falls back to the default authenticated role with
+                no elevated access.
               </p>
             </div>
             <Select

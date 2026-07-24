@@ -85,7 +85,11 @@ export function useMfaEnroll() {
 
 type SecurityMfaEnrollPanelProps = Pick<
   ReturnType<typeof useMfaEnroll>,
-  "enrollState" | "setEnrollState" | "verifyForm" | "isVerifying" | "cancelEnroll"
+  | "enrollState"
+  | "setEnrollState"
+  | "verifyForm"
+  | "isVerifying"
+  | "cancelEnroll"
 >
 
 export function SecurityMfaEnrollPanel({
