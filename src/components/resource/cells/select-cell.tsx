@@ -35,10 +35,10 @@ export function SelectCell({
     columnMetadata.comment ?? "{}"
   ) as EnumColumnMetadata
 
-  if (enumMeta?.enums && enumMeta.enums[value]) {
-    const { icon, variant } = enumMeta.enums[value]
+  if (enumMeta?.values && enumMeta.values[value]) {
+    const { icon, variant } = enumMeta.values[value]
 
-    if (enumMeta.iconOnly && icon) {
+    if (enumMeta.icon_only && icon) {
       return (
         <Tooltip>
           <TooltipTrigger>

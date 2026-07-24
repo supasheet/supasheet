@@ -228,7 +228,7 @@ function RouteComponent() {
 
   const tableMeta = JSON.parse(tableSchema.comment ?? "{}") as TableMetadata
   const resourceDisplayName = tableMeta.name ?? formatTitle(resource)
-  const allowedTabs = tableMeta.tabs
+  const allowedTabs = tableMeta.detail?.tabs
 
   const basePath = `/${schema}/resource/${resource}/${resourceId}/detail`
   const MAIN_TAB = "__main__"

@@ -19,7 +19,6 @@ import { AlertCircleIcon, FileXIcon } from "lucide-react"
 import { DataTableSkeleton } from "#/components/data-table/data-table-skeleton"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceList } from "#/components/resource/list/resource-list"
-import type { ListView } from "#/components/resource/list/resource-list"
 import { ResourceActions } from "#/components/resource/resource-actions"
 import { ResourceViewSwitcher } from "#/components/resource/resource-view-switcher"
 import { Button } from "#/components/ui/button"
@@ -31,7 +30,7 @@ import {
   EmptyTitle,
 } from "#/components/ui/empty"
 import { useHasPermission } from "#/hooks/use-permissions"
-import type { TableMetadata } from "#/lib/database-meta.types"
+import type { ListLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
@@ -90,8 +89,8 @@ export const Route = createFileRoute(
       context.resourceSchema.comment ?? "{}"
     ) as TableMetadata
     const listView = meta.views?.find(
-      (item) => item.id === listId && item.type === "list"
-    ) as ListView | undefined
+      (item): item is ListLayout => item.id === listId && item.type === "list"
+    )
     if (!listView) throw notFound()
 
     context.queryClient.ensureQueryData(

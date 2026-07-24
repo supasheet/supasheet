@@ -116,7 +116,7 @@ create table finance.accounts (
 
 comment on column finance.accounts.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "asset":     {"variant": "success",     "icon": "Landmark"},
         "liability": {"variant": "destructive", "icon": "AlertTriangle"},
         "equity":    {"variant": "info",        "icon": "PieChart"},
@@ -128,7 +128,7 @@ comment on column finance.accounts.type is '{
 comment on table finance.accounts is '{
     "icon": "BookOpen",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -248,7 +248,7 @@ create table finance.vendors (
 comment on table finance.vendors is '{
     "icon": "Truck",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "gallery",
     "views": [
         {
@@ -399,7 +399,7 @@ create table finance.invoices (
 
 comment on column finance.invoices.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "sent":      {"variant": "info",        "icon": "Send"},
         "paid":      {"variant": "success",     "icon": "CircleCheck"},
@@ -412,7 +412,7 @@ comment on column finance.invoices.status is '{
 comment on table finance.invoices is '{
     "icon": "Receipt",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -523,7 +523,7 @@ comment on table finance.invoices is '{
     }
 }';
 
-comment on column finance.invoices.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column finance.invoices.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table finance.invoices
 from
@@ -594,7 +594,7 @@ create table finance.bills (
 
 comment on column finance.bills.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "pending":   {"variant": "warning",     "icon": "Clock"},
         "approved":  {"variant": "info",        "icon": "BadgeCheck"},
@@ -607,7 +607,7 @@ comment on column finance.bills.status is '{
 comment on table finance.bills is '{
     "icon": "FileText",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -718,7 +718,7 @@ comment on table finance.bills is '{
     }
 }';
 
-comment on column finance.bills.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column finance.bills.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table finance.bills
 from
@@ -792,7 +792,7 @@ create table finance.expenses (
 
 comment on column finance.expenses.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":      {"variant": "outline",     "icon": "FileEdit"},
         "submitted":  {"variant": "info",        "icon": "Send"},
         "approved":   {"variant": "success",     "icon": "BadgeCheck"},
@@ -803,7 +803,7 @@ comment on column finance.expenses.status is '{
 
 comment on column finance.expenses.category is '{
     "progress": false,
-    "enums": {
+    "values": {
         "travel":    {"variant": "info",      "icon": "Plane"},
         "meals":     {"variant": "warning",   "icon": "Utensils"},
         "lodging":   {"variant": "info",      "icon": "Hotel"},
@@ -817,7 +817,7 @@ comment on column finance.expenses.category is '{
 
 comment on column finance.expenses.payment_method is '{
     "progress": false,
-    "enums": {
+    "values": {
         "bank_transfer": {"variant": "info",     "icon": "Landmark"},
         "credit_card":   {"variant": "warning",  "icon": "CreditCard"},
         "check":         {"variant": "outline",  "icon": "FileSignature"},
@@ -830,7 +830,7 @@ comment on column finance.expenses.payment_method is '{
 comment on table finance.expenses is '{
     "icon": "Wallet",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -946,9 +946,9 @@ comment on table finance.expenses is '{
     }
 }';
 
-comment on column finance.expenses.receipt is '{"accept":"image/*,application/pdf", "maxFiles": 5}';
+comment on column finance.expenses.receipt is '{"accept":"image/*,application/pdf", "max_files": 5}';
 
-comment on column finance.expenses.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column finance.expenses.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table finance.expenses
 from
@@ -1019,7 +1019,7 @@ create table finance.payments (
 
 comment on column finance.payments.direction is '{
     "progress": false,
-    "enums": {
+    "values": {
         "incoming": {"variant": "success",     "icon": "ArrowDownLeft"},
         "outgoing": {"variant": "destructive", "icon": "ArrowUpRight"}
     }
@@ -1027,7 +1027,7 @@ comment on column finance.payments.direction is '{
 
 comment on column finance.payments.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":   {"variant": "warning",     "icon": "Clock"},
         "completed": {"variant": "success",     "icon": "CircleCheck"},
         "failed":    {"variant": "destructive", "icon": "XCircle"},
@@ -1037,7 +1037,7 @@ comment on column finance.payments.status is '{
 
 comment on column finance.payments.method is '{
     "progress": false,
-    "enums": {
+    "values": {
         "bank_transfer": {"variant": "info",     "icon": "Landmark"},
         "credit_card":   {"variant": "warning",  "icon": "CreditCard"},
         "check":         {"variant": "outline",  "icon": "FileSignature"},
@@ -1050,7 +1050,7 @@ comment on column finance.payments.method is '{
 comment on table finance.payments is '{
     "icon": "ArrowLeftRight",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -1160,7 +1160,7 @@ comment on table finance.payments is '{
     }
 }';
 
-comment on column finance.payments.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column finance.payments.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table finance.payments
 from
@@ -1231,7 +1231,7 @@ create table finance.budgets (
 
 comment on column finance.budgets.period is '{
     "progress": false,
-    "enums": {
+    "values": {
         "monthly":   {"variant": "info",      "icon": "Calendar"},
         "quarterly": {"variant": "warning",   "icon": "CalendarRange"},
         "annual":    {"variant": "success",   "icon": "CalendarDays"}
@@ -1241,7 +1241,7 @@ comment on column finance.budgets.period is '{
 comment on table finance.budgets is '{
     "icon": "PiggyBank",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -1399,7 +1399,7 @@ create table finance.payroll_runs (
 
 comment on column finance.payroll_runs.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":      {"variant": "outline",     "icon": "FileEdit"},
         "processing": {"variant": "info",        "icon": "Loader"},
         "completed":  {"variant": "success",     "icon": "CircleCheck"},
@@ -1410,7 +1410,7 @@ comment on column finance.payroll_runs.status is '{
 comment on table finance.payroll_runs is '{
     "icon": "Banknote",
     "display": "block",
-    "group": "Payroll",
+    "collapsible_group": "Payroll",
     "primary_view": "kanban",
     "views": [
         {
@@ -1497,7 +1497,7 @@ comment on table finance.payroll_runs is '{
     }
 }';
 
-comment on column finance.payroll_runs.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column finance.payroll_runs.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table finance.payroll_runs
 from
@@ -1569,7 +1569,7 @@ create table finance.payslips (
 
 comment on column finance.payslips.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {"variant": "warning", "icon": "Clock"},
         "issued":  {"variant": "info",    "icon": "Send"},
         "paid":    {"variant": "success", "icon": "CircleCheck"}
@@ -1579,7 +1579,7 @@ comment on column finance.payslips.status is '{
 comment on table finance.payslips is '{
     "icon": "FileSpreadsheet",
     "display": "block",
-    "group": "Payroll",
+    "collapsible_group": "Payroll",
     "primary_view": "kanban",
     "views": [
         {
@@ -1684,7 +1684,7 @@ comment on table finance.payslips is '{
     }
 }';
 
-comment on column finance.payslips.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column finance.payslips.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table finance.payslips
 from
@@ -1749,7 +1749,7 @@ create table finance.journal_entries (
 
 comment on column finance.journal_entries.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":    {"variant": "outline",     "icon": "FileEdit"},
         "posted":   {"variant": "success",     "icon": "CircleCheck"},
         "reversed": {"variant": "destructive", "icon": "RotateCcw"}
@@ -1759,7 +1759,7 @@ comment on column finance.journal_entries.status is '{
 comment on table finance.journal_entries is '{
     "icon": "BookText",
     "display": "block",
-    "group": "Operations",
+    "collapsible_group": "Operations",
     "primary_view": "kanban",
     "views": [
         {
@@ -1862,7 +1862,7 @@ comment on table finance.journal_entries is '{
     }
 }';
 
-comment on column finance.journal_entries.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column finance.journal_entries.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table finance.journal_entries
 from

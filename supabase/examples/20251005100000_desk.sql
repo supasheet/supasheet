@@ -43,7 +43,7 @@ create table desk.projects (
 
 comment on column desk.projects.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "planning": {
             "variant": "outline",
             "icon": "Lightbulb"
@@ -69,7 +69,7 @@ comment on column desk.projects.status is '{
 
 comment on column desk.projects.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low": {
             "variant": "outline",
             "icon": "CircleArrowDown"
@@ -334,7 +334,7 @@ create table desk.tasks (
 
 comment on column desk.tasks.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"
@@ -356,7 +356,7 @@ comment on column desk.tasks.status is '{
 
 comment on column desk.tasks.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low": {
             "variant": "outline",
             "icon": "CircleArrowDown"
@@ -545,21 +545,6 @@ comment on table desk.tasks is '{
                     "notes"
                 ]
             }
-        ],
-        "duplicated": [
-            "title",
-            "description",
-            "status",
-            "priority",
-            "project_id",
-            "assignee_id",
-            "tags",
-            "is_important",
-            "completion",
-            "estimated_duration",
-            "duration",
-            "color",
-            "notes"
         ]
     },
     "query": {
@@ -600,7 +585,7 @@ comment on table desk.tasks is '{
 
 comment on column desk.tasks.cover is '{"accept":"image/*"}';
 
-comment on column desk.tasks.attachments is '{"accept":"*", "maxFiles": 999}';
+comment on column desk.tasks.attachments is '{"accept":"*", "max_files": 999}';
 
 revoke all on table desk.tasks
 from
@@ -1765,7 +1750,7 @@ create table desk.timesheets (
 
 comment on column desk.timesheets.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft": {
             "variant": "outline",
             "icon": "FileText"

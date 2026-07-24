@@ -63,7 +63,7 @@ export interface KanbanViewData {
 
 export type KanbanViewReducedData = Record<string, KanbanViewData[]>
 
-export type KanbanLayout = "board" | "list"
+export type KanbanBoardMode = "board" | "list"
 
 export function ResourceKanban({
   data,
@@ -74,7 +74,7 @@ export function ResourceKanban({
   data: KanbanViewReducedData
   resourceSchema: ResourceSchema
   groupBy: string
-  layout: KanbanLayout
+  layout: KanbanBoardMode
 }) {
   const schema = resourceSchema.schema ?? ""
   const resource = resourceSchema.name ?? ""
@@ -126,7 +126,7 @@ export function ResourceKanban({
     [primaryKeys, groupBy, updateResource, queryClient, schema, resource]
   )
 
-  function goToLayout(l: KanbanLayout) {
+  function goToLayout(l: KanbanBoardMode) {
     void navigate({
       search: (prev: Record<string, unknown>) => ({
         ...prev,

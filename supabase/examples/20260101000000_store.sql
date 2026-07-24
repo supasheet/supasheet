@@ -91,7 +91,7 @@ comment on table store.store_settings is '{
     }
 }';
 
-comment on column store.store_settings.logo is '{"name": "Logo", "accept": "image/*", "maxSize": 2097152}';
+comment on column store.store_settings.logo is '{"name": "Logo", "accept": "image/*", "max_size": 2097152}';
 
 revoke all on table store.store_settings
 from
@@ -141,7 +141,7 @@ create table store.products (
 
 comment on column store.products.status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "active": {
             "variant": "success",
             "icon": "CircleCheck"
@@ -292,7 +292,7 @@ create table store.orders (
 
 comment on column store.orders.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"
@@ -321,7 +321,7 @@ comment on column store.orders.status is '{
 }';
 
 comment on column store.orders.payment_method is '{
-    "enums": {
+    "values": {
         "credit_card": {
             "variant": "info",
             "icon": "CreditCard"
@@ -580,7 +580,7 @@ create table store.reviews (
 
 comment on column store.reviews.status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"

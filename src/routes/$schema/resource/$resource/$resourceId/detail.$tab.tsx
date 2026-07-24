@@ -33,7 +33,7 @@ export const Route = createFileRoute(
     ) as TableMetadata
     const metaJoins = tableMeta.query?.join
 
-    const allowedTabs = tableMeta.tabs
+    const allowedTabs = tableMeta.detail?.tabs
     if (allowedTabs && !allowedTabs.includes(tab)) throw notFound()
 
     const embeddedTables = addEmbedKeys(

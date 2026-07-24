@@ -94,7 +94,7 @@ create table crm.companies (
 
 comment on column crm.companies.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "customer": {
             "variant": "success",
             "icon": "BadgeCheck"
@@ -287,7 +287,7 @@ create table crm.contacts (
 
 comment on column crm.contacts.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "lead": {
             "variant": "warning",
             "icon": "Sprout"
@@ -309,7 +309,7 @@ comment on column crm.contacts.status is '{
 
 comment on column crm.contacts.lead_source is '{
     "progress": false,
-    "enums": {
+    "values": {
         "website": {
             "variant": "info",
             "icon": "Globe"
@@ -610,7 +610,7 @@ create table crm.deals (
 
 comment on column crm.deals.stage is '{
     "progress": true,
-    "enums": {
+    "values": {
         "prospecting": {
             "variant": "outline",
             "icon": "Search"
@@ -640,7 +640,7 @@ comment on column crm.deals.stage is '{
 
 comment on column crm.deals.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low": {
             "variant": "outline",
             "icon": "CircleArrowDown"
@@ -790,7 +790,7 @@ comment on table crm.deals is '{
 
 comment on column crm.deals.cover is '{"accept":"image/*"}';
 
-comment on column crm.deals.attachments is '{"accept":"*", "maxFiles": 999}';
+comment on column crm.deals.attachments is '{"accept":"*", "max_files": 999}';
 
 revoke all on table crm.deals
 from
@@ -861,7 +861,7 @@ create table crm.activities (
 
 comment on column crm.activities.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "call": {
             "variant": "info",
             "icon": "Phone"
@@ -887,7 +887,7 @@ comment on column crm.activities.type is '{
 
 comment on column crm.activities.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"
@@ -1019,7 +1019,7 @@ comment on table crm.activities is '{
     }
 }';
 
-comment on column crm.activities.attachments is '{"accept":"*", "maxFiles": 999}';
+comment on column crm.activities.attachments is '{"accept":"*", "max_files": 999}';
 
 revoke all on table crm.activities
 from

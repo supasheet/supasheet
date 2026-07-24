@@ -10,7 +10,7 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
   "name": "Tickets", // override display name
   "description": "...",
   "icon": "Ticket", // Lucide React icon name
-  "group": "Support", // sidebar grouping
+  "collapsible_group": "Support", // sidebar collapsible section this resource is grouped under
   "singleton": false, // true = settings-style single record
   "inline_form": false, // true = editable section on parent detail page (junction/line-item tables)
   "primary_view": "kanban", // id of default view (omit = sheet/table view)
@@ -19,7 +19,7 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
   "links": [/* ResourceLink[] */],
   "fields": {/* see Fields */},
   "query": {/* see Query */},
-  "tabs": ["tasks", "invoices"], // allowlist of related-table tabs on the detail page
+  "detail": {/* see Detail — table-only, views have no detail page */},
 }
 ```
 
@@ -81,7 +81,6 @@ Quick-link shortcuts shown on the resource landing page — to an external dashb
     ],
     "metadata": ["created_at", "updated_at"],   // override system columns; default ["deleted_at","created_at","updated_at","created_by","updated_by"]
     "quick_create": ["title", "project_id", "assignee_id"],   // abbreviated quick-create form
-    "duplicated": ["title", "description", "status", "tags"], // fields copied on "Duplicate record"
     "behavior": { /* conditional fields */ },
     "lookups":  { /* FK dropdown fill/filter */ }
 }
@@ -105,23 +104,23 @@ Keyed by field name; `visible` / `required` / `read_only` each take conditions t
 
 ### Lookups (FK dropdowns)
 
-Keyed by the local FK field. `fill` copies columns from the picked record into local form fields; `filter` restricts the dropdown by another local field's value. The lookup target must be reachable in the same schema (use replica views for cross-schema).
+Keyed by the local FK field. `fill` copies columns from the picked record into local form fields; `filter` restricts the dropdown by another local field's value. `source_column`/`target_column` follow the same direction as `Relationship.source_column_name`/`target_column_name`: `source_column` is always on this table's own form, `target_column` is always on the lookup table being referenced. The lookup target must be reachable in the same schema (use replica views for cross-schema).
 
 ```json
 "lookups": {
     "service_id": {
         "fill": [
-            {"target": "unit_price", "source": "default_rate"},
-            {"target": "description", "source": "name"}
+            {"source_column": "unit_price", "target_column": "default_rate"},
+            {"source_column": "description", "target_column": "name"}
         ]
     },
     "project_id": {
-        "filter": [{"on": "client_id", "column": "client_id"}]
+        "filter": [{"source_column": "client_id", "target_column": "client_id"}]
     }
 }
 ```
 
-(`filter` reads: when the local `client_id` changes, only offer projects whose `client_id` matches.)
+(`filter` reads: when the local `client_id` field changes, only offer projects whose `client_id` matches.)
 
 ## Query
 
@@ -143,9 +142,20 @@ Default list-view query configuration:
 - No `between` operator — use paired `gte` + `lte` filters.
 - Filter operators are type-dependent: text (`ilike, not.ilike, like, eq, neq, is, not.is`), numeric/date (`eq, neq, lt, lte, gt, gte, is, not.is`), enum (`eq, neq, is, not.is`), array (`in, not.in, is, not.is`), boolean (`is, not.is`), uuid (`eq, neq, is, not.is`).
 
-## Tabs
+## Detail
 
-`"tabs": ["tasks", "milestones", "invoices"]` — allowlist which related tables (by FK) appear as tabs on the detail page. Omit to show all related tables. Does not affect the Audit/Comments pages (those are permission-driven).
+Table-only — view resources have no detail page. Configures the detail page's heading and which related-table tabs it shows (not the fields in the page body — that's `fields.sections`):
+
+```json
+"detail": {
+    "header": {"title": "name", "badges": ["status", "tags"]},
+    "tabs": ["tasks", "milestones", "invoices"]
+}
+```
+
+- `header.title` names a column whose value renders as the page heading (falls back to the primary key when empty).
+- `header.badges` names columns rendered as badges next to the heading.
+- `tabs` allowlists which related tables (by FK) appear as tabs. Entries are the related table's own name, unless a `query.join[].alias` is configured for it (then use the alias instead). Omit to show all related tables. Does not affect the Audit/Comments pages (those are permission-driven).
 
 ## Special table modes
 
@@ -156,9 +166,9 @@ Default list-view query configuration:
 
 - Comments must be valid JSON — the app `JSON.parse`s them. Multi-line string literals are fine in SQL; for tooling that mangles quotes use dollar-quoting: `comment on table t is $$ {...} $$;`.
 - After changing any comment, run `select supasheet.refresh_metadata();`.
-- View (non-table) resources use the same base shape (`display`, `name`, `icon`, `views`, `filter_presets`, `links`, `fields.sections`) but no form-specific keys — unless tagged `{"type": "report" | "chart" | "dashboard_widget"}`, which routes them to those features instead.
+- View (non-table) resources use the same base shape (`display`, `name`, `icon`, `views`, `filter_presets`, `links`, `fields.sections`) but no form-specific keys — unless tagged `{"type": "report" | "chart" | "dashboard_widget" | "template"}`, which routes them to those features instead.
 
 ## Authoritative sources
 
 - `src/lib/database-meta.types.ts` — `TableMetadata`, `ViewLayout`, `FieldSection`, `FieldBehavior`, `LookupConfig`, `QueryConfig`, `FilterPreset`, `ResourceLink`
-- `supabase/demo.sql` — rich real examples: `demo.clients` (kanban+gallery, sections, presets), `demo.tasks` (behavior, quick_create, duplicated, tree), `demo.invoices` (lookup filter, tabs), `demo.invoice_items` (inline_form, lookup fill), `demo.workspace_settings` (singleton)
+- `supabase/demo.sql` — rich real examples: `demo.clients` (kanban+gallery, sections, presets), `demo.tasks` (behavior, quick_create, tree), `demo.invoices` (lookup filter, tabs), `demo.invoice_items` (inline_form, lookup fill), `demo.workspace_settings` (singleton)

@@ -23,7 +23,7 @@ export function AvatarField({ columnMetadata, columnSchema }: FileFieldProps) {
   const config = JSON.parse(
     columnSchema.comment ?? "{}"
   ) as AvatarColumnMetadata
-  const maxSize = config.maxSize ?? 5 * 1024 * 1024
+  const maxSize = config.max_size ?? 5 * 1024 * 1024
 
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(
     null

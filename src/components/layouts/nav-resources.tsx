@@ -268,12 +268,12 @@ export function NavResources({
   isLoading?: boolean
   items: ResourceItem[]
 }) {
-  const hasGroups = items.some((item) => item.meta?.group)
+  const hasGroups = items.some((item) => item.meta?.collapsible_group)
 
   const grouped: Record<string, ResourceItem[]> = {}
   if (hasGroups) {
     for (const item of items) {
-      const key = item.meta?.group ?? ""
+      const key = item.meta?.collapsible_group ?? ""
       grouped[key] = grouped[key] ?? []
       grouped[key].push(item)
     }

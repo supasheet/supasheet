@@ -19,14 +19,13 @@ import {
 } from "#/components/ui/dropdown-menu"
 import { encodeFilterValue } from "#/lib/data-table"
 import type { FilterPreset } from "#/lib/database-meta.types"
-import type { FilterOperator } from "#/types/data-table"
 
 const ALL_RECORDS_ID = "__all__"
 
 function encodePresetFilters(preset: FilterPreset): ColumnFiltersState {
   return preset.filters.map((f) => ({
     id: f.id,
-    value: encodeFilterValue(f.operator as FilterOperator, f.value),
+    value: encodeFilterValue(f.operator, f.value),
   }))
 }
 

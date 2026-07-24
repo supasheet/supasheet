@@ -23,8 +23,8 @@ import {
 export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
   const field = useFieldContext<FileObject[]>()
   const config = JSON.parse(columnSchema.comment ?? "{}") as FileColumnMetadata
-  const maxSize = config.maxSize ?? 5 * 1024 * 1024
-  const maxFiles = config.maxFiles ?? 1
+  const maxSize = config.max_size ?? 5 * 1024 * 1024
+  const maxFiles = config.max_files ?? 1
   const accept = config.accept ?? "*"
 
   const storagePath = `${columnSchema.schema}/${columnSchema.table}/${columnSchema.name}`

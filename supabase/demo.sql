@@ -142,7 +142,7 @@ create table demo.clients (
 
 comment on column demo.clients.status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "lead": {"variant": "info", "icon": "Sprout"},
         "active": {"variant": "success", "icon": "BadgeCheck"},
         "on_hold": {"variant": "warning", "icon": "PauseCircle"},
@@ -154,10 +154,7 @@ comment on table demo.clients is '{
     "icon": "Building2",
     "display": "block",
     "primary_view": "kanban",
-    "detail": {
-        "title": "name",
-        "badges": ["status", "tags"]
-    },
+    "detail": {"header": {"title": "name", "badges": ["status", "tags"]}},
     "views": [
         {
             "id": "kanban",
@@ -202,7 +199,7 @@ comment on table demo.clients is '{
     }
 }';
 
-comment on column demo.clients.logo is '{"accept":"image/*", "maxSize": 2097152}';
+comment on column demo.clients.logo is '{"accept":"image/*", "max_size": 2097152}';
 
 revoke all on table demo.clients
 from
@@ -274,7 +271,7 @@ create table demo.team_members (
 
 comment on column demo.team_members.department is '{
     "progress": false,
-    "enums": {
+    "values": {
         "design": {"variant": "secondary", "icon": "Palette"},
         "engineering": {"variant": "info", "icon": "Code2"},
         "product": {"variant": "default", "icon": "Box"},
@@ -286,7 +283,7 @@ comment on column demo.team_members.department is '{
 
 comment on column demo.team_members.employment_status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "active": {"variant": "success", "icon": "CircleCheck"},
         "on_leave": {"variant": "warning", "icon": "Palmtree"},
         "offboarded": {"variant": "destructive", "icon": "UserX"}
@@ -297,10 +294,7 @@ comment on table demo.team_members is '{
     "icon": "Users",
     "display": "block",
     "primary_view": "tree",
-    "detail": {
-        "title": "name",
-        "badges": ["department", "employment_status"]
-    },
+    "detail": {"header": {"title": "name", "badges": ["department", "employment_status"]}},
     "views": [
         {
             "id": "tree",
@@ -479,7 +473,7 @@ create table demo.projects (
 
 comment on column demo.projects.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "planning": {"variant": "outline", "icon": "ClipboardList"},
         "active": {"variant": "info", "icon": "Play"},
         "on_hold": {"variant": "warning", "icon": "PauseCircle"},
@@ -490,7 +484,7 @@ comment on column demo.projects.status is '{
 
 comment on column demo.projects.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low": {"variant": "outline", "icon": "ArrowDown"},
         "medium": {"variant": "info", "icon": "Minus"},
         "high": {"variant": "warning", "icon": "ArrowUp"},
@@ -500,13 +494,12 @@ comment on column demo.projects.priority is '{
 
 comment on table demo.projects is '{
     "icon": "FolderKanban",
-    "group": "Projects",
+    "collapsible_group": "Projects",
     "display": "block",
     "primary_view": "kanban",
-    "tabs": ["tasks", "milestones", "invoices", "project_members"],
     "detail": {
-        "title": "name",
-        "badges": ["status", "priority", "tags"]
+        "header": {"title": "name", "badges": ["status", "priority", "tags"]},
+        "tabs": ["tasks", "milestones", "invoices", "project_members"]
     },
     "views": [
         {
@@ -765,7 +758,7 @@ create table demo.milestones (
 
 comment on column demo.milestones.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {"variant": "outline", "icon": "Circle"},
         "in_progress": {"variant": "info", "icon": "Loader"},
         "completed": {"variant": "success", "icon": "CheckCircle2"},
@@ -775,13 +768,10 @@ comment on column demo.milestones.status is '{
 
 comment on table demo.milestones is '{
     "icon": "Milestone",
-    "group": "Projects",
+    "collapsible_group": "Projects",
     "display": "block",
     "primary_view": "calendar",
-    "detail": {
-        "title": "title",
-        "badges": ["status"]
-    },
+    "detail": {"header": {"title": "title", "badges": ["status"]}},
     "views": [
         {
             "id": "calendar",
@@ -882,7 +872,7 @@ create table demo.tasks (
 
 comment on column demo.tasks.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "todo": {"variant": "outline", "icon": "Circle"},
         "in_progress": {"variant": "info", "icon": "Loader"},
         "in_review": {"variant": "warning", "icon": "Eye"},
@@ -894,8 +884,8 @@ comment on column demo.tasks.status is '{
 
 comment on column demo.tasks.priority is '{
     "progress": false,
-    "iconOnly": true,
-    "enums": {
+    "icon_only": true,
+    "values": {
         "low": {"variant": "outline", "icon": "ArrowDown"},
         "medium": {"variant": "info", "icon": "Minus"},
         "high": {"variant": "warning", "icon": "ArrowUp"},
@@ -905,13 +895,10 @@ comment on column demo.tasks.priority is '{
 
 comment on table demo.tasks is '{
     "icon": "ListTodo",
-    "group": "Projects",
+    "collapsible_group": "Projects",
     "display": "block",
     "primary_view": "kanban",
-    "detail": {
-        "title": "title",
-        "badges": ["status", "priority", "tags"]
-    },
+    "detail": {"header": {"title": "title", "badges": ["status", "priority", "tags"]}},
     "views": [
         {
             "id": "kanban",
@@ -977,7 +964,7 @@ comment on table demo.tasks is '{
     }
 }';
 
-comment on column demo.tasks.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column demo.tasks.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table demo.tasks
 from
@@ -1106,7 +1093,7 @@ create table demo.portfolio_items (
 
 comment on column demo.portfolio_items.category is '{
     "progress": false,
-    "enums": {
+    "values": {
         "web": {"variant": "info", "icon": "Globe"},
         "branding": {"variant": "secondary", "icon": "Palette"},
         "mobile": {"variant": "success", "icon": "Smartphone"},
@@ -1119,10 +1106,7 @@ comment on table demo.portfolio_items is '{
     "icon": "Image",
     "display": "block",
     "primary_view": "gallery",
-    "detail": {
-        "title": "title",
-        "badges": ["category", "tags"]
-    },
+    "detail": {"header": {"title": "title", "badges": ["category", "tags"]}},
     "views": [
         {
             "id": "gallery",
@@ -1164,7 +1148,7 @@ comment on table demo.portfolio_items is '{
     }
 }';
 
-comment on column demo.portfolio_items.cover is '{"accept":"image/*", "maxSize": 5242880}';
+comment on column demo.portfolio_items.cover is '{"accept":"image/*", "max_size": 5242880}';
 
 revoke all on table demo.portfolio_items
 from
@@ -1267,7 +1251,7 @@ create table demo.services (
 
 comment on column demo.services.category is '{
     "progress": false,
-    "enums": {
+    "values": {
         "design": {"variant": "secondary", "icon": "Palette"},
         "development": {"variant": "info", "icon": "Code2"},
         "consulting": {"variant": "default", "icon": "Lightbulb"},
@@ -1280,10 +1264,7 @@ comment on table demo.services is '{
     "icon": "Wrench",
     "display": "block",
     "primary_view": "list",
-    "detail": {
-        "title": "name",
-        "badges": ["category"]
-    },
+    "detail": {"header": {"title": "name", "badges": ["category"]}},
     "views": [
         {
             "id": "list",
@@ -1379,7 +1360,7 @@ create table demo.invoices (
 
 comment on column demo.invoices.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft": {"variant": "outline", "icon": "FileEdit"},
         "sent": {"variant": "info", "icon": "Send"},
         "paid": {"variant": "success", "icon": "CircleCheck"},
@@ -1392,10 +1373,9 @@ comment on table demo.invoices is '{
     "icon": "Receipt",
     "display": "block",
     "primary_view": "kanban",
-    "tabs": ["invoice_items"],
     "detail": {
-        "title": "invoice_number",
-        "badges": ["status"]
+        "header": {"title": "invoice_number", "badges": ["status"]},
+        "tabs": ["invoice_items"]
     },
     "views": [
         {
@@ -1434,7 +1414,7 @@ comment on table demo.invoices is '{
             "paid_at": {"visible": [{"id": "status", "operator": "eq", "value": "paid"}]}
         },
         "lookups": {
-            "project_id": {"filter": [{"on": "client_id", "column": "client_id"}]}
+            "project_id": {"filter": [{"source_column": "client_id", "target_column": "client_id"}]}
         }
     },
     "query": {
@@ -1522,8 +1502,8 @@ comment on table demo.invoice_items is '{
         "lookups": {
             "service_id": {
                 "fill": [
-                    {"target": "unit_price", "source": "default_rate"},
-                    {"target": "description", "source": "name"}
+                    {"source_column": "unit_price", "target_column": "default_rate"},
+                    {"source_column": "description", "target_column": "name"}
                 ]
             }
         }
@@ -1712,7 +1692,7 @@ comment on table demo.workspace_settings is '{
     }
 }';
 
-comment on column demo.workspace_settings.logo is '{"accept":"image/*", "maxSize": 2097152}';
+comment on column demo.workspace_settings.logo is '{"accept":"image/*", "max_size": 2097152}';
 
 revoke all on table demo.workspace_settings
 from
@@ -2653,19 +2633,19 @@ comment on view demo.revenue_summary is '{"type": "dashboard_widget", "name": "R
 
 comment on view demo.project_health is '{"type": "dashboard_widget", "name": "Project Health", "description": "At-risk open projects breakdown", "widget_type": "card_4"}';
 
-comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks", "link": "/demo/resource/tasks"}';
+comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks", "url": "/demo/resource/tasks"}';
 
 comment on view demo.upcoming_milestones is '{"type": "dashboard_widget", "name": "Upcoming Milestones", "description": "Next 10 milestones due across active projects", "widget_type": "table_1"}';
 
-comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2", "link": "/demo/resource/clients"}';
+comment on view demo.top_clients is '{"type": "dashboard_widget", "name": "Top Clients", "description": "Top 10 clients by invoiced revenue", "widget_type": "table_2", "url": "/demo/resource/clients"}';
 
-comment on view demo.task_alerts is '{"type": "dashboard_widget", "name": "Task Alerts", "description": "Blocked or overdue high-priority tasks", "widget_type": "list_1", "link": "/demo/resource/tasks"}';
+comment on view demo.task_alerts is '{"type": "dashboard_widget", "name": "Task Alerts", "description": "Blocked or overdue high-priority tasks", "widget_type": "list_1", "url": "/demo/resource/tasks"}';
 
-comment on view demo.recent_invoices is '{"type": "dashboard_widget", "name": "Recent Invoices", "description": "Latest invoices with amount and due date", "widget_type": "list_2", "link": "/demo/resource/invoices"}';
+comment on view demo.recent_invoices is '{"type": "dashboard_widget", "name": "Recent Invoices", "description": "Latest invoices with amount and due date", "widget_type": "list_2", "url": "/demo/resource/invoices"}';
 
-comment on view demo.recent_task_activity is '{"type": "dashboard_widget", "name": "Recent Activity", "description": "Latest task actions across the team", "widget_type": "list_3", "link": "/demo/resource/tasks"}';
+comment on view demo.recent_task_activity is '{"type": "dashboard_widget", "name": "Recent Activity", "description": "Latest task actions across the team", "widget_type": "list_3", "url": "/demo/resource/tasks"}';
 
-comment on view demo.top_task_closers is '{"type": "dashboard_widget", "name": "Top Task Closers", "description": "Team members ranked by completed tasks", "widget_type": "list_4", "link": "/demo/resource/team_members"}';
+comment on view demo.top_task_closers is '{"type": "dashboard_widget", "name": "Top Task Closers", "description": "Team members ranked by completed tasks", "widget_type": "list_4", "url": "/demo/resource/team_members"}';
 
 comment on view demo.task_board_overview is '{"type": "dashboard_widget", "name": "Task Board Overview", "description": "Open tasks by priority", "widget_type": "card_5"}';
 

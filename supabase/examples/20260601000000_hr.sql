@@ -200,7 +200,7 @@ create table hr.positions (
 
 comment on column hr.positions.employment_type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "full_time":  {"variant": "success",  "icon": "BriefcaseBusiness"},
         "part_time":  {"variant": "info",     "icon": "Clock"},
         "contract":   {"variant": "warning",  "icon": "FileSignature"},
@@ -338,7 +338,7 @@ create table hr.employees (
 
 comment on column hr.employees.employment_status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "active":     {"variant": "success",     "icon": "UserCheck"},
         "on_leave":   {"variant": "warning",     "icon": "PalmTree"},
         "suspended":  {"variant": "destructive", "icon": "UserX"},
@@ -349,7 +349,7 @@ comment on column hr.employees.employment_status is '{
 
 comment on column hr.employees.employment_type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "full_time":  {"variant": "success",  "icon": "BriefcaseBusiness"},
         "part_time":  {"variant": "info",     "icon": "Clock"},
         "contract":   {"variant": "warning",  "icon": "FileSignature"},
@@ -579,7 +579,7 @@ create table hr.leave_requests (
 
 comment on column hr.leave_requests.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "vacation":    {"variant": "info",       "icon": "PalmTree"},
         "sick":        {"variant": "warning",    "icon": "Thermometer"},
         "personal":    {"variant": "secondary",  "icon": "User"},
@@ -592,7 +592,7 @@ comment on column hr.leave_requests.type is '{
 
 comment on column hr.leave_requests.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":   {"variant": "warning",     "icon": "Clock"},
         "approved":  {"variant": "success",     "icon": "CircleCheck"},
         "rejected":  {"variant": "destructive", "icon": "XCircle"},
@@ -710,7 +710,7 @@ comment on table hr.leave_requests is '{
     }
 }';
 
-comment on column hr.leave_requests.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column hr.leave_requests.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table hr.leave_requests
 from
@@ -777,7 +777,7 @@ create table hr.performance_reviews (
 
 comment on column hr.performance_reviews.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":        {"variant": "outline",  "icon": "FileEdit"},
         "in_review":    {"variant": "info",     "icon": "Eye"},
         "completed":    {"variant": "success",  "icon": "CircleCheck"},
@@ -874,7 +874,7 @@ comment on table hr.performance_reviews is '{
     }
 }';
 
-comment on column hr.performance_reviews.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column hr.performance_reviews.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table hr.performance_reviews
 from
@@ -942,7 +942,7 @@ create table hr.job_postings (
 
 comment on column hr.job_postings.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "open":      {"variant": "success",     "icon": "CircleCheck"},
         "on_hold":   {"variant": "warning",     "icon": "PauseCircle"},
@@ -1124,7 +1124,7 @@ create table hr.candidates (
 
 comment on column hr.candidates.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "applied":    {"variant": "outline",     "icon": "Inbox"},
         "screening":  {"variant": "info",        "icon": "Search"},
         "interview":  {"variant": "warning",     "icon": "MessagesSquare"},
@@ -1244,7 +1244,7 @@ comment on table hr.candidates is '{
 
 comment on column hr.candidates.avatar is '{"accept":"image/*"}';
 
-comment on column hr.candidates.resume is '{"accept":"application/pdf,.doc,.docx", "maxFiles": 1}';
+comment on column hr.candidates.resume is '{"accept":"application/pdf,.doc,.docx", "max_files": 1}';
 
 revoke all on table hr.candidates
 from

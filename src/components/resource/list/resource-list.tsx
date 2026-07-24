@@ -18,6 +18,7 @@ import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   ColumnSchema,
   FilterPreset,
+  ListLayout,
   ResourceSchema,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
@@ -28,21 +29,11 @@ import { getResourceTableColumns } from "../resource-table-columns"
 import { ResourceListEmpty } from "./resource-list-empty"
 import { ResourceListRow } from "./resource-list-row"
 
-export type ListView = {
-  id: string
-  name: string
-  title?: string
-  description?: string
-  field_1?: string
-  field_2?: string
-  [key: string]: unknown
-}
-
 interface ResourceListProps {
   data: Record<string, unknown>[]
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
-  listView: ListView
+  listView: ListLayout
   sorting: SortingState
   pagination: PaginationState
   columnFilters: ColumnFiltersState

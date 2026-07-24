@@ -154,7 +154,7 @@ create table procurement.suppliers (
 
 comment on column procurement.suppliers.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":     {"variant": "warning",     "icon": "Clock"},
         "qualified":   {"variant": "info",        "icon": "BadgeCheck"},
         "preferred":   {"variant": "success",     "icon": "Star"},
@@ -165,7 +165,7 @@ comment on column procurement.suppliers.status is '{
 
 comment on column procurement.suppliers.tier is '{
     "progress": false,
-    "enums": {
+    "values": {
         "strategic":     {"variant": "success",     "icon": "Crown"},
         "tier_1":        {"variant": "info",        "icon": "Trophy"},
         "tier_2":        {"variant": "info",        "icon": "Medal"},
@@ -307,7 +307,7 @@ comment on table procurement.suppliers is '{
 
 comment on column procurement.suppliers.logo is '{"accept":"image/*"}';
 
-comment on column procurement.suppliers.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column procurement.suppliers.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table procurement.suppliers
 from
@@ -379,7 +379,7 @@ create table procurement.contracts (
 
 comment on column procurement.contracts.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "master": {"variant": "success",   "icon": "FileSignature"},
         "msa":    {"variant": "info",      "icon": "FileText"},
         "sow":    {"variant": "warning",   "icon": "ClipboardList"},
@@ -390,7 +390,7 @@ comment on column procurement.contracts.type is '{
 
 comment on column procurement.contracts.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":          {"variant": "outline",     "icon": "FileEdit"},
         "active":         {"variant": "success",     "icon": "CircleCheck"},
         "expiring_soon":  {"variant": "warning",     "icon": "AlertTriangle"},
@@ -517,9 +517,9 @@ comment on table procurement.contracts is '{
     }
 }';
 
-comment on column procurement.contracts.document is '{"accept":"application/pdf,.doc,.docx", "maxFiles": 1}';
+comment on column procurement.contracts.document is '{"accept":"application/pdf,.doc,.docx", "max_files": 1}';
 
-comment on column procurement.contracts.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column procurement.contracts.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table procurement.contracts
 from
@@ -593,7 +593,7 @@ create table procurement.requisitions (
 
 comment on column procurement.requisitions.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "submitted": {"variant": "info",        "icon": "Send"},
         "approved":  {"variant": "success",     "icon": "BadgeCheck"},
@@ -605,7 +605,7 @@ comment on column procurement.requisitions.status is '{
 
 comment on column procurement.requisitions.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low":      {"variant": "outline",     "icon": "CircleArrowDown"},
         "medium":   {"variant": "info",        "icon": "CircleMinus"},
         "high":     {"variant": "warning",     "icon": "CircleArrowUp"},
@@ -737,7 +737,7 @@ comment on table procurement.requisitions is '{
     }
 }';
 
-comment on column procurement.requisitions.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column procurement.requisitions.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table procurement.requisitions
 from
@@ -946,7 +946,7 @@ create table procurement.rfqs (
 
 comment on column procurement.rfqs.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "open":      {"variant": "info",        "icon": "Send"},
         "closed":    {"variant": "warning",     "icon": "Lock"},
@@ -1076,7 +1076,7 @@ comment on table procurement.rfqs is '{
     }
 }';
 
-comment on column procurement.rfqs.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column procurement.rfqs.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table procurement.rfqs
 from
@@ -1146,7 +1146,7 @@ create table procurement.quotes (
 
 comment on column procurement.quotes.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "submitted":   {"variant": "info",        "icon": "Send"},
         "shortlisted": {"variant": "warning",     "icon": "Star"},
         "awarded":     {"variant": "success",     "icon": "Trophy"},
@@ -1256,7 +1256,7 @@ comment on table procurement.quotes is '{
     }
 }';
 
-comment on column procurement.quotes.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column procurement.quotes.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table procurement.quotes
 from
@@ -1317,7 +1317,7 @@ create table procurement.asset_categories (
 
 comment on column procurement.asset_categories.default_depreciation_method is '{
     "progress": false,
-    "enums": {
+    "values": {
         "straight_line":        {"variant": "info",     "icon": "TrendingDown"},
         "declining_balance":    {"variant": "warning",  "icon": "ChartLine"},
         "units_of_production":  {"variant": "secondary","icon": "Settings2"},
@@ -1461,7 +1461,7 @@ create table procurement.assets (
 
 comment on column procurement.assets.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "available":   {"variant": "success",     "icon": "CircleCheck"},
         "in_use":      {"variant": "info",        "icon": "UserCheck"},
         "maintenance": {"variant": "warning",     "icon": "Wrench"},
@@ -1473,7 +1473,7 @@ comment on column procurement.assets.status is '{
 
 comment on column procurement.assets.condition is '{
     "progress": true,
-    "enums": {
+    "values": {
         "new":       {"variant": "success",     "icon": "Sparkles"},
         "excellent": {"variant": "success",     "icon": "Star"},
         "good":      {"variant": "info",        "icon": "ThumbsUp"},
@@ -1484,7 +1484,7 @@ comment on column procurement.assets.condition is '{
 
 comment on column procurement.assets.depreciation_method is '{
     "progress": false,
-    "enums": {
+    "values": {
         "straight_line":       {"variant": "info",      "icon": "TrendingDown"},
         "declining_balance":   {"variant": "warning",   "icon": "ChartLine"},
         "units_of_production": {"variant": "secondary", "icon": "Settings2"},
@@ -1649,7 +1649,7 @@ comment on table procurement.assets is '{
 
 comment on column procurement.assets.image is '{"accept":"image/*"}';
 
-comment on column procurement.assets.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column procurement.assets.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table procurement.assets
 from
@@ -1721,7 +1721,7 @@ create table procurement.asset_assignments (
 
 comment on column procurement.asset_assignments.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "active":      {"variant": "info",        "icon": "UserCheck"},
         "returned":    {"variant": "success",     "icon": "CircleCheck"},
         "transferred": {"variant": "warning",     "icon": "ArrowLeftRight"},
@@ -1908,7 +1908,7 @@ create table procurement.asset_maintenance (
 
 comment on column procurement.asset_maintenance.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "preventive":  {"variant": "success",     "icon": "ShieldCheck"},
         "corrective":  {"variant": "warning",     "icon": "Wrench"},
         "inspection":  {"variant": "info",        "icon": "Eye"},
@@ -1919,7 +1919,7 @@ comment on column procurement.asset_maintenance.type is '{
 
 comment on column procurement.asset_maintenance.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "scheduled":   {"variant": "outline",     "icon": "Calendar"},
         "in_progress": {"variant": "warning",     "icon": "Loader"},
         "completed":   {"variant": "success",     "icon": "CircleCheck"},
@@ -2042,7 +2042,7 @@ comment on table procurement.asset_maintenance is '{
     }
 }';
 
-comment on column procurement.asset_maintenance.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column procurement.asset_maintenance.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table procurement.asset_maintenance
 from

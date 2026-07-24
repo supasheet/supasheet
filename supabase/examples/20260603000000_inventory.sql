@@ -110,7 +110,7 @@ create table inventory.warehouses (
 
 comment on column inventory.warehouses.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "main":         {"variant": "success",   "icon": "Warehouse"},
         "satellite":    {"variant": "info",      "icon": "Building2"},
         "fulfillment":  {"variant": "warning",   "icon": "PackageCheck"},
@@ -275,7 +275,7 @@ create table inventory.suppliers (
 
 comment on column inventory.suppliers.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "active":   {"variant": "success",     "icon": "CircleCheck"},
         "pending":  {"variant": "warning",     "icon": "Clock"},
         "on_hold":  {"variant": "warning",     "icon": "PauseCircle"},
@@ -453,7 +453,7 @@ create table inventory.products (
 
 comment on column inventory.products.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "active":       {"variant": "success",     "icon": "CircleCheck"},
         "discontinued": {"variant": "destructive", "icon": "XCircle"},
         "preorder":     {"variant": "info",        "icon": "Clock"},
@@ -579,7 +579,7 @@ comment on table inventory.products is '{
 
 comment on column inventory.products.image is '{"accept":"image/*"}';
 
-comment on column inventory.products.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column inventory.products.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table inventory.products
 from
@@ -644,7 +644,7 @@ create table inventory.stock_levels (
 
 comment on column inventory.stock_levels.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "in_stock":     {"variant": "success",     "icon": "CircleCheck"},
         "low_stock":    {"variant": "warning",     "icon": "AlertTriangle"},
         "out_of_stock": {"variant": "destructive", "icon": "PackageX"},
@@ -792,7 +792,7 @@ create table inventory.purchase_orders (
 
 comment on column inventory.purchase_orders.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":              {"variant": "outline",     "icon": "FileEdit"},
         "submitted":          {"variant": "info",        "icon": "Send"},
         "confirmed":          {"variant": "info",        "icon": "BadgeCheck"},
@@ -908,7 +908,7 @@ comment on table inventory.purchase_orders is '{
     }
 }';
 
-comment on column inventory.purchase_orders.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column inventory.purchase_orders.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table inventory.purchase_orders
 from
@@ -1095,7 +1095,7 @@ create table inventory.shipments (
 
 comment on column inventory.shipments.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":    {"variant": "outline",     "icon": "Clock"},
         "preparing":  {"variant": "info",        "icon": "PackageOpen"},
         "shipped":    {"variant": "info",        "icon": "Send"},
@@ -1108,7 +1108,7 @@ comment on column inventory.shipments.status is '{
 
 comment on column inventory.shipments.carrier is '{
     "progress": false,
-    "enums": {
+    "values": {
         "ups":     {"variant": "warning",   "icon": "Truck"},
         "fedex":   {"variant": "info",      "icon": "Truck"},
         "usps":    {"variant": "info",      "icon": "Mail"},
@@ -1232,7 +1232,7 @@ comment on table inventory.shipments is '{
     }
 }';
 
-comment on column inventory.shipments.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column inventory.shipments.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table inventory.shipments
 from
@@ -1408,7 +1408,7 @@ create table inventory.stock_movements (
 
 comment on column inventory.stock_movements.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "purchase_in":  {"variant": "success",     "icon": "PackagePlus"},
         "sale_out":     {"variant": "warning",     "icon": "PackageMinus"},
         "transfer_in":  {"variant": "info",        "icon": "ArrowDownLeft"},

@@ -2,7 +2,7 @@ import { ResourceCard } from "./resource-card"
 import type { Resource } from "./resource-card"
 
 export function ResourceCardGrid({ resources }: { resources: Resource[] }) {
-  const hasGroups = resources.some((r) => r.meta?.group)
+  const hasGroups = resources.some((r) => r.meta?.collapsible_group)
 
   if (!hasGroups) {
     return (
@@ -16,7 +16,7 @@ export function ResourceCardGrid({ resources }: { resources: Resource[] }) {
 
   const grouped: Record<string, Resource[]> = {}
   for (const resource of resources) {
-    const key = resource.meta?.group ?? ""
+    const key = resource.meta?.collapsible_group ?? ""
     grouped[key] = grouped[key] ?? []
     grouped[key].push(resource)
   }

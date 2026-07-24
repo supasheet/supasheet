@@ -15,7 +15,7 @@ import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceActions } from "#/components/resource/resource-actions"
 import { ResourceKanban } from "#/components/resource/resource-kanban"
 import type {
-  KanbanLayout as KanbanLayoutMode,
+  KanbanBoardMode,
   KanbanViewData,
   KanbanViewReducedData,
 } from "#/components/resource/resource-kanban"
@@ -52,7 +52,7 @@ export const Route = createFileRoute(
   validateSearch: (search: { layout?: string }) => ({
     layout: (["board", "list"].includes(search.layout as string)
       ? search.layout
-      : "board") as KanbanLayoutMode,
+      : "board") as KanbanBoardMode,
   }),
   loaderDeps: ({ search: { layout } }) => ({ layout }),
   loader: async ({ context, params }) => {

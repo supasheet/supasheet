@@ -63,7 +63,7 @@ comment on table blog.blog_settings is '{
     }
 }';
 
-comment on column blog.blog_settings.logo is '{"name": "Logo", "accept": "image/*", "maxSize": 2097152}';
+comment on column blog.blog_settings.logo is '{"name": "Logo", "accept": "image/*", "max_size": 2097152}';
 
 revoke all on table blog.blog_settings
 from
@@ -488,7 +488,7 @@ create table if not exists blog.posts (
 
 comment on column blog.posts.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft": {
             "variant": "outline",
             "icon": "FileEdit"
@@ -800,7 +800,7 @@ create table if not exists blog.comments (
 
 comment on column blog.comments.status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"

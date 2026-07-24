@@ -95,7 +95,7 @@ create table manufacturing.work_centers (
 
 comment on column manufacturing.work_centers.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "assembly":   {"variant": "info",      "icon": "Wrench"},
         "machining":  {"variant": "warning",   "icon": "Cog"},
         "packaging":  {"variant": "secondary", "icon": "Package"},
@@ -107,7 +107,7 @@ comment on column manufacturing.work_centers.type is '{
 
 comment on column manufacturing.work_centers.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "available":   {"variant": "success",     "icon": "CircleCheck"},
         "busy":        {"variant": "warning",     "icon": "Loader"},
         "maintenance": {"variant": "info",        "icon": "Wrench"},
@@ -278,7 +278,7 @@ create table manufacturing.boms (
 
 comment on column manufacturing.boms.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":    {"variant": "outline",     "icon": "FileEdit"},
         "active":   {"variant": "success",     "icon": "CircleCheck"},
         "obsolete": {"variant": "warning",     "icon": "AlertTriangle"},
@@ -387,7 +387,7 @@ comment on table manufacturing.boms is '{
 
 comment on column manufacturing.boms.image is '{"accept":"image/*"}';
 
-comment on column manufacturing.boms.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column manufacturing.boms.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table manufacturing.boms
 from
@@ -575,7 +575,7 @@ create table manufacturing.routings (
 
 comment on column manufacturing.routings.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":    {"variant": "outline", "icon": "FileEdit"},
         "active":   {"variant": "success", "icon": "CircleCheck"},
         "obsolete": {"variant": "warning", "icon": "AlertTriangle"}
@@ -666,7 +666,7 @@ comment on table manufacturing.routings is '{
     }
 }';
 
-comment on column manufacturing.routings.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column manufacturing.routings.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table manufacturing.routings
 from
@@ -862,7 +862,7 @@ create table manufacturing.work_orders (
 
 comment on column manufacturing.work_orders.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":       {"variant": "outline",     "icon": "FileEdit"},
         "planned":     {"variant": "info",        "icon": "Calendar"},
         "released":    {"variant": "info",        "icon": "Send"},
@@ -875,7 +875,7 @@ comment on column manufacturing.work_orders.status is '{
 
 comment on column manufacturing.work_orders.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low":      {"variant": "outline",     "icon": "CircleArrowDown"},
         "medium":   {"variant": "info",        "icon": "CircleMinus"},
         "high":     {"variant": "warning",     "icon": "CircleArrowUp"},
@@ -1027,7 +1027,7 @@ comment on table manufacturing.work_orders is '{
     }
 }';
 
-comment on column manufacturing.work_orders.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column manufacturing.work_orders.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table manufacturing.work_orders
 from
@@ -1103,7 +1103,7 @@ create table manufacturing.work_order_operations (
 
 comment on column manufacturing.work_order_operations.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":     {"variant": "outline",     "icon": "Clock"},
         "in_progress": {"variant": "warning",     "icon": "Loader"},
         "completed":   {"variant": "success",     "icon": "CircleCheck"},
@@ -1300,7 +1300,7 @@ create table manufacturing.material_issues (
 
 comment on column manufacturing.material_issues.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "reserved": {"variant": "outline", "icon": "Clock"},
         "issued":   {"variant": "success", "icon": "PackageCheck"},
         "returned": {"variant": "warning", "icon": "Undo2"}
@@ -1478,7 +1478,7 @@ create table manufacturing.production_outputs (
 
 comment on column manufacturing.production_outputs.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "good":               {"variant": "success",     "icon": "CircleCheck"},
         "rework":             {"variant": "warning",     "icon": "RotateCcw"},
         "scrap":              {"variant": "destructive", "icon": "Trash2"},
@@ -1599,7 +1599,7 @@ comment on table manufacturing.production_outputs is '{
     }
 }';
 
-comment on column manufacturing.production_outputs.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column manufacturing.production_outputs.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table manufacturing.production_outputs
 from

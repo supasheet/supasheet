@@ -27,7 +27,7 @@ export function ResourceDetailHeader({
 }: Props) {
   const detailMeta = (
     JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
-  ).detail
+  ).detail?.header
 
   const colByName = new Map(columnsSchema.map((c) => [c.name ?? c.id ?? "", c]))
 

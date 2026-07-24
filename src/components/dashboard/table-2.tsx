@@ -88,12 +88,12 @@ export function Table2Widget<S extends DatabaseSchemas>({
             <CardTitle>{widget.name}</CardTitle>
             <CardDescription>{widget.description}</CardDescription>
           </div>
-          {widget.link && (
+          {widget.url && (
             <Button
               variant="outline"
               size="sm"
               nativeButton={false}
-              render={<Link to={widget.link as never} />}
+              render={<Link to={widget.url as never} />}
               className="shrink-0"
             >
               View All

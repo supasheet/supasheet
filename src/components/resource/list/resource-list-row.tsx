@@ -9,17 +9,17 @@ import type {
   DatabaseSchemas,
   DatabaseTables,
   DatabaseViews,
+  ListLayout,
   PrimaryKey,
 } from "#/lib/database-meta.types"
 import { getPkValue } from "#/lib/fields"
 import { cn } from "#/lib/utils"
 
 import { readField } from "./read-field"
-import type { ListView } from "./resource-list"
 
 interface ResourceListRowProps<S extends DatabaseSchemas> {
   row: Row<Record<string, unknown>>
-  listView: ListView
+  listView: ListLayout
   schema: S
   resource: DatabaseTables<S> | DatabaseViews<S>
   primaryKeys: PrimaryKey[]

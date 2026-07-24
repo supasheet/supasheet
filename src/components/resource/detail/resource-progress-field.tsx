@@ -10,7 +10,7 @@ import { formatTitle } from "#/lib/format"
 import { cn } from "#/lib/utils"
 
 type Variant = NonNullable<
-  NonNullable<EnumColumnMetadata["enums"]>[string]["variant"]
+  NonNullable<EnumColumnMetadata["values"]>[string]["variant"]
 >
 
 const filledCircle: Record<Variant, string> = {
@@ -40,8 +40,8 @@ export function ResourceProgressField({
   value: string | null
   enumMeta: EnumColumnMetadata
 }) {
-  if (!enumMeta.enums) return null
-  const steps = Object.entries(enumMeta.enums)
+  if (!enumMeta.values) return null
+  const steps = Object.entries(enumMeta.values)
   if (steps.length === 0) return null
 
   const currentIndex = steps.findIndex(([key]) => key === value)

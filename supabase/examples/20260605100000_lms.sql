@@ -120,7 +120,7 @@ create table lms.courses (
 
 comment on column lms.courses.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":       {"variant": "outline",     "icon": "FileEdit"},
         "published":   {"variant": "success",     "icon": "CircleCheck"},
         "coming_soon": {"variant": "info",        "icon": "Clock"},
@@ -130,7 +130,7 @@ comment on column lms.courses.status is '{
 
 comment on column lms.courses.difficulty is '{
     "progress": true,
-    "enums": {
+    "values": {
         "beginner":     {"variant": "success",     "icon": "Sprout"},
         "intermediate": {"variant": "info",        "icon": "TreePine"},
         "advanced":     {"variant": "warning",     "icon": "Trees"},
@@ -324,7 +324,7 @@ create table lms.modules (
 
 comment on column lms.modules.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline", "icon": "FileEdit"},
         "published": {"variant": "success", "icon": "CircleCheck"},
         "hidden":    {"variant": "secondary","icon": "EyeOff"}
@@ -461,7 +461,7 @@ create table lms.lessons (
 
 comment on column lms.lessons.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "video":        {"variant": "info",      "icon": "Play"},
         "article":      {"variant": "secondary", "icon": "FileText"},
         "quiz":         {"variant": "warning",   "icon": "ListChecks"},
@@ -474,7 +474,7 @@ comment on column lms.lessons.type is '{
 
 comment on column lms.lessons.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",  "icon": "FileEdit"},
         "published": {"variant": "success",  "icon": "CircleCheck"},
         "hidden":    {"variant": "secondary","icon": "EyeOff"}
@@ -567,9 +567,9 @@ comment on table lms.lessons is '{
     }
 }';
 
-comment on column lms.lessons.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column lms.lessons.attachments is '{"accept":"*", "max_files": 10}';
 
-comment on column lms.lessons.download is '{"accept":"*", "maxFiles": 5}';
+comment on column lms.lessons.download is '{"accept":"*", "max_files": 5}';
 
 revoke all on table lms.lessons
 from
@@ -637,7 +637,7 @@ create table lms.enrollments (
 
 comment on column lms.enrollments.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "active":    {"variant": "info",        "icon": "Play"},
         "completed": {"variant": "success",     "icon": "CircleCheck"},
         "paused":    {"variant": "warning",     "icon": "PauseCircle"},
@@ -809,7 +809,7 @@ create table lms.lesson_progress (
 
 comment on column lms.lesson_progress.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "not_started": {"variant": "outline",   "icon": "Circle"},
         "in_progress": {"variant": "warning",   "icon": "Loader"},
         "completed":   {"variant": "success",   "icon": "CircleCheck"},
@@ -966,7 +966,7 @@ create table lms.assignments (
 
 comment on column lms.assignments.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "quiz":        {"variant": "info",      "icon": "ListChecks"},
         "essay":       {"variant": "warning",   "icon": "FileText"},
         "project":     {"variant": "warning",   "icon": "Hammer"},
@@ -1087,7 +1087,7 @@ comment on table lms.assignments is '{
     }
 }';
 
-comment on column lms.assignments.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column lms.assignments.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table lms.assignments
 from
@@ -1160,7 +1160,7 @@ create table lms.submissions (
 
 comment on column lms.submissions.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "submitted": {"variant": "info",        "icon": "Send"},
         "graded":    {"variant": "success",     "icon": "BadgeCheck"},
@@ -1291,7 +1291,7 @@ comment on table lms.submissions is '{
     }
 }';
 
-comment on column lms.submissions.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column lms.submissions.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table lms.submissions
 from
@@ -1370,7 +1370,7 @@ create table lms.certificates (
 
 comment on column lms.certificates.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "issued":  {"variant": "success",     "icon": "BadgeCheck"},
         "revoked": {"variant": "destructive", "icon": "XCircle"},
         "expired": {"variant": "outline",     "icon": "Clock"}
@@ -1511,7 +1511,7 @@ comment on table lms.certificates is '{
     }
 }';
 
-comment on column lms.certificates.document is '{"accept":"application/pdf,image/*", "maxFiles": 1}';
+comment on column lms.certificates.document is '{"accept":"application/pdf,image/*", "max_files": 1}';
 
 revoke all on table lms.certificates
 from
@@ -1588,7 +1588,7 @@ create table lms.learning_paths (
 
 comment on column lms.learning_paths.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":     {"variant": "outline",     "icon": "FileEdit"},
         "published": {"variant": "success",     "icon": "CircleCheck"},
         "archived":  {"variant": "destructive", "icon": "Archive"}

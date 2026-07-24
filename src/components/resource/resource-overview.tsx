@@ -35,7 +35,6 @@ import {
 } from "#/lib/resource-view"
 import type { ChartSchema } from "#/lib/supabase/data/chart"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
-import type { FilterOperator } from "#/types/data-table"
 
 function isExternalLink(link: ResourceLink) {
   return /^[a-z][a-z0-9+.-]*:\/\//i.test(link.url)
@@ -109,10 +108,7 @@ export function ResourceOverview<S extends DatabaseSchemas>({
                 openTableWithFilters(
                   preset.filters.map((f) => ({
                     id: f.id,
-                    value: encodeFilterValue(
-                      f.operator as FilterOperator,
-                      f.value
-                    ),
+                    value: encodeFilterValue(f.operator, f.value),
                   }))
                 )
               }

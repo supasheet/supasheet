@@ -143,7 +143,7 @@ create table quality.standards (
 
 comment on column quality.standards.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "iso":           {"variant": "info",      "icon": "BadgeCheck"},
         "regulatory":    {"variant": "warning",   "icon": "Scale"},
         "internal":      {"variant": "secondary", "icon": "Building"},
@@ -153,7 +153,7 @@ comment on column quality.standards.type is '{
 
 comment on column quality.standards.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "draft":      {"variant": "outline",     "icon": "FileEdit"},
         "active":     {"variant": "success",     "icon": "CircleCheck"},
         "superseded": {"variant": "warning",     "icon": "Replace"},
@@ -250,9 +250,9 @@ comment on table quality.standards is '{
     }
 }';
 
-comment on column quality.standards.document is '{"accept":"application/pdf,.doc,.docx", "maxFiles": 1}';
+comment on column quality.standards.document is '{"accept":"application/pdf,.doc,.docx", "max_files": 1}';
 
-comment on column quality.standards.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column quality.standards.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table quality.standards
 from
@@ -330,7 +330,7 @@ create table quality.inspections (
 
 comment on column quality.inspections.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "incoming":       {"variant": "info",      "icon": "PackageOpen"},
         "in_process":     {"variant": "warning",   "icon": "Loader"},
         "final":          {"variant": "success",   "icon": "PackageCheck"},
@@ -341,7 +341,7 @@ comment on column quality.inspections.type is '{
 
 comment on column quality.inspections.result is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":     {"variant": "outline",     "icon": "Clock"},
         "passed":      {"variant": "success",     "icon": "CircleCheck"},
         "failed":      {"variant": "destructive", "icon": "XCircle"},
@@ -485,7 +485,7 @@ comment on table quality.inspections is '{
     }
 }';
 
-comment on column quality.inspections.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column quality.inspections.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table quality.inspections
 from
@@ -552,7 +552,7 @@ create table quality.inspection_items (
 
 comment on column quality.inspection_items.result is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {"variant": "outline",     "icon": "Clock"},
         "pass":    {"variant": "success",     "icon": "CircleCheck"},
         "fail":    {"variant": "destructive", "icon": "XCircle"},
@@ -694,7 +694,7 @@ create table quality.non_conformances (
 
 comment on column quality.non_conformances.severity is '{
     "progress": false,
-    "enums": {
+    "values": {
         "minor":    {"variant": "info",        "icon": "AlertCircle"},
         "major":    {"variant": "warning",     "icon": "AlertTriangle"},
         "critical": {"variant": "destructive", "icon": "Flame"}
@@ -703,7 +703,7 @@ comment on column quality.non_conformances.severity is '{
 
 comment on column quality.non_conformances.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open":          {"variant": "destructive", "icon": "AlertCircle"},
         "investigating": {"variant": "warning",     "icon": "Search"},
         "resolved":      {"variant": "info",        "icon": "Wrench"},
@@ -714,7 +714,7 @@ comment on column quality.non_conformances.status is '{
 
 comment on column quality.non_conformances.disposition is '{
     "progress": false,
-    "enums": {
+    "values": {
         "rework":                 {"variant": "warning",     "icon": "RotateCcw"},
         "scrap":                  {"variant": "destructive", "icon": "Trash2"},
         "use_as_is":              {"variant": "info",        "icon": "Check"},
@@ -853,7 +853,7 @@ comment on table quality.non_conformances is '{
     }
 }';
 
-comment on column quality.non_conformances.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column quality.non_conformances.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table quality.non_conformances
 from
@@ -935,7 +935,7 @@ create table quality.capa (
 
 comment on column quality.capa.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "corrective": {"variant": "warning", "icon": "Wrench"},
         "preventive": {"variant": "info",    "icon": "ShieldCheck"}
     }
@@ -943,7 +943,7 @@ comment on column quality.capa.type is '{
 
 comment on column quality.capa.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open":         {"variant": "destructive", "icon": "AlertCircle"},
         "in_progress":  {"variant": "warning",     "icon": "Loader"},
         "verification": {"variant": "info",        "icon": "Search"},
@@ -954,7 +954,7 @@ comment on column quality.capa.status is '{
 
 comment on column quality.capa.priority is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low":      {"variant": "outline",     "icon": "CircleArrowDown"},
         "medium":   {"variant": "info",        "icon": "CircleMinus"},
         "high":     {"variant": "warning",     "icon": "CircleArrowUp"},
@@ -1105,7 +1105,7 @@ comment on table quality.capa is '{
     }
 }';
 
-comment on column quality.capa.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column quality.capa.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table quality.capa
 from
@@ -1184,7 +1184,7 @@ create table quality.audits (
 
 comment on column quality.audits.type is '{
     "progress": false,
-    "enums": {
+    "values": {
         "internal":   {"variant": "info",      "icon": "Building"},
         "external":   {"variant": "warning",   "icon": "Globe"},
         "supplier":   {"variant": "secondary", "icon": "Factory"},
@@ -1194,7 +1194,7 @@ comment on column quality.audits.type is '{
 
 comment on column quality.audits.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "planned":     {"variant": "outline",     "icon": "Calendar"},
         "in_progress": {"variant": "warning",     "icon": "Loader"},
         "completed":   {"variant": "info",        "icon": "ClipboardCheck"},
@@ -1328,9 +1328,9 @@ comment on table quality.audits is '{
     }
 }';
 
-comment on column quality.audits.report is '{"accept":"application/pdf,.doc,.docx", "maxFiles": 1}';
+comment on column quality.audits.report is '{"accept":"application/pdf,.doc,.docx", "max_files": 1}';
 
-comment on column quality.audits.attachments is '{"accept":"*", "maxFiles": 20}';
+comment on column quality.audits.attachments is '{"accept":"*", "max_files": 20}';
 
 revoke all on table quality.audits
 from
@@ -1401,7 +1401,7 @@ create table quality.audit_findings (
 
 comment on column quality.audit_findings.severity is '{
     "progress": false,
-    "enums": {
+    "values": {
         "observation": {"variant": "outline",     "icon": "Eye"},
         "minor":       {"variant": "info",        "icon": "AlertCircle"},
         "major":       {"variant": "warning",     "icon": "AlertTriangle"},
@@ -1411,7 +1411,7 @@ comment on column quality.audit_findings.severity is '{
 
 comment on column quality.audit_findings.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open":        {"variant": "destructive", "icon": "AlertCircle"},
         "in_progress": {"variant": "warning",     "icon": "Loader"},
         "resolved":    {"variant": "info",        "icon": "Wrench"},
@@ -1517,7 +1517,7 @@ comment on table quality.audit_findings is '{
     }
 }';
 
-comment on column quality.audit_findings.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column quality.audit_findings.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table quality.audit_findings
 from
@@ -1589,7 +1589,7 @@ create table quality.certifications (
 
 comment on column quality.certifications.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending":       {"variant": "outline",     "icon": "Clock"},
         "active":        {"variant": "success",     "icon": "BadgeCheck"},
         "expiring_soon": {"variant": "warning",     "icon": "AlertTriangle"},
@@ -1702,9 +1702,9 @@ comment on table quality.certifications is '{
     }
 }';
 
-comment on column quality.certifications.document is '{"accept":"application/pdf", "maxFiles": 1}';
+comment on column quality.certifications.document is '{"accept":"application/pdf", "max_files": 1}';
 
-comment on column quality.certifications.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column quality.certifications.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table quality.certifications
 from
@@ -1781,7 +1781,7 @@ create table quality.complaints (
 
 comment on column quality.complaints.severity is '{
     "progress": false,
-    "enums": {
+    "values": {
         "low":      {"variant": "outline",     "icon": "CircleArrowDown"},
         "medium":   {"variant": "info",        "icon": "CircleMinus"},
         "high":     {"variant": "warning",     "icon": "CircleArrowUp"},
@@ -1791,7 +1791,7 @@ comment on column quality.complaints.severity is '{
 
 comment on column quality.complaints.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "received":      {"variant": "outline",     "icon": "Inbox"},
         "investigating": {"variant": "warning",     "icon": "Search"},
         "resolved":      {"variant": "info",        "icon": "Wrench"},
@@ -1926,7 +1926,7 @@ comment on table quality.complaints is '{
     }
 }';
 
-comment on column quality.complaints.attachments is '{"accept":"*", "maxFiles": 10}';
+comment on column quality.complaints.attachments is '{"accept":"*", "max_files": 10}';
 
 revoke all on table quality.complaints
 from

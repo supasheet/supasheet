@@ -170,7 +170,7 @@ export function getProgressFields(cols: ColumnSchema[]): ProgressField[] {
   return cols
     .map((col) => {
       const meta = JSON.parse(col.comment ?? "{}") as EnumColumnMetadata
-      if (!meta?.progress || !meta.enums) return null
+      if (!meta?.progress || !meta.values) return null
       return { col, meta }
     })
     .filter((x): x is ProgressField => Boolean(x))

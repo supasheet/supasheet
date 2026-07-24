@@ -2,6 +2,7 @@ import type * as LucideIcons from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 import { METADATA_COLUMNS } from "#/config/database.config"
+import type { FilterOperator } from "#/types/data-table"
 
 import type { Database } from "./database.types"
 
@@ -13,9 +14,8 @@ export type ColumnName = string
 
 export type TableAlias = string
 
-// PascalCase names of Lucide icon components, as authored in metadata JSON
-// `icon` fields (e.g. "Activity", "AlertCircle") and looked up against
-// `lucide-react`'s exports at render time.
+export type EmbedKey = string
+
 export type IconName = {
   [K in keyof typeof LucideIcons]: (typeof LucideIcons)[K] extends LucideIcon
     ? K
@@ -98,35 +98,28 @@ export type Relationship = {
   target_column_name: ColumnName
 }
 
-export type PaginatedData<T> = {
-  results: T[]
-  total: number
-  page: number
-  perPage: number
-}
-
 export type FormMode = "create" | "update" | "read"
 
 export type FieldCondition = {
   id: ColumnName
-  operator: string // e.g. eq, neq, lt, lte, gt, gte, like, ilike, is, in, not.ilike, not.is, not.in
+  operator: FilterOperator
   value: string | string[]
 }
 
 export type FieldBehavior = {
-  visible?: FieldCondition[] // shown when ALL conditions match
-  required?: FieldCondition[] // required when ALL conditions match
-  read_only?: FieldCondition[] // read-only when ALL conditions match
+  visible?: FieldCondition[]
+  required?: FieldCondition[]
+  read_only?: FieldCondition[]
 }
 
 export type LookupFillRule = {
-  target: ColumnName // local form field to populate
-  source: ColumnName // column from the lookup target table
+  source_column: ColumnName
+  target_column: ColumnName
 }
 
 export type LookupFilterRule = {
-  on: ColumnName // local field to watch
-  column: ColumnName // lookup target column to match against
+  source_column: ColumnName
+  target_column: ColumnName
 }
 
 export type LookupConfig = {
@@ -149,7 +142,7 @@ export type FieldSection = {
 export type FilterRule = {
   id: ColumnName
   value: string | string[]
-  operator: string
+  operator: FilterOperator
 }
 
 export type SortRule = {
@@ -174,13 +167,12 @@ export type QueryConfig = {
 type BaseViewLayout = {
   id: string
   name: string
-  query?: Record<string, unknown>
 }
 
 export type KanbanLayout = BaseViewLayout & {
   type: "kanban"
-  group?: ColumnName
-  title?: ColumnName
+  group: ColumnName
+  title: ColumnName
   description?: ColumnName
   badge?: ColumnName
   date?: ColumnName
@@ -188,23 +180,23 @@ export type KanbanLayout = BaseViewLayout & {
 
 export type CalendarLayout = BaseViewLayout & {
   type: "calendar"
-  title?: ColumnName
-  start_date?: ColumnName
+  title: ColumnName
+  start_date: ColumnName
   end_date?: ColumnName
   badge?: ColumnName
 }
 
 export type GalleryLayout = BaseViewLayout & {
   type: "gallery"
-  cover?: ColumnName
-  title?: ColumnName
+  cover: ColumnName
+  title: ColumnName
   description?: ColumnName
   badge?: ColumnName
 }
 
 export type ListLayout = BaseViewLayout & {
   type: "list"
-  title?: ColumnName
+  title: ColumnName
   description?: ColumnName
   field_1?: ColumnName
   field_2?: ColumnName
@@ -222,9 +214,14 @@ export type ViewLayout =
 
 export type ViewLayoutType = ViewLayout["type"]
 
-export type DetailHeaderMeta = {
+export type DetailHeader = {
   title?: ColumnName
   badges?: ColumnName[]
+}
+
+export type DetailConfig = {
+  header?: DetailHeader
+  tabs?: EmbedKey[]
 }
 
 export type FilterPreset = {
@@ -243,13 +240,11 @@ export type ResourceLink = {
   description?: string
 }
 
-// Valid for both tables and views
 export type FieldsConfig = {
   sections?: FieldSection[]
   metadata?: ColumnName[]
 }
 
-// Table-only: includes form-specific options
 export type TableFieldsConfig = FieldsConfig & {
   quick_create?: ColumnName[]
   behavior?: Record<ColumnName, FieldBehavior>
@@ -261,20 +256,19 @@ type BaseResourceMetadata = {
   name?: string
   description?: string
   icon?: IconName
-  group?: string
+  collapsible_group?: string
   singleton?: boolean
   primary_view?: string
   views?: ViewLayout[]
   filter_presets?: FilterPreset[]
   links?: ResourceLink[]
   fields?: FieldsConfig
-  detail?: DetailHeaderMeta
 }
 
 export type TableMetadata = BaseResourceMetadata & {
   inline_form?: boolean
   query?: QueryConfig
-  tabs?: TableAlias[]
+  detail?: DetailConfig
   fields?: TableFieldsConfig
 }
 
@@ -301,7 +295,7 @@ export type DashboardWidgetMeta = {
   type: "dashboard_widget"
   widget_type: DashboardWidgetType
   resource?: string
-  link?: string
+  url?: string
 }
 
 export type ChartType = "area" | "pie" | "line" | "radar" | "bar"
@@ -313,6 +307,19 @@ export type ChartMeta = {
   type: "chart"
   chart_type: ChartType
   resource?: string
+}
+
+export type ReportMeta = {
+  name: string
+  description?: string
+  type: "report"
+}
+
+export type TemplateMeta = {
+  name: string
+  description?: string
+  type: "template"
+  target_table?: string
 }
 
 export type RowActionMeta = {
@@ -336,8 +343,8 @@ export type ColumnMetadata = {
 
 export type EnumColumnMetadata = ColumnMetadata & {
   progress?: boolean
-  iconOnly?: boolean
-  enums?: {
+  icon_only?: boolean
+  values?: {
     [key: string]: {
       icon?: IconName
       variant:
@@ -348,10 +355,10 @@ export type EnumColumnMetadata = ColumnMetadata & {
 
 export type FileColumnMetadata = ColumnMetadata & {
   accept?: string
-  maxFiles?: number
-  maxSize?: number
+  max_files?: number
+  max_size?: number
 }
 
 export type AvatarColumnMetadata = ColumnMetadata & {
-  maxSize?: number
+  max_size?: number
 }

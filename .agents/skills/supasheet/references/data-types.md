@@ -73,12 +73,12 @@ comment on column app.authors.avatar is '{"maxSize": 2097152}';
 
 ### Enum columns
 
-`enums` maps each value to a badge `variant` + optional `icon`; `progress: true` renders the enum as an ordered progress indicator (use for pipeline-like statuses):
+`values` maps each enum value to a badge `variant` + optional `icon`; `progress: true` renders the enum as an ordered progress indicator (use for pipeline-like statuses):
 
 ```sql
 comment on column app.tickets.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open":        {"variant": "info",      "icon": "CircleDot"},
         "in_progress": {"variant": "warning",   "icon": "Loader"},
         "resolved":    {"variant": "success",   "icon": "CheckCircle2"},

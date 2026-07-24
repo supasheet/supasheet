@@ -85,7 +85,7 @@ comment on table app.tickets is '{
 }';
 
 comment on column app.tickets.status is '{
-    "enums": {
+    "values": {
         "open":        {"variant": "info", "icon": "CircleDot"},
         "in_progress": {"variant": "warning", "icon": "Loader"},
         "resolved":    {"variant": "success", "icon": "CheckCircle2"},

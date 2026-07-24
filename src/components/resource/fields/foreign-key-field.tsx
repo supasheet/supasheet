@@ -41,8 +41,8 @@ export function ForeignKeyField({
   const applyFill = (record: Record<string, unknown>) => {
     if (!behavior?.fill?.length || !form) return
     for (const rule of behavior.fill) {
-      const val = record[rule.source]
-      if (val !== undefined) form.setFieldValue(rule.target, val)
+      const val = record[rule.target_column]
+      if (val !== undefined) form.setFieldValue(rule.source_column, val)
     }
   }
 

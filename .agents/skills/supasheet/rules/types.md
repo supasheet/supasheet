@@ -39,7 +39,7 @@ Every enum column should get a comment mapping values to badge variants/icons; a
 ```sql
 comment on column app.tickets.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open":        {"variant": "info",      "icon": "CircleDot"},
         "in_progress": {"variant": "warning",   "icon": "Loader"},
         "resolved":    {"variant": "success",   "icon": "CheckCircle2"},

@@ -79,7 +79,6 @@ from (
   "type": "template",
   "name": "Monthly Payment Template",
   "description": "What applying this does",
-  "caption": "optional short label",
   "target_table": "payments"
 }
 ```

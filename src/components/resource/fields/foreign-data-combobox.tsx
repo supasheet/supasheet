@@ -56,9 +56,9 @@ export function ForeignDataCombobox({
     (s) => {
       const vals: Record<string, unknown> = {}
       for (const rule of filterRules) {
-        vals[rule.on] = (s as { values: Record<string, unknown> }).values?.[
-          rule.on
-        ]
+        vals[rule.source_column] = (
+          s as { values: Record<string, unknown> }
+        ).values?.[rule.source_column]
       }
       return vals
     }
@@ -69,7 +69,9 @@ export function ForeignDataCombobox({
   useEffect(() => {
     if (!filterRules.length) return
     const prev = prevWatchedRef.current
-    const changed = filterRules.some((r) => prev[r.on] !== watchedValues[r.on])
+    const changed = filterRules.some(
+      (r) => prev[r.source_column] !== watchedValues[r.source_column]
+    )
     if (changed) {
       prevWatchedRef.current = watchedValues
       field.handleChange(null)
@@ -78,11 +80,18 @@ export function ForeignDataCombobox({
 
   // Build dynamic filters from filter rules
   const dynamicFilters = filterRules
-    .filter((r) => watchedValues[r.on] != null && watchedValues[r.on] !== "")
-    .map((r) => ({ id: r.column, value: `eq.${watchedValues[r.on]}` }))
+    .filter(
+      (r) =>
+        watchedValues[r.source_column] != null &&
+        watchedValues[r.source_column] !== ""
+    )
+    .map((r) => ({
+      id: r.target_column,
+      value: `eq.${watchedValues[r.source_column]}`,
+    }))
 
   // Build select columns: PK + join display columns + fill source columns
-  const fillSourceColumns = behavior?.fill?.map((r) => r.source) ?? []
+  const fillSourceColumns = behavior?.fill?.map((r) => r.target_column) ?? []
   const selectColumns = [
     relationship.target_column_name,
     ...joinConfig.columns.filter((c) => c !== relationship.target_column_name),

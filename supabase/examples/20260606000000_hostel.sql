@@ -80,7 +80,7 @@ create table hostel.hostels (
 );
 
 comment on column hostel.hostels.gender is '{
-    "enums": {
+    "values": {
         "male": {
             "variant": "info",
             "icon": "Mars"
@@ -237,7 +237,7 @@ create table hostel.rooms (
 );
 
 comment on column hostel.rooms.type is '{
-    "enums": {
+    "values": {
         "single": {
             "variant": "info",
             "icon": "User"
@@ -263,7 +263,7 @@ comment on column hostel.rooms.type is '{
 
 comment on column hostel.rooms.status is '{
     "progress": false,
-    "enums": {
+    "values": {
         "available": {
             "variant": "success",
             "icon": "CircleCheck"
@@ -575,7 +575,7 @@ create table hostel.allocations (
 
 comment on column hostel.allocations.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"
@@ -666,12 +666,12 @@ comment on table hostel.allocations is '{
             "room_id": {
                 "fill": [
                     {
-                        "target": "monthly_rent",
-                        "source": "monthly_rent"
+                        "source_column": "monthly_rent",
+                        "target_column": "monthly_rent"
                     },
                     {
-                        "target": "security_deposit",
-                        "source": "security_deposit"
+                        "source_column": "security_deposit",
+                        "target_column": "security_deposit"
                     }
                 ]
             }
@@ -780,7 +780,7 @@ create table hostel.payments (
 
 comment on column hostel.payments.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "pending": {
             "variant": "warning",
             "icon": "Clock"
@@ -801,7 +801,7 @@ comment on column hostel.payments.status is '{
 }';
 
 comment on column hostel.payments.method is '{
-    "enums": {
+    "values": {
         "cash": {
             "variant": "outline",
             "icon": "Banknote"
@@ -1018,7 +1018,7 @@ create table hostel.complaints (
 );
 
 comment on column hostel.complaints.priority is '{
-    "enums": {
+    "values": {
         "low": {
             "variant": "secondary",
             "icon": "Minus"
@@ -1040,7 +1040,7 @@ comment on column hostel.complaints.priority is '{
 
 comment on column hostel.complaints.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "open": {
             "variant": "warning",
             "icon": "Clock"
@@ -1065,7 +1065,7 @@ comment on column hostel.complaints.status is '{
 }';
 
 comment on column hostel.complaints.category is '{
-    "enums": {
+    "values": {
         "plumbing": {"variant": "info", "icon": "Droplet"},
         "electrical": {"variant": "warning", "icon": "Zap"},
         "cleaning": {"variant": "secondary", "icon": "Sparkles"},
@@ -1156,8 +1156,8 @@ comment on table hostel.complaints is '{
             "room_id": {
                 "filter": [
                     {
-                        "on": "hostel_id",
-                        "column": "hostel_id"
+                        "source_column": "hostel_id",
+                        "target_column": "hostel_id"
                     }
                 ]
             }
@@ -1287,7 +1287,7 @@ create table hostel.visitors (
 
 comment on column hostel.visitors.status is '{
     "progress": true,
-    "enums": {
+    "values": {
         "checked_in": {
             "variant": "info",
             "icon": "LogIn"

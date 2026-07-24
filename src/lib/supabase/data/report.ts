@@ -2,16 +2,13 @@ import { queryOptions } from "@tanstack/react-query"
 
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
-import type { DatabaseSchemas, DatabaseViews } from "#/lib/database-meta.types"
+import type {
+  DatabaseSchemas,
+  DatabaseViews,
+  ReportMeta,
+} from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
 import { applyFilters } from "#/lib/supabase/filter"
-
-export type ReportMeta = {
-  name: string
-  description?: string
-  caption?: string
-  type: "report"
-}
 
 export type ReportSchema<S extends DatabaseSchemas> = {
   schema: S

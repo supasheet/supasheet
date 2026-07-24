@@ -40,10 +40,10 @@ type EnumOption = { value: string; label: string; icon?: IconName }
 function getEnumOptions(col: ColumnSchema | undefined): EnumOption[] {
   if (!col) return []
 
-  let enumsMeta: EnumColumnMetadata["enums"] | undefined
+  let enumsMeta: EnumColumnMetadata["values"] | undefined
   try {
     enumsMeta = col.comment
-      ? (JSON.parse(col.comment) as EnumColumnMetadata).enums
+      ? (JSON.parse(col.comment) as EnumColumnMetadata).values
       : undefined
   } catch {
     enumsMeta = undefined
