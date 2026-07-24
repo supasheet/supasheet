@@ -470,6 +470,7 @@ from
   join pg_language l on l.oid = p.prolang
 where
   p.prokind = 'f'
+  and p.prorettype <> 'trigger'::regtype
   and not pg_is_other_temp_schema(n.oid)
   and n.nspname not in (
     'vault',
