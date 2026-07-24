@@ -25,6 +25,9 @@
 --   - Detail page "tabs" allowlist
 --   - Row actions backed by SQL functions (publish, cancel, set
 --     priority via enum picker, duplicate)
+--   - Custom form backed by a SQL function (log_time_entry), with
+--     foreign-key-style combobox fields declared via `relations`,
+--     listed on the "tasks" overview
 --
 -- Apply directly against a local Supabase Postgres instance, e.g.:
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/demo.sql
@@ -1660,6 +1663,59 @@ with
   check (true);
 
 create policy time_entries_delete on demo.time_entries for delete to authenticated using (true);
+
+----------------------------------------------------------------
+-- Custom form: log time against a task (backed by a SQL function,
+-- listed on the "tasks" resource overview page)
+----------------------------------------------------------------
+create or replace function demo.log_time_entry (
+  p_task_id uuid,
+  p_team_member_id uuid,
+  p_duration supasheet.DURATION,
+  p_is_billable boolean default true,
+  p_notes text default null
+) returns uuid language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_id uuid;
+begin
+  insert into demo.time_entries (task_id, team_member_id, duration, is_billable, notes)
+  values (p_task_id, p_team_member_id, p_duration, p_is_billable, p_notes)
+  returning id into v_id;
+
+  return v_id;
+end;
+$$;
+
+comment on function demo.log_time_entry (uuid, uuid, supasheet.DURATION, boolean, text) is '{
+    "type": "form",
+    "resource": "tasks",
+    "name": "Log time",
+    "description": "Record time spent on a task without leaving the board.",
+    "icon": "Clock",
+    "success_message": "Time entry logged",
+    "fields": {
+        "sections": [
+            {"id": "entry", "title": "Entry", "fields": ["p_task_id", "p_team_member_id"]},
+            {"id": "duration", "title": "Duration", "fields": ["p_duration", "p_is_billable", "p_notes"]}
+        ]
+    },
+    "relations": {
+        "p_task_id": {"table": "tasks", "display": ["title", "status"]},
+        "p_team_member_id": {"table": "team_members", "display": ["name", "avatar"]}
+    }
+}';
+
+revoke all on function demo.log_time_entry (uuid, uuid, supasheet.DURATION, boolean, text)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.log_time_entry (uuid, uuid, supasheet.DURATION, boolean, text) to "x-admin",
+"user";
 
 ----------------------------------------------------------------
 -- Workspace settings (singleton — one row only)

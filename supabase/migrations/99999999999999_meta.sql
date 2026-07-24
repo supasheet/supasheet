@@ -400,6 +400,122 @@ grant
 execute on FUNCTION supasheet.get_actions (text, text, text) to authenticated;
 
 ----------------------------------------------------------------
+-- Function: supasheet.get_forms
+----------------------------------------------------------------
+drop function if exists supasheet.get_forms (text, text);
+
+create or replace function supasheet.get_forms (
+  p_schema text default null,
+  p_resource text default null,
+  p_caller text default current_user
+) returns table (
+  id bigint,
+  schema text,
+  name text,
+  arguments text,
+  return_type text,
+  security_type text,
+  language text,
+  roles jsonb,
+  comment text
+) language sql security definer
+set
+  search_path = '' as $$
+    SELECT
+        f.*
+    FROM supasheet.functions f
+    WHERE f.schema = p_schema
+        AND f.comment::jsonb ->> 'type' = 'form'
+        AND f.comment::jsonb ->> 'resource' = p_resource
+        AND has_function_privilege(p_caller, f.id::oid, 'execute');
+$$;
+
+revoke all on FUNCTION supasheet.get_forms (text, text, text)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on FUNCTION supasheet.get_forms (text, text, text) to authenticated;
+
+----------------------------------------------------------------
+-- Function: supasheet.get_form_fields
+----------------------------------------------------------------
+drop function if exists supasheet.get_form_fields (text, text);
+
+create or replace function supasheet.get_form_fields (
+  p_schema text,
+  p_function_name text,
+  p_caller text default current_user
+) returns setof supasheet.columns language sql security definer
+set
+  search_path = '' as $$
+    SELECT
+        p.oid::int8 AS table_id,
+        n.nspname::text AS schema,
+        p.proname::text AS "table",
+        (p.oid || '.' || gs.i) AS id,
+        gs.i AS ordinal_position,
+        p.proargnames[gs.i]::text AS "name",
+        pg_get_function_arg_default (p.oid, gs.i) AS default_value,
+        CASE
+            WHEN t.typtype = 'd' THEN CASE
+                WHEN bt.typelem <> 0::oid AND bt.typlen = -1 THEN 'ARRAY'
+                WHEN nbt.nspname = 'pg_catalog' THEN format_type (t.typbasetype, NULL)
+                ELSE 'USER-DEFINED'
+            END
+            ELSE CASE
+                WHEN t.typelem <> 0::oid AND t.typlen = -1 THEN 'ARRAY'
+                WHEN nt.nspname = 'pg_catalog' THEN format_type (t.oid, NULL)
+                ELSE 'USER-DEFINED'
+            END
+        END AS data_type,
+        t.typname::text AS actual_type,
+        coalesce(bt.typname, t.typname)::text AS format,
+        coalesce(nbt.nspname, nt.nspname)::text AS format_schema,
+        false AS is_identity,
+        NULL::text AS identity_generation,
+        false AS is_generated,
+        (gs.i > (p.pronargs - p.pronargdefaults)) AS is_nullable,
+        true AS is_updatable,
+        false AS is_unique,
+        NULL::text AS "check",
+        array_to_json(
+          array(
+            SELECT
+                enumlabel
+            FROM pg_catalog.pg_enum e
+            WHERE e.enumtypid = coalesce(bt.oid, t.oid)
+                OR e.enumtypid = coalesce(bt.typelem, t.typelem)
+            ORDER BY e.enumsortorder
+          )
+        ) AS enums,
+        NULL::text AS "comment"
+    FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    CROSS JOIN LATERAL generate_subscripts(p.proargnames, 1) AS gs (i)
+    LEFT JOIN pg_type t ON t.oid = (p.proargtypes::oid[]) [gs.i - 1]
+    LEFT JOIN pg_namespace nt ON nt.oid = t.typnamespace
+    LEFT JOIN pg_type bt ON t.typtype = 'd'
+        AND t.typbasetype = bt.oid
+    LEFT JOIN pg_namespace nbt ON nbt.oid = bt.typnamespace
+    WHERE n.nspname = p_schema
+        AND p.proname = p_function_name
+        AND has_function_privilege(p_caller, p.oid, 'execute')
+    ORDER BY gs.i;
+$$;
+
+revoke all on FUNCTION supasheet.get_form_fields (text, text, text)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on FUNCTION supasheet.get_form_fields (text, text, text) to authenticated;
+
+----------------------------------------------------------------
 -- Function: supasheet.set_updated_at
 ----------------------------------------------------------------
 create or replace function supasheet.set_updated_at () returns trigger as $$

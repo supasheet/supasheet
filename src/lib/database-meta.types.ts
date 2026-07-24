@@ -345,6 +345,30 @@ export type RowActionMeta = {
   action_type?: "default" | "picker"
 }
 
+export type FormFieldRelation = {
+  schema?: DatabaseSchemas
+  table: string
+  column?: ColumnName
+  display: ColumnName[]
+}
+
+export type FormFieldsConfig = {
+  sections?: FieldSection[]
+  behavior?: Record<ColumnName, FieldBehavior>
+  lookups?: Record<ColumnName, LookupConfig>
+  relations?: Record<ColumnName, FormFieldRelation>
+}
+
+export type FormMeta = {
+  type: "form"
+  resource: string
+  name: string
+  description?: string
+  icon?: IconName
+  success_message?: string
+  fields?: FormFieldsConfig
+}
+
 export type ColumnMetadata = {
   name?: string
   description?: string

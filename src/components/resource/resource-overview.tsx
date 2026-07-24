@@ -8,6 +8,7 @@ import type { LucideIcon } from "lucide-react"
 import {
   ArrowRightIcon,
   ExternalLinkIcon,
+  FileTextIcon,
   FilterIcon,
   LinkIcon,
 } from "lucide-react"
@@ -23,12 +24,12 @@ import {
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
+import { getFormMeta } from "#/hooks/use-custom-form"
 import { encodeFilterValue } from "#/lib/data-table"
 import type {
   DatabaseSchemas,
   DatabaseTables,
   IconName,
-  ResourceLink,
   TableMetadata,
 } from "#/lib/database-meta.types"
 import {
@@ -37,9 +38,18 @@ import {
 } from "#/lib/resource-view"
 import type { ChartSchema } from "#/lib/supabase/data/chart"
 import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
+import type { ResourceFormRow } from "#/lib/supabase/data/form"
 
-function isExternalLink(link: ResourceLink) {
-  return /^[a-z][a-z0-9+.-]*:\/\//i.test(link.url)
+function isExternalHref(href: string) {
+  return /^[a-z][a-z0-9+.-]*:\/\//i.test(href)
+}
+
+function getCardDescription(
+  name: string,
+  description: string | undefined,
+  resourceName: string
+) {
+  return description ?? `${name} for ${resourceName}`
 }
 
 const OVERVIEW_CARD_GRID =
@@ -48,24 +58,31 @@ const OVERVIEW_CARD_GRID =
 function OverviewCard({
   icon,
   fallbackIcon: FallbackIcon,
-  trailingIcon: TrailingIcon,
   name,
   description,
+  href,
   onClick,
 }: {
   icon?: IconName
   fallbackIcon: LucideIcon
-  trailingIcon: LucideIcon
   name: string
   description?: string
+  href?: string
   onClick?: () => void
 }) {
-  return (
+  const external = href ? isExternalHref(href) : false
+  const TrailingIcon = href
+    ? external
+      ? ExternalLinkIcon
+      : ArrowRightIcon
+    : ArrowRightIcon
+
+  const card = (
     <Card
       size="sm"
       className={
         "h-full transition-colors hover:bg-muted/50" +
-        (onClick ? " cursor-pointer" : "")
+        (onClick || href ? " cursor-pointer" : "")
       }
       onClick={onClick}
     >
@@ -90,6 +107,18 @@ function OverviewCard({
       )}
     </Card>
   )
+
+  if (!href) return card
+
+  return external ? (
+    <a href={href} target="_blank" rel="noreferrer" className="block h-full">
+      {card}
+    </a>
+  ) : (
+    <Link to={href as never} className="block h-full">
+      {card}
+    </Link>
+  )
 }
 
 export function ResourceOverview<S extends DatabaseSchemas>({
@@ -99,6 +128,7 @@ export function ResourceOverview<S extends DatabaseSchemas>({
   friendlyName,
   widgets,
   charts,
+  forms,
 }: {
   schema: S
   resource: DatabaseTables<S>
@@ -106,6 +136,7 @@ export function ResourceOverview<S extends DatabaseSchemas>({
   friendlyName: string
   widgets: DashboardWidgetSchema<S>[]
   charts: ChartSchema<S>[]
+  forms: ResourceFormRow<S>[]
 }) {
   const navigate = useNavigate()
 
@@ -128,6 +159,63 @@ export function ResourceOverview<S extends DatabaseSchemas>({
   const filterPresets = meta.filter_presets ?? []
   const links = meta.links ?? []
 
+  const presetCards = filterPresets.map((preset) => (
+    <OverviewCard
+      key={`preset-${preset.id}`}
+      icon={preset.icon}
+      fallbackIcon={FilterIcon}
+      name={preset.name}
+      description={getCardDescription(
+        preset.name,
+        preset.description,
+        friendlyName
+      )}
+      onClick={() =>
+        openTableWithFilters(
+          preset.filters.map((f) => ({
+            id: f.id,
+            value: encodeFilterValue(f.operator, f.value),
+          }))
+        )
+      }
+    />
+  ))
+
+  const linkCards = links.map((link) => (
+    <OverviewCard
+      key={`link-${link.id}`}
+      icon={link.icon}
+      fallbackIcon={LinkIcon}
+      name={link.name}
+      description={getCardDescription(
+        link.name,
+        link.description,
+        friendlyName
+      )}
+      href={link.url}
+    />
+  ))
+
+  const formCards = forms.map((form) => {
+    const formMeta = getFormMeta(form)
+    return (
+      <OverviewCard
+        key={`form-${form.name}`}
+        icon={formMeta.icon}
+        fallbackIcon={FileTextIcon}
+        name={formMeta.name}
+        description={getCardDescription(
+          formMeta.name,
+          formMeta.description,
+          friendlyName
+        )}
+        href={`/${schema}/resource/${resource}/form/${form.name}`}
+      />
+    )
+  })
+
+  const overviewCards = [...presetCards, ...linkCards, ...formCards]
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 p-4">
       <section className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -149,63 +237,8 @@ export function ResourceOverview<S extends DatabaseSchemas>({
         </Button>
       </section>
 
-      {filterPresets.length > 0 && (
-        <div className={OVERVIEW_CARD_GRID}>
-          {filterPresets.map((preset) => (
-            <OverviewCard
-              key={preset.id}
-              icon={preset.icon}
-              fallbackIcon={FilterIcon}
-              trailingIcon={ArrowRightIcon}
-              name={preset.name}
-              description={preset.description}
-              onClick={() =>
-                openTableWithFilters(
-                  preset.filters.map((f) => ({
-                    id: f.id,
-                    value: encodeFilterValue(f.operator, f.value),
-                  }))
-                )
-              }
-            />
-          ))}
-        </div>
-      )}
-
-      {links.length > 0 && (
-        <div className={OVERVIEW_CARD_GRID}>
-          {links.map((link) => {
-            const external = isExternalLink(link)
-            const card = (
-              <OverviewCard
-                icon={link.icon}
-                fallbackIcon={LinkIcon}
-                trailingIcon={external ? ExternalLinkIcon : ArrowRightIcon}
-                name={link.name}
-                description={link.description}
-              />
-            )
-            return external ? (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noreferrer"
-                className="block h-full"
-              >
-                {card}
-              </a>
-            ) : (
-              <Link
-                key={link.id}
-                to={link.url as never}
-                className="block h-full"
-              >
-                {card}
-              </Link>
-            )
-          })}
-        </div>
+      {overviewCards.length > 0 && (
+        <div className={OVERVIEW_CARD_GRID}>{overviewCards}</div>
       )}
 
       {cardWidgets.length > 0 && (

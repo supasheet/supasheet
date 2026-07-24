@@ -34,6 +34,7 @@ import { pageTitle } from "#/lib/page-title"
 import { resolvePrimaryViewTarget } from "#/lib/resource-view"
 import { chartsQueryOptions } from "#/lib/supabase/data/chart"
 import { dashboardWidgetsQueryOptions } from "#/lib/supabase/data/dashboard"
+import { resourceFormsQueryOptions } from "#/lib/supabase/data/form"
 
 export const Route = createFileRoute("/$schema/resource/$resource/")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
@@ -59,22 +60,26 @@ export const Route = createFileRoute("/$schema/resource/$resource/")({
     }
   },
   loader: async ({ context, params: { schema, resource } }) => {
-    const [widgets, charts] = await Promise.all([
+    const [widgets, charts, forms] = await Promise.all([
       context.queryClient.ensureQueryData(
         dashboardWidgetsQueryOptions(schema, resource)
       ),
       context.queryClient.ensureQueryData(chartsQueryOptions(schema, resource)),
+      context.queryClient.ensureQueryData(
+        resourceFormsQueryOptions(schema, resource)
+      ),
     ])
 
     const meta = JSON.parse(
       context.resourceSchema?.comment ?? "{}"
     ) as TableMetadata
-    const hasFilterPresets = (meta.filter_presets?.length ?? 0) > 0
-    if (!hasFilterPresets && widgets.length === 0 && charts.length === 0) {
+    const presets = meta.filter_presets ?? []
+    const urls = meta.links ?? []
+    if ([...presets, ...urls, ...widgets, ...charts, ...forms].length === 0) {
       throw redirect(resolvePrimaryViewTarget(schema, resource, meta))
     }
 
-    return { widgets, charts }
+    return { widgets, charts, forms }
   },
   head: ({ params }) => ({
     meta: [
@@ -175,7 +180,7 @@ function RouteComponent() {
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
-  const { widgets, charts } = Route.useLoaderData()
+  const { widgets, charts, forms } = Route.useLoaderData()
 
   return (
     <>
@@ -196,6 +201,7 @@ function RouteComponent() {
         friendlyName={friendlyName}
         widgets={widgets}
         charts={charts}
+        forms={forms}
       />
     </>
   )

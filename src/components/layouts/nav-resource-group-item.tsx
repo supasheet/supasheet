@@ -58,7 +58,7 @@ function ResourceMenuSubItem({
     <SidebarMenuSubItem key={item.name} className="group/menu-sub-item">
       <SidebarMenuSubButton
         render={<Link to={url as never} />}
-        isActive={location.pathname.startsWith(`/${schema}/${item.id}/`)}
+        isActive={location.pathname.startsWith(`/${schema}/${item.id}`)}
       >
         {icon}
         <span>{item.meta?.name ?? formatTitle(item.name)}</span>
