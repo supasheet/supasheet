@@ -9,6 +9,7 @@ import { MessageSquareIcon } from "lucide-react"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceComments } from "#/components/resource/comments/resource-comments"
 import { Skeleton } from "#/components/ui/skeleton"
+import { hasResourcePermission } from "#/hooks/use-permissions"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
@@ -18,9 +19,11 @@ export const Route = createFileRoute(
   "/$schema/resource/$resource/$resourceId/comment"
 )({
   beforeLoad: ({ context, params: { schema, resource } }) => {
-    const hasComment = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:select`
-    )
+    const hasComment = hasResourcePermission(context.permissions, {
+      schema,
+      resource,
+      action: "select",
+    })
     if (!hasComment) throw notFound()
     const tableSchema = isTableSchema(context.resourceSchema)
       ? context.resourceSchema

@@ -525,9 +525,7 @@ export type Database = {
       }
       get_permissions: {
         Args: { p_caller?: string; schema_name?: string }
-        Returns: {
-          permission: string
-        }[]
+        Returns: Json
       }
       get_privileges: {
         Args: { p_caller?: string; resource_name: string; schema_name: string }
@@ -787,6 +785,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

@@ -49,7 +49,11 @@ function RouteComponent() {
   )
 
   const { authUser, privileges } = Route.useRouteContext()
-  const hasUpdatePermission = useHasPermission(`${schema}.${resource}:update`)
+  const hasUpdatePermission = useHasPermission({
+    schema,
+    resource,
+    action: "update",
+  })
   const hasUpdatePrivilege = !!privileges?.includes("update")
   const canUpdate = authUser
     ? hasUpdatePermission && hasUpdatePrivilege

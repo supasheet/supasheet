@@ -77,8 +77,16 @@ export function ResourceForeignTable({
   const schema = resourceSchema.schema
   const table = resourceSchema.name
 
-  const canDelete = useHasPermission(`${schema}.${table}:delete`)
-  const canInsert = useHasPermission(`${schema}.${table}:insert`)
+  const canDelete = useHasPermission({
+    schema,
+    resource: table,
+    action: "delete",
+  })
+  const canInsert = useHasPermission({
+    schema,
+    resource: table,
+    action: "insert",
+  })
 
   const { data: actions = [] } = useQuery(
     resourceActionsQueryOptions(schema as never, table)

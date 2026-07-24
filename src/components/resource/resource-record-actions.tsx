@@ -26,7 +26,11 @@ export function ResourceRecordActions({
 }: ResourceRecordActionsProps) {
   const navigate = useNavigate()
 
-  const canViewAudit = useHasPermission("supasheet.audit_logs:select")
+  const canViewAudit = useHasPermission({
+    schema: "supasheet",
+    resource: "audit_logs",
+    action: "select",
+  })
 
   const params = { schema, resource, resourceId }
 

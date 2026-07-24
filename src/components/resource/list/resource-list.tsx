@@ -59,7 +59,7 @@ export function ResourceList({
     ? (resourceSchema.primary_keys ?? [])
     : []
 
-  const canDelete = useHasPermission(`${schema}.${resource}:delete`)
+  const canDelete = useHasPermission({ schema, resource, action: "delete" })
 
   const { mutateAsync: deleteRows } = useMutation(
     deleteBulkResourceMutationOptions(schema, resource)

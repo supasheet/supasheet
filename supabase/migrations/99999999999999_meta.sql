@@ -263,36 +263,46 @@ execute on FUNCTION supasheet.get_related_tables (text, text, text) to authentic
 ----------------------------------------------------------------
 -- Function: supasheet.get_permissions
 ----------------------------------------------------------------
-drop function if exists supasheet.get_permissions (text);
+drop function if exists supasheet.get_permissions (text, text);
 
 create or replace function supasheet.get_permissions (
   schema_name text default null,
   p_caller text default current_user
-) RETURNS table (permission text) LANGUAGE sql SECURITY DEFINER
+) RETURNS jsonb LANGUAGE sql SECURITY DEFINER
 set
   search_path = '' as $$
-    SELECT DISTINCT grants.schema || '.' || grants.name || ':' || grants.action
+    SELECT coalesce(jsonb_object_agg(schemas.schema, schemas.resources), '{}'::jsonb)
     FROM (
-        SELECT t.schema, t.name, act.action
-        FROM supasheet.tables t
-        CROSS JOIN (VALUES ('select'), ('insert'), ('update'), ('delete')) AS act (action)
-        WHERE (schema_name IS NULL OR t.schema = schema_name)
-            AND has_table_privilege(p_caller, t.id::oid, act.action)
+        SELECT
+            grants.schema,
+            jsonb_object_agg(grants.name, grants.actions) AS resources
+        FROM (
+            SELECT
+                t.schema,
+                t.name,
+                jsonb_agg(act.action ORDER BY act.action) AS actions
+            FROM supasheet.tables t
+            CROSS JOIN (VALUES ('select'), ('insert'), ('update'), ('delete')) AS act (action)
+            WHERE (schema_name IS NULL OR t.schema = schema_name)
+                AND has_table_privilege(p_caller, t.id::oid, act.action)
+            GROUP BY t.schema, t.name
 
-        UNION ALL
+            UNION ALL
 
-        SELECT v.schema, v.name, 'select'
-        FROM supasheet.views v
-        WHERE (schema_name IS NULL OR v.schema = schema_name)
-            AND has_table_privilege(p_caller, v.id::oid, 'select')
+            SELECT v.schema, v.name, jsonb_build_array('select')
+            FROM supasheet.views v
+            WHERE (schema_name IS NULL OR v.schema = schema_name)
+                AND has_table_privilege(p_caller, v.id::oid, 'select')
 
-        UNION ALL
+            UNION ALL
 
-        SELECT mv.schema, mv.name, 'select'
-        FROM supasheet.materialized_views mv
-        WHERE (schema_name IS NULL OR mv.schema = schema_name)
-            AND has_table_privilege(p_caller, mv.id::oid, 'select')
-    ) grants (schema, name, action);
+            SELECT mv.schema, mv.name, jsonb_build_array('select')
+            FROM supasheet.materialized_views mv
+            WHERE (schema_name IS NULL OR mv.schema = schema_name)
+                AND has_table_privilege(p_caller, mv.id::oid, 'select')
+        ) grants (schema, name, actions)
+        GROUP BY grants.schema
+    ) schemas (schema, resources);
 $$;
 
 revoke all on FUNCTION supasheet.get_permissions (text, text)

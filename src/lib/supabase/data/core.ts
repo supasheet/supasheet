@@ -2,14 +2,13 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
-import type { DatabaseSchemas } from "#/lib/database-meta.types"
 import type { Json } from "#/lib/database.types"
 
 import { supabase } from "../client"
 import { applyFilters } from "../filter"
 
 export type AppRole = string
-export type AppPermission = string
+export type PermissionsMap = Record<string, Record<string, string[]>>
 
 export const auditLogsQueryOptions = (
   page: number,
@@ -166,15 +165,15 @@ export const deleteAccountsMutationOptions = mutationOptions({
   },
 })
 
-export const userPermissionsQueryOptions = (schema?: DatabaseSchemas) =>
+export const userPermissionsQueryOptions = (schema?: string) =>
   queryOptions({
     queryKey: ["supasheet", "permissions", schema ?? null],
-    queryFn: async () => {
+    queryFn: async (): Promise<PermissionsMap> => {
       const { data, error } = await supabase
         .schema("supasheet")
         .rpc("get_permissions", { schema_name: schema })
       if (error) throw error
-      return data
+      return (data ?? {}) as PermissionsMap
     },
     staleTime: 1000 * 60 * 5,
   })

@@ -107,16 +107,20 @@ function RouteComponent() {
 
   const { authUser, privileges } = Route.useRouteContext()
 
-  const hasParentUpdatePermission = useHasPermission(
-    `${schema}.${resource}:update`
-  )
+  const hasParentUpdatePermission = useHasPermission({
+    schema,
+    resource,
+    action: "update",
+  })
   const parentUpdatePrivilege = !!privileges?.includes("update")
   const canUpdateParent = authUser
     ? hasParentUpdatePermission && parentUpdatePrivilege
     : parentUpdatePrivilege
 
   const hasOneToOneUpdatePermission = useHasPermission(
-    oneToOne ? `${oneToOne.schema}.${oneToOne.name}:update` : undefined
+    oneToOne
+      ? { schema: oneToOne.schema, resource: oneToOne.name, action: "update" }
+      : undefined
   )
   const { data: oneToOnePrivileges } = useQuery({
     ...resourcePrivilegesQueryOptions(

@@ -64,7 +64,8 @@ export const Route = createFileRoute("/$schema")({
           userPermissionsQueryOptions(params.schema)
         )
       : null
-    if (context.authUser && !permissions?.length) throw notFound()
+    if (context.authUser && !Object.keys(permissions ?? {}).length)
+      throw notFound()
     return { permissions }
   },
   loader: async ({ context, params }) => {

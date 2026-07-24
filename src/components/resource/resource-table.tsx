@@ -57,7 +57,7 @@ export function ResourceTable({
     ? (resourceSchema.primary_keys ?? [])
     : []
 
-  const canDelete = useHasPermission(`${schema}.${resource}:delete`)
+  const canDelete = useHasPermission({ schema, resource, action: "delete" })
 
   const { data: actions = [] } = useQuery(
     resourceActionsQueryOptions(schema, resource)

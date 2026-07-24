@@ -23,6 +23,7 @@ import {
   EmptyTitle,
 } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
+import { hasResourcePermission } from "#/hooks/use-permissions"
 import { isTableSchema } from "#/lib/database-meta.types"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
@@ -58,9 +59,11 @@ export const Route = createFileRoute("/$schema/resource/$resource/new")({
     }
   },
   beforeLoad: ({ context, params: { schema, resource } }) => {
-    const hasPermission = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:insert`
-    )
+    const hasPermission = hasResourcePermission(context.permissions, {
+      schema,
+      resource,
+      action: "insert",
+    })
     const hasPrivilege = context.privileges?.includes("insert")
     const canInsert = context.authUser
       ? hasPermission && hasPrivilege

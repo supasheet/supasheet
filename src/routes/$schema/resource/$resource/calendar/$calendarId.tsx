@@ -28,7 +28,10 @@ import {
 } from "#/components/ui/empty"
 import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
 import { Skeleton } from "#/components/ui/skeleton"
-import { useHasPermission } from "#/hooks/use-permissions"
+import {
+  hasResourcePermission,
+  useHasPermission,
+} from "#/hooks/use-permissions"
 import type { CalendarLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
@@ -39,9 +42,11 @@ export const Route = createFileRoute(
   "/$schema/resource/$resource/calendar/$calendarId"
 )({
   beforeLoad: ({ context, params: { schema, resource } }) => {
-    const hasPermission = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:select`
-    )
+    const hasPermission = hasResourcePermission(context.permissions, {
+      schema,
+      resource,
+      action: "select",
+    })
     const hasPrivilege = context.privileges?.includes("select")
     const canSelect = context.authUser
       ? hasPermission && hasPrivilege
@@ -234,7 +239,7 @@ function RouteComponent() {
 
   const metaItems = meta.views ?? []
   const isTable = isTableSchema(resourceSchema)
-  const canInsert = useHasPermission(`${schema}.${resource}:insert`)
+  const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
   return (
     <>

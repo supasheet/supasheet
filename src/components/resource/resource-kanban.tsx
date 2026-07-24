@@ -281,7 +281,7 @@ function KanbanContextMenu<S extends DatabaseSchemas>({
 }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const canDelete = useHasPermission(`${schema}.${resource}:delete`)
+  const canDelete = useHasPermission({ schema, resource, action: "delete" })
   const { mutateAsync: deleteRow } = useMutation(
     deleteResourceMutationOptions(schema, resource)
   )

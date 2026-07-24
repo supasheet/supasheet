@@ -41,7 +41,7 @@ export function ResourceDetailSheetBody({
     singleResourceDataQueryOptions(schema as never, resource as never, pk)
   )
 
-  const canUpdate = useHasPermission(`${schema}.${resource}:update`)
+  const canUpdate = useHasPermission({ schema, resource, action: "update" })
 
   if (!tableSchema || !columnsSchema?.length || !record) {
     return (

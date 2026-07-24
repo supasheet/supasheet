@@ -15,29 +15,14 @@ import {
   whoamiQueryOptions,
 } from "#/lib/supabase/data/core"
 
-function groupPermissions(permissions: { permission: string }[]) {
-  return permissions.reduce<Record<string, Record<string, string[]>>>(
-    (acc, { permission }) => {
-      const [schema, rest] = permission.split(".")
-      const [table, operation] = rest.split(":")
-      acc[schema] ??= {}
-      acc[schema][table] ??= []
-      acc[schema][table].push(operation)
-      return acc
-    },
-    {}
-  )
-}
-
 export function RolesPermissionsCard() {
   const { data: whoami, isLoading: isWhoamiLoading } =
     useQuery(whoamiQueryOptions)
-  const { data: permissions = [], isLoading: isPermissionsLoading } = useQuery(
+  const { data: grouped = {}, isLoading: isPermissionsLoading } = useQuery(
     userPermissionsQueryOptions()
   )
   const isLoading = isWhoamiLoading || isPermissionsLoading
   const role = whoami?.role
-  const grouped = groupPermissions(permissions)
 
   return (
     <Card>

@@ -9,6 +9,7 @@ import { HistoryIcon } from "lucide-react"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceAuditTimeline } from "#/components/resource/audit/resource-audit-timeline"
 import { Skeleton } from "#/components/ui/skeleton"
+import { hasResourcePermission } from "#/hooks/use-permissions"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
@@ -24,9 +25,11 @@ export const Route = createFileRoute(
           userPermissionsQueryOptions("supasheet")
         )
       : null
-    const hasAudit = auditPermissions?.some(
-      (p) => p.permission === "supasheet.audit_logs:select"
-    )
+    const hasAudit = hasResourcePermission(auditPermissions, {
+      schema: "supasheet",
+      resource: "audit_logs",
+      action: "select",
+    })
     if (!hasAudit) throw notFound()
     const tableSchema = isTableSchema(context.resourceSchema)
       ? context.resourceSchema

@@ -54,7 +54,11 @@ export function LucideIconComponent({
 }
 
 export function useResourceMenuAction(item: ResourceItem, schema: string) {
-  const canInsert = useHasPermission(`${item.schema}.${item.id}:insert`)
+  const canInsert = useHasPermission({
+    schema: item.schema,
+    resource: item.id,
+    action: "insert",
+  })
   const showInsert = canInsert && item.type === "table"
   const url = `/${schema}/${item.id}`
   const newUrl = `/${schema}/${item.id}/new`

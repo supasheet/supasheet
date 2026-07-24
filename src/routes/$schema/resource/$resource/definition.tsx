@@ -19,15 +19,18 @@ import {
   EmptyTitle,
 } from "#/components/ui/empty"
 import { Skeleton } from "#/components/ui/skeleton"
+import { hasResourcePermission } from "#/hooks/use-permissions"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 
 export const Route = createFileRoute("/$schema/resource/$resource/definition")({
   beforeLoad: ({ context, params: { schema, resource } }) => {
-    const hasPermission = context.permissions?.some(
-      (p) => p.permission === `${schema}.${resource}:select`
-    )
+    const hasPermission = hasResourcePermission(context.permissions, {
+      schema,
+      resource,
+      action: "select",
+    })
     const hasPrivilege = context.privileges?.includes("select")
     const canSelect = context.authUser
       ? hasPermission && hasPrivilege
