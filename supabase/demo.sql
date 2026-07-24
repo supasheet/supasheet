@@ -497,6 +497,7 @@ comment on column demo.projects.priority is '{
 
 comment on table demo.projects is '{
     "icon": "FolderKanban",
+    "group": "Projects",
     "display": "block",
     "primary_view": "kanban",
     "tabs": ["tasks", "milestones", "invoices", "project_members"],
@@ -771,6 +772,7 @@ comment on column demo.milestones.status is '{
 
 comment on table demo.milestones is '{
     "icon": "Milestone",
+    "group": "Projects",
     "display": "block",
     "primary_view": "calendar",
     "detail": {
@@ -900,6 +902,7 @@ comment on column demo.tasks.priority is '{
 
 comment on table demo.tasks is '{
     "icon": "ListTodo",
+    "group": "Projects",
     "display": "block",
     "primary_view": "kanban",
     "detail": {
