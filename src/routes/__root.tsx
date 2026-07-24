@@ -11,6 +11,7 @@ import type { QueryClient } from "@tanstack/react-query"
 import { TanStackDevtools } from "@tanstack/react-devtools"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
+import { InstallPromptBanner } from "#/components/pwa/install-prompt-banner"
 import { ThemeProvider } from "#/components/theme-provider"
 import { Button } from "#/components/ui/button"
 import { Toaster } from "#/components/ui/sonner"
@@ -110,6 +111,7 @@ function RootComponent() {
           <TooltipProvider>
             <Outlet />
             <Toaster />
+            <InstallPromptBanner />
           </TooltipProvider>
         </ThemeProvider>
       </TanStackQueryProvider>
