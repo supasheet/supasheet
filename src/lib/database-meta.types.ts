@@ -235,6 +235,14 @@ export type FilterPreset = {
   filters: FilterRule[]
 }
 
+export type ResourceLink = {
+  id: string
+  name: string
+  url: string
+  icon?: IconName
+  description?: string
+}
+
 // Valid for both tables and views
 export type FieldsConfig = {
   sections?: FieldSection[]
@@ -258,6 +266,7 @@ type BaseResourceMetadata = {
   primary_view?: string
   views?: ViewLayout[]
   filter_presets?: FilterPreset[]
+  links?: ResourceLink[]
   fields?: FieldsConfig
   detail?: DetailHeaderMeta
 }

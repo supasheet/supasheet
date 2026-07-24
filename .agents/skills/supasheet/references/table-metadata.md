@@ -16,6 +16,7 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
   "primary_view": "kanban", // id of default view (omit = sheet/table view)
   "views": [/* ViewLayout[] */],
   "filter_presets": [/* FilterPreset[] */],
+  "links": [/* ResourceLink[] */],
   "fields": {/* see Fields */},
   "query": {/* see Query */},
   "tabs": ["tasks", "invoices"], // allowlist of related-table tabs on the detail page
@@ -54,6 +55,19 @@ One-click filter chips above the table:
     {"id": "high", "name": "High Priority", "filters": [{"id": "priority", "value": ["high", "critical"], "operator": "in"}]}
 ]
 ```
+
+## Links
+
+Quick-link shortcuts shown on the resource landing page — to an external dashboard/doc, or to another resource/report/route in the app:
+
+```json
+"links": [
+    {"id": "docs", "name": "Runbook", "url": "https://wiki.example.com/support-runbook", "icon": "BookOpen"},
+    {"id": "billing", "name": "Billing Report", "url": "/demo/report/billing-summary", "description": "MRR and churn by plan"}
+]
+```
+
+`url` starting with a scheme (e.g. `https://`) opens in a new tab; anything else (e.g. `/schema/resource/...`) is treated as an internal app route and navigated client-side.
 
 ## Fields
 
@@ -142,9 +156,9 @@ Default list-view query configuration:
 
 - Comments must be valid JSON — the app `JSON.parse`s them. Multi-line string literals are fine in SQL; for tooling that mangles quotes use dollar-quoting: `comment on table t is $$ {...} $$;`.
 - After changing any comment, run `select supasheet.refresh_metadata();`.
-- View (non-table) resources use the same base shape (`display`, `name`, `icon`, `views`, `filter_presets`, `fields.sections`) but no form-specific keys — unless tagged `{"type": "report" | "chart" | "dashboard_widget"}`, which routes them to those features instead.
+- View (non-table) resources use the same base shape (`display`, `name`, `icon`, `views`, `filter_presets`, `links`, `fields.sections`) but no form-specific keys — unless tagged `{"type": "report" | "chart" | "dashboard_widget"}`, which routes them to those features instead.
 
 ## Authoritative sources
 
-- `src/lib/database-meta.types.ts` — `TableMetadata`, `ViewLayout`, `FieldSection`, `FieldBehavior`, `LookupConfig`, `QueryConfig`, `FilterPreset`
+- `src/lib/database-meta.types.ts` — `TableMetadata`, `ViewLayout`, `FieldSection`, `FieldBehavior`, `LookupConfig`, `QueryConfig`, `FilterPreset`, `ResourceLink`
 - `supabase/demo.sql` — rich real examples: `demo.clients` (kanban+gallery, sections, presets), `demo.tasks` (behavior, quick_create, duplicated, tree), `demo.invoices` (lookup filter, tabs), `demo.invoice_items` (inline_form, lookup fill), `demo.workspace_settings` (singleton)

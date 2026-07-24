@@ -184,6 +184,9 @@ comment on table demo.clients is '{
         {"id": "leads", "name": "Leads", "filters": [{"id": "status", "value": "lead", "operator": "eq"}]},
         {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "on_hold", "operator": "eq"}]}
     ],
+    "links": [
+        {"id": "clients_report", "name": "Clients Report", "url": "/demo/report/clients_report", "icon": "BarChart3", "description": "Revenue and project rollups per client"}
+    ],
     "fields": {
         "sections": [
             {"id": "profile", "title": "Profile", "fields": ["name", "logo", "industry", "status"]},
