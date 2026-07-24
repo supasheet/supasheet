@@ -4,6 +4,7 @@ import { Link, useNavigate } from "@tanstack/react-router"
 
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
+import type { LucideIcon } from "lucide-react"
 import {
   ArrowRightIcon,
   ExternalLinkIcon,
@@ -26,6 +27,7 @@ import { encodeFilterValue } from "#/lib/data-table"
 import type {
   DatabaseSchemas,
   DatabaseTables,
+  IconName,
   ResourceLink,
   TableMetadata,
 } from "#/lib/database-meta.types"
@@ -38,6 +40,56 @@ import type { DashboardWidgetSchema } from "#/lib/supabase/data/dashboard"
 
 function isExternalLink(link: ResourceLink) {
   return /^[a-z][a-z0-9+.-]*:\/\//i.test(link.url)
+}
+
+const OVERVIEW_CARD_GRID =
+  "grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-3"
+
+function OverviewCard({
+  icon,
+  fallbackIcon: FallbackIcon,
+  trailingIcon: TrailingIcon,
+  name,
+  description,
+  onClick,
+}: {
+  icon?: IconName
+  fallbackIcon: LucideIcon
+  trailingIcon: LucideIcon
+  name: string
+  description?: string
+  onClick?: () => void
+}) {
+  return (
+    <Card
+      size="sm"
+      className={
+        "h-full transition-colors hover:bg-muted/50" +
+        (onClick ? " cursor-pointer" : "")
+      }
+      onClick={onClick}
+    >
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <div className="flex min-w-0 items-center gap-2">
+          {icon ? (
+            <DynamicIcon
+              iconName={icon}
+              className="size-4 shrink-0 text-muted-foreground"
+            />
+          ) : (
+            <FallbackIcon className="size-4 shrink-0 text-muted-foreground" />
+          )}
+          <CardTitle className="truncate">{name}</CardTitle>
+        </div>
+        <TrailingIcon className="size-3.5 shrink-0 text-muted-foreground" />
+      </CardHeader>
+      {description && (
+        <CardContent>
+          <CardDescription>{description}</CardDescription>
+        </CardContent>
+      )}
+    </Card>
+  )
 }
 
 export function ResourceOverview<S extends DatabaseSchemas>({
@@ -98,12 +150,15 @@ export function ResourceOverview<S extends DatabaseSchemas>({
       </section>
 
       {filterPresets.length > 0 && (
-        <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-3">
+        <div className={OVERVIEW_CARD_GRID}>
           {filterPresets.map((preset) => (
-            <Card
+            <OverviewCard
               key={preset.id}
-              size="sm"
-              className="h-full cursor-pointer transition-colors hover:bg-muted/50"
+              icon={preset.icon}
+              fallbackIcon={FilterIcon}
+              trailingIcon={ArrowRightIcon}
+              name={preset.name}
+              description={preset.description}
               onClick={() =>
                 openTableWithFilters(
                   preset.filters.map((f) => ({
@@ -112,64 +167,23 @@ export function ResourceOverview<S extends DatabaseSchemas>({
                   }))
                 )
               }
-            >
-              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-                <div className="flex min-w-0 items-center gap-2">
-                  {preset.icon ? (
-                    <DynamicIcon
-                      iconName={preset.icon}
-                      className="size-4 shrink-0 text-muted-foreground"
-                    />
-                  ) : (
-                    <FilterIcon className="size-4 shrink-0 text-muted-foreground" />
-                  )}
-                  <CardTitle className="truncate">{preset.name}</CardTitle>
-                </div>
-                <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-              </CardHeader>
-              {preset.description && (
-                <CardContent>
-                  <CardDescription>{preset.description}</CardDescription>
-                </CardContent>
-              )}
-            </Card>
+            />
           ))}
         </div>
       )}
 
       {links.length > 0 && (
-        <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-3">
+        <div className={OVERVIEW_CARD_GRID}>
           {links.map((link) => {
             const external = isExternalLink(link)
             const card = (
-              <Card
-                size="sm"
-                className="h-full transition-colors hover:bg-muted/50"
-              >
-                <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-                  <div className="flex min-w-0 items-center gap-2">
-                    {link.icon ? (
-                      <DynamicIcon
-                        iconName={link.icon}
-                        className="size-4 shrink-0 text-muted-foreground"
-                      />
-                    ) : (
-                      <LinkIcon className="size-4 shrink-0 text-muted-foreground" />
-                    )}
-                    <CardTitle className="truncate">{link.name}</CardTitle>
-                  </div>
-                  {external ? (
-                    <ExternalLinkIcon className="size-3.5 shrink-0 text-muted-foreground" />
-                  ) : (
-                    <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-                  )}
-                </CardHeader>
-                {link.description && (
-                  <CardContent>
-                    <CardDescription>{link.description}</CardDescription>
-                  </CardContent>
-                )}
-              </Card>
+              <OverviewCard
+                icon={link.icon}
+                fallbackIcon={LinkIcon}
+                trailingIcon={external ? ExternalLinkIcon : ArrowRightIcon}
+                name={link.name}
+                description={link.description}
+              />
             )
             return external ? (
               <a
