@@ -61,18 +61,6 @@ grant "user",
 grant authenticated to "user",
 "admin";
 
--- "user"'s grants on tables whose base revoke/x-admin-grant already
--- happened in migrations (20250523000822_roles.sql,
--- 20250928062812_audit_logs.sql) — added here since "user" doesn't
--- exist yet when those migrations run.
-grant
-select
-,
-update on table supasheet.users to "user";
-
-grant
-select
-  on supasheet.audit_logs to "user";
 
 ----------------------------------------------------------------
 -- Enums + permissions (must commit before use)

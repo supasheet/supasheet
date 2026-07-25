@@ -61,6 +61,11 @@ from
   authenticated,
   service_role;
 
+grant
+select
+,
+update on table supasheet.users to "authenticated";
+
 -- Function "supasheet.protect_user_fields"
 -- Function to protect user fields from being updated by anyone
 create or replace function supasheet.protect_user_fields () returns trigger as $$
