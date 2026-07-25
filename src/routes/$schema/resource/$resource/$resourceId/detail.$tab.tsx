@@ -34,7 +34,10 @@ export const Route = createFileRoute(
     const metaJoins = tableMeta.query?.join
 
     const allowedTabs = tableMeta.detail?.tabs
-    if (allowedTabs && !allowedTabs.includes(tab)) throw notFound()
+    const timelineTabs = tableMeta.detail?.timelines
+    const isTimeline = !!timelineTabs?.includes(tab)
+    if (allowedTabs && !allowedTabs.includes(tab) && !isTimeline)
+      throw notFound()
 
     const embeddedTables = addEmbedKeys(
       schema,
@@ -72,7 +75,7 @@ export const Route = createFileRoute(
           })
         )
       }
-      return classification
+      return { ...classification, isTimeline }
     }
 
     const many = classification.oneToMany ?? classification.manyToMany
@@ -88,14 +91,14 @@ export const Route = createFileRoute(
       resourceActionsQueryOptions(many.schema, many.name)
     )
 
-    return classification
+    return { ...classification, isTimeline }
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const { schema, resource, resourceId } = Route.useParams()
-  const { oneToOne, oneToMany, manyToMany } = Route.useLoaderData()
+  const { oneToOne, oneToMany, manyToMany, isTimeline } = Route.useLoaderData()
   const { pkName } = parentRoute.useLoaderData()
 
   const pk = { [pkName]: resourceId }
@@ -143,6 +146,7 @@ function RouteComponent() {
       parentRecord={record}
       oneToOne={oneToOne}
       many={many}
+      isTimeline={isTimeline}
       canUpdateOneToOne={canUpdateOneToOne}
       canUpdateParent={canUpdateParent}
     />

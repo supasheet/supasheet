@@ -16,11 +16,13 @@ export function isSkippedForUpdate(
   primaryKeys: PrimaryKey[]
 ): boolean {
   if (primaryKeys.some((pk) => pk.name === col.name)) return true
+  if (col.is_generated ?? false) return true
   return false
 }
 
 export function isSkippedForCreate(col: ColumnSchema): boolean {
   if (col.is_identity ?? false) return true
+  if (col.is_generated ?? false) return true
   return false
 }
 

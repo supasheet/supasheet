@@ -13,6 +13,7 @@ import {
 } from "#/components/resource/detail/one-to-one-detail"
 import { OneToOneUnlinked } from "#/components/resource/detail/one-to-one-unlinked"
 import { ResourceForeignTable } from "#/components/resource/detail/resource-foreign-table"
+import { ResourceForeignTimeline } from "#/components/resource/detail/resource-foreign-timeline"
 
 type Props = {
   schema: string
@@ -21,6 +22,7 @@ type Props = {
   parentRecord: Record<string, unknown> | null | undefined
   oneToOne: OneToOneRelation | undefined
   many: ManyRelation | undefined
+  isTimeline?: boolean
   canUpdateOneToOne: boolean
   canUpdateParent: boolean
 }
@@ -32,6 +34,7 @@ export function ResourceDetailTab({
   parentRecord,
   oneToOne,
   many,
+  isTimeline,
   canUpdateOneToOne,
   canUpdateParent,
 }: Props) {
@@ -87,14 +90,25 @@ export function ResourceDetailTab({
   return (
     <>
       <Suspense fallback={<DataTableSkeleton columnCount={10} />}>
-        <ResourceForeignTable
-          parentResource={resource}
-          parentColumn={__parentColumn}
-          parentValue={parentValue}
-          resourceSchema={resourceSchema}
-          columnsSchema={columns ?? []}
-          selectClause={__selectClause}
-        />
+        {isTimeline ? (
+          <ResourceForeignTimeline
+            parentResource={resource}
+            parentColumn={__parentColumn}
+            parentValue={parentValue}
+            resourceSchema={resourceSchema}
+            columnsSchema={columns ?? []}
+            selectClause={__selectClause}
+          />
+        ) : (
+          <ResourceForeignTable
+            parentResource={resource}
+            parentColumn={__parentColumn}
+            parentValue={parentValue}
+            resourceSchema={resourceSchema}
+            columnsSchema={columns ?? []}
+            selectClause={__selectClause}
+          />
+        )}
       </Suspense>
       <Outlet />
     </>

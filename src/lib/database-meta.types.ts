@@ -232,6 +232,7 @@ export type DetailHeader = {
 export type DetailConfig = {
   header?: DetailHeader
   tabs?: EmbedKey[]
+  timelines?: EmbedKey[]
 }
 
 export type FilterPreset = {

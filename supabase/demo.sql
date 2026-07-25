@@ -23,6 +23,9 @@
 --   - Notifications (fan-out on create/status change)
 --   - Audit logging and per-resource comments
 --   - Detail page "tabs" allowlist
+--   - Detail page "timelines" — a related table rendered as a vertical
+--     activity feed instead of a data table (task_events, populated by
+--     a trigger on demo.tasks, display: none, read-only)
 --   - Row actions backed by SQL functions (publish, cancel, set
 --     priority via enum picker, duplicate)
 --   - Custom forms backed by SQL functions, each returning a
@@ -935,7 +938,10 @@ comment on table demo.tasks is '{
     "collapsible_group": "Projects",
     "display": "block",
     "primary_view": "kanban",
-    "detail": {"header": {"title": "title", "badges": ["status", "priority", "tags"]}},
+    "detail": {
+        "header": {"title": "title", "badges": ["status", "priority", "tags"]},
+        "timelines": ["task_events"]
+    },
     "views": [
         {
             "id": "kanban",
@@ -1105,6 +1111,126 @@ from
 grant
 execute on function demo.duplicate_task (uuid) to "x-admin",
 "user";
+
+----------------------------------------------------------------
+-- Task events (system-generated activity timeline for a single
+-- task — display: none, never browsable on its own; only ever
+-- surfaced as the "task_events" timeline tab on that one task's
+-- detail page)
+----------------------------------------------------------------
+begin;
+
+create type demo.task_event_type as enum(
+  'status_changed',
+  'blocked',
+  'assignee_changed',
+  'priority_changed',
+  'record_updated'
+);
+
+commit;
+
+create table demo.task_events (
+  id uuid primary key default extensions.uuid_generate_v4 (),
+  task_id uuid not null references demo.tasks (id) on delete cascade,
+  event_type demo.task_event_type not null,
+  title varchar(255) not null,
+  metadata jsonb,
+  actor_id uuid default auth.uid () references supasheet.users (id) on delete set null,
+  occurred_at timestamptz not null default current_timestamp
+);
+
+comment on column demo.task_events.event_type is '{
+    "progress": false,
+    "values": {
+        "status_changed": {"variant": "info", "icon": "ArrowRightLeft"},
+        "blocked": {"variant": "destructive", "icon": "Ban"},
+        "assignee_changed": {"variant": "secondary", "icon": "UserCog"},
+        "priority_changed": {"variant": "warning", "icon": "Flag"},
+        "record_updated": {"variant": "outline", "icon": "RefreshCw"}
+    }
+}';
+
+comment on table demo.task_events is '{
+    "icon": "History",
+    "display": "none",
+    "fields": {
+        "sections": [
+            {"id": "event", "title": "Event", "fields": ["task_id", "event_type", "title", "metadata", "actor_id", "occurred_at"]}
+        ]
+    },
+    "query": {
+        "sort": [{"id": "occurred_at", "desc": true}],
+        "join": [{"table": "users", "on": "actor_id", "alias": "actor", "columns": ["name", "avatar"]}]
+    }
+}';
+
+revoke all on table demo.task_events
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on table demo.task_events to "x-admin",
+  "user";
+
+create index idx_demo_task_events_task_id on demo.task_events (task_id);
+
+create index idx_demo_task_events_occurred_at on demo.task_events (occurred_at desc);
+
+alter table demo.task_events enable row level security;
+
+create policy task_events_select on demo.task_events for
+select
+  to authenticated using (true);
+
+-- Log a timeline event whenever an existing task is edited.
+create or replace function demo.trg_tasks_log_event () returns trigger as $$
+begin
+    if new.status is distinct from old.status then
+        if new.status = 'blocked' then
+            insert into demo.task_events (task_id, event_type, title, metadata)
+            values (new.id, 'blocked', 'Task blocked', jsonb_build_object('reason', new.blocked_reason));
+        else
+            insert into demo.task_events (task_id, event_type, title, metadata)
+            values (
+                new.id,
+                'status_changed',
+                'Status changed to ' || new.status,
+                jsonb_build_object('from', old.status, 'to', new.status)
+            );
+        end if;
+    elsif new.assignee_id is distinct from old.assignee_id then
+        insert into demo.task_events (task_id, event_type, title, metadata)
+        values (
+            new.id,
+            'assignee_changed',
+            'Assignee changed',
+            jsonb_build_object('from', old.assignee_id, 'to', new.assignee_id)
+        );
+    elsif new.priority is distinct from old.priority then
+        insert into demo.task_events (task_id, event_type, title, metadata)
+        values (
+            new.id,
+            'priority_changed',
+            'Priority changed to ' || new.priority,
+            jsonb_build_object('from', old.priority, 'to', new.priority)
+        );
+    else
+        insert into demo.task_events (task_id, event_type, title)
+        values (new.id, 'record_updated', 'Task updated');
+    end if;
+
+    return new;
+end;
+$$ language plpgsql security definer
+set
+  search_path = '';
+
+create trigger tasks_log_event
+after update on demo.tasks for each row
+execute function demo.trg_tasks_log_event ();
 
 ----------------------------------------------------------------
 -- Portfolio items (published case studies — gallery is the natural
