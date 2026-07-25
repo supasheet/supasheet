@@ -34,16 +34,20 @@ Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table
 | `gallery`  | `cover` (FILE/AVATAR col), `title` | `description`, `badge`              |
 | `list`     | `title`                            | `description`, `field_1`, `field_2` |
 | `tree`     | `parent` (self-FK col), `title`    | `secondary`                         |
+| `timeline` | `title`, `date`                    | `description`, `badge`              |
 
 ```json
 "views": [
     {"id": "kanban", "name": "By Status", "type": "kanban", "group": "status", "title": "title", "description": "description", "date": "due_date", "badge": "priority"},
-    {"id": "calendar", "name": "Timeline", "type": "calendar", "title": "title", "badge": "status", "start_date": "start_date", "end_date": "due_date"},
+    {"id": "calendar", "name": "Calendar", "type": "calendar", "title": "title", "badge": "status", "start_date": "start_date", "end_date": "due_date"},
     {"id": "gallery", "name": "Gallery", "type": "gallery", "cover": "logo", "title": "name", "description": "summary", "badge": "category"},
     {"id": "list", "name": "All", "type": "list", "title": "name", "description": "status", "field_1": "status", "field_2": "due_date"},
-    {"id": "tree", "name": "Org Chart", "type": "tree", "parent": "manager_id", "title": "name", "secondary": "job_title"}
+    {"id": "tree", "name": "Org Chart", "type": "tree", "parent": "manager_id", "title": "name", "secondary": "job_title"},
+    {"id": "timeline", "name": "Timeline", "type": "timeline", "title": "title", "date": "created_at", "description": "summary", "badge": "status"}
 ]
 ```
+
+`timeline` plots every row as a chronological entry (oldest/newest first, toggle in the UI) using `date` to place it on the line; `title` is the entry heading, `description` an optional one-line note, and `badge` an optional status chip.
 
 ## Filter presets
 

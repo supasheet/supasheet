@@ -219,8 +219,21 @@ export type TreeLayout = BaseViewLayout & {
   secondary?: ColumnName
 }
 
+export type TimelineLayout = BaseViewLayout & {
+  type: "timeline"
+  title: ColumnName
+  date: ColumnName
+  description?: ColumnName
+  badge?: ColumnName
+}
+
 export type ViewLayout =
-  KanbanLayout | CalendarLayout | GalleryLayout | ListLayout | TreeLayout
+  | KanbanLayout
+  | CalendarLayout
+  | GalleryLayout
+  | ListLayout
+  | TreeLayout
+  | TimelineLayout
 
 export type ViewLayoutType = ViewLayout["type"]
 
@@ -370,13 +383,7 @@ export type FormMeta = {
 }
 
 export type AggregateFunction =
-  | "none"
-  | "count"
-  | "count_distinct"
-  | "sum"
-  | "avg"
-  | "min"
-  | "max"
+  "none" | "count" | "count_distinct" | "sum" | "avg" | "min" | "max"
 
 export type ColumnMetadata = {
   name?: string
