@@ -40,6 +40,40 @@ create schema if not exists demo;
 
 grant usage on schema demo to authenticated;
 
+-------------------------------------------------------------------
+-- Roles
+-------------------------------------------------------------------
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'user') then
+    create role "user" nologin;
+  end if;
+
+  if not exists (select 1 from pg_roles where rolname = 'admin') then
+    create role "admin" nologin;
+  end if;
+end;
+$$;
+
+grant "user",
+"admin" to authenticator;
+
+grant authenticated to "user",
+"admin";
+
+-- "user"'s grants on tables whose base revoke/x-admin-grant already
+-- happened in migrations (20250523000822_roles.sql,
+-- 20250928062812_audit_logs.sql) — added here since "user" doesn't
+-- exist yet when those migrations run.
+grant
+select
+,
+update on table supasheet.users to "user";
+
+grant
+select
+  on supasheet.audit_logs to "user";
+
 ----------------------------------------------------------------
 -- Enums + permissions (must commit before use)
 ----------------------------------------------------------------
