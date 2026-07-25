@@ -1,3 +1,4 @@
+import { CustomFormResult } from "#/components/resource/custom-form-result"
 import { ResourceFormLayout } from "#/components/resource/resource-form-layout"
 import { useCustomForm } from "#/hooks/use-custom-form"
 import type {
@@ -19,7 +20,7 @@ export function CustomForm<S extends DatabaseSchemas>({
   form: ResourceFormRow<S>
   fieldsSchema: ColumnSchema<S>[]
 }) {
-  const { meta, writableCols, tableSchema, form } = useCustomForm({
+  const { meta, writableCols, tableSchema, form, result } = useCustomForm({
     schema,
     resource,
     form: formRow,
@@ -27,25 +28,30 @@ export function CustomForm<S extends DatabaseSchemas>({
   })
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        form.handleSubmit()
-      }}
-    >
-      <div className="mb-4 space-y-1">
-        <h2 className="text-lg font-semibold">{meta.name}</h2>
-        {meta.description && (
-          <p className="text-sm text-muted-foreground">{meta.description}</p>
-        )}
-      </div>
-      <ResourceFormLayout
-        tableSchema={tableSchema}
-        writableCols={writableCols}
-        form={form}
-        mode="create"
-        headerTitle={meta.name}
-      />
-    </form>
+    <div className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          form.handleSubmit()
+        }}
+      >
+        <div className="mb-4 space-y-1">
+          <h2 className="text-lg font-semibold">{meta.name}</h2>
+          {meta.description && (
+            <p className="text-sm text-muted-foreground">
+              {meta.description}
+            </p>
+          )}
+        </div>
+        <ResourceFormLayout
+          tableSchema={tableSchema}
+          writableCols={writableCols}
+          form={form}
+          mode="create"
+          headerTitle={meta.name}
+        />
+      </form>
+      {result && <CustomFormResult result={result} />}
+    </div>
   )
 }

@@ -25,9 +25,16 @@
 --   - Detail page "tabs" allowlist
 --   - Row actions backed by SQL functions (publish, cancel, set
 --     priority via enum picker, duplicate)
---   - Custom form backed by a SQL function (log_time_entry), with
---     foreign-key-style combobox fields declared via `relations`,
---     listed on the "tasks" overview
+--   - Custom forms backed by SQL functions, each returning a
+--     different shape the UI renders accordingly: log_time_entry
+--     (returns a scalar uuid, listed on "tasks"), create_project_for_client
+--     (returns a single row/object via explicit OUT parameters,
+--     listed on "clients"), generate_invoice_items_from_tasks
+--     (inserts and returns setof demo.invoice_items, listed on
+--     "invoices"), and preview_team_billables (a pure computation —
+--     no inserts — returning setof rows via an explicit `table(...)`
+--     column list, listed on "projects") — all with foreign-key-style
+--     combobox fields declared via `relations`
 --   - Column footer aggregates (sum/avg/min/max/count) via the
 --     `aggregate` column comment key (projects.budget,
 --     tasks.estimated_hours, invoices.total, time_entries.duration)
@@ -1732,11 +1739,11 @@ comment on function demo.log_time_entry (uuid, uuid, supasheet.DURATION, boolean
         "sections": [
             {"id": "entry", "title": "Entry", "fields": ["p_task_id", "p_team_member_id"]},
             {"id": "duration", "title": "Duration", "fields": ["p_duration", "p_is_billable", "p_notes"]}
-        ]
-    },
-    "relations": {
-        "p_task_id": {"table": "tasks", "display": ["title", "status"]},
-        "p_team_member_id": {"table": "team_members", "display": ["name", "avatar"]}
+        ],
+        "relations": {
+            "p_task_id": {"table": "tasks", "column": "id", "display": ["title", "status"]},
+            "p_team_member_id": {"table": "team_members", "column": "id", "display": ["name", "avatar"]}
+        }
     }
 }';
 
@@ -1748,6 +1755,223 @@ from
 
 grant
 execute on function demo.log_time_entry (uuid, uuid, supasheet.DURATION, boolean, text) to "x-admin",
+"user";
+
+----------------------------------------------------------------
+-- Custom form: start a new project for a client (listed on the
+-- "clients" resource overview). Returns a single object row via
+-- explicit OUT parameters (not the existing demo.projects row
+-- type) — the UI renders the created record as a detail card
+-- instead of just toasting and navigating away.
+----------------------------------------------------------------
+create or replace function demo.create_project_for_client (
+  p_client_id uuid,
+  p_name varchar,
+  p_owner_id uuid default null,
+  p_budget numeric default null,
+  p_due_date date default null,
+  out project_id uuid,
+  out name varchar,
+  out client_id uuid,
+  out owner_id uuid,
+  out status demo.project_status,
+  out budget numeric,
+  out due_date date
+) language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_project demo.projects%rowtype;
+begin
+  if not exists (select 1 from demo.clients where id = p_client_id) then
+    raise exception 'Client not found';
+  end if;
+
+  insert into demo.projects (client_id, name, owner_id, budget, due_date)
+  values (p_client_id, p_name, p_owner_id, p_budget, p_due_date)
+  returning * into v_project;
+
+  project_id := v_project.id;
+  name := v_project.name;
+  client_id := v_project.client_id;
+  owner_id := v_project.owner_id;
+  status := v_project.status;
+  budget := v_project.budget;
+  due_date := v_project.due_date;
+end;
+$$;
+
+comment on function demo.create_project_for_client (uuid, varchar, uuid, numeric, date) is '{
+    "type": "form",
+    "resource": "clients",
+    "name": "Start a project",
+    "description": "Kick off a new project for this client and view the created record.",
+    "icon": "FolderPlus",
+    "success_message": "Project created",
+    "fields": {
+        "sections": [
+            {"id": "project", "title": "Project", "fields": ["p_client_id", "p_name", "p_owner_id"]},
+            {"id": "planning", "title": "Planning", "fields": ["p_budget", "p_due_date"]}
+        ],
+        "relations": {
+            "p_client_id": {"table": "clients", "column": "id", "display": ["name"]},
+            "p_owner_id": {"table": "team_members", "column": "id", "display": ["name"]}
+        }
+    }
+}';
+
+revoke all on function demo.create_project_for_client (uuid, varchar, uuid, numeric, date)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.create_project_for_client (uuid, varchar, uuid, numeric, date) to "x-admin",
+"user";
+
+----------------------------------------------------------------
+-- Custom form: generate invoice line items from a project's
+-- completed, unbilled tasks (listed on the "invoices" resource
+-- overview). Returns setof demo.invoice_items — the UI renders the
+-- created rows as a table instead of just toasting and navigating
+-- away.
+----------------------------------------------------------------
+create or replace function demo.generate_invoice_items_from_tasks (
+  p_invoice_id uuid,
+  p_service_id uuid
+) returns setof demo.invoice_items language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_project_id uuid;
+  v_rate numeric(10, 2);
+begin
+  select project_id into v_project_id from demo.invoices where id = p_invoice_id;
+
+  if v_project_id is null then
+    raise exception 'Invoice not found or has no linked project';
+  end if;
+
+  select default_rate into v_rate from demo.services where id = p_service_id;
+
+  return query
+  insert into demo.invoice_items (invoice_id, service_id, description, quantity, unit_price)
+  select
+    p_invoice_id,
+    p_service_id,
+    t.title,
+    coalesce(t.estimated_hours, 1),
+    coalesce(v_rate, 0)
+  from demo.tasks t
+  where t.project_id = v_project_id
+    and t.status = 'done'
+    and not exists (
+      select 1
+      from demo.invoice_items ii
+      where ii.invoice_id = p_invoice_id
+        and ii.description = t.title
+    )
+  returning *;
+end;
+$$;
+
+comment on function demo.generate_invoice_items_from_tasks (uuid, uuid) is '{
+    "type": "form",
+    "resource": "invoices",
+    "name": "Bill completed tasks",
+    "description": "Add a line item for every completed, unbilled task on this invoice''s project.",
+    "icon": "ListPlus",
+    "success_message": "Invoice items generated",
+    "fields": {
+        "sections": [
+            {"id": "billing", "title": "Billing", "fields": ["p_invoice_id", "p_service_id"]}
+        ],
+        "relations": {
+            "p_invoice_id": {"table": "invoices", "column": "id", "display": ["invoice_number"]},
+            "p_service_id": {"table": "services", "column": "id", "display": ["name"]}
+        }
+    }
+}';
+
+revoke all on function demo.generate_invoice_items_from_tasks (uuid, uuid)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.generate_invoice_items_from_tasks (uuid, uuid) to "x-admin",
+"user";
+
+----------------------------------------------------------------
+-- Custom form: preview billable cost per team member on a project
+-- (listed on the "projects" resource overview). Pure computation —
+-- reads logged time entries and rates without inserting anything.
+-- Returns setof rows via an explicit `table(...)` column list (not
+-- an existing table's row type) — the UI renders it as a table just
+-- like an insert-backed setof result.
+----------------------------------------------------------------
+create or replace function demo.preview_team_billables (
+  p_project_id uuid,
+  p_service_id uuid default null
+) returns table (
+  team_member_name varchar,
+  hours_logged numeric,
+  hourly_rate numeric,
+  estimated_cost numeric
+) language plpgsql security invoker
+set
+  search_path = '' as $$
+declare
+  v_rate numeric(10, 2);
+begin
+  if p_service_id is not null then
+    select default_rate into v_rate from demo.services where id = p_service_id;
+  end if;
+
+  return query
+  select
+    tm.name,
+    round(sum(te.duration) / 1000.0 / 3600.0, 2) as hours_logged,
+    coalesce(v_rate, tm.hourly_rate, 0) as hourly_rate,
+    round(sum(te.duration) / 1000.0 / 3600.0, 2) * coalesce(v_rate, tm.hourly_rate, 0) as estimated_cost
+  from demo.time_entries te
+  join demo.tasks t on t.id = te.task_id
+  join demo.team_members tm on tm.id = te.team_member_id
+  where t.project_id = p_project_id
+    and te.is_billable = true
+  group by tm.id, tm.name, tm.hourly_rate
+  order by tm.name;
+end;
+$$;
+
+comment on function demo.preview_team_billables (uuid, uuid) is '{
+    "type": "form",
+    "resource": "projects",
+    "name": "Preview team billables",
+    "description": "Estimate billable cost per team member from logged time, without creating an invoice.",
+    "icon": "Calculator",
+    "success_message": "Preview generated",
+    "fields": {
+        "sections": [
+            {"id": "preview", "title": "Preview", "fields": ["p_project_id", "p_service_id"]}
+        ],
+        "relations": {
+            "p_project_id": {"table": "projects", "column": "id", "display": ["name"]},
+            "p_service_id": {"table": "services", "column": "id", "display": ["name"]}
+        }
+    }
+}';
+
+revoke all on function demo.preview_team_billables (uuid, uuid)
+from
+  public,
+  authenticated,
+  service_role;
+
+grant
+execute on function demo.preview_team_billables (uuid, uuid) to "x-admin",
 "user";
 
 ----------------------------------------------------------------

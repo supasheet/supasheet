@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { useNavigate } from "@tanstack/react-router"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -27,6 +29,18 @@ import { runResourceFormMutationOptions } from "#/lib/supabase/data/form"
 
 export function getFormMeta(form: ResourceFormRow): FormMeta {
   return (form.comment ? JSON.parse(form.comment) : {}) as FormMeta
+}
+
+export type FormResult =
+  | { kind: "object"; data: Record<string, unknown> }
+  | { kind: "set"; data: Record<string, unknown>[] }
+
+function toFormResult(data: unknown): FormResult | null {
+  if (Array.isArray(data)) return { kind: "set", data }
+  if (data !== null && typeof data === "object") {
+    return { kind: "object", data: data as Record<string, unknown> }
+  }
+  return null
 }
 
 function withDisplayName<S extends DatabaseSchemas>(
@@ -90,6 +104,7 @@ export function useCustomForm<S extends DatabaseSchemas>({
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const meta = getFormMeta(formRow)
+  const [result, setResult] = useState<FormResult | null>(null)
 
   const writableCols = fieldsSchema
     .filter((col) => !isSkippedForCreate(col))
@@ -141,8 +156,9 @@ export function useCustomForm<S extends DatabaseSchemas>({
     onSubmit: async ({ value }) => {
       const payload = buildCreatePayload(value, writableCols)
 
+      let data: unknown
       try {
-        await runResourceForm({
+        data = await runResourceForm({
           schema: formRow.schema,
           functionName: formRow.name,
           params: payload,
@@ -158,9 +174,16 @@ export function useCustomForm<S extends DatabaseSchemas>({
         queryKey: ["supasheet", "resource-data", schema, resource],
       })
       toast.success(meta.success_message ?? `${meta.name} submitted`)
-      goBack()
+
+      const formResult = toFormResult(data)
+      if (!formResult) {
+        goBack()
+        return
+      }
+
+      setResult(formResult)
     },
   })
 
-  return { meta, writableCols, tableSchema, form }
+  return { meta, writableCols, tableSchema, form, result }
 }
