@@ -1,7 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
   Grid3X3Icon,
-  HistoryIcon,
   ImageIcon,
   LayoutGridIcon,
   ListIcon,
@@ -24,7 +23,6 @@ const VIEW_TYPE_ICON: Record<ViewLayoutType, LucideIcon> = {
   gallery: ImageIcon,
   list: ListIcon,
   tree: ListTreeIcon,
-  timeline: HistoryIcon,
 }
 
 function resolveMetaViewTarget<S extends DatabaseSchemas>(
@@ -58,15 +56,9 @@ function resolveMetaViewTarget<S extends DatabaseSchemas>(
       params: () => ({ schema, resource, listId: view.id }),
     }
   }
-  if (view.type === "tree") {
-    return {
-      to: "/$schema/resource/$resource/tree/$treeId" as const,
-      params: () => ({ schema, resource, treeId: view.id }),
-    }
-  }
   return {
-    to: "/$schema/resource/$resource/timeline/$timelineId" as const,
-    params: () => ({ schema, resource, timelineId: view.id }),
+    to: "/$schema/resource/$resource/tree/$treeId" as const,
+    params: () => ({ schema, resource, treeId: view.id }),
   }
 }
 

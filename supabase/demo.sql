@@ -11,7 +11,7 @@
 --   - Row Level Security scoped to native roles via pg_has_role()
 --   - All column data types: URL, TEL, EMAIL, RICH_TEXT, COLOR,
 --     PERCENTAGE, DURATION, file, AVATAR, enums, arrays
---   - All view layouts: kanban, calendar, gallery, list, tree, timeline
+--   - All view layouts: kanban, calendar, gallery, list, tree
 --   - Field sections, filter presets, quick_create,
 --     conditional field behavior, lookup fill + lookup filter
 --   - Singleton resource (workspace_settings)
@@ -827,15 +827,6 @@ comment on table demo.milestones is '{
             "title": "title",
             "description": "description",
             "date": "due_date"
-        },
-        {
-            "id": "timeline",
-            "name": "Roadmap",
-            "type": "timeline",
-            "title": "title",
-            "date": "due_date",
-            "description": "description",
-            "badge": "status"
         }
     ],
     "fields": {
