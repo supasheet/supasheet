@@ -11,6 +11,7 @@ import {
   isSkippedForCreate,
 } from "#/components/resource/resource-form-utils"
 import type {
+  ColumnMetadata,
   ColumnSchema,
   DatabaseSchemas,
   DatabaseTables,
@@ -26,6 +27,24 @@ import { runResourceFormMutationOptions } from "#/lib/supabase/data/form"
 
 export function getFormMeta(form: ResourceFormRow): FormMeta {
   return (form.comment ? JSON.parse(form.comment) : {}) as FormMeta
+}
+
+function withDisplayName<S extends DatabaseSchemas>(
+  col: ColumnSchema<S>
+): ColumnSchema<S> {
+  const paramName = col.name ?? col.id
+  if (!paramName?.startsWith("p_")) return col
+
+  const existingMeta = col.comment
+    ? (JSON.parse(col.comment) as ColumnMetadata)
+    : {}
+  return {
+    ...col,
+    comment: JSON.stringify({
+      ...existingMeta,
+      name: existingMeta.name ?? paramName.slice(2),
+    }),
+  }
 }
 
 function buildRelationshipConfig<S extends DatabaseSchemas>(
@@ -72,7 +91,9 @@ export function useCustomForm<S extends DatabaseSchemas>({
   const queryClient = useQueryClient()
   const meta = getFormMeta(formRow)
 
-  const writableCols = fieldsSchema.filter((col) => !isSkippedForCreate(col))
+  const writableCols = fieldsSchema
+    .filter((col) => !isSkippedForCreate(col))
+    .map(withDisplayName)
 
   const { mutateAsync: runResourceForm } = useMutation(
     runResourceFormMutationOptions()
