@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from "react"
+import { Fragment, Suspense, useMemo } from "react"
 
 import { Link, useNavigate } from "@tanstack/react-router"
 
@@ -7,6 +7,7 @@ import type { ColumnFiltersState } from "@tanstack/react-table"
 import type { LucideIcon } from "lucide-react"
 import {
   ArrowRightIcon,
+  ChevronDownIcon,
   ExternalLinkIcon,
   FileTextIcon,
   FilterIcon,
@@ -17,6 +18,7 @@ import { ChartSkeleton, ChartWidget } from "#/components/chart/chart-widget"
 import { DashboardWidget } from "#/components/dashboard/dashboard-widget"
 import { DynamicIcon } from "#/components/resource/resource-definition-utils"
 import { Button } from "#/components/ui/button"
+import { ButtonGroup } from "#/components/ui/button-group"
 import {
   Card,
   CardContent,
@@ -24,6 +26,15 @@ import {
   CardHeader,
   CardTitle,
 } from "#/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "#/components/ui/dropdown-menu"
 import { getFormMeta } from "#/hooks/use-custom-form"
 import { encodeFilterValue } from "#/lib/data-table"
 import type {
@@ -33,6 +44,7 @@ import type {
   TableMetadata,
 } from "#/lib/database-meta.types"
 import {
+  getAvailableViews,
   getPrimaryViewIcon,
   resolvePrimaryViewTarget,
 } from "#/lib/resource-view"
@@ -141,6 +153,10 @@ export function ResourceOverview<S extends DatabaseSchemas>({
   const navigate = useNavigate()
 
   const PrimaryViewIcon = useMemo(() => getPrimaryViewIcon(meta), [meta])
+  const availableViews = useMemo(
+    () => getAvailableViews(schema, resource, meta),
+    [schema, resource, meta]
+  )
 
   function openPrimaryView() {
     navigate(resolvePrimaryViewTarget(schema, resource, meta))
@@ -231,10 +247,38 @@ export function ResourceOverview<S extends DatabaseSchemas>({
             <p className="text-sm text-muted-foreground">{meta.description}</p>
           )}
         </div>
-        <Button size="sm" variant="outline" onClick={openPrimaryView}>
-          <PrimaryViewIcon className="size-3.5" />
-          Open view
-        </Button>
+        <ButtonGroup>
+          <Button size="sm" variant="outline" onClick={openPrimaryView}>
+            <PrimaryViewIcon className="size-3.5" />
+            Open view
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button size="sm" variant="outline" className="px-2">
+                  <ChevronDownIcon className="size-3.5" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" className="w-fit rounded-lg">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Views</DropdownMenuLabel>
+                {availableViews.map((view, index) => (
+                  <Fragment key={view.id}>
+                    {index > 0 &&
+                      view.builtIn !== availableViews[index - 1].builtIn && (
+                        <DropdownMenuSeparator />
+                      )}
+                    <DropdownMenuItem onClick={() => navigate(view.target)}>
+                      <view.icon className="size-3.5" />
+                      {view.label}
+                    </DropdownMenuItem>
+                  </Fragment>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ButtonGroup>
       </section>
 
       {overviewCards.length > 0 && (

@@ -204,7 +204,6 @@ function RouteComponent() {
   const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
-  const metaItems = meta.views ?? []
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
   const { data: resourceData } = useSuspenseQuery(
@@ -240,7 +239,7 @@ function RouteComponent() {
         <ResourceViewSwitcher
           schema={schema}
           resource={resource}
-          metaItems={metaItems}
+          meta={meta}
           currentViewId="grid"
         />
         {canInsert && (

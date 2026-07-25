@@ -3,8 +3,13 @@ import { Link } from "@tanstack/react-router"
 import * as LucideIcons from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
-import { Badge } from "#/components/ui/badge"
-import { Card, CardHeader, CardTitle } from "#/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "#/components/ui/card"
 import type {
   DatabaseSchemas,
   TableMetadata,
@@ -32,6 +37,10 @@ function ResourceIcon({
 }
 
 export function ResourceCard({ resource }: { resource: Resource }) {
+  const description =
+    resource.meta?.description ??
+    `A ${resource.type} in the ${formatTitle(resource.schema)} module`
+
   return (
     <Link
       to="/$schema/resource/$resource"
@@ -46,14 +55,13 @@ export function ResourceCard({ resource }: { resource: Resource }) {
             <CardTitle className="truncate">
               {resource.meta?.name ?? formatTitle(resource.name)}
             </CardTitle>
-            <Badge
-              variant="secondary"
-              className="ml-auto shrink-0 text-xs capitalize"
-            >
-              {resource.type}
-            </Badge>
           </div>
         </CardHeader>
+        <CardContent>
+          <CardDescription className="truncate text-xs">
+            {description}
+          </CardDescription>
+        </CardContent>
       </Card>
     </Link>
   )

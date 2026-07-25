@@ -215,7 +215,6 @@ function RouteComponent() {
     data: row,
   }))
 
-  const metaItems = meta.views ?? []
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
@@ -233,7 +232,7 @@ function RouteComponent() {
         <ResourceViewSwitcher
           schema={schema}
           resource={resource}
-          metaItems={metaItems}
+          meta={meta}
           currentViewId={galleryView.id}
         />
         {isTable && canInsert && (
