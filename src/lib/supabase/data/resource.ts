@@ -8,6 +8,7 @@ import type {
   DatabaseSchemas,
   DatabaseTables,
   DatabaseViews,
+  JoinClause,
   TableMetadata,
   TableSchema,
   ViewMetadata,
@@ -16,6 +17,17 @@ import type {
 import { parseComment } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
 import { applyFilters } from "#/lib/supabase/filter"
+
+function buildJoinsSelect(resource: string, join: JoinClause[] | undefined) {
+  return (
+    join
+      ?.map((j) => {
+        const target = j.table === resource ? j.on : `${j.table}!${j.on}`
+        return `,${j.alias ? `${j.alias}:` : ""}${target}(${j.columns.join(",")})`
+      })
+      .join("") ?? ""
+  )
+}
 
 export const navItemsQueryOptions = (schema: DatabaseSchemas) =>
   queryOptions({
@@ -200,16 +212,12 @@ export const resourceDataQueryOptions = <S extends DatabaseSchemas>(
       filters,
     ],
     queryFn: async () => {
-      const joins =
-        defaultQuery?.join?.map(
-          (j) =>
-            `,${j.alias ? `${j.alias}:` : ""}${j.table}!${j.on}(${j.columns.join(",")})`
-        ) || []
+      const joins = buildJoinsSelect(resource, defaultQuery?.join)
 
       let query = supabase
         .schema(schema)
         .from(resource)
-        .select((defaultQuery?.select?.join(",") ?? "*") + joins.join(""), {
+        .select((defaultQuery?.select?.join(",") ?? "*") + joins, {
           count: "exact",
         })
 
@@ -234,7 +242,7 @@ export const resourceDataQueryOptions = <S extends DatabaseSchemas>(
 
       const { data, count, error } = await query
       if (error) throw error
-
+      console.log(data)
       return {
         result: (data ?? []) as unknown as Record<string, unknown>[],
         count: count,
@@ -276,18 +284,14 @@ export const foreignTableDataQueryOptions = <S extends DatabaseSchemas>(
       filters,
     ],
     queryFn: async () => {
-      const joins =
-        defaultQuery?.join?.map(
-          (j) =>
-            `,${j.alias ? `${j.alias}:` : ""}${j.table}!${j.on}(${j.columns.join(",")})`
-        ) || []
+      const joins = buildJoinsSelect(resource, defaultQuery?.join)
 
       const baseSelect = selectClause ?? defaultQuery?.select?.join(",") ?? "*"
 
       let query = supabase
         .schema(schema)
         .from(resource)
-        .select(baseSelect + joins.join(""), { count: "exact" })
+        .select(baseSelect + joins, { count: "exact" })
         .eq(parentColumn as never, parentValue as never)
 
       if (page && pageSize) {
@@ -337,16 +341,12 @@ export const singleResourceDataQueryOptions = <S extends DatabaseSchemas>(
       defaultQuery?.join ?? null,
     ],
     queryFn: async () => {
-      const joins =
-        defaultQuery?.join?.map(
-          (j) =>
-            `,${j.alias ? `${j.alias}:` : ""}${j.table}!${j.on}(${j.columns.join(",")})`
-        ) || []
+      const joins = buildJoinsSelect(resource, defaultQuery?.join)
 
       let query = supabase
         .schema(schema)
         .from(resource)
-        .select("*" + joins.join(""))
+        .select("*" + joins)
       for (const [col, val] of Object.entries(pk)) {
         query = query.eq(col as never, val as never)
       }

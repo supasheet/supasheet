@@ -239,7 +239,17 @@ set
         t.relationships
     FROM supasheet.tables t
     WHERE has_table_privilege(p_caller, t.id::oid, 'select')
-        AND NOT (t.schema = schema_name AND t.name = table_name)
+        AND (
+            NOT (t.schema = schema_name AND t.name = table_name)
+            OR EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements(t.relationships) AS rel
+                WHERE rel->>'source_schema' = schema_name
+                    AND rel->>'source_table_name' = table_name
+                    AND rel->>'target_table_schema' = schema_name
+                    AND rel->>'target_table_name' = table_name
+            )
+        )
         AND EXISTS (
             SELECT 1
             FROM jsonb_array_elements(t.relationships) AS rel

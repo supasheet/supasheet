@@ -369,10 +369,20 @@ export type FormMeta = {
   fields?: FormFieldsConfig
 }
 
+export type AggregateFunction =
+  | "none"
+  | "count"
+  | "count_distinct"
+  | "sum"
+  | "avg"
+  | "min"
+  | "max"
+
 export type ColumnMetadata = {
   name?: string
   description?: string
   icon?: IconName
+  aggregate?: AggregateFunction
 }
 
 export type EnumColumnMetadata = ColumnMetadata & {

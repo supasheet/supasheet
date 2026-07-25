@@ -4,6 +4,7 @@ import type { RelatedTable } from "./classify-relationships"
 
 export type EmbeddedRelatedTable = Omit<RelatedTable, "columns"> & {
   __embedKey: string
+  __preferReverse?: boolean
 }
 
 export function addEmbedKeys(
@@ -19,6 +20,38 @@ export function addEmbedKeys(
   const embeddedTables: EmbeddedRelatedTable[] = []
 
   for (const table of tables) {
+    const isSelfRelatedTable = table.schema === schema && table.name === resource
+
+    if (isSelfRelatedTable) {
+      const selfRels = (table.relationships ?? []).filter(
+        (rel) =>
+          rel.source_schema === schema &&
+          rel.source_table_name === resource &&
+          rel.target_table_schema === schema &&
+          rel.target_table_name === resource
+      )
+
+      for (const rel of selfRels) {
+        const parentKey =
+          metaJoins?.find(
+            (j) => j.table === rel.target_table_name && j.on === rel.source_column_name
+          )?.alias ?? rel.source_column_name
+
+        embeddedTables.push({
+          ...table,
+          relationships: [rel],
+          __embedKey: parentKey,
+        })
+        embeddedTables.push({
+          ...table,
+          relationships: [rel],
+          __embedKey: rel.source_table_name,
+          __preferReverse: true,
+        })
+      }
+      continue
+    }
+
     const rels = (table.relationships ?? []).filter(
       (rel) =>
         (rel.source_schema === schema && rel.source_table_name === resource) ||

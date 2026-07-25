@@ -201,6 +201,7 @@ export function getColumnMetadata(
   const baseOptions = {
     name,
     description: commentMeta.description,
+    aggregate: commentMeta.aggregate,
     defaultValue,
     disabled,
     required,

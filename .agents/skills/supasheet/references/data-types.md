@@ -49,6 +49,12 @@ comment on column app.tickets.title is '{"name": "Ticket Title", "description": 
 
 `name` overrides the header label in tables, reports, FK display columns, and CSV export. `icon` is a Lucide React icon name.
 
+`aggregate` sets the default footer aggregate function shown under a column in the sheet view — `"count"`, `"count_distinct"`, `"sum"`, `"avg"`, `"min"`, `"max"`, or `"none"` (default). `sum`/`avg` only apply to numeric-backed columns (numbers, `supasheet.PERCENTAGE`, `supasheet.DURATION`, `supasheet.RATING`, money); `min`/`max` also work on dates/times. Users can still change the aggregate function per column at runtime from the table footer.
+
+```sql
+comment on column app.invoices.total is '{"aggregate": "sum"}';
+```
+
 ### File columns (`supasheet.FILE`)
 
 `accept` (default `"*"`), `maxSize` in bytes (default 5242880), `maxFiles` (default 1):

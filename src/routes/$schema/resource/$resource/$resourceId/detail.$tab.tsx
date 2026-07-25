@@ -54,6 +54,7 @@ export const Route = createFileRoute(
       activeTable,
       columnsSchema
     )
+    if (activeTable.__preferReverse) classification.oneToOne = undefined
 
     const oneToOne = classification.oneToOne
     if (oneToOne) {

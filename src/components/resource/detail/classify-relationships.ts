@@ -45,6 +45,31 @@ export function classifyRelationships(
     primary_keys: tableSchema.primary_keys ?? [],
   } as RelatedTable
 
+  const selfRel = table.relationships.find(
+    (rel) =>
+      rel.source_schema === schema &&
+      rel.source_table_name === resource &&
+      rel.target_table_schema === schema &&
+      rel.target_table_name === resource
+  )
+  if (selfRel) {
+    return {
+      oneToOne: {
+        ...table,
+        __fkColumn: selfRel.source_column_name,
+        __foreignMatchColumn: selfRel.target_column_name,
+        __parentMatchColumn: selfRel.source_column_name,
+      },
+      oneToMany: {
+        ...table,
+        __parentColumn: selfRel.source_column_name,
+        __targetColumn: selfRel.target_column_name,
+        __selectClause: "*",
+      },
+      manyToMany: undefined,
+    }
+  }
+
   const oneToOneAsSource = table.relationships.find(
     (rel) => rel.source_schema === schema && rel.source_table_name === resource
   )

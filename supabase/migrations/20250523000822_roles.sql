@@ -107,14 +107,10 @@ create trigger on_auth_user_created_assign_role
 before insert on auth.users for each row
 execute function supasheet.assign_default_role ();
 
--- RLS is enabled on supasheet.users in 20250523000814_users.sql. The
--- grant to "user" on this table lives in supabase/seed.sql instead of
--- here, since "user" isn't created until seed.sql runs.
-revoke all on table supasheet.users
-from
-  authenticated,
-  service_role;
-
+-- RLS is enabled on supasheet.users in 20250523000814_users.sql, which
+-- also grants select/update on it to "authenticated" — not revoked
+-- here, since "authenticated" is the role every signed-in user runs
+-- as regardless of their "x-admin"/"user"/"admin" JWT role claim.
 grant
 select
 ,

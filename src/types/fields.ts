@@ -1,11 +1,12 @@
 import type { ReactElement } from "react"
 
-import type { ColumnSchema } from "#/lib/database-meta.types"
+import type { AggregateFunction, ColumnSchema } from "#/lib/database-meta.types"
 
 import type { FilterVariant } from "./data-table"
 
 export type ColumnFieldMetadata = {
   name: string
+  aggregate?: AggregateFunction
   variant:
     | "uuid"
     | "text"

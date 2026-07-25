@@ -13,6 +13,7 @@ import {
 } from "#/components/ui/table"
 import { cn } from "#/lib/utils"
 
+import { DataTableFooter } from "./data-table-footer"
 import { DataTablePagination } from "./data-table-pagination"
 
 interface DataTableProps<TData> {
@@ -75,6 +76,7 @@ export function DataTable<TData>({
               </TableRow>
             )}
           </TableBody>
+          <DataTableFooter table={table} />
         </TableRoot>
       </div>
       <DataTablePagination table={table} />
