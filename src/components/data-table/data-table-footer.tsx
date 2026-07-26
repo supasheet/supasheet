@@ -46,7 +46,7 @@ export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
 
   return (
     <TableFooter>
-      <TableRow>
+      <TableRow className="h-10">
         {columns.map((column) => {
           const meta = column.columnDef.meta
           if (!meta) return <TableCell key={column.id} className="h-10" />
@@ -69,7 +69,7 @@ export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
                 >
                   <SelectTrigger
                     size="sm"
-                    className="h-6 shrink-0 border-none bg-transparent px-1 text-xs text-muted-foreground shadow-none hover:bg-muted"
+                    className="h-6! shrink-0 border-none bg-transparent px-1 text-xs text-muted-foreground shadow-none hover:bg-muted"
                   >
                     <SelectValue />
                   </SelectTrigger>
