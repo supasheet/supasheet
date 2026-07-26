@@ -17,7 +17,11 @@ import {
 } from "#/components/ui/alert-dialog"
 import { Button } from "#/components/ui/button"
 import { Input } from "#/components/ui/input"
-import { storageDeleteMutationOptions } from "#/lib/supabase/data/storage"
+import type { FileObject } from "#/lib/supabase/data/storage"
+import {
+  storageDeleteFolderMutationOptions,
+  storageDeleteMutationOptions,
+} from "#/lib/supabase/data/storage"
 
 import { CreateFolderDialog } from "./create-folder-dialog"
 import { UploadDialog } from "./upload-dialog"
@@ -25,6 +29,7 @@ import { UploadDialog } from "./upload-dialog"
 interface StorageToolbarProps {
   bucketId: string
   currentPath: string[]
+  items: FileObject[]
   selectedItems: Set<string>
   onClearSelection: () => void
   search: string
@@ -34,6 +39,7 @@ interface StorageToolbarProps {
 export function StorageToolbar({
   bucketId,
   currentPath,
+  items,
   selectedItems,
   onClearSelection,
   search,
@@ -42,22 +48,39 @@ export function StorageToolbar({
   const [deleteOpen, setDeleteOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { mutateAsync: deleteFiles, isPending: isDeleting } = useMutation(
+  const { mutateAsync: deleteFiles, isPending: isDeletingFiles } = useMutation(
     storageDeleteMutationOptions
   )
+  const { mutateAsync: deleteFolder, isPending: isDeletingFolder } =
+    useMutation(storageDeleteFolderMutationOptions)
+  const isDeleting = isDeletingFiles || isDeletingFolder
 
   const handleDeleteSelected = async () => {
     const folderPath = currentPath.join("/")
-    const paths = Array.from(selectedItems).map((name) =>
+    const selected = items.filter((item) => selectedItems.has(item.name))
+    const folders = selected.filter((item) => !item.id)
+    const files = selected.filter((item) => item.id)
+
+    const toFullPath = (name: string) =>
       folderPath ? `${folderPath}/${name}` : name
-    )
+
     try {
-      await deleteFiles({ bucketId, paths })
+      await Promise.all([
+        ...folders.map((folder) =>
+          deleteFolder({ bucketId, folderPath: toFullPath(folder.name) })
+        ),
+        files.length > 0
+          ? deleteFiles({
+              bucketId,
+              paths: files.map((file) => toFullPath(file.name)),
+            })
+          : Promise.resolve(null),
+      ])
       await queryClient.invalidateQueries({
         queryKey: ["storage", "files", bucketId],
       })
       toast.success(
-        `${paths.length} ${paths.length === 1 ? "item" : "items"} deleted`
+        `${selected.length} ${selected.length === 1 ? "item" : "items"} deleted`
       )
       onClearSelection()
     } catch (err) {

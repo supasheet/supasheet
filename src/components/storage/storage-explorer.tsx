@@ -79,6 +79,7 @@ export function StorageExplorer({
       <StorageToolbar
         bucketId={bucketId}
         currentPath={path}
+        items={filtered}
         selectedItems={selectedItems}
         onClearSelection={() => setSelectedItems(new Set())}
         search={search}
