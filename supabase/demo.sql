@@ -74,7 +74,6 @@ grant "user",
 grant authenticated to "user",
 "admin";
 
-
 ----------------------------------------------------------------
 -- Enums + permissions (must commit before use)
 ----------------------------------------------------------------
@@ -1963,10 +1962,7 @@ execute on function demo.create_project_for_client (uuid, varchar, uuid, numeric
 -- created rows as a table instead of just toasting and navigating
 -- away.
 ----------------------------------------------------------------
-create or replace function demo.generate_invoice_items_from_tasks (
-  p_invoice_id uuid,
-  p_service_id uuid
-) returns setof demo.invoice_items language plpgsql security invoker
+create or replace function demo.generate_invoice_items_from_tasks (p_invoice_id uuid, p_service_id uuid) returns setof demo.invoice_items language plpgsql security invoker
 set
   search_path = '' as $$
 declare
@@ -2038,10 +2034,7 @@ execute on function demo.generate_invoice_items_from_tasks (uuid, uuid) to "x-ad
 -- an existing table's row type) — the UI renders it as a table just
 -- like an insert-backed setof result.
 ----------------------------------------------------------------
-create or replace function demo.preview_team_billables (
-  p_project_id uuid,
-  p_service_id uuid default null
-) returns table (
+create or replace function demo.preview_team_billables (p_project_id uuid, p_service_id uuid default null) returns table (
   team_member_name varchar,
   hours_logged numeric,
   hourly_rate numeric,

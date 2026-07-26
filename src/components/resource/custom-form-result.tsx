@@ -1,4 +1,3 @@
-import type { FormResult } from "#/hooks/use-custom-form"
 import {
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "#/components/ui/table"
+import type { FormResult } from "#/hooks/use-custom-form"
 import { computeAggregate, formatAggregateValue } from "#/lib/aggregate"
 import { formatTitle } from "#/lib/format"
 
@@ -33,7 +33,9 @@ function formatCellValue(value: unknown) {
 }
 
 function isNumericColumn(values: unknown[]) {
-  const nonNull = values.filter((v) => v !== null && v !== undefined && v !== "")
+  const nonNull = values.filter(
+    (v) => v !== null && v !== undefined && v !== ""
+  )
   return (
     nonNull.length > 0 &&
     nonNull.every((v) => typeof v === "number" || !isNaN(Number(v)))
@@ -48,7 +50,9 @@ function CustomFormResultCard({ record }: { record: Record<string, unknown> }) {
       <CardHeader>
         <div className="space-y-1.5">
           <CardTitle>Result</CardTitle>
-          <CardDescription>View resource details and properties</CardDescription>
+          <CardDescription>
+            View resource details and properties
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2">

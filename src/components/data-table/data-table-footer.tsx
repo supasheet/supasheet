@@ -23,8 +23,12 @@ interface DataTableFooterProps<TData> {
 }
 
 export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
-  const columns = table.getAllLeafColumns().filter((column) => column.getIsVisible())
-  const aggregatableColumns = columns.filter((column) => !!column.columnDef.meta)
+  const columns = table
+    .getAllLeafColumns()
+    .filter((column) => column.getIsVisible())
+  const aggregatableColumns = columns.filter(
+    (column) => !!column.columnDef.meta
+  )
 
   const [selected, setSelected] = useState<Record<string, AggregateFunction>>(
     () =>

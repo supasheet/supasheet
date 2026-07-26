@@ -371,13 +371,7 @@ export type FormMeta = {
 }
 
 export type AggregateFunction =
-  | "none"
-  | "count"
-  | "count_distinct"
-  | "sum"
-  | "avg"
-  | "min"
-  | "max"
+  "none" | "count" | "count_distinct" | "sum" | "avg" | "min" | "max"
 
 export type ColumnMetadata = {
   name?: string

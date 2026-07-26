@@ -38,9 +38,7 @@ export function CustomForm<S extends DatabaseSchemas>({
         <div className="mb-4 space-y-1">
           <h2 className="text-lg font-semibold">{meta.name}</h2>
           {meta.description && (
-            <p className="text-sm text-muted-foreground">
-              {meta.description}
-            </p>
+            <p className="text-sm text-muted-foreground">{meta.description}</p>
           )}
         </div>
         <ResourceFormLayout

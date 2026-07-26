@@ -48,7 +48,9 @@ export function computeAggregate(
 ): number | string | null {
   if (fn === "none") return null
 
-  const nonNull = values.filter((v) => v !== null && v !== undefined && v !== "")
+  const nonNull = values.filter(
+    (v) => v !== null && v !== undefined && v !== ""
+  )
 
   if (fn === "count") return nonNull.length
   if (fn === "count_distinct")

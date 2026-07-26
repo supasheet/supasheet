@@ -20,7 +20,8 @@ export function addEmbedKeys(
   const embeddedTables: EmbeddedRelatedTable[] = []
 
   for (const table of tables) {
-    const isSelfRelatedTable = table.schema === schema && table.name === resource
+    const isSelfRelatedTable =
+      table.schema === schema && table.name === resource
 
     if (isSelfRelatedTable) {
       const selfRels = (table.relationships ?? []).filter(
@@ -34,7 +35,9 @@ export function addEmbedKeys(
       for (const rel of selfRels) {
         const parentKey =
           metaJoins?.find(
-            (j) => j.table === rel.target_table_name && j.on === rel.source_column_name
+            (j) =>
+              j.table === rel.target_table_name &&
+              j.on === rel.source_column_name
           )?.alias ?? rel.source_column_name
 
         embeddedTables.push({
