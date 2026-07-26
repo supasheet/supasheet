@@ -42,7 +42,6 @@ export const Route = createFileRoute("/$schema/resource/$resource")({
 
     const resourceSchema = tableSchema ?? viewSchema
     if (!resourceSchema) throw notFound()
-    if (!columnsSchema?.length) throw notFound()
 
     return { privileges, resourceSchema, columnsSchema }
   },
