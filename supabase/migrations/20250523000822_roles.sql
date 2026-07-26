@@ -92,21 +92,6 @@ from
   authenticated,
   service_role;
 
-create or replace function supasheet.assign_default_role () returns trigger language plpgsql security definer
-set
-  search_path = '' as $$
-begin
-  if new.raw_app_meta_data ->> 'role' is null then
-    new.raw_app_meta_data := coalesce(new.raw_app_meta_data, '{}'::jsonb) || jsonb_build_object('role', 'user');
-  end if;
-  return new;
-end;
-$$;
-
-create trigger on_auth_user_created_assign_role
-before insert on auth.users for each row
-execute function supasheet.assign_default_role ();
-
 -- RLS is enabled on supasheet.users in 20250523000814_users.sql, which
 -- also grants select/update on it to "authenticated" — not revoked
 -- here, since "authenticated" is the role every signed-in user runs

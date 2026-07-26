@@ -118,7 +118,7 @@ function RouteComponent() {
         <div className="@container/main flex flex-1 flex-col">
           <div className="mx-auto px-4 pt-4">
             <Tabs value={activeTab} onValueChange={handleTabChange}>
-              <TabsList variant="line">
+              <TabsList variant="default">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="edit" disabled={isSelf || !canUpdate}>
                   Edit

@@ -74,6 +74,23 @@ grant "user",
 grant authenticated to "user",
 "admin";
 
+create or replace function supasheet.assign_default_role () returns trigger language plpgsql security definer
+set
+  search_path = '' as $$
+begin
+  if new.raw_app_meta_data ->> 'role' is null then
+    new.raw_app_meta_data := coalesce(new.raw_app_meta_data, '{}'::jsonb) || jsonb_build_object('role', 'user');
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created_assign_role on auth.users;
+
+create trigger on_auth_user_created_assign_role
+before insert on auth.users for each row
+execute function supasheet.assign_default_role ();
+
 ----------------------------------------------------------------
 -- Enums + permissions (must commit before use)
 ----------------------------------------------------------------

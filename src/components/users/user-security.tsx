@@ -115,7 +115,9 @@ export function UserSecurity({ user }: { user: AuthUser }) {
               }
             >
               <SelectTrigger className="w-32">
-                <SelectValue />
+                <SelectValue>
+                  {(value: string | null) => value ?? "None"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={null}>None</SelectItem>

@@ -10,42 +10,44 @@ claim itself.
 
 ## The pieces (base migration `20250523000822_roles.sql`)
 
+Only `x-admin` is created out of the box — later core migrations
+structurally depend on it (its grants/policies on `supasheet.users` and
+`supasheet.audit_logs`). No other role exists until you add one:
+
 ```sql
 -- real, nologin Postgres roles — no app-level enum wraps them, pg_roles is
 -- the source of truth for which roles exist
 create role "x-admin" nologin;
 
-create role "admin" nologin;
-
-create role "user" nologin;
-
-grant "x-admin",
-"admin",
-"user" to authenticator;
+grant "x-admin" to authenticator;
 
 -- lets PostgREST SET ROLE
-grant authenticated to "x-admin",
-"admin",
-"user";
+grant authenticated to "x-admin";
 
 -- `to authenticated` policies still apply
 supasheet.has_role (requested_role text) returns boolean -- pg_has_role(current_user, requested_role, 'member')
 supasheet.whoami () returns jsonb -- { user_id, role, current_user } — debug/UI helper
 supasheet.custom_access_token (event jsonb) returns jsonb -- the Auth Hook (see below)
-supasheet.assign_default_role () -- before insert on auth.users trigger, defaults role to 'user'
 ```
 
 Neither `app_permission` nor `app_role` exist — there's nothing to validate a permission
 string against, since grants are the source of truth.
 
+`supabase/seed.sql` has a commented-out, inactive reference block that
+scaffolds `"user"`/`"admin"` roles (plus a trigger to auto-assign `"user"` on
+sign-up) — uncomment it if you want those as starting points instead of
+defining your own from scratch.
+
 ## Built-in roles
 
-- `user` — default; auto-assigned on sign-up by the `assign_default_role()`
-  trigger; no grants until you add them.
-- `admin` — intermediate; nothing built in.
-- `x-admin` — super-admin; the only role with broad `supasheet.users` access
-  and the target of every `pg_has_role`-based admin override. Always keep at
-  least one x-admin.
+- `x-admin` — the only role that exists by default; super-admin, the only
+  role with broad `supasheet.users` access and the target of every
+  `pg_has_role`-based admin override. Always keep at least one x-admin.
+- Every other role (including the optional `user`/`admin` scaffolded in
+  `supabase/seed.sql`) is opt-in — nothing is auto-assigned; a new user
+  (sign-up, invite, or admin-created) starts with no role beyond the bare
+  `authenticated` every signed-in user gets, until an x-admin assigns one via
+  the Users > Security tab.
 
 ## The Custom Access Token Hook
 
@@ -165,8 +167,9 @@ grant authenticated to "manager";
 -- then grant it access per resource in whichever migrations need it
 ```
 
-Default role for new sign-ups: `create or replace` `supasheet.assign_default_role()`
-to change the default from `'user'`.
+New users get no role by default. To auto-assign one on sign-up, add a
+`before insert on auth.users` trigger that sets `new.raw_app_meta_data` to
+include `{"role": "user"}` (or whichever role you want as the default).
 
 ## Rules of thumb
 
@@ -188,8 +191,10 @@ to change the default from `'user'`.
 
 ## Authoritative sources
 
-- `supabase/migrations/20250523000822_roles.sql` — role creation, grants,
-  `has_role`/`whoami`/`custom_access_token`, `assign_default_role` trigger
+- `supabase/migrations/20250523000822_roles.sql` — `x-admin` role creation,
+  grants, `has_role`/`whoami`/`custom_access_token`
+- `supabase/seed.sql` — commented-out reference scaffold for optional
+  `user`/`admin` roles and a default-role-on-sign-up trigger
 - `supabase/migrations/99999999999999_meta.sql` — grant-aware discovery
   functions
 - `supabase/config.toml` — `[auth.hook.custom_access_token]` registration

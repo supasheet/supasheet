@@ -1,35 +1,62 @@
 -- ================================================================
--- Custom Postgres roles ("user", "admin") not needed by core migrations
+-- Custom Postgres roles ("user", "admin") — reference only, inactive
 -- ================================================================
 -- "x-admin" is created in supabase/migrations/20250523000822_roles.sql
 -- (along with its grants/policies on supasheet.users and
 -- supasheet.audit_logs) because core migrations that run after it
--- structurally depend on it existing. "user" and "admin" have no such
--- dependency — nothing in supabase/migrations/ needs either of them to
--- exist before seed.sql runs — so they're created here instead, kept
--- out of the versioned migration chain.
+-- structurally depend on it existing. "user" and "admin" are not created
+-- at all out of the box — there's nothing granted to either, so a fresh
+-- install only ever has "x-admin" as a usable role beyond the bare
+-- "authenticated" every signed-in user gets. Uncomment this block (kept
+-- here rather than in a migration, since nothing before seed.sql needs
+-- it) if you want "user"/"admin" scaffolded as starting points to grant
+-- things to:
 --
--- NOTE: this reruns on every `supabase db reset` (unlike a migration,
--- which only ever runs once against a given database), so every
--- statement here must be idempotent — `if not exists` guards on
--- `create role`, plain `grant`/`revoke` (safe to repeat).
-do $$
-begin
-  if not exists (select 1 from pg_roles where rolname = 'user') then
-    create role "user" nologin;
-  end if;
+-- do $$
+-- begin
+--   if not exists (select 1 from pg_roles where rolname = 'user') then
+--     create role "user" nologin;
+--   end if;
+--
+--   if not exists (select 1 from pg_roles where rolname = 'admin') then
+--     create role "admin" nologin;
+--   end if;
+-- end;
+-- $$;
+--
+-- grant "user",
+-- "admin" to authenticator;
+--
+-- grant authenticated to "user",
+-- "admin";
 
-  if not exists (select 1 from pg_roles where rolname = 'admin') then
-    create role "admin" nologin;
-  end if;
-end;
-$$;
-
-grant "user",
-"admin" to authenticator;
-
-grant authenticated to "user",
-"admin";
+-- ================================================================
+-- Default role for new sign-ups (reference only — inactive)
+-- ================================================================
+-- No auth.users row gets a role by default: a new user (self sign-up,
+-- invited, or admin-created) only ever has the bare "authenticated" role
+-- until an x-admin assigns one via the Users > Security tab. "x-admin"
+-- itself is never auto-assigned either — it only exists on the users
+-- seeded with it explicitly below. This trigger references the "user"
+-- role from the block above, so uncomment both together if you want new
+-- sign-ups to default to "user" instead:
+--
+-- create or replace function supasheet.assign_default_role () returns trigger language plpgsql security definer
+-- set
+--   search_path = '' as $$
+-- begin
+--   if new.raw_app_meta_data ->> 'role' is null then
+--     new.raw_app_meta_data := coalesce(new.raw_app_meta_data, '{}'::jsonb) || jsonb_build_object('role', 'user');
+--   end if;
+--   return new;
+-- end;
+-- $$;
+--
+-- drop trigger if exists on_auth_user_created_assign_role on auth.users;
+--
+-- create trigger on_auth_user_created_assign_role
+-- before insert on auth.users for each row
+-- execute function supasheet.assign_default_role ();
 
 insert into
   "auth"."users" (
@@ -184,7 +211,7 @@ values
     '',
     null,
     '2024-04-20 08:38:00.93864+00',
-    '{"provider": "email", "providers": ["email"], "role": "user"}',
+    '{"provider": "email", "providers": ["email"]}',
     '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b4", "email": "user@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
@@ -282,7 +309,7 @@ values
     '',
     null,
     '2024-04-20 08:38:00.93864+00',
-    '{"provider": "email", "providers": ["email"], "role": "user"}',
+    '{"provider": "email", "providers": ["email"]}',
     '{"sub": "b73eb03e-fb7a-424d-84ff-18e2791ce0b1", "email": "user1@supasheet.app", "email_verified": false, "phone_verified": false}',
     null,
     '2024-04-20 08:37:43.3385+00',
@@ -345,7 +372,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'john.doe@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "john.doe@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -379,7 +406,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'jane.smith@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "jane.smith@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -413,7 +440,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'bob.johnson@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "bob.johnson@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -447,7 +474,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'alice.williams@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "alice.williams@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -481,7 +508,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'charlie.brown@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "charlie.brown@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -515,7 +542,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'diana.prince@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "diana.prince@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -549,7 +576,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'ethan.hunt@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "ethan.hunt@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -583,7 +610,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'fiona.gallagher@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "fiona.gallagher@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -617,7 +644,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'george.lucas@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "george.lucas@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -651,7 +678,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'hannah.montana@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "hannah.montana@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -685,7 +712,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'isaac.newton@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "isaac.newton@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -719,7 +746,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'julia.roberts@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "julia.roberts@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -753,7 +780,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'kevin.hart@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "kevin.hart@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -787,7 +814,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'laura.palmer@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "laura.palmer@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -821,7 +848,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'michael.scott@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "michael.scott@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -855,7 +882,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'nancy.drew@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "nancy.drew@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -889,7 +916,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'oscar.wilde@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "oscar.wilde@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -923,7 +950,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'patricia.lee@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "patricia.lee@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -957,7 +984,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'quincy.jones@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "quincy.jones@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -991,7 +1018,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'rachel.green@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "rachel.green@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -1025,7 +1052,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'sam.wilson@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "sam.wilson@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -1059,7 +1086,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'tina.fey@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "tina.fey@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -1093,7 +1120,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'uma.thurman@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "uma.thurman@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -1127,7 +1154,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'victor.hugo@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "victor.hugo@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
@@ -1161,7 +1188,7 @@ BEGIN
     VALUES ('00000000-0000-0000-0000-000000000000', new_user_id, 'authenticated',
             'authenticated', 'wendy.williams@example.com', '$2a$10$/.78oHxqRLOcnyMeoqYulOcOWhyIeKoyaBYvZhQ0jhEFDtg1ddEPa',
             '2024-04-20 08:38:00.860548+00', NULL, '', '2024-04-20 08:37:43.343769+00', '', NULL, '', '', NULL,
-            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"], "role": "user"}'::jsonb,
+            '2024-04-20 08:38:00.93864+00', '{"provider": "email", "providers": ["email"]}'::jsonb,
             ('{"sub": "' || new_user_id::text || '", "email": "wendy.williams@example.com", "email_verified": true, "phone_verified": false}')::jsonb,
             NULL, '2024-04-20 08:37:43.3385+00', '2024-04-20 08:38:00.942809+00', NULL, NULL, '', '', NULL, '', 0, NULL, '',
             NULL, false, NULL, false);
