@@ -23,8 +23,11 @@ import { Route as SchemaIndexRouteImport } from './routes/$schema/index'
 import { Route as AuthUpdatePasswordRouteImport } from './routes/auth/update-password'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AuthPhoneOtpRouteImport } from './routes/auth/phone-otp'
 import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
+import { Route as AuthMagicLinkRouteImport } from './routes/auth/magic-link'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AuthEmailOtpRouteImport } from './routes/auth/email-otp'
 import { Route as AccountSecurityRouteImport } from './routes/account/security'
 import { Route as AccountRolesPermissionsRouteImport } from './routes/account/roles-permissions'
 import { Route as AccountProfileRouteImport } from './routes/account/profile'
@@ -146,14 +149,29 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthPhoneOtpRoute = AuthPhoneOtpRouteImport.update({
+  id: '/phone-otp',
+  path: '/phone-otp',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthMfaRoute = AuthMfaRouteImport.update({
   id: '/mfa',
   path: '/mfa',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthMagicLinkRoute = AuthMagicLinkRouteImport.update({
+  id: '/magic-link',
+  path: '/magic-link',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthEmailOtpRoute = AuthEmailOtpRouteImport.update({
+  id: '/email-otp',
+  path: '/email-otp',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const AccountSecurityRoute = AccountSecurityRouteImport.update({
@@ -449,8 +467,11 @@ export interface FileRoutesByFullPath {
   '/account/profile': typeof AccountProfileRoute
   '/account/roles-permissions': typeof AccountRolesPermissionsRoute
   '/account/security': typeof AccountSecurityRoute
+  '/auth/email-otp': typeof AuthEmailOtpRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/magic-link': typeof AuthMagicLinkRoute
   '/auth/mfa': typeof AuthMfaRoute
+  '/auth/phone-otp': typeof AuthPhoneOtpRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
@@ -512,8 +533,11 @@ export interface FileRoutesByTo {
   '/account/profile': typeof AccountProfileRoute
   '/account/roles-permissions': typeof AccountRolesPermissionsRoute
   '/account/security': typeof AccountSecurityRoute
+  '/auth/email-otp': typeof AuthEmailOtpRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/magic-link': typeof AuthMagicLinkRoute
   '/auth/mfa': typeof AuthMfaRoute
+  '/auth/phone-otp': typeof AuthPhoneOtpRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
@@ -578,8 +602,11 @@ export interface FileRoutesById {
   '/account/profile': typeof AccountProfileRoute
   '/account/roles-permissions': typeof AccountRolesPermissionsRoute
   '/account/security': typeof AccountSecurityRoute
+  '/auth/email-otp': typeof AuthEmailOtpRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/magic-link': typeof AuthMagicLinkRoute
   '/auth/mfa': typeof AuthMfaRoute
+  '/auth/phone-otp': typeof AuthPhoneOtpRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/auth/update-password': typeof AuthUpdatePasswordRoute
@@ -648,8 +675,11 @@ export interface FileRouteTypes {
     | '/account/profile'
     | '/account/roles-permissions'
     | '/account/security'
+    | '/auth/email-otp'
     | '/auth/forgot-password'
+    | '/auth/magic-link'
     | '/auth/mfa'
+    | '/auth/phone-otp'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/auth/update-password'
@@ -711,8 +741,11 @@ export interface FileRouteTypes {
     | '/account/profile'
     | '/account/roles-permissions'
     | '/account/security'
+    | '/auth/email-otp'
     | '/auth/forgot-password'
+    | '/auth/magic-link'
     | '/auth/mfa'
+    | '/auth/phone-otp'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/auth/update-password'
@@ -776,8 +809,11 @@ export interface FileRouteTypes {
     | '/account/profile'
     | '/account/roles-permissions'
     | '/account/security'
+    | '/auth/email-otp'
     | '/auth/forgot-password'
+    | '/auth/magic-link'
     | '/auth/mfa'
+    | '/auth/phone-otp'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/auth/update-password'
@@ -942,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/auth/phone-otp': {
+      id: '/auth/phone-otp'
+      path: '/phone-otp'
+      fullPath: '/auth/phone-otp'
+      preLoaderRoute: typeof AuthPhoneOtpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/auth/mfa': {
       id: '/auth/mfa'
       path: '/mfa'
@@ -949,11 +992,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthMfaRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/auth/magic-link': {
+      id: '/auth/magic-link'
+      path: '/magic-link'
+      fullPath: '/auth/magic-link'
+      preLoaderRoute: typeof AuthMagicLinkRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
       path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/email-otp': {
+      id: '/auth/email-otp'
+      path: '/email-otp'
+      fullPath: '/auth/email-otp'
+      preLoaderRoute: typeof AuthEmailOtpRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/account/security': {
@@ -1560,16 +1617,22 @@ const AiRouteRouteWithChildren =
   AiRouteRoute._addFileChildren(AiRouteRouteChildren)
 
 interface AuthRouteRouteChildren {
+  AuthEmailOtpRoute: typeof AuthEmailOtpRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthMagicLinkRoute: typeof AuthMagicLinkRoute
   AuthMfaRoute: typeof AuthMfaRoute
+  AuthPhoneOtpRoute: typeof AuthPhoneOtpRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   AuthUpdatePasswordRoute: typeof AuthUpdatePasswordRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthEmailOtpRoute: AuthEmailOtpRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthMagicLinkRoute: AuthMagicLinkRoute,
   AuthMfaRoute: AuthMfaRoute,
+  AuthPhoneOtpRoute: AuthPhoneOtpRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   AuthUpdatePasswordRoute: AuthUpdatePasswordRoute,

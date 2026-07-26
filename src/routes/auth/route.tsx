@@ -5,15 +5,21 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
 import { TableIcon } from "lucide-react"
 
 import { useAppConfig } from "#/hooks/use-app-config"
+import { authConfigQueryOptions } from "#/lib/supabase/data/auth"
 
 export const Route = createFileRoute("/auth")({
-  beforeLoad: ({ context, location }) => {
+  beforeLoad: async ({ context, location }) => {
     if (
       context.user &&
       location.pathname !== "/auth/update-password" &&
       location.pathname !== "/auth/mfa"
     )
       throw redirect({ to: "/" })
+
+    const authConfig = await context.queryClient.ensureQueryData(
+      authConfigQueryOptions()
+    )
+    return { authConfig }
   },
   component: AuthLayout,
 })
