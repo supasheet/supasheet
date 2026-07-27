@@ -53,6 +53,11 @@ export function LucideIconComponent({
   return <Icon className="size-4 shrink-0" />
 }
 
+export function isResourceActive(pathname: string, schema: string, id: string) {
+  const url = `/${schema}/${id}`
+  return pathname === url || pathname.startsWith(`${url}/`)
+}
+
 export function useResourceMenuAction(item: ResourceItem, schema: string) {
   const canInsert = useHasPermission({
     schema: item.schema,
@@ -93,7 +98,7 @@ export function ResourceMenuItem({
       <SidebarMenuButton
         tooltip={item.meta?.name ?? formatTitle(item.name)}
         render={<Link to={url as never} />}
-        isActive={location.pathname.startsWith(`/${schema}/${item.id}`)}
+        isActive={isResourceActive(location.pathname, schema, item.id)}
       >
         {icon}
         <span>{item.meta?.name ?? formatTitle(item.name)}</span>

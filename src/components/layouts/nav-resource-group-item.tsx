@@ -31,7 +31,11 @@ import {
 import { formatTitle } from "#/lib/format"
 
 import type { ResourceItem } from "./nav-resource-item"
-import { LucideIconComponent, useResourceMenuAction } from "./nav-resource-item"
+import {
+  LucideIconComponent,
+  isResourceActive,
+  useResourceMenuAction,
+} from "./nav-resource-item"
 
 function ResourceMenuSubItem({
   item,
@@ -58,7 +62,7 @@ function ResourceMenuSubItem({
     <SidebarMenuSubItem key={item.name} className="group/menu-sub-item">
       <SidebarMenuSubButton
         render={<Link to={url as never} />}
-        isActive={location.pathname.startsWith(`/${schema}/${item.id}`)}
+        isActive={isResourceActive(location.pathname, schema, item.id)}
       >
         {icon}
         <span>{item.meta?.name ?? formatTitle(item.name)}</span>
@@ -117,7 +121,7 @@ export function ResourceGroupMenuItem({
 }) {
   const location = useLocation()
   const isGroupActive = items.some((item) =>
-    location.pathname.startsWith(`/${schema}/${item.id}/`)
+    isResourceActive(location.pathname, schema, item.id)
   )
 
   return (
