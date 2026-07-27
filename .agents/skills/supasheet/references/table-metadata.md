@@ -12,7 +12,7 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
   "icon": "Ticket", // Lucide React icon name
   "collapsible_group": "Support", // sidebar collapsible section this resource is grouped under
   "singleton": false, // true = settings-style single record
-  "inline_form": false, // true = editable section on parent detail page (junction/line-item tables)
+  "inline_form": false, // true = this table's own top-level views (table/grid/kanban/...) open records in the sheet overlay instead of the full detail page. Does NOT affect detail-page tabs — those always use the overlay regardless.
   "primary_view": "kanban", // id of default view (omit = sheet/table view)
   "views": [/* ViewLayout[] */],
   "filter_presets": [/* FilterPreset[] */],
@@ -160,7 +160,8 @@ Table-only — view resources have no detail page. Configures the detail page's 
 ## Special table modes
 
 - **Singleton**: `"singleton": true` — UI opens the single row directly (settings tables). Don't grant/permit `:delete`.
-- **Inline form**: `"inline_form": true` + `"display": "none"` — table renders as an editable section on its parent's detail page (parent detected via FK). Used for junction tables and line items (see `demo.invoice_items`, `demo.project_members`).
+- **Inline form**: `"inline_form": true` — governs *only* this table's own top-level views (table/grid/kanban/calendar/gallery/list/tree): records there open in the same-page sheet overlay instead of navigating to the full detail page. It has no effect on detail-page tabs — any FK-related table renders as a tab on its parent's detail page automatically (independent of `inline_form`), and rows inside a detail-page tab *always* open in the sheet overlay by design, `inline_form` or not.
+  `"display": "none"` is a separate, unrelated flag (hides the table from the sidebar). The two are commonly combined for junction/line-item tables — hide it from the sidebar, and if it's ever reached directly (e.g. by URL) keep interactions lightweight — but neither implies the other. See `demo.invoice_items`, `demo.project_members`.
 
 ## Gotchas
 

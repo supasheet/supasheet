@@ -196,7 +196,7 @@ npx supabase gen types typescript --local --schema public --schema supasheet --s
 
 ### Junction table (many-to-many)
 
-Insert/delete only, hidden from the sidebar, rendered inline on the parent detail page:
+Insert/delete only, hidden from the sidebar. `inline_form` isn't required for this — the table already renders as a tab on the parent's detail page via its FK, with rows opening in the sheet overlay regardless. Setting `inline_form: true` additionally makes the table's own standalone views (if ever reached directly) use the sheet overlay too:
 
 ```sql
 comment on table app.ticket_watchers is '{

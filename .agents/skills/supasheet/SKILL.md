@@ -39,7 +39,7 @@ Every feature follows the same migration shape. Order matters.
 - FKs must reference real tables (`references supasheet.users (id)`), but PostgREST cannot embed across schemas — every app schema needs a same-name **replica view**: `create view <schema>.users with (security_invoker = true) as select * from supasheet.users;`.
 - All feature views are created `with (security_invoker = true)`.
 - Table/column comments are JSON; keep them valid JSON (the UI parses them). Roles **are** derived from the JWT's `role` claim by design (see `rules/roles-permissions.md`) — that claim drives PostgREST's `SET ROLE`, which is what grants/RLS actually check via `current_user`.
-- Junction tables: no `update` grant, `"inline_form": true`, `"display": "none"`. Singletons: `"singleton": true`, no `delete` grant.
+- Junction tables: no `update` grant, `"display": "none"` (hide from sidebar). `"inline_form": true` is optional and independent — it only affects the table's own standalone views, not its rendering inside a parent's detail-page tab (that always uses the sheet overlay regardless). Singletons: `"singleton": true`, no `delete` grant.
 - The audit DELETE trigger must be `BEFORE DELETE`; INSERT/UPDATE are `AFTER`.
 - `supasheet.create_notification()` is service_role-only — call it from a `security definer set search_path = ''` trigger function.
 
