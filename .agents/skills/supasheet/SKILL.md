@@ -42,6 +42,7 @@ Every feature follows the same migration shape. Order matters.
 - Junction tables: no `update` grant, `"display": "none"` (hide from sidebar). `"inline_form": true` is optional and independent — it only affects the table's own standalone views, not its rendering inside a parent's detail-page tab (that always uses the sheet overlay regardless). Singletons: `"singleton": true`, no `delete` grant.
 - The audit DELETE trigger must be `BEFORE DELETE`; INSERT/UPDATE are `AFTER`.
 - `supasheet.create_notification()` is service_role-only — call it from a `security definer set search_path = ''` trigger function.
+- Custom forms (`"type": "form"` function comment, see `rules/forms.md`) are not row actions (`"type": "action"`, undocumented here, see supasheet-docs `resource/actions.mdx`): forms render a full multi-field UI and appear on the *resource's* overview page; actions auto-fill args from a single *row* and appear as a row button/menu item.
 
 ## Rules (by feature area)
 
@@ -56,6 +57,7 @@ One rule file per feature area, mirroring how Supasheet organizes a schema (tabl
 | [rules/dashboards.md](rules/dashboards.md)                 | Widget contracts card_1..card_4 / table_1 / table_2 with starter SQL                      |
 | [rules/charts.md](rules/charts.md)                         | Chart contracts pie/bar/line/area/radar, date formatting, starter SQL                     |
 | [rules/reports.md](rules/reports.md)                       | Report views: denormalized, select-only, exportable                                       |
+| [rules/forms.md](rules/forms.md)                           | Custom forms: type:form function comment, sections/relations, result rendering            |
 | [rules/templates.md](rules/templates.md)                   | Template views: bulk-insert payloads applied via supasheet.apply_template                 |
 | [rules/policies.md](rules/policies.md)                     | RLS authoring: clauses per command, permissive vs restrictive, performance                |
 | [rules/triggers.md](rules/triggers.md)                     | Audit, notification, business (rollup), and maintenance triggers                          |
