@@ -567,10 +567,11 @@ export type ResourceComment = {
   id: string
   created_at: string
   updated_at: string
+  deleted_at: string | null
   schema_name: string
   table_name: string
   record_id: string
-  content: string
+  content: string | null
   created_by: string | null
   created_by_name: string | null
   created_by_email: string | null

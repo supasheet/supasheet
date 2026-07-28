@@ -121,6 +121,7 @@ export type Database = {
           content: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
           id: string
           record_id: string
           schema_name: string
@@ -131,6 +132,7 @@ export type Database = {
           content: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           record_id: string
           schema_name: string
@@ -141,6 +143,7 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
           id?: string
           record_id?: string
           schema_name?: string
@@ -482,12 +485,13 @@ export type Database = {
           p_table: string
         }
         Returns: {
-          content: string
+          content: string | null
           created_at: string
           created_by: string
           created_by_email: string
           created_by_name: string
           created_by_picture_url: string
+          deleted_at: string | null
           id: string
           record_id: string
           schema_name: string

@@ -39,6 +39,8 @@ export function CommentTimelineItem({
   onEdit: (comment: ResourceComment) => void
   onDelete: (id: string) => void
 }) {
+  const isDeleted = !!comment.deleted_at
+
   return (
     <TimelineItem step={step}>
       <TimelineIndicator className={isOwner ? "border-primary" : ""} />
@@ -65,14 +67,14 @@ export function CommentTimelineItem({
                 {formatDistanceToNow(new Date(comment.created_at), {
                   addSuffix: true,
                 })}
-                {comment.updated_at !== comment.created_at && (
+                {!isDeleted && comment.updated_at !== comment.created_at && (
                   <span className="ml-1 text-muted-foreground/50">
                     · edited
                   </span>
                 )}
               </TimelineDate>
             </div>
-            {isOwner && (
+            {isOwner && !isDeleted && (
               <div className="flex shrink-0 gap-0.5">
                 <Button
                   size="icon-xs"
@@ -93,8 +95,12 @@ export function CommentTimelineItem({
               </div>
             )}
           </div>
-          <p className="mt-2 whitespace-pre-wrap wrap-break-word text-sm text-muted-foreground">
-            {comment.content}
+          <p
+            className={`mt-2 whitespace-pre-wrap wrap-break-word text-sm text-muted-foreground ${isDeleted ? "italic" : ""}`}
+          >
+            {isDeleted
+              ? `This comment was deleted by ${comment.created_by_name ?? "its author"}.`
+              : comment.content}
           </p>
         </div>
       </TimelineContent>
@@ -115,7 +121,7 @@ export function EditCommentForm({
   onCancel: () => void
   isPending: boolean
 }) {
-  const [value, setValue] = useState(comment.content)
+  const [value, setValue] = useState(comment.content ?? "")
 
   return (
     <TimelineItem step={step}>
