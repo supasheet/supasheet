@@ -14,13 +14,10 @@ export default {
       return assetResponse
     }
 
-    const indexResponse = await env.ASSETS.fetch(
-      new Request(`${url.origin}/`, request)
-    )
     const isSupasheetDomain = url.hostname.endsWith(".supasheet.app")
 
     if (!isSupasheetDomain) {
-      return indexResponse
+      return env.ASSETS.fetch(new Request(`${url.origin}/`, request))
     }
 
     const projectRef = url.hostname.split(".")[0]
@@ -33,7 +30,10 @@ export default {
     const cached = await cache.match(cacheKey)
     if (cached) return cached
 
-    const publishableKey = await env.CONFIGS.get(projectRef)
+    const [publishableKey, indexResponse] = await Promise.all([
+      env.CONFIGS.get(projectRef, { cacheTtl: 86400 }),
+      env.ASSETS.fetch(new Request(`${url.origin}/`, request)),
+    ])
 
     if (!publishableKey) {
       return indexResponse
