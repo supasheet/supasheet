@@ -149,13 +149,43 @@ Table-only — view resources have no detail page. Configures the detail page's 
 ```json
 "detail": {
     "header": {"title": "name", "badges": ["status", "tags"]},
-    "tabs": ["tasks", "milestones", "invoices"]
+    "tabs": ["tasks", "milestones", "invoices"],
+    "timelines": ["task_events"]
 }
 ```
 
 - `header.title` names a column whose value renders as the page heading (falls back to the primary key when empty).
 - `header.badges` names columns rendered as badges next to the heading.
 - `tabs` allowlists which related tables (by FK) appear as tabs. Entries are the related table's own name, unless a `query.join[].alias` is configured for it (then use the alias instead). Omit to show all related tables. Does not affect the Audit/Comments pages (those are permission-driven).
+- `timelines` renders specific related-table tabs as a vertical activity feed (`Timeline` component) instead of a data table. Entries use the same name/alias rules as `tabs`, and a table can appear in `timelines` OR `tabs`, not both — `timelines` wins if a name is in both.
+
+### Timeline tabs
+
+A timeline entry is still just a regular FK-related child table — `timelines` only changes how that one tab renders. The child table needs specific columns for the feed to render correctly:
+
+| column       | required | renders as                                                          |
+| ------------ | -------- | -------------------------------------------------------------------- |
+| `occurred_at`| yes      | timestamp; feed is always sorted by this column descending (fixed, not configurable) |
+| `title`      | yes      | the event's headline text                                            |
+| `event_type` | no       | badge, if the column has enum metadata (`values` map) like any other enum column |
+| `metadata`   | no       | raw JSON rendered inline (e.g. `{"from": "todo", "to": "done"}`)      |
+| `actor_id`   | no       | rendered as "by \<name\>" — requires a `query.join` entry aliased exactly `"actor"` pointing at the users table, with `name` in its `columns` |
+
+Timeline tables are typically trigger-populated activity logs: `display: "none"` (never browsable on their own), granted `select`-only (no insert/update/delete) so they're read-only, and never listed in the parent's own `fields.sections`. If `insert` is granted, a "New entry" button appears above the feed.
+
+```json
+// on the child table (e.g. demo.task_events)
+{
+    "icon": "History",
+    "display": "none",
+    "query": {
+        "sort": [{"id": "occurred_at", "desc": true}],
+        "join": [{"table": "users", "on": "actor_id", "alias": "actor", "columns": ["name", "avatar"]}]
+    }
+}
+```
+
+See `demo.tasks` (`"detail": {"timelines": ["task_events"]}`) + `demo.task_events` in `supabase/demo.sql` for the full working example, including the trigger (`demo.trg_tasks_log_event`) that populates it.
 
 ## Special table modes
 
@@ -172,4 +202,4 @@ Table-only — view resources have no detail page. Configures the detail page's 
 ## Authoritative sources
 
 - `src/lib/database-meta.types.ts` — `TableMetadata`, `ViewLayout`, `FieldSection`, `FieldBehavior`, `LookupConfig`, `QueryConfig`, `FilterPreset`, `ResourceLink`
-- `supabase/demo.sql` — rich real examples: `demo.clients` (kanban+gallery, sections, presets), `demo.tasks` (behavior, quick_create, tree), `demo.invoices` (lookup filter, tabs), `demo.invoice_items` (inline_form, lookup fill), `demo.workspace_settings` (singleton)
+- `supabase/demo.sql` — rich real examples: `demo.clients` (kanban+gallery, sections, presets), `demo.tasks` (behavior, quick_create, tree, timelines), `demo.task_events` (timeline tab target, trigger-populated), `demo.invoices` (lookup filter, tabs), `demo.invoice_items` (inline_form, lookup fill), `demo.workspace_settings` (singleton)
