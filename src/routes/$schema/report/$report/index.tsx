@@ -220,19 +220,18 @@ function RouteComponent() {
           { title: "Report", url: `/${params.schema}/report` },
           { title: formatTitle(params.report) },
         ]}
-      />
+      >
+        {report?.template && (
+          <ReportPrintButton
+            schema={params.schema}
+            viewName={params.report}
+            name={report.name}
+            rows={reportData?.result ?? []}
+          />
+        )}
+      </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="flex flex-col gap-4 px-4 py-4">
-          {report?.template && (
-            <div className="flex justify-end">
-              <ReportPrintButton
-                schema={params.schema}
-                viewName={params.report}
-                name={report.name}
-                rows={reportData?.result ?? []}
-              />
-            </div>
-          )}
           <ReportTable
             data={reportData?.result ?? []}
             columnsSchema={columnsSchema ?? []}
