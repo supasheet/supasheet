@@ -8,6 +8,7 @@ import { MessageSquareIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceComments } from "#/components/resource/comments/resource-comments"
+import { ResourceRecordMenu } from "#/components/resource/resource-record-menu"
 import { Skeleton } from "#/components/ui/skeleton"
 import { hasResourcePermission } from "#/hooks/use-permissions"
 import { isTableSchema } from "#/lib/database-meta.types"
@@ -130,7 +131,13 @@ function RouteComponent() {
           },
           { title: "Comments" },
         ]}
-      />
+      >
+        <ResourceRecordMenu
+          schema={schema}
+          resource={resource}
+          resourceId={resourceId}
+        />
+      </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col p-4">
           <div className="mx-auto w-full max-w-2xl">

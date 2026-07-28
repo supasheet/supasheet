@@ -8,6 +8,7 @@ import { HistoryIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceAuditTimeline } from "#/components/resource/audit/resource-audit-timeline"
+import { ResourceRecordMenu } from "#/components/resource/resource-record-menu"
 import { Skeleton } from "#/components/ui/skeleton"
 import { hasResourcePermission } from "#/hooks/use-permissions"
 import { isTableSchema } from "#/lib/database-meta.types"
@@ -129,7 +130,13 @@ function RouteComponent() {
           },
           { title: "Audit Log" },
         ]}
-      />
+      >
+        <ResourceRecordMenu
+          schema={schema}
+          resource={resource}
+          resourceId={resourceId}
+        />
+      </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col p-4">
           <div className="mx-auto w-full max-w-2xl">

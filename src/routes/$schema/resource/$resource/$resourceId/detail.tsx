@@ -16,7 +16,7 @@ import { AlertCircleIcon, FileXIcon } from "lucide-react"
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { addEmbedKeys } from "#/components/resource/detail/add-embed-keys"
 import { ResourceDetailHeader } from "#/components/resource/detail/resource-detail-header"
-import { ResourceRecordActions } from "#/components/resource/resource-record-actions"
+import { ResourceRecordMenu } from "#/components/resource/resource-record-menu"
 import { Button } from "#/components/ui/button"
 import { Card, CardContent, CardHeader } from "#/components/ui/card"
 import {
@@ -267,7 +267,7 @@ function RouteComponent() {
           { title: "Detail" },
         ]}
       >
-        <ResourceRecordActions
+        <ResourceRecordMenu
           schema={schema}
           resource={resource}
           resourceId={resourceId}
