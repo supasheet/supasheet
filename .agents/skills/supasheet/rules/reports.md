@@ -10,7 +10,9 @@ requires:
 
 # Reports
 
-A report = a view whose comment is `{"type": "report", "name": ..., "description": ...}` (those three keys only). Discovered by `supasheet.get_reports()`; renders as a filterable, exportable table at `/$schema/report/$name` for callers whose native role holds `select` on the view.
+A report = a view whose comment is `{"type": "report", "name": ..., "description": ..., "template": ...}` (`template` optional). Discovered by `supasheet.get_reports()`; renders as a filterable, exportable table at `/$schema/report/$name` for callers whose native role holds `select` on the view.
+
+`template: true` means a Handlebars HTML file has been uploaded to the `report-templates` bucket at the deterministic key `<schema>/<view_name>.hbs` (one template per report — the path IS the report identity, so there's nothing to store beyond a flag). When set, the report page fetches the report rows and that file, compiles them client-side (`Handlebars.compile(source)({ name, rows })`), and renders/prints the result — a simple HTML-based PDF report via the browser's print dialog. Only `x-admin` can upload/manage templates; anyone with `select` on the report view can read them.
 
 ## Full recipe
 

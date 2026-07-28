@@ -53,6 +53,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
+    "handlebars": "^4.7.9",
     "input-otp": "^1.4.2",
     "lexical": "^0.47.0",
     "lodash": "^4.18.1",

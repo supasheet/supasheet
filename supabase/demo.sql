@@ -20,6 +20,8 @@
 --     trigger that keeps parent totals in sync (invoice_items)
 --   - Reports, dashboard widgets (card_1..6, table_1..2, list_1..4),
 --     charts (pie/bar/line/radar)
+--   - HTML-based PDF reporting on a report view (`template` key on
+--     invoices_report) — see supabase/examples/templates/invoices_report.hbs
 --   - Notifications (fan-out on create/status change)
 --   - Audit logging and per-resource comments
 --   - Detail page "tabs" allowlist
@@ -2303,7 +2305,12 @@ select
   on demo.invoices_report to "x-admin",
   "user";
 
-comment on view demo.invoices_report is '{"type": "report", "name": "Invoices Report", "description": "Invoices with client, project, and line item counts"}';
+-- `template: true` means a Handlebars HTML file has been uploaded to
+-- the `report-templates` bucket at the deterministic key
+-- `demo/invoices_report.hbs` (one template per report). Upload
+-- supabase/examples/templates/invoices_report.hbs there as-is (as
+-- "x-admin") to enable the "Print Report" button on this report.
+comment on view demo.invoices_report is '{"type": "report", "name": "Invoices Report", "description": "Invoices with client, project, and line item counts", "template": true}';
 
 create or replace view demo.team_utilization_report
 with

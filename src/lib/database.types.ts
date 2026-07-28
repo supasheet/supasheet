@@ -597,7 +597,7 @@ export type Database = {
         }[]
       }
       get_reports: {
-        Args: { p_caller?: string; p_schema?: string }
+        Args: { p_caller?: string; p_schema?: string; p_view_name?: string }
         Returns: {
           comment: string
           id: number
@@ -830,6 +830,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

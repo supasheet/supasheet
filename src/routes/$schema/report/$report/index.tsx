@@ -18,6 +18,7 @@ import z from "zod"
 
 import { DataTableSkeleton } from "#/components/data-table/data-table-skeleton"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { ReportPrintButton } from "#/components/report/report-print-button"
 import { ReportTable } from "#/components/report/report-table"
 import { Button } from "#/components/ui/button"
 import {
@@ -36,7 +37,7 @@ import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import {
   reportDataQueryOptions,
-  reportsQueryOptions,
+  reportQueryOptions,
 } from "#/lib/supabase/data/report"
 import { columnsSchemaQueryOptions } from "#/lib/supabase/data/resource"
 
@@ -74,14 +75,15 @@ export const Route = createFileRoute("/$schema/report/$report/")({
     params,
     deps: { sortId, sortDesc, page, pageSize, filters },
   }) => {
-    const [reports, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(reportsQueryOptions(params.schema)),
+    const [report, columnsSchema] = await Promise.all([
+      context.queryClient.ensureQueryData(
+        reportQueryOptions(params.schema, params.report)
+      ),
       context.queryClient.ensureQueryData(
         columnsSchemaQueryOptions(params.schema, params.report)
       ),
     ])
 
-    const report = reports.find((r) => r.view_name === params.report)
     if (!report || !columnsSchema?.length) throw notFound()
 
     context.queryClient.ensureQueryData(
@@ -190,6 +192,9 @@ function RouteComponent() {
   const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
 
   const { columnsSchema } = Route.useLoaderData()
+  const { data: report } = useSuspenseQuery(
+    reportQueryOptions(params.schema, params.report)
+  )
   const { data: reportData } = useSuspenseQuery(
     reportDataQueryOptions(
       params.schema,
@@ -218,6 +223,16 @@ function RouteComponent() {
       />
       <div className="flex flex-1 flex-col">
         <div className="flex flex-col gap-4 px-4 py-4">
+          {report?.template && (
+            <div className="flex justify-end">
+              <ReportPrintButton
+                schema={params.schema}
+                viewName={params.report}
+                name={report.name}
+                rows={reportData?.result ?? []}
+              />
+            </div>
+          )}
           <ReportTable
             data={reportData?.result ?? []}
             columnsSchema={columnsSchema ?? []}

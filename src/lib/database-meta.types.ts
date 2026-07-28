@@ -324,6 +324,7 @@ export type ReportMeta = {
   name: string
   description?: string
   type: "report"
+  template?: boolean
 }
 
 export type TemplateMeta = {

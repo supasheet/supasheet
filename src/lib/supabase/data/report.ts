@@ -10,6 +10,8 @@ import type {
 import { supabase } from "#/lib/supabase/client"
 import { applyFilters } from "#/lib/supabase/filter"
 
+export const REPORT_TEMPLATES_BUCKET = "report-templates"
+
 export type ReportSchema<S extends DatabaseSchemas> = {
   schema: S
   view_name: DatabaseViews<S>
@@ -34,6 +36,33 @@ export const reportsQueryOptions = (schema: DatabaseSchemas) =>
           ...meta,
         } as ReportSchema<typeof schema>
       })
+    },
+    staleTime: 1000 * 60 * 5,
+  })
+
+export const reportQueryOptions = (
+  schema: DatabaseSchemas,
+  viewName: DatabaseViews<DatabaseSchemas>
+) =>
+  queryOptions({
+    queryKey: ["supasheet", "report", schema, viewName],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .schema("supasheet")
+        .rpc("get_reports", { p_schema: schema, p_view_name: viewName })
+      if (error) throw error
+
+      const report = data[0]
+      if (!report) return null
+
+      const meta = (
+        report.comment ? JSON.parse(report.comment) : {}
+      ) as ReportMeta
+      return {
+        view_name: report.name,
+        schema: report.schema,
+        ...meta,
+      } as ReportSchema<typeof schema>
     },
     staleTime: 1000 * 60 * 5,
   })
@@ -79,6 +108,23 @@ export const reportDataQueryOptions = <S extends DatabaseSchemas>(
         result: (data ?? []) as Record<string, unknown>[],
         count: count,
       }
+    },
+    staleTime: 1000 * 60 * 5,
+  })
+
+export const reportTemplateQueryOptions = <S extends DatabaseSchemas>(
+  schema: S,
+  viewName: DatabaseViews<S>
+) =>
+  queryOptions({
+    queryKey: ["supasheet", "report-template", schema, viewName],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from(REPORT_TEMPLATES_BUCKET)
+        .download(`${schema}/${viewName}.hbs`)
+      if (error) throw error
+
+      return data.text()
     },
     staleTime: 1000 * 60 * 5,
   })
