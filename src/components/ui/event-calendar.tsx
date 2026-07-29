@@ -935,42 +935,40 @@ export function EventCalendarHeader({
     setSelectedDate(navigateDate(selectedDate, view, "next"))
 
   return (
-    <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex flex-1 items-center gap-3">
-        <div className="flex flex-1 items-center gap-2">
-          <Button size={"icon-sm"} onClick={handleClick}>
+    <div className="flex flex-col gap-3 border-b p-3 sm:p-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-1 flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size={"icon-sm"} className="shrink-0" onClick={handleClick}>
             {today.getDate()}
           </Button>
-          <span className="text-lg font-semibold">
+          <span className="shrink-0 text-base font-semibold sm:text-lg">
             {month} {year}
           </span>
-          <Badge variant="outline" className="px-1.5">
+          <Badge variant="outline" className="shrink-0 px-1.5">
             {eventCount} events
           </Badge>
         </div>
 
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="size-6.5 px-0 [&_svg]:size-4.5"
-              onClick={handlePrevious}
-            >
-              <ChevronLeft />
-            </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            variant="outline"
+            className="size-6.5 shrink-0 px-0 [&_svg]:size-4.5"
+            onClick={handlePrevious}
+          >
+            <ChevronLeft />
+          </Button>
 
-            <p className="text-sm text-muted-foreground">
-              {rangeText(view, selectedDate)}
-            </p>
+          <p className="text-sm whitespace-nowrap text-muted-foreground">
+            {rangeText(view, selectedDate)}
+          </p>
 
-            <Button
-              variant="outline"
-              className="size-6.5 px-0 [&_svg]:size-4.5"
-              onClick={handleNext}
-            >
-              <ChevronRight />
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="size-6.5 shrink-0 px-0 [&_svg]:size-4.5"
+            onClick={handleNext}
+          >
+            <ChevronRight />
+          </Button>
         </div>
       </div>
       {children}
