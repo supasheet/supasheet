@@ -50,9 +50,13 @@ export function ResourceViewSwitcher<S extends DatabaseSchemas>({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
+      <DropdownMenuTrigger
+        render={
+          <Button size="sm" variant="outline" className="px-2 sm:px-2.5" />
+        }
+      >
         {CurrentIcon && <CurrentIcon className="size-3.5" />}
-        <span className="truncate font-medium">
+        <span className="hidden truncate font-medium sm:inline">
           {currentView?.label ?? "View"}
         </span>
         <ChevronDownIcon className="size-3.5 opacity-50" />
