@@ -41,7 +41,11 @@ export function DataTableToolbar<TData>({
           excludeColumns={["select"]}
           filename={table.options.meta?.filename}
         />
-        {!hideColumnVisibility && <DataTableColumnVisibility table={table} />}
+        {!hideColumnVisibility && (
+          <div className="hidden sm:block">
+            <DataTableColumnVisibility table={table} />
+          </div>
+        )}
       </div>
     </div>
   )
