@@ -1803,7 +1803,7 @@ export function EventCalendarMonthView() {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 overflow-hidden">
+      <div className="grid grid-cols-7 overflow-hidden border-b">
         {cells.map((cell) => (
           <DayCell
             key={cell.date.toISOString()}
