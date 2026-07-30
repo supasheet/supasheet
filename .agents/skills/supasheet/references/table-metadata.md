@@ -29,8 +29,8 @@ Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table
 
 | type       | required                                | optional                                                                 |
 | ---------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| `kanban`   | `group` (enum col), `title`             | `description`, `badge`, `date`                                          |
-| `calendar` | `title`, `start_date`                   | `end_date`, `badge`                                                     |
+| `kanban`   | `group` (enum col), `title`             | `description`, `badge`, `date`, `read_only`                             |
+| `calendar` | `title`, `start_date`                   | `end_date`, `badge`, `read_only`                                        |
 | `gallery`  | `cover` (FILE/AVATAR col), `title`      | `description`, `badge`                                                  |
 | `list`     | `title`                                 | `description`, `field_1`, `field_2`                                     |
 | `tree`     | `parent` (self-FK col), `title`         | `secondary`                                                              |

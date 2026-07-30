@@ -338,6 +338,7 @@ function RouteComponent() {
           layout={layout}
           filterPresets={meta.filter_presets ?? []}
           currentFilters={filters}
+          readOnly={kanbanView.read_only ?? false}
         />
       </div>
       <Outlet />

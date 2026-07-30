@@ -77,6 +77,7 @@ export function ResourceKanban({
   layout,
   filterPresets = [],
   currentFilters = [],
+  readOnly = false,
 }: {
   data: KanbanViewReducedData
   resourceSchema: ResourceSchema
@@ -86,6 +87,7 @@ export function ResourceKanban({
   layout: KanbanBoardMode
   filterPresets?: FilterPreset[]
   currentFilters?: ColumnFiltersState
+  readOnly?: boolean
 }) {
   const schema = resourceSchema.schema ?? ""
   const resource = resourceSchema.name ?? ""
@@ -203,7 +205,7 @@ export function ResourceKanban({
         <Kanban
           value={columns}
           onValueChange={setColumns}
-          onValueCommit={handleValueCommit}
+          onValueCommit={readOnly ? undefined : handleValueCommit}
           getItemValue={buildId}
         >
           <KanbanBoard
@@ -267,7 +269,11 @@ export function ResourceKanban({
                     {tasks.map((task) => {
                       const resourceId = getPkValue(task.data, primaryKeys)
                       return (
-                        <KanbanItem key={buildId(task)} value={buildId(task)}>
+                        <KanbanItem
+                          key={buildId(task)}
+                          value={buildId(task)}
+                          disabled={readOnly}
+                        >
                           <KanbanItemHandle
                             className="block cursor-pointer rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
                             onClick={() =>

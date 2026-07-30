@@ -186,6 +186,7 @@ export type KanbanLayout = BaseViewLayout & {
   description?: ColumnName
   badge?: ColumnName
   date?: ColumnName
+  read_only?: boolean
 }
 
 export type CalendarLayout = BaseViewLayout & {
