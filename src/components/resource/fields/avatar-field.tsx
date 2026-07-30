@@ -2,15 +2,19 @@
 
 import { useCallback, useState } from "react"
 
-import { CircleUserRoundIcon, XIcon } from "lucide-react"
+import { User, XIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "#/components/ui/button"
-import { useFileUpload } from "#/hooks/use-file-upload"
-import type { FileMetadata, FileWithPreview } from "#/hooks/use-file-upload"
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from "#/components/ui/avatar"
+import { Input } from "#/components/ui/input"
 import type { AvatarColumnMetadata } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
-import type { FileFieldProps, FileObject, UploadProgress } from "#/types/fields"
+import type { FileFieldProps, FileObject } from "#/types/fields"
 
 import { useFieldContext } from "../form-hook"
 import {
@@ -25,47 +29,27 @@ export function AvatarField({ columnMetadata, columnSchema }: FileFieldProps) {
   ) as AvatarColumnMetadata
   const maxSize = config.max_size ?? 5 * 1024 * 1024
 
-  const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(
-    null
-  )
+  const [error, setError] = useState<string | null>(null)
 
   const storagePath = `${columnSchema.schema}/${columnSchema.table}/${columnSchema.name}`
 
   const currentValue = field.state.value as FileObject | null
 
-  const loadInitialFile = useCallback((): FileMetadata[] => {
-    if (!currentValue || typeof currentValue !== "object") return []
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]
+      if (!file) return
 
-    return [
-      {
-        name: currentValue.name,
-        size: currentValue.size,
-        type: currentValue.type,
-        url: currentValue.url,
-        id: currentValue.url,
-      },
-    ]
-  }, [currentValue])
+      if (file.size > maxSize) {
+        toast.error("File is too large")
+        event.target.value = ""
+        return
+      }
 
-  const handleFileAdded = useCallback(
-    (addedFiles: FileWithPreview[]) => {
-      const fileWithPreview = addedFiles[0]
-      if (!fileWithPreview || !(fileWithPreview.file instanceof File)) return
-
-      const file = fileWithPreview.file
-      const fileId = fileWithPreview.id
-
-      setUploadProgress({ fileId, progress: 0, completed: false })
+      setError(null)
       ;(async () => {
         try {
-          const url = await uploadFileToStorage(
-            supabase,
-            file,
-            storagePath,
-            (progress) => {
-              setUploadProgress({ fileId, progress, completed: false })
-            }
-          )
+          const url = await uploadFileToStorage(supabase, file, storagePath)
 
           field.handleChange({
             name: file.name,
@@ -74,136 +58,80 @@ export function AvatarField({ columnMetadata, columnSchema }: FileFieldProps) {
             url,
             last_modified: new Date(file.lastModified).toISOString(),
           })
-
-          setUploadProgress({ fileId, progress: 100, completed: true })
-          setTimeout(() => setUploadProgress(null), 1000)
-        } catch (error) {
-          setUploadProgress({
-            fileId,
-            progress: 0,
-            completed: false,
-            error: error instanceof Error ? error.message : "Upload failed",
-          })
+        } catch (uploadError) {
+          setError(
+            uploadError instanceof Error
+              ? uploadError.message
+              : "Upload failed"
+          )
         }
       })()
     },
-    [storagePath, field]
+    [maxSize, storagePath, field]
   )
 
-  const handleFileRemoved = useCallback(
-    async (fileUrl?: string) => {
-      setUploadProgress(null)
+  const handleRemoveClick = useCallback(async () => {
+    setError(null)
 
-      if (!fileUrl) {
-        field.handleChange(null)
-        return
-      }
+    if (!currentValue?.url) {
+      field.handleChange(null)
+      return
+    }
 
-      try {
-        await deleteFileFromStorage(supabase, fileUrl)
-
-        field.handleChange(null)
-      } catch (error) {
-        console.error("Failed to delete avatar:", error)
-        toast.error("Failed to delete avatar")
-      }
-    },
-    [field]
-  )
-
-  const [
-    { files, isDragging },
-    {
-      handleDragEnter,
-      handleDragLeave,
-      handleDragOver,
-      handleDrop,
-      openFileDialog,
-      removeFile,
-      getInputProps,
-    },
-  ] = useFileUpload({
-    multiple: false,
-    maxSize,
-    maxFiles: 1,
-    accept: "image/*",
-    initialFiles: loadInitialFile(),
-    onFilesAdded: handleFileAdded,
-  })
-
-  const previewUrl = files[0]?.preview || currentValue?.url || null
+    try {
+      await deleteFileFromStorage(supabase, currentValue.url)
+      field.handleChange(null)
+    } catch (deleteError) {
+      console.error("Failed to delete avatar:", deleteError)
+      toast.error("Failed to delete avatar")
+    }
+  }, [currentValue, field])
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <div className="relative inline-flex">
-        <button
-          type="button"
-          className="relative flex size-24 items-center justify-center overflow-hidden rounded-full border border-dashed border-input transition-colors outline-none hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 has-[img]:border-none data-[dragging=true]:bg-accent/50"
-          onClick={openFileDialog}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          data-dragging={isDragging || undefined}
-          disabled={columnMetadata.disabled}
-          aria-label={previewUrl ? "Change avatar" : "Upload avatar"}
-        >
-          {previewUrl ? (
-            <img
-              className="size-full object-cover"
-              src={previewUrl}
-              alt="Avatar"
-              width={96}
-              height={96}
-              style={{ objectFit: "cover" }}
-            />
-          ) : (
-            <div aria-hidden="true">
-              <CircleUserRoundIcon className="size-6 opacity-60" />
-            </div>
-          )}
-
-          {uploadProgress && !uploadProgress.completed && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-              <div className="text-xs text-white">
-                {uploadProgress.progress}%
-              </div>
-            </div>
-          )}
-        </button>
-
-        {previewUrl && !columnMetadata.disabled && (
-          <Button
-            type="button"
-            onClick={() => {
-              const file = files[0]
-              const fileUrl =
-                file && !(file.file instanceof File)
-                  ? file.file.url
-                  : currentValue?.url
-              handleFileRemoved(fileUrl || undefined)
-              if (file) removeFile(file.id)
-            }}
-            size="icon"
-            className="absolute -top-1 -right-1 size-6 rounded-full border-2 border-background shadow-none focus-visible:border-background"
-            aria-label="Remove avatar"
-          >
-            <XIcon className="size-3.5" />
-          </Button>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center gap-2">
+        {currentValue ? (
+          <>
+            <Avatar>
+              <AvatarImage src={currentValue.url} alt={currentValue.name} />
+              <AvatarFallback>
+                <User className="size-4" />
+              </AvatarFallback>
+              {!columnMetadata.disabled && (
+                <AvatarBadge
+                  role="button"
+                  tabIndex={0}
+                  className="cursor-pointer bg-destructive"
+                  onClick={handleRemoveClick}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      handleRemoveClick()
+                    }
+                  }}
+                  aria-label={`Remove ${currentValue.name}`}
+                >
+                  <XIcon />
+                </AvatarBadge>
+              )}
+            </Avatar>
+            <p className="truncate text-sm text-muted-foreground">
+              {currentValue.name}
+            </p>
+          </>
+        ) : (
+          <Input
+            type="file"
+            accept="image/*"
+            disabled={columnMetadata.disabled}
+            onChange={handleFileChange}
+          />
         )}
-
-        <input
-          {...getInputProps()}
-          disabled={columnMetadata.disabled}
-          className="sr-only"
-          aria-label="Upload avatar image file"
-          tabIndex={-1}
-        />
       </div>
 
-      {uploadProgress?.error && (
+      {error && (
         <p className="text-xs text-destructive" role="alert">
-          {uploadProgress.error}
+          {error}
         </p>
       )}
     </div>
