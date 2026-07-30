@@ -13,7 +13,7 @@ import {
   TimelineItem,
   TimelineSeparator,
   TimelineTitle,
-} from "#/components/ui/timeline"
+} from "#/components/reui/timeline"
 import type { ResourceComment } from "#/lib/supabase/data/resource"
 
 function userInitials(name: string | null) {

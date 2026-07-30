@@ -19,7 +19,7 @@ import {
   TimelineItem,
   TimelineSeparator,
   TimelineTitle,
-} from "#/components/ui/timeline"
+} from "#/components/reui/timeline"
 import { useHasPermission } from "#/hooks/use-permissions"
 import { getColumnMetadata } from "#/lib/columns"
 import type {

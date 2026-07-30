@@ -8,7 +8,7 @@ import {
   TimelineIndicator,
   TimelineItem,
   TimelineSeparator,
-} from "#/components/ui/timeline"
+} from "#/components/reui/timeline"
 import { useAuthUser } from "#/hooks/use-user"
 import type { ResourceComment } from "#/lib/supabase/data/resource"
 import {

@@ -22,7 +22,7 @@ import {
   TimelineItem,
   TimelineSeparator,
   TimelineTitle,
-} from "#/components/ui/timeline"
+} from "#/components/reui/timeline"
 import { useIsMobile } from "#/hooks/use-mobile"
 import type { ResourceAuditLog } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
