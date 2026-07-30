@@ -4,10 +4,13 @@ import { useNavigate } from "@tanstack/react-router"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
+import type { ColumnFiltersState } from "@tanstack/react-table"
+
 import { AlignStartHorizontalIcon, AlignStartVerticalIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { DynamicIcon } from "#/components/resource/resource-definition-utils"
+import { ResourceFilterPresets } from "#/components/resource/resource-filter-presets"
 import {
   Kanban,
   KanbanBoard,
@@ -28,7 +31,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import type { ResourceSchema } from "#/lib/database-meta.types"
+import type { FilterPreset, ResourceSchema } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import type { EnumBadgeMeta } from "#/lib/fields"
 import { getPkValue } from "#/lib/fields"
@@ -71,12 +74,16 @@ export function ResourceKanban({
   groupBy,
   groupValues = [],
   layout,
+  filterPresets = [],
+  currentFilters = [],
 }: {
   data: KanbanViewReducedData
   resourceSchema: ResourceSchema
   groupBy: string
   groupValues?: string[]
   layout: KanbanBoardMode
+  filterPresets?: FilterPreset[]
+  currentFilters?: ColumnFiltersState
 }) {
   const schema = resourceSchema.schema ?? ""
   const resource = resourceSchema.name ?? ""
@@ -151,7 +158,13 @@ export function ResourceKanban({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ResourceFilterPresets
+            filterPresets={filterPresets}
+            currentFilters={currentFilters}
+          />
+        </div>
         <ButtonGroup>
           <Button
             size="icon-sm"
