@@ -242,7 +242,7 @@ export const resourceDataQueryOptions = <S extends DatabaseSchemas>(
 
       const { data, count, error } = await query
       if (error) throw error
-      console.log(data)
+
       return {
         result: (data ?? []) as unknown as Record<string, unknown>[],
         count: count,
