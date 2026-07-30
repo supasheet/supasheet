@@ -4,25 +4,22 @@ import { useNavigate } from "@tanstack/react-router"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import {
-  AlignStartHorizontalIcon,
-  AlignStartVerticalIcon,
-  Eye,
-  Trash,
-} from "lucide-react"
+import { AlignStartHorizontalIcon, AlignStartVerticalIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanColumnContent,
+  KanbanItem,
+  KanbanItemHandle,
+  KanbanOverlay,
+} from "#/components/reui/kanban"
+import type { KanbanCommitMeta } from "#/components/reui/kanban"
 import { Badge } from "#/components/ui/badge"
 import { Button } from "#/components/ui/button"
 import { ButtonGroup } from "#/components/ui/button-group"
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "#/components/ui/context-menu"
 import {
   Empty,
   EmptyDescription,
@@ -30,27 +27,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import {
-  Kanban,
-  KanbanBoard,
-  KanbanColumn,
-  KanbanItem,
-  KanbanOverlay,
-} from "#/components/ui/kanban"
-import { useConfirmAction } from "#/hooks/use-confirm-action"
-import { useHasPermission } from "#/hooks/use-permissions"
-import type {
-  DatabaseSchemas,
-  DatabaseTables,
-  PrimaryKey,
-  ResourceSchema,
-} from "#/lib/database-meta.types"
+import type { ResourceSchema } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { getPkValue } from "#/lib/fields"
-import {
-  deleteResourceMutationOptions,
-  updateResourceMutationOptions,
-} from "#/lib/supabase/data/resource"
+import { updateResourceMutationOptions } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
 
 export interface KanbanViewData {
@@ -81,7 +61,6 @@ export function ResourceKanban({
   const primaryKeys = isTableSchema(resourceSchema)
     ? (resourceSchema.primary_keys ?? [])
     : []
-  const isTable = isTableSchema(resourceSchema)
 
   const navigate = useNavigate({
     from: "/$schema/resource/$resource/kanban/$kanbanId",
@@ -102,13 +81,19 @@ export function ResourceKanban({
     []
   )
 
-  const handleUpdate = useCallback(
-    (item: KanbanViewData, _from: string | number, to: string | number) => {
+  const handleValueCommit = useCallback(
+    (next: KanbanViewReducedData, meta: KanbanCommitMeta<KanbanViewData>) => {
+      if (meta.kind !== "item" || meta.activeContainer === meta.overContainer) {
+        return
+      }
+      const item = next[meta.overContainer]?.[meta.overIndex]
+      if (!item) return
+
       const pk = Object.fromEntries(
         primaryKeys.map((pkField) => [pkField.name, item.data[pkField.name]])
       )
       updateResource(
-        { pk, data: { [groupBy]: to } },
+        { pk, data: { [groupBy]: meta.overContainer } },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({
@@ -116,6 +101,7 @@ export function ResourceKanban({
             })
           },
           onError: (err) => {
+            setColumns(meta.previousValue)
             toast.error(
               err instanceof Error ? err.message : "Failed to update record"
             )
@@ -178,21 +164,25 @@ export function ResourceKanban({
         <Kanban
           value={columns}
           onValueChange={setColumns}
-          onUpdate={handleUpdate}
-          orientation={layout === "list" ? "vertical" : "horizontal"}
+          onValueCommit={handleValueCommit}
           getItemValue={buildId}
         >
           <KanbanBoard
             className={cn(
               "overflow-x-auto",
-              layout === "board" && "h-[calc(100svh-135px)]"
+              layout === "board"
+                ? "flex h-[calc(100svh-135px)] flex-row"
+                : "flex flex-col"
             )}
           >
             {Object.entries(columns).map(([columnValue, tasks]) => (
               <KanbanColumn
                 key={columnValue}
                 value={columnValue}
-                className={cn(layout === "board" ? "min-w-sm max-w-2xl" : "")}
+                className={cn(
+                  "flex flex-col gap-2 rounded-lg border bg-card p-2.5",
+                  layout === "board" && "min-w-sm max-w-2xl"
+                )}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -205,51 +195,52 @@ export function ResourceKanban({
                     </Badge>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 overflow-y-auto p-0.5">
+                <KanbanColumnContent
+                  value={columnValue}
+                  className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5"
+                >
                   {tasks.map((task) => {
                     const resourceId = getPkValue(task.data, primaryKeys)
                     return (
-                      <KanbanContextMenu
-                        key={buildId(task)}
-                        task={task}
-                        schema={schema}
-                        resource={resource}
-                        resourceId={resourceId}
-                        primaryKeys={primaryKeys}
-                        isTable={isTable}
-                      >
-                        <KanbanItem value={buildId(task)} asHandle asChild>
-                          <div className="rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10">
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="line-clamp-1 text-sm font-medium">
-                                  {task.title ?? "Untitled"}
+                      <KanbanItem key={buildId(task)} value={buildId(task)}>
+                        <KanbanItemHandle
+                          className="block cursor-pointer rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
+                          onClick={() =>
+                            navigate({
+                              to: "/$schema/resource/$resource/$resourceId/detail",
+                              params: { schema, resource, resourceId },
+                            })
+                          }
+                        >
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="line-clamp-1 text-sm font-medium">
+                                {task.title ?? "Untitled"}
+                              </span>
+                              {task.badge && (
+                                <Badge className="pointer-events-none h-5 px-1.5 text-[11px] capitalize">
+                                  {task.badge}
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              {task.description && (
+                                <span className="line-clamp-1">
+                                  {task.description}
                                 </span>
-                                {task.badge && (
-                                  <Badge className="pointer-events-none h-5 px-1.5 text-[11px] capitalize">
-                                    {task.badge}
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                {task.description && (
-                                  <span className="line-clamp-1">
-                                    {task.description}
-                                  </span>
-                                )}
-                                {task.date && (
-                                  <time className="text-[10px] tabular-nums whitespace-nowrap">
-                                    {new Date(task.date).toDateString()}
-                                  </time>
-                                )}
-                              </div>
+                              )}
+                              {task.date && (
+                                <time className="text-[10px] tabular-nums whitespace-nowrap">
+                                  {new Date(task.date).toDateString()}
+                                </time>
+                              )}
                             </div>
                           </div>
-                        </KanbanItem>
-                      </KanbanContextMenu>
+                        </KanbanItemHandle>
+                      </KanbanItem>
                     )
                   })}
-                </div>
+                </KanbanColumnContent>
               </KanbanColumn>
             ))}
           </KanbanBoard>
@@ -259,87 +250,5 @@ export function ResourceKanban({
         </Kanban>
       )}
     </div>
-  )
-}
-
-function KanbanContextMenu<S extends DatabaseSchemas>({
-  children,
-  task,
-  schema,
-  resource,
-  resourceId,
-  primaryKeys,
-  isTable,
-}: {
-  children: React.ReactNode
-  task: KanbanViewData
-  schema: S
-  resource: DatabaseTables<S>
-  resourceId: string
-  primaryKeys: PrimaryKey[]
-  isTable: boolean
-}) {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const canDelete = useHasPermission({ schema, resource, action: "delete" })
-  const { mutateAsync: deleteRow } = useMutation(
-    deleteResourceMutationOptions(schema, resource)
-  )
-
-  const deleteConfirm = useConfirmAction(async (item: KanbanViewData) => {
-    const pk = Object.fromEntries(
-      primaryKeys.map((pkField) => [pkField.name, item.data[pkField.name]])
-    )
-    try {
-      await deleteRow(pk)
-      queryClient.invalidateQueries({
-        queryKey: ["supasheet", "resource-data", schema, resource],
-      })
-      toast.success("Record deleted")
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete record"
-      )
-    }
-  })
-
-  return (
-    <>
-      <ContextMenu>
-        <ContextMenuTrigger>{children}</ContextMenuTrigger>
-        <ContextMenuContent className="w-52">
-          <ContextMenuItem
-            onClick={() =>
-              navigate({
-                to: "/$schema/resource/$resource/$resourceId/detail",
-                params: { schema, resource, resourceId },
-              })
-            }
-          >
-            <Eye className="size-4" />
-            View details
-          </ContextMenuItem>
-          {isTable && canDelete && (
-            <>
-              <ContextMenuSeparator />
-              <ContextMenuItem
-                variant="destructive"
-                onClick={() => deleteConfirm.request(task)}
-              >
-                <Trash className="size-4" />
-                Delete
-              </ContextMenuItem>
-            </>
-          )}
-        </ContextMenuContent>
-      </ContextMenu>
-      <ConfirmDeleteDialog
-        open={deleteConfirm.open}
-        onOpenChange={(open) => !open && deleteConfirm.cancel()}
-        onConfirm={deleteConfirm.confirm}
-        title="Delete record?"
-        pending={deleteConfirm.pending}
-      />
-    </>
   )
 }
