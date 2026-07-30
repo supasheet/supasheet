@@ -3,7 +3,7 @@
   Supasheet
   </h1>
   <h3 align="center"><strong>Turn any Supabase project into a real business platform.</strong></h3>
-  <p>Supasheet turns any Supabase project into a real business platform - an ERP, CRM, or admin platform, driven entirely by your schema. Auto-generated CRUD, multiple data views (grid, data grid, kanban, calendar, gallery, list, tree), built-in auth with MFA, RBAC and RLS enforced natively by Supabase Postgres, configurable dashboards, charts, AI chat, SQL editor, file storage, comments, templates, and audit logs. All in one open-source React app. The <a href="./supabase/examples">supabase/examples/</a> directory ships ready-made schemas for CRM, HR, Finance, Inventory, Manufacturing, Procurement, Quality, LMS, Hostel, Helpdesk, Store, and Blog: proof it scales from a small project to a full ERP or B2B product.</p>
+  <p>Supasheet turns any Supabase project into a real business platform - an ERP, CRM, or admin platform, driven entirely by your schema. Auto-generated CRUD, multiple data views (grid, data grid, kanban, calendar, gallery, list, tree), built-in auth with MFA, RBAC and RLS enforced natively by Supabase Postgres, configurable dashboards, charts, AI chat, SQL editor, file storage, comments, templates, and audit logs. All in one open-source React app.</p>
   <p>Try out Supasheet demo at <a href="https://jdydxqrxntcdrxhqqmuv.supasheet.app" target="_blank">jdydxqrxntcdrxhqqmuv.supasheet.app</a></p>
 </div>
 
