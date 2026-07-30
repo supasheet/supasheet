@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  GanttChartIcon,
   Grid3X3Icon,
   ImageIcon,
   LayoutGridIcon,
@@ -23,6 +24,7 @@ const VIEW_TYPE_ICON: Record<ViewLayoutType, LucideIcon> = {
   gallery: ImageIcon,
   list: ListIcon,
   tree: ListTreeIcon,
+  gantt: GanttChartIcon,
 }
 
 function resolveMetaViewTarget<S extends DatabaseSchemas>(
@@ -56,9 +58,16 @@ function resolveMetaViewTarget<S extends DatabaseSchemas>(
       params: () => ({ schema, resource, listId: view.id }),
     }
   }
+  if (view.type === "tree") {
+    return {
+      to: "/$schema/resource/$resource/tree/$treeId" as const,
+      params: () => ({ schema, resource, treeId: view.id }),
+    }
+  }
   return {
-    to: "/$schema/resource/$resource/tree/$treeId" as const,
-    params: () => ({ schema, resource, treeId: view.id }),
+    to: "/$schema/resource/$resource/gantt/$ganttId" as const,
+    params: () => ({ schema, resource, ganttId: view.id }),
+    search: { scale: "month" },
   }
 }
 

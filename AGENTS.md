@@ -12,7 +12,7 @@ Supabase (Auth, Database, Storage, Edge Functions).
 ## The most important rule
 
 **Features are implemented in SQL migrations, not app code.** New tables,
-modules, alternate views (kanban/calendar/gallery/list/tree), dashboard widgets,
+modules, alternate views (kanban/calendar/gallery/list/tree/gantt), dashboard widgets,
 charts, reports, roles/permissions, RLS policies, notification and audit
 triggers, and storage-backed columns are all pure SQL under
 `supabase/migrations/`. Creating a table auto-generates its data table, forms,

@@ -585,6 +585,17 @@ comment on table demo.projects is '{
             "description": "status",
             "field_1": "status",
             "field_2": "due_date"
+        },
+        {
+            "id": "gantt",
+            "name": "Project Roadmap",
+            "type": "gantt",
+            "group": "status",
+            "title": "name",
+            "start_date": "start_date",
+            "end_date": "due_date",
+            "progress": "progress",
+            "badge": "priority"
         }
     ],
     "filter_presets": [

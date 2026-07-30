@@ -6,9 +6,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { toast } from "sonner"
 
-import { EVENT_CALENDAR_COLORS } from "#/components/reui/event-calendar/event-calendar-event"
 import { EventCalendar } from "#/components/reui/event-calendar/event-calendar"
 import { EventCalendarContent } from "#/components/reui/event-calendar/event-calendar-content"
+import { EVENT_CALENDAR_COLORS } from "#/components/reui/event-calendar/event-calendar-event"
 import { EventCalendarNav } from "#/components/reui/event-calendar/event-calendar-nav"
 import type {
   CalendarEvent,
@@ -47,7 +47,7 @@ export interface ResourceCalendarProps {
   columnsSchema?: ColumnSchema[]
 }
 
-function formatFieldValue(
+export function formatFieldValue(
   format: string | null | undefined,
   date: Date
 ): string {
@@ -155,7 +155,7 @@ export function ResourceCalendar({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-xl bg-card">
+    <div className="flex h-full min-h-0 flex-col rounded-md border bg-card">
       <EventCalendar
         className="h-full min-h-0"
         events={events}

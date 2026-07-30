@@ -220,8 +220,24 @@ export type TreeLayout = BaseViewLayout & {
   secondary?: ColumnName
 }
 
+export type GanttLayout = BaseViewLayout & {
+  type: "gantt"
+  title: ColumnName
+  start_date: ColumnName
+  end_date: ColumnName
+  group?: ColumnName
+  progress?: ColumnName
+  badge?: ColumnName
+  read_only?: boolean
+}
+
 export type ViewLayout =
-  KanbanLayout | CalendarLayout | GalleryLayout | ListLayout | TreeLayout
+  | KanbanLayout
+  | CalendarLayout
+  | GalleryLayout
+  | ListLayout
+  | TreeLayout
+  | GanttLayout
 
 export type ViewLayoutType = ViewLayout["type"]
 

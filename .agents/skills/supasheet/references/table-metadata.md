@@ -27,13 +27,14 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
 
 Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table) view always exists. Column hints name columns of this table.
 
-| type       | required                           | optional                            |
-| ---------- | ---------------------------------- | ----------------------------------- |
-| `kanban`   | `group` (enum col), `title`        | `description`, `badge`, `date`      |
-| `calendar` | `title`, `start_date`              | `end_date`, `badge`                 |
-| `gallery`  | `cover` (FILE/AVATAR col), `title` | `description`, `badge`              |
-| `list`     | `title`                            | `description`, `field_1`, `field_2` |
-| `tree`     | `parent` (self-FK col), `title`    | `secondary`                         |
+| type       | required                                | optional                                                                 |
+| ---------- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| `kanban`   | `group` (enum col), `title`             | `description`, `badge`, `date`                                          |
+| `calendar` | `title`, `start_date`                   | `end_date`, `badge`                                                     |
+| `gallery`  | `cover` (FILE/AVATAR col), `title`      | `description`, `badge`                                                  |
+| `list`     | `title`                                 | `description`, `field_1`, `field_2`                                     |
+| `tree`     | `parent` (self-FK col), `title`         | `secondary`                                                              |
+| `gantt`    | `title`, `start_date`, `end_date`       | `group` (enum col), `progress` (numeric 0-100 col), `badge`, `read_only` |
 
 ```json
 "views": [
@@ -41,7 +42,8 @@ Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table
     {"id": "calendar", "name": "Timeline", "type": "calendar", "title": "title", "badge": "status", "start_date": "start_date", "end_date": "due_date"},
     {"id": "gallery", "name": "Gallery", "type": "gallery", "cover": "logo", "title": "name", "description": "summary", "badge": "category"},
     {"id": "list", "name": "All", "type": "list", "title": "name", "description": "status", "field_1": "status", "field_2": "due_date"},
-    {"id": "tree", "name": "Org Chart", "type": "tree", "parent": "manager_id", "title": "name", "secondary": "job_title"}
+    {"id": "tree", "name": "Org Chart", "type": "tree", "parent": "manager_id", "title": "name", "secondary": "job_title"},
+    {"id": "gantt", "name": "Roadmap", "type": "gantt", "group": "status", "title": "name", "start_date": "start_date", "end_date": "due_date", "progress": "progress", "badge": "priority"}
 ]
 ```
 

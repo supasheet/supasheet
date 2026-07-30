@@ -7,7 +7,7 @@ metadata:
   version: "1.0.0"
   organization: Supasheet
   date: July 2026
-  abstract: Complete guide to building Supasheet features purely in SQL — tables and views plus JSON comments drive the entire UI (data tables, forms, kanban/calendar/gallery/list/tree views, dashboards, charts, reports), while RBAC, RLS, audit logs, comments, and notifications are wired through the supasheet schema helpers.
+  abstract: Complete guide to building Supasheet features purely in SQL — tables and views plus JSON comments drive the entire UI (data tables, forms, kanban/calendar/gallery/list/tree/gantt views, dashboards, charts, reports), while RBAC, RLS, audit logs, comments, and notifications are wired through the supasheet schema helpers.
 ---
 
 # Supasheet SQL Development
@@ -16,7 +16,7 @@ Supasheet is a SQL-first admin panel built on Supabase. Creating a table auto-ge
 
 ## When to Apply
 
-Use this skill whenever implementing anything in a Supasheet project's database: new tables/modules, alternate views (kanban/calendar/gallery/list/tree), dashboard widgets, charts, reports, notifications, audit logging, comments, permissions, or storage-backed columns.
+Use this skill whenever implementing anything in a Supasheet project's database: new tables/modules, alternate views (kanban/calendar/gallery/list/tree/gantt), dashboard widgets, charts, reports, notifications, audit logging, comments, permissions, or storage-backed columns.
 
 ## The Universal Workflow
 
