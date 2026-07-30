@@ -1,12 +1,10 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
-import {
-  ArrowUpRightIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  ListTreeIcon,
-} from "lucide-react"
+import { hotkeysCoreFeature, syncDataLoaderFeature } from "@headless-tree/core"
+import { useTree } from "@headless-tree/react"
+import { ArrowUpRightIcon, ListTreeIcon } from "lucide-react"
 
+import { Tree, TreeItem, TreeItemLabel } from "#/components/reui/tree"
 import {
   Empty,
   EmptyDescription,
@@ -28,6 +26,7 @@ interface ResourceTreeProps {
 }
 
 const ROOT_KEY = "__root__"
+const indent = 20
 
 export function ResourceTree({
   rows,
@@ -41,38 +40,55 @@ export function ResourceTree({
   const pkColumn = primaryKeys[0]?.name
   const parentColumn = treeView.parent
 
-  // Group rows by their parent value. Null parent → roots.
+  // Group row ids by their parent id. Null/undefined parent → synthetic root.
   // O(N) single pass; mutable Map operations only.
   const childrenByParent = useMemo(() => {
-    const map = new Map<string, Row[]>()
+    const map = new Map<string, string[]>()
     if (!pkColumn) return map
     for (const row of rows) {
+      const id = String(row[pkColumn])
       const parentVal = row[parentColumn]
       const key =
         parentVal === null || parentVal === undefined
           ? ROOT_KEY
           : String(parentVal)
       const bucket = map.get(key)
-      if (bucket) bucket.push(row)
-      else map.set(key, [row])
+      if (bucket) bucket.push(id)
+      else map.set(key, [id])
     }
     return map
   }, [rows, pkColumn, parentColumn])
 
-  const roots = childrenByParent.get(ROOT_KEY) ?? []
+  const itemsById = useMemo(() => {
+    const map = new Map<string, Row>()
+    if (!pkColumn) return map
+    for (const row of rows) {
+      map.set(String(row[pkColumn]), row)
+    }
+    return map
+  }, [rows, pkColumn])
 
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(
-    () => new Set(roots.map((r) => String(r[pkColumn ?? ""])))
-  )
+  const rootIds = childrenByParent.get(ROOT_KEY) ?? []
 
-  const toggle = (id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
+  const tree = useTree<string>({
+    initialState: {
+      expandedItems: [ROOT_KEY, ...rootIds],
+    },
+    indent,
+    rootItemId: ROOT_KEY,
+    getItemName: (item) => {
+      const id = item.getId()
+      const row = itemsById.get(id)
+      const titleValue = row?.[treeView.title]
+      return titleValue == null ? "Untitled" : String(titleValue)
+    },
+    isItemFolder: (item) => (childrenByParent.get(item.getId())?.length ?? 0) > 0,
+    dataLoader: {
+      getItem: (itemId) => itemId,
+      getChildren: (itemId) => childrenByParent.get(itemId) ?? [],
+    },
+    features: [syncDataLoaderFeature, hotkeysCoreFeature],
+  })
 
   if (!pkColumn) {
     return (
@@ -90,7 +106,7 @@ export function ResourceTree({
     )
   }
 
-  if (rows.length === 0 || roots.length === 0) {
+  if (rows.length === 0 || rootIds.length === 0) {
     return (
       <Empty className="min-h-[400px] border">
         <EmptyHeader>
@@ -107,132 +123,61 @@ export function ResourceTree({
   }
 
   return (
-    <div
-      className="flex flex-col overflow-hidden rounded-md border bg-card"
-      role="tree"
+    <Tree
+      indent={indent}
+      tree={tree}
+      className="rounded-md border bg-card p-1"
     >
-      {roots.map((row) => (
-        <TreeRow
-          key={String(row[pkColumn])}
-          row={row}
-          depth={0}
-          pkColumn={pkColumn}
-          childrenByParent={childrenByParent}
-          expandedIds={expandedIds}
-          onToggle={toggle}
-          treeView={treeView}
-          onSelect={onSelect}
-        />
-      ))}
-    </div>
-  )
-}
+      {tree.getItems().map((item) => {
+        const id = item.getId()
+        if (id === ROOT_KEY) return null
 
-interface TreeRowProps {
-  row: Row
-  depth: number
-  pkColumn: string
-  childrenByParent: Map<string, Row[]>
-  expandedIds: Set<string>
-  onToggle: (id: string) => void
-  treeView: TreeLayout
-  onSelect?: (row: Row) => void
-}
+        const row = itemsById.get(id)
+        if (!row) return null
 
-function TreeRow({
-  row,
-  depth,
-  pkColumn,
-  childrenByParent,
-  expandedIds,
-  onToggle,
-  treeView,
-  onSelect,
-}: TreeRowProps) {
-  const id = String(row[pkColumn])
-  const children = childrenByParent.get(id) ?? []
-  const hasChildren = children.length > 0
-  const isExpanded = expandedIds.has(id)
+        const secondaryValue = treeView.secondary
+          ? row[treeView.secondary]
+          : null
+        const hasSecondary =
+          secondaryValue !== null &&
+          secondaryValue !== undefined &&
+          secondaryValue !== ""
 
-  const titleValue = row[treeView.title]
-  const secondaryValue = treeView.secondary ? row[treeView.secondary] : null
-  const hasSecondary =
-    secondaryValue !== null &&
-    secondaryValue !== undefined &&
-    secondaryValue !== ""
+        return (
+          <TreeItem key={id} item={item} render={<div />}>
+            <TreeItemLabel className="group">
+              <span className="flex-1 truncate">{item.getItemName()}</span>
 
-  return (
-    <div role="treeitem" aria-expanded={hasChildren ? isExpanded : undefined}>
-      <div
-        className="group flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors hover:bg-accent"
-        style={{ paddingLeft: `${depth * 20 + 8}px` }}
-      >
-        {hasChildren ? (
-          <button
-            type="button"
-            onClick={() => onToggle(id)}
-            aria-label={isExpanded ? "Collapse" : "Expand"}
-            className="inline-flex size-4 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground"
-          >
-            {isExpanded ? (
-              <ChevronDownIcon className="size-4" />
-            ) : (
-              <ChevronRightIcon className="size-4" />
-            )}
-          </button>
-        ) : (
-          <span className="inline-block size-4 shrink-0" />
-        )}
+              {hasSecondary && (
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {String(secondaryValue)}
+                </span>
+              )}
 
-        <span className="flex-1 truncate">
-          {titleValue == null ? "Untitled" : String(titleValue)}
-        </span>
-
-        {hasSecondary && (
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {String(secondaryValue)}
-          </span>
-        )}
-
-        {onSelect && (
-          <button
-            type="button"
-            aria-label="Open details"
-            title="Open details"
-            className={cn(
-              "inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground opacity-0 transition-opacity",
-              "hover:bg-accent-foreground/10 hover:text-foreground",
-              "group-hover:opacity-100 focus-visible:opacity-100",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            )}
-            onClick={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-              onSelect(row)
-            }}
-          >
-            <ArrowUpRightIcon className="size-3.5" />
-          </button>
-        )}
-      </div>
-
-      {hasChildren && isExpanded && (
-        <div role="group">
-          {children.map((child) => (
-            <TreeRow
-              key={String(child[pkColumn])}
-              row={child}
-              depth={depth + 1}
-              pkColumn={pkColumn}
-              childrenByParent={childrenByParent}
-              expandedIds={expandedIds}
-              onToggle={onToggle}
-              treeView={treeView}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+              {onSelect && (
+                <button
+                  type="button"
+                  aria-label="Open details"
+                  title="Open details"
+                  className={cn(
+                    "inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground opacity-0 transition-opacity",
+                    "hover:bg-accent-foreground/10 hover:text-foreground",
+                    "group-hover:opacity-100 focus-visible:opacity-100",
+                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    onSelect(row)
+                  }}
+                >
+                  <ArrowUpRightIcon className="size-3.5" />
+                </button>
+              )}
+            </TreeItemLabel>
+          </TreeItem>
+        )
+      })}
+    </Tree>
   )
 }
