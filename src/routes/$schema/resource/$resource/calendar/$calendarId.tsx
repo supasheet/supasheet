@@ -17,6 +17,7 @@ import {
   ResourceCalendar,
   colorFromString,
 } from "#/components/resource/resource-calendar"
+import type { CalendarEvent, CalendarView } from "#/components/reui/event-calendar/event-calendar-types"
 import { ResourceViewSwitcher } from "#/components/resource/resource-view-switcher"
 import { Button } from "#/components/ui/button"
 import {
@@ -26,7 +27,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
 import { Skeleton } from "#/components/ui/skeleton"
 import {
   hasResourcePermission,
@@ -54,11 +54,9 @@ export const Route = createFileRoute(
     if (!canSelect) throw notFound()
   },
   validateSearch: (search: { view?: string }) => ({
-    view: (["month", "week", "day", "year", "agenda"].includes(
-      search.view as string
-    )
+    view: (["month", "week", "day", "agenda"].includes(search.view as string)
       ? search.view
-      : "month") as TCalendarView,
+      : "month") as CalendarView,
   }),
   loaderDeps: ({ search: { view } }) => ({ view }),
   loader: async ({ context, params }) => {
@@ -219,22 +217,26 @@ function RouteComponent() {
   const endDateField = calendarView.end_date
   const badgeField = calendarView.badge
 
-  const data: IEvent[] = startDateField
+  const data: CalendarEvent[] = startDateField
     ? (resourceData?.result ?? [])
         .filter((row) => row[startDateField])
-        .map((row, i) => ({
-          id: String(i),
-          title: titleField ? String(row[titleField] ?? "") : "",
-          color: colorFromString(
-            badgeField ? String(row[badgeField] ?? "") : null
-          ),
-          startDate: String(row[startDateField]),
-          endDate:
+        .map((row, i) => {
+          const start = new Date(String(row[startDateField]))
+          const end =
             endDateField && row[endDateField]
-              ? String(row[endDateField])
-              : String(row[startDateField]),
-          data: row,
-        }))
+              ? new Date(String(row[endDateField]))
+              : start
+          return {
+            id: String(i),
+            title: titleField ? String(row[titleField] ?? "") : "",
+            color: colorFromString(
+              badgeField ? String(row[badgeField] ?? "") : null
+            ),
+            start,
+            end,
+            data: row,
+          }
+        })
     : []
 
   const isTable = isTableSchema(resourceSchema)

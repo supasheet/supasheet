@@ -194,6 +194,7 @@ export type CalendarLayout = BaseViewLayout & {
   start_date: ColumnName
   end_date?: ColumnName
   badge?: ColumnName
+  read_only?: boolean
 }
 
 export type GalleryLayout = BaseViewLayout & {

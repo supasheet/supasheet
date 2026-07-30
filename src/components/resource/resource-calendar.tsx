@@ -1,25 +1,22 @@
+import { useEffect, useState } from "react"
+
 import { useNavigate } from "@tanstack/react-router"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { CalendarRange, Columns, Grid2x2, Grid3x3, List } from "lucide-react"
 import { toast } from "sonner"
 
-import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
-import { Button } from "#/components/ui/button"
-import { ButtonGroup } from "#/components/ui/button-group"
-import {
-  EventCalendarAgendaView,
-  EventCalendarContainer,
-  EventCalendarDayView,
-  EventCalendarHeader,
-  EventCalendarMonthView,
-  EventCalendarRoot,
-  EventCalendarWeekView,
-  EventCalendarYearView,
-} from "#/components/ui/event-calendar"
-import type { IEvent, TCalendarView } from "#/components/ui/event-calendar"
-import { useConfirmAction } from "#/hooks/use-confirm-action"
+import { EVENT_CALENDAR_COLORS } from "#/components/reui/event-calendar/event-calendar-event"
+import { EventCalendar } from "#/components/reui/event-calendar/event-calendar"
+import { EventCalendarContent } from "#/components/reui/event-calendar/event-calendar-content"
+import { EventCalendarNav } from "#/components/reui/event-calendar/event-calendar-nav"
+import type {
+  CalendarEvent,
+  CalendarView,
+  EventCalendarOccurrence,
+  EventCalendarProposedUpdate,
+  EventCalendarSlotInfo,
+} from "#/components/reui/event-calendar/event-calendar-types"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   CalendarLayout,
@@ -28,46 +25,36 @@ import type {
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { getPkValue } from "#/lib/fields"
-import {
-  deleteResourceMutationOptions,
-  updateResourceMutationOptions,
-} from "#/lib/supabase/data/resource"
+import { updateResourceMutationOptions } from "#/lib/supabase/data/resource"
 
-type TEventColor =
-  "blue" | "green" | "red" | "yellow" | "purple" | "orange" | "gray"
-
-const COLORS: TEventColor[] = [
-  "blue",
-  "green",
-  "red",
-  "yellow",
-  "purple",
-  "orange",
-  "gray",
-]
-
-export function colorFromString(str: string | null | undefined): TEventColor {
-  if (!str) return "blue"
+export function colorFromString(str: string | null | undefined): string {
+  if (!str) return EVENT_CALENDAR_COLORS[0].value
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
   }
-  return COLORS[Math.abs(hash) % COLORS.length]
+  return EVENT_CALENDAR_COLORS[Math.abs(hash) % EVENT_CALENDAR_COLORS.length]
+    .value
 }
 
+const CALENDAR_VIEWS: CalendarView[] = ["month", "week", "day", "agenda"]
+
 export interface ResourceCalendarProps {
-  view?: TCalendarView
-  data: IEvent[]
+  view?: CalendarView
+  data: CalendarEvent[]
   resourceSchema: ResourceSchema
   currentView: CalendarLayout
   columnsSchema?: ColumnSchema[]
 }
 
-function formatSlotValue(format: string | undefined, slot: Date): string {
+function formatFieldValue(
+  format: string | null | undefined,
+  date: Date
+): string {
   const pad = (n: number) => String(n).padStart(2, "0")
-  const date = `${slot.getFullYear()}-${pad(slot.getMonth() + 1)}-${pad(slot.getDate())}`
-  if (format === "date") return date
-  return `${date}T${pad(slot.getHours())}:${pad(slot.getMinutes())}`
+  const value = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+  if (format === "date") return value
+  return `${value}T${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
 export function ResourceCalendar({
@@ -84,6 +71,8 @@ export function ResourceCalendar({
     : []
   const startDateField = currentView.start_date ?? ""
   const endDateField = currentView.end_date ?? ""
+  const hasPk = primaryKeys.length > 0
+  const readOnly = currentView.read_only ?? false
 
   const queryClient = useQueryClient()
   const navigate = useNavigate({
@@ -93,54 +82,60 @@ export function ResourceCalendar({
   const { mutate: updateResource } = useMutation(
     updateResourceMutationOptions(schema, resource)
   )
-  const { mutateAsync: deleteRow } = useMutation(
-    deleteResourceMutationOptions(schema, resource)
-  )
 
-  function getPk(event: IEvent): Record<string, unknown> {
+  const canUpdate = useHasPermission({ schema, resource, action: "update" })
+
+  // Controlled `events` gives drag/resize an optimistic move while the
+  // mutation is in flight; reseeded whenever fresh data arrives from the
+  // query cache (mirrors ResourceKanban's local column state).
+  const [events, setEvents] = useState(data)
+  useEffect(() => {
+    setEvents(data)
+  }, [data])
+
+  function getPk(row: Record<string, unknown>) {
     return Object.fromEntries(
-      primaryKeys.map((pkField) => [pkField.name, event.data?.[pkField.name]])
+      primaryKeys.map((pkField) => [pkField.name, row[pkField.name]])
     )
   }
 
-  function onDragEvent(event: IEvent) {
+  function onEventUpdate(update: EventCalendarProposedUpdate) {
+    const row = update.event.data as Record<string, unknown> | undefined
+    if (!row || !hasPk) return false
+
+    const previous = events
+    const startCol = columnsSchema.find((c) => c.name === startDateField)
+    const endCol = columnsSchema.find((c) => c.name === endDateField)
+    const patch: Record<string, unknown> = {
+      [startDateField]: formatFieldValue(startCol?.format, update.start),
+    }
+    if (endDateField) {
+      patch[endDateField] = formatFieldValue(endCol?.format, update.end)
+    }
+
     updateResource(
-      {
-        pk: getPk(event),
-        data: {
-          [startDateField]: event.startDate,
-          [endDateField]: event.endDate,
-        },
-      },
+      { pk: getPk(row), data: patch },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: ["supasheet", "resource-data", schema, resource],
           })
         },
+        onError: (err) => {
+          setEvents(previous)
+          toast.error(
+            err instanceof Error ? err.message : "Failed to update record"
+          )
+        },
       }
     )
   }
 
-  function onAddEvent({
-    startDate,
-    hour,
-    minute,
-  }: {
-    startDate: Date
-    hour: number
-    minute: number
-  }) {
-    const start = new Date(startDate)
-    start.setHours(hour, minute)
+  function onSlotClick(slot: EventCalendarSlotInfo) {
+    if (!hasPk) return
     const startCol = columnsSchema.find((c) => c.name === startDateField)
     const defaults = startDateField
-      ? {
-          [startDateField]: formatSlotValue(
-            startCol?.format ?? undefined,
-            start
-          ),
-        }
+      ? { [startDateField]: formatFieldValue(startCol?.format, slot.date) }
       : undefined
     void navigate({
       to: "/$schema/resource/$resource/new",
@@ -149,134 +144,42 @@ export function ResourceCalendar({
     })
   }
 
-  function onEventView(event: IEvent) {
-    const resourceId = getPkValue(event.data ?? {}, primaryKeys)
+  function onEventClick(occurrence: EventCalendarOccurrence) {
+    const row = occurrence.event.data as Record<string, unknown> | undefined
+    if (!row || !hasPk) return
+    const resourceId = getPkValue(row, primaryKeys)
     void navigate({
       to: "/$schema/resource/$resource/$resourceId/detail",
       params: { schema, resource, resourceId },
     })
   }
 
-  const deleteConfirm = useConfirmAction(async (event: IEvent) => {
-    try {
-      await deleteRow(getPk(event))
-      queryClient.invalidateQueries({
-        queryKey: ["supasheet", "resource-data", schema, resource],
-      })
-      toast.success("Record deleted")
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete record"
-      )
-    }
-  })
-
-  const hasPk = primaryKeys.length > 0
-  const canUpdate = useHasPermission({ schema, resource, action: "update" })
-  const canDelete = useHasPermission({ schema, resource, action: "delete" })
-
   return (
-    <div className="flex h-full flex-col gap-2">
-      <div className="rounded-xl bg-card">
-        <EventCalendarRoot
-          view={view}
-          events={data}
-          onViewUpdate={(v) =>
-            void navigate({
-              search: (prev: Record<string, unknown>) => ({
-                ...prev,
-                view: v,
-              }),
-            })
-          }
-          onDragEvent={canUpdate ? onDragEvent : undefined}
-          onAddEvent={hasPk ? onAddEvent : undefined}
-          onEventView={hasPk ? onEventView : undefined}
-          onEventDelete={hasPk && canDelete ? deleteConfirm.request : undefined}
-        >
-          <EventCalendarHeader>
-            <EventCalendarNavigation view={view} />
-          </EventCalendarHeader>
-          <EventCalendarContainer>
-            <EventCalendarDayView />
-            <EventCalendarWeekView />
-            <EventCalendarMonthView />
-            <EventCalendarYearView />
-            <EventCalendarAgendaView />
-          </EventCalendarContainer>
-        </EventCalendarRoot>
-      </div>
-      <ConfirmDeleteDialog
-        open={deleteConfirm.open}
-        onOpenChange={(open) => !open && deleteConfirm.cancel()}
-        onConfirm={deleteConfirm.confirm}
-        title="Delete record?"
-        pending={deleteConfirm.pending}
-      />
+    <div className="flex h-full min-h-0 flex-col rounded-xl bg-card">
+      <EventCalendar
+        className="h-full min-h-0"
+        events={events}
+        onEventsChange={setEvents}
+        view={view}
+        onViewChange={(v) =>
+          void navigate({
+            search: (prev: Record<string, unknown>) => ({ ...prev, view: v }),
+          })
+        }
+        views={CALENDAR_VIEWS}
+        showDayAddButton={hasPk && !readOnly}
+        interactions={{
+          drag: canUpdate && !readOnly,
+          resize: canUpdate && !readOnly && Boolean(endDateField),
+          selectSlot: false,
+        }}
+        onEventUpdate={canUpdate && !readOnly ? onEventUpdate : undefined}
+        onSlotClick={hasPk && !readOnly ? onSlotClick : undefined}
+        onEventClick={hasPk ? onEventClick : undefined}
+      >
+        <EventCalendarNav />
+        <EventCalendarContent />
+      </EventCalendar>
     </div>
-  )
-}
-
-function EventCalendarNavigation({ view }: { view: TCalendarView }) {
-  const navigate = useNavigate({
-    from: "/$schema/resource/$resource/calendar/$calendarId",
-  })
-
-  function goTo(v: TCalendarView) {
-    void navigate({
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        view: v,
-      }),
-    })
-  }
-
-  return (
-    <ButtonGroup>
-      <Button
-        aria-label="View by day"
-        size="icon-sm"
-        variant={view === "day" ? "default" : "outline"}
-        onClick={() => goTo("day")}
-      >
-        <List className="size-4" />
-      </Button>
-
-      <Button
-        aria-label="View by week"
-        size="icon-sm"
-        variant={view === "week" ? "default" : "outline"}
-        onClick={() => goTo("week")}
-      >
-        <Columns className="size-4" />
-      </Button>
-
-      <Button
-        aria-label="View by month"
-        size="icon-sm"
-        variant={view === "month" ? "default" : "outline"}
-        onClick={() => goTo("month")}
-      >
-        <Grid2x2 className="size-4" />
-      </Button>
-
-      <Button
-        aria-label="View by year"
-        size="icon-sm"
-        variant={view === "year" ? "default" : "outline"}
-        onClick={() => goTo("year")}
-      >
-        <Grid3x3 className="size-4" />
-      </Button>
-
-      <Button
-        aria-label="View by agenda"
-        size="icon-sm"
-        variant={view === "agenda" ? "default" : "outline"}
-        onClick={() => goTo("agenda")}
-      >
-        <CalendarRange className="size-4" />
-      </Button>
-    </ButtonGroup>
   )
 }

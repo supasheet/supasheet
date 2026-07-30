@@ -986,7 +986,8 @@ comment on table demo.tasks is '{
             "title": "title",
             "badge": "status",
             "start_date": "created_at",
-            "end_date": "due_date"
+            "end_date": "due_date",
+            "read_only": true
         }
     ],
     "filter_presets": [
