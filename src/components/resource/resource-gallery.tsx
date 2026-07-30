@@ -2,25 +2,17 @@ import { useNavigate } from "@tanstack/react-router"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { Eye, Image as ImageIcon, Trash } from "lucide-react"
+import { EyeIcon, Image as ImageIcon, Trash } from "lucide-react"
 import { toast } from "sonner"
 
 import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Badge } from "#/components/ui/badge"
+import { Button } from "#/components/ui/button"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "#/components/ui/card"
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "#/components/ui/context-menu"
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "#/components/ui/button-group"
+import { Card, CardContent } from "#/components/ui/card"
 import {
   Empty,
   EmptyDescription,
@@ -81,11 +73,11 @@ export function ResourceGallery({
           </EmptyHeader>
         </Empty>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {data.map((item) => {
             const resourceId = getPkValue(item.data, primaryKeys)
             return (
-              <GalleryContextMenu
+              <GalleryCard
                 key={resourceId}
                 item={item}
                 schema={schema}
@@ -93,51 +85,7 @@ export function ResourceGallery({
                 resourceId={resourceId}
                 primaryKeys={primaryKeys}
                 isTable={isTable}
-              >
-                <Card className="h-full cursor-pointer shadow-xs">
-                  <CardHeader>
-                    <div className="relative aspect-4/3 w-full overflow-hidden rounded-md bg-muted">
-                      {item.cover ? (
-                        <img
-                          src={item.cover}
-                          alt={item.title ?? "Gallery item"}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            target.style.display = "none"
-                            const sibling = target.nextElementSibling
-                            if (sibling) sibling.classList.remove("hidden")
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={cn(
-                          "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-                          item.cover && "hidden"
-                        )}
-                      >
-                        <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
-                      </div>
-                      {item.badge && (
-                        <Badge className="absolute top-2 right-2 capitalize">
-                          {item.badge}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardTitle className="line-clamp-1">
-                      {item.title ?? "Untitled"}
-                    </CardTitle>
-                    {item.description && (
-                      <CardDescription className="line-clamp-2">
-                        {item.description}
-                      </CardDescription>
-                    )}
-                  </CardContent>
-                </Card>
-              </GalleryContextMenu>
+              />
             )
           })}
         </div>
@@ -146,8 +94,7 @@ export function ResourceGallery({
   )
 }
 
-function GalleryContextMenu<S extends DatabaseSchemas>({
-  children,
+function GalleryCard<S extends DatabaseSchemas>({
   item,
   schema,
   resource,
@@ -155,7 +102,6 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
   primaryKeys,
   isTable,
 }: {
-  children: React.ReactNode
   item: GalleryViewData
   schema: S
   resource: DatabaseViews<S> | DatabaseTables<S>
@@ -169,6 +115,12 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
   const { mutateAsync: deleteRow } = useMutation(
     deleteResourceMutationOptions(schema, resource)
   )
+
+  const goToDetail = () =>
+    navigate({
+      to: "/$schema/resource/$resource/$resourceId/detail",
+      params: { schema, resource, resourceId },
+    })
 
   const deleteConfirm = useConfirmAction(async (target: GalleryViewData) => {
     const pk = Object.fromEntries(
@@ -189,34 +141,75 @@ function GalleryContextMenu<S extends DatabaseSchemas>({
 
   return (
     <>
-      <ContextMenu>
-        <ContextMenuTrigger>{children}</ContextMenuTrigger>
-        <ContextMenuContent className="w-52">
-          <ContextMenuItem
-            onClick={() =>
-              navigate({
-                to: "/$schema/resource/$resource/$resourceId/detail",
-                params: { schema, resource, resourceId },
-              })
-            }
-          >
-            <Eye className="size-4" />
-            View details
-          </ContextMenuItem>
-          {isTable && canDelete && (
-            <>
-              <ContextMenuSeparator />
-              <ContextMenuItem
-                variant="destructive"
-                onClick={() => deleteConfirm.request(item)}
-              >
-                <Trash className="size-4" />
-                Delete
-              </ContextMenuItem>
-            </>
-          )}
-        </ContextMenuContent>
-      </ContextMenu>
+      <Card className="h-full">
+        <CardContent className="flex flex-col gap-4">
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-muted">
+            {item.cover ? (
+              <img
+                src={item.cover}
+                alt={item.title ?? "Gallery item"}
+                className="h-full w-full object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = "none"
+                  const sibling = target.nextElementSibling
+                  if (sibling) sibling.classList.remove("hidden")
+                }}
+              />
+            ) : null}
+            <div
+              className={cn(
+                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                item.cover && "hidden"
+              )}
+            >
+              <ImageIcon className="h-12 w-12 text-muted-foreground/40" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-5">
+              <div className="flex items-center gap-1">
+                <span className="text-secondary-foreground font-medium line-clamp-1">
+                  {item.title}
+                </span>
+              </div>
+              {item.badge && <Badge variant="outline">
+                {/* <BellIcon aria-hidden="true" /> */}
+                {item.badge}
+              </Badge>}
+            </div>
+
+            <p className="text-foreground text-sm line-clamp-2">
+              {item.description}
+            </p>
+          </div>
+
+          <ButtonGroup className="w-full">
+            <Button
+              variant="secondary"
+              className="flex-1"
+              onClick={goToDetail}
+            >
+              <EyeIcon aria-hidden="true" />
+              View details
+            </Button>
+            {isTable && canDelete && (
+              <>
+                <ButtonGroupSeparator />
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  onClick={() => deleteConfirm.request(item)}
+                >
+                  <Trash />
+                </Button>
+              </>
+            )}
+          </ButtonGroup>
+        </CardContent>
+      </Card>
       <ConfirmDeleteDialog
         open={deleteConfirm.open}
         onOpenChange={(open) => !open && deleteConfirm.cancel()}
