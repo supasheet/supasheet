@@ -31,6 +31,7 @@ import {
 } from "#/hooks/use-permissions"
 import type { GalleryLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import { getEnumBadgeMetaMap } from "#/lib/fields"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
@@ -201,19 +202,28 @@ function RouteComponent() {
   const descriptionField = galleryView.description
   const badgeField = galleryView.badge
 
-  const data: GalleryViewData[] = (resourceData?.result ?? []).map((row) => ({
-    cover:
-      coverField && row[coverField] != null ? String(row[coverField]) : null,
-    title:
-      titleField && row[titleField] != null ? String(row[titleField]) : null,
-    description:
-      descriptionField && row[descriptionField] != null
-        ? String(row[descriptionField])
-        : null,
-    badge:
-      badgeField && row[badgeField] != null ? String(row[badgeField]) : null,
-    data: row,
-  }))
+  const badgeColumn = columnsSchema?.find((col) => col.name === badgeField)
+  const badgeMeta = getEnumBadgeMetaMap(badgeColumn)
+
+  const data: GalleryViewData[] = (resourceData?.result ?? []).map((row) => {
+    const badge =
+      badgeField && row[badgeField] != null ? String(row[badgeField]) : null
+
+    return {
+      cover:
+        coverField && row[coverField] != null ? String(row[coverField]) : null,
+      title:
+        titleField && row[titleField] != null ? String(row[titleField]) : null,
+      description:
+        descriptionField && row[descriptionField] != null
+          ? String(row[descriptionField])
+          : null,
+      badge,
+      badgeIcon: badge ? badgeMeta[badge]?.icon : undefined,
+      badgeVariant: badge ? badgeMeta[badge]?.variant : undefined,
+      data: row,
+    }
+  })
 
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })

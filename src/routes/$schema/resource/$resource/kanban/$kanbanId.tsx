@@ -35,6 +35,7 @@ import {
 } from "#/hooks/use-permissions"
 import type { KanbanLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import { getEnumBadgeMetaMap, getEnumValues } from "#/lib/fields"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
 import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
@@ -226,6 +227,9 @@ function RouteComponent() {
   const badgeField = kanbanView.badge
   const dateField = kanbanView.date
 
+  const badgeColumn = columnsSchema?.find((col) => col.name === badgeField)
+  const badgeMeta = getEnumBadgeMetaMap(badgeColumn)
+
   const data: KanbanViewReducedData = {}
   for (const row of resourceData?.result ?? []) {
     const groupValue =
@@ -235,6 +239,9 @@ function RouteComponent() {
 
     if (!data[groupValue]) data[groupValue] = []
 
+    const badge =
+      badgeField && row[badgeField] != null ? String(row[badgeField]) : null
+
     const item: KanbanViewData = {
       title:
         titleField && row[titleField] != null ? String(row[titleField]) : null,
@@ -242,14 +249,18 @@ function RouteComponent() {
         descriptionField && row[descriptionField] != null
           ? String(row[descriptionField])
           : null,
-      badge:
-        badgeField && row[badgeField] != null ? String(row[badgeField]) : null,
+      badge,
+      badgeIcon: badge ? badgeMeta[badge]?.icon : undefined,
+      badgeVariant: badge ? badgeMeta[badge]?.variant : undefined,
       date: dateField && row[dateField] != null ? String(row[dateField]) : null,
       data: row,
     }
 
     data[groupValue].push(item)
   }
+
+  const groupByColumn = columnsSchema?.find((col) => col.name === groupByField)
+  const groupValues = getEnumValues(groupByColumn)
 
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
@@ -285,6 +296,7 @@ function RouteComponent() {
           data={data}
           resourceSchema={resourceSchema}
           groupBy={groupByField ?? ""}
+          groupValues={groupValues}
           layout={layout}
         />
       </div>

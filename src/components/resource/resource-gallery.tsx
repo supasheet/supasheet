@@ -5,13 +5,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { EyeIcon, Image as ImageIcon, Trash } from "lucide-react"
 import { toast } from "sonner"
 
+import { DynamicIcon } from "#/components/resource/resource-definition-utils"
 import { ConfirmDeleteDialog } from "#/components/shared/confirm-delete-dialog"
 import { Badge } from "#/components/ui/badge"
 import { Button } from "#/components/ui/button"
-import {
-  ButtonGroup,
-  ButtonGroupSeparator,
-} from "#/components/ui/button-group"
+import { ButtonGroup, ButtonGroupSeparator } from "#/components/ui/button-group"
 import { Card, CardContent } from "#/components/ui/card"
 import {
   Empty,
@@ -30,6 +28,7 @@ import type {
   ResourceSchema,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import type { EnumBadgeMeta } from "#/lib/fields"
 import { getPkValue } from "#/lib/fields"
 import { deleteResourceMutationOptions } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
@@ -39,6 +38,8 @@ export interface GalleryViewData {
   title: string | null
   description: string | null
   badge: string | null
+  badgeIcon?: EnumBadgeMeta["icon"]
+  badgeVariant?: EnumBadgeMeta["variant"]
   data: Record<string, unknown>
 }
 
@@ -175,10 +176,12 @@ function GalleryCard<S extends DatabaseSchemas>({
                   {item.title}
                 </span>
               </div>
-              {item.badge && <Badge variant="outline">
-                {/* <BellIcon aria-hidden="true" /> */}
-                {item.badge}
-              </Badge>}
+              {item.badge && (
+                <Badge variant={item.badgeVariant ?? "outline"}>
+                  <DynamicIcon iconName={item.badgeIcon} />
+                  {item.badge}
+                </Badge>
+              )}
             </div>
 
             <p className="text-foreground text-sm line-clamp-2">
@@ -187,11 +190,7 @@ function GalleryCard<S extends DatabaseSchemas>({
           </div>
 
           <ButtonGroup className="w-full">
-            <Button
-              variant="secondary"
-              className="flex-1"
-              onClick={goToDetail}
-            >
+            <Button variant="secondary" className="flex-1" onClick={goToDetail}>
               <EyeIcon aria-hidden="true" />
               View details
             </Button>

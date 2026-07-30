@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { AlignStartHorizontalIcon, AlignStartVerticalIcon } from "lucide-react"
 import { toast } from "sonner"
 
+import { DynamicIcon } from "#/components/resource/resource-definition-utils"
 import {
   Kanban,
   KanbanBoard,
@@ -29,6 +30,7 @@ import {
 } from "#/components/ui/empty"
 import type { ResourceSchema } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import type { EnumBadgeMeta } from "#/lib/fields"
 import { getPkValue } from "#/lib/fields"
 import { updateResourceMutationOptions } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
@@ -37,6 +39,8 @@ export interface KanbanViewData {
   title: string | null
   description: string | null
   badge: string | null
+  badgeIcon?: EnumBadgeMeta["icon"]
+  badgeVariant?: EnumBadgeMeta["variant"]
   date: string | null
   data: Record<string, unknown>
 }
@@ -45,15 +49,33 @@ export type KanbanViewReducedData = Record<string, KanbanViewData[]>
 
 export type KanbanBoardMode = "board" | "list"
 
+function seedGroupColumns(
+  data: KanbanViewReducedData,
+  groupValues: string[]
+): KanbanViewReducedData {
+  if (groupValues.length === 0) return data
+
+  const seeded: KanbanViewReducedData = {}
+  for (const value of groupValues) {
+    seeded[value] = data[value] ?? []
+  }
+  for (const [value, tasks] of Object.entries(data)) {
+    if (!(value in seeded)) seeded[value] = tasks
+  }
+  return seeded
+}
+
 export function ResourceKanban({
   data,
   resourceSchema,
   groupBy,
+  groupValues = [],
   layout,
 }: {
   data: KanbanViewReducedData
   resourceSchema: ResourceSchema
   groupBy: string
+  groupValues?: string[]
   layout: KanbanBoardMode
 }) {
   const schema = resourceSchema.schema ?? ""
@@ -66,11 +88,13 @@ export function ResourceKanban({
     from: "/$schema/resource/$resource/kanban/$kanbanId",
   })
   const queryClient = useQueryClient()
-  const [columns, setColumns] = useState<KanbanViewReducedData>(data)
+  const [columns, setColumns] = useState<KanbanViewReducedData>(() =>
+    seedGroupColumns(data, groupValues)
+  )
 
   useEffect(() => {
-    setColumns(data)
-  }, [data])
+    setColumns(seedGroupColumns(data, groupValues))
+  }, [data, groupValues])
 
   const { mutate: updateResource } = useMutation(
     updateResourceMutationOptions(schema, resource)
@@ -218,7 +242,11 @@ export function ResourceKanban({
                                 {task.title ?? "Untitled"}
                               </span>
                               {task.badge && (
-                                <Badge className="pointer-events-none h-5 px-1.5 text-[11px] capitalize">
+                                <Badge
+                                  variant={task.badgeVariant}
+                                  className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
+                                >
+                                  <DynamicIcon iconName={task.badgeIcon} />
                                   {task.badge}
                                 </Badge>
                               )}
