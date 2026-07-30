@@ -1,6 +1,12 @@
 import type React from "react"
-import { useCallback, useRef, useState } from "react"
-import type { ChangeEvent, DragEvent, InputHTMLAttributes } from "react"
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type InputHTMLAttributes,
+} from "react"
 
 export type FileMetadata = {
   name: string
@@ -162,7 +168,7 @@ export const useFileUpload = (
 
   const addFiles = useCallback(
     (newFiles: FileList | File[]) => {
-      if (newFiles.length === 0) return
+      if (!newFiles || newFiles.length === 0) return
 
       const newFilesArray = Array.from(newFiles)
       const errors: string[] = []
@@ -200,7 +206,7 @@ export const useFileUpload = (
 
           // Skip duplicate files silently
           if (isDuplicate) {
-            continue
+            return
           }
         }
 
@@ -232,13 +238,13 @@ export const useFileUpload = (
         onFilesAdded?.(validFiles)
 
         setState((prev) => {
-          const nextFiles = !multiple
+          const newFiles = !multiple
             ? validFiles
             : [...prev.files, ...validFiles]
-          onFilesChange?.(nextFiles)
+          onFilesChange?.(newFiles)
           return {
             ...prev,
-            files: nextFiles,
+            files: newFiles,
             errors,
           }
         })
@@ -335,7 +341,7 @@ export const useFileUpload = (
         return
       }
 
-      if (e.dataTransfer.files.length > 0) {
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         // In single file mode, only use the first file
         if (!multiple) {
           const file = e.dataTransfer.files[0]
