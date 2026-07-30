@@ -2,9 +2,23 @@
 
 import { useCallback, useState } from "react"
 
-import { AlertCircleIcon, FileUpIcon, XIcon } from "lucide-react"
+import {
+  AlertCircleIcon,
+  ExternalLinkIcon,
+  FileUpIcon,
+  XIcon,
+} from "lucide-react"
 import { toast } from "sonner"
 
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "#/components/ui/attachment"
 import { Button } from "#/components/ui/button"
 import { useFileUpload } from "#/hooks/use-file-upload"
 import type { FileMetadata, FileWithPreview } from "#/hooks/use-file-upload"
@@ -29,7 +43,7 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
 
   const storagePath = `${columnSchema.schema}/${columnSchema.table}/${columnSchema.name}`
 
-  const [_, setUploadProgress] = useState<UploadProgress[]>([])
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([])
 
   const currentFiles = field.state.value as FileObject[] | null
 
@@ -246,49 +260,66 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
               Clear all
             </Button>
           </div>
-          <div className="max-h-[200px] space-y-1 overflow-y-auto">
+          <div className="max-h-[200px] space-y-1.5 overflow-y-auto">
             {files.map((file) => {
               const FileIcon = getFileIcon(file.file.type)
               const isImage = file.file.type?.startsWith("image/")
+              const url = !(file.file instanceof File)
+                ? file.file.url
+                : undefined
+              const progress = uploadProgress.find(
+                (item) => item.fileId === file.id
+              )
+              const state = progress?.error
+                ? "error"
+                : progress && !progress.completed
+                  ? "uploading"
+                  : "done"
 
               return (
-                <div
-                  key={file.id}
-                  className="flex items-center gap-2 rounded-md border bg-muted/50 px-2 py-1.5"
-                >
-                  <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-background">
-                    {isImage && file.preview ? (
+                <Attachment key={file.id} state={state} className="w-full">
+                  <AttachmentMedia variant={isImage ? "image" : "icon"}>
+                    {isImage && (file.preview || url) ? (
                       <img
-                        src={file.preview}
+                        src={file.preview || url}
                         alt={file.file.name}
-                        className="size-full object-cover"
                       />
                     ) : (
-                      <FileIcon className="size-4 text-muted-foreground" />
+                      <FileIcon />
                     )}
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="truncate text-sm">{file.file.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatFileSize(file.file.size)}
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="size-5 rounded-sm"
-                    onClick={() => {
-                      removeFile(file.id)
-                      handleFileRemoved(
-                        file.id,
-                        !(file.file instanceof File) ? file.file.url : undefined
-                      )
-                    }}
-                  >
-                    <XIcon className="size-3" />
-                  </Button>
-                </div>
+                  </AttachmentMedia>
+                  <AttachmentContent>
+                    <AttachmentTitle>{file.file.name}</AttachmentTitle>
+                    <AttachmentDescription>
+                      {progress?.error ?? formatFileSize(file.file.size)}
+                    </AttachmentDescription>
+                  </AttachmentContent>
+                  <AttachmentActions>
+                    {url && (
+                      <AttachmentAction
+                        render={
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          />
+                        }
+                        aria-label={`Open ${file.file.name} in a new tab`}
+                      >
+                        <ExternalLinkIcon />
+                      </AttachmentAction>
+                    )}
+                    <AttachmentAction
+                      onClick={() => {
+                        removeFile(file.id)
+                        handleFileRemoved(file.id, url)
+                      }}
+                      aria-label={`Remove ${file.file.name}`}
+                    >
+                      <XIcon />
+                    </AttachmentAction>
+                  </AttachmentActions>
+                </Attachment>
               )
             })}
           </div>
