@@ -73,6 +73,7 @@ export function ResourceKanban({
   resourceSchema,
   groupBy,
   groupValues = [],
+  groupMeta = {},
   layout,
   filterPresets = [],
   currentFilters = [],
@@ -81,6 +82,7 @@ export function ResourceKanban({
   resourceSchema: ResourceSchema
   groupBy: string
   groupValues?: string[]
+  groupMeta?: Record<string, EnumBadgeMeta>
   layout: KanbanBoardMode
   filterPresets?: FilterPreset[]
   currentFilters?: ColumnFiltersState
@@ -212,78 +214,105 @@ export function ResourceKanban({
                 : "flex flex-col"
             )}
           >
-            {Object.entries(columns).map(([columnValue, tasks]) => (
-              <KanbanColumn
-                key={columnValue}
-                value={columnValue}
-                className={cn(
-                  "flex flex-col gap-2 rounded-lg border bg-card p-2.5",
-                  layout === "board" && "min-w-sm max-w-2xl"
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">{columnValue}</span>
-                    <Badge
-                      variant="secondary"
-                      className="pointer-events-none rounded-sm"
-                    >
-                      {tasks.length}
-                    </Badge>
-                  </div>
-                </div>
-                <KanbanColumnContent
+            {Object.entries(columns).map(([columnValue, tasks]) => {
+              const collapsed = layout === "board" && tasks.length === 0
+              const meta = groupMeta[columnValue]
+
+              return (
+                <KanbanColumn
+                  key={columnValue}
                   value={columnValue}
-                  className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5"
+                  className={cn(
+                    "flex flex-col gap-2 rounded-lg border bg-card p-2.5",
+                    layout === "board" &&
+                      (collapsed
+                        ? "w-14 shrink-0 items-center"
+                        : "min-w-sm max-w-2xl")
+                  )}
                 >
-                  {tasks.map((task) => {
-                    const resourceId = getPkValue(task.data, primaryKeys)
-                    return (
-                      <KanbanItem key={buildId(task)} value={buildId(task)}>
-                        <KanbanItemHandle
-                          className="block cursor-pointer rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
-                          onClick={() =>
-                            navigate({
-                              to: "/$schema/resource/$resource/$resourceId/detail",
-                              params: { schema, resource, resourceId },
-                            })
-                          }
-                        >
-                          <div className="flex flex-col gap-2">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="line-clamp-1 text-sm font-medium">
-                                {task.title ?? "Untitled"}
-                              </span>
-                              {task.badge && (
-                                <Badge
-                                  variant={task.badgeVariant}
-                                  className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
-                                >
-                                  <DynamicIcon iconName={task.badgeIcon} />
-                                  {task.badge}
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              {task.description && (
-                                <span className="line-clamp-1">
-                                  {task.description}
+                  <div
+                    className={cn(
+                      "flex items-center justify-between",
+                      collapsed && "flex-1 flex-col justify-start gap-2"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex items-center gap-2",
+                        collapsed && "flex-col"
+                      )}
+                    >
+                      <DynamicIcon iconName={meta?.icon} />
+                      <span
+                        className={cn(
+                          "text-sm font-semibold",
+                          collapsed &&
+                            "[writing-mode:vertical-rl] rotate-180 whitespace-nowrap"
+                        )}
+                      >
+                        {columnValue}
+                      </span>
+                      <Badge
+                        variant={meta?.variant ?? "secondary"}
+                        className="pointer-events-none rounded-sm"
+                      >
+                        {tasks.length}
+                      </Badge>
+                    </div>
+                  </div>
+                  <KanbanColumnContent
+                    value={columnValue}
+                    className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5"
+                  >
+                    {tasks.map((task) => {
+                      const resourceId = getPkValue(task.data, primaryKeys)
+                      return (
+                        <KanbanItem key={buildId(task)} value={buildId(task)}>
+                          <KanbanItemHandle
+                            className="block cursor-pointer rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
+                            onClick={() =>
+                              navigate({
+                                to: "/$schema/resource/$resource/$resourceId/detail",
+                                params: { schema, resource, resourceId },
+                              })
+                            }
+                          >
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="line-clamp-1 text-sm font-medium">
+                                  {task.title ?? "Untitled"}
                                 </span>
-                              )}
-                              {task.date && (
-                                <time className="text-[10px] tabular-nums whitespace-nowrap">
-                                  {new Date(task.date).toDateString()}
-                                </time>
-                              )}
+                                {task.badge && (
+                                  <Badge
+                                    variant={task.badgeVariant}
+                                    className="pointer-events-none h-5 px-1.5 text-[11px]"
+                                  >
+                                    <DynamicIcon iconName={task.badgeIcon} />
+                                    {task.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                {task.description && (
+                                  <span className="line-clamp-1">
+                                    {task.description}
+                                  </span>
+                                )}
+                                {task.date && (
+                                  <time className="text-[10px] tabular-nums whitespace-nowrap">
+                                    {new Date(task.date).toDateString()}
+                                  </time>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </KanbanItemHandle>
-                      </KanbanItem>
-                    )
-                  })}
-                </KanbanColumnContent>
-              </KanbanColumn>
-            ))}
+                          </KanbanItemHandle>
+                        </KanbanItem>
+                      )
+                    })}
+                  </KanbanColumnContent>
+                </KanbanColumn>
+              )
+            })}
           </KanbanBoard>
           <KanbanOverlay>
             <div className="size-full rounded-md bg-primary/10" />

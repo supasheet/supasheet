@@ -297,6 +297,7 @@ function RouteComponent() {
 
   const groupByColumn = columnsSchema?.find((col) => col.name === groupByField)
   const groupValues = getEnumValues(groupByColumn)
+  const groupMeta = getEnumBadgeMetaMap(groupByColumn)
 
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
@@ -333,6 +334,7 @@ function RouteComponent() {
           resourceSchema={resourceSchema}
           groupBy={groupByField ?? ""}
           groupValues={groupValues}
+          groupMeta={groupMeta}
           layout={layout}
           filterPresets={meta.filter_presets ?? []}
           currentFilters={filters}
