@@ -24,7 +24,7 @@ import { pageTitle } from "#/lib/page-title"
 import {
   navItemsQueryOptions,
   resourcesQueryOptions,
-} from "#/lib/supabase/data/resource"
+} from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/$schema/")({
   head: ({ params }) => ({

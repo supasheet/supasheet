@@ -14,7 +14,7 @@ import { UsersTable } from "#/components/users/users-table"
 import { useHasRole } from "#/hooks/use-permissions"
 import { pageTitle } from "#/lib/page-title"
 import { usersQueryOptions } from "#/lib/supabase/data/core"
-import { columnsSchemaQueryOptions } from "#/lib/supabase/data/resource"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/core/users/")({
   head: () => ({ meta: [{ title: pageTitle("Users") }] }),

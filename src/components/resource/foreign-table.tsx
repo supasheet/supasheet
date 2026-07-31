@@ -27,10 +27,8 @@ import type {
   Relationship,
   ResourceDataSchema,
 } from "#/lib/database-meta.types"
-import {
-  columnsSchemaQueryOptions,
-  resourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
+import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
 
 import { foreignTableColumns } from "./foreign-table-columns"

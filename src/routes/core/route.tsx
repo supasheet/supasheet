@@ -21,7 +21,7 @@ import {
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { userPermissionsQueryOptions } from "#/lib/supabase/data/core"
-import { schemasQueryOptions } from "#/lib/supabase/data/resource"
+import { schemasQueryOptions } from "#/lib/supabase/data/meta"
 
 const CORE_RESOURCES = [
   {

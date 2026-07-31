@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   columnsSchemaQueryOptions,
   tableSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+} from "#/lib/supabase/data/meta"
 
 import { ResourceFormSheetContent } from "./resource-form-sheet-content"
 

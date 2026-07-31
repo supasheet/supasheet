@@ -5,10 +5,8 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { ResourceFullDetail } from "#/components/resource/detail/resource-full-detail"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"
 import { useHasPermission } from "#/hooks/use-permissions"
-import {
-  columnsSchemaQueryOptions,
-  singleResourceDataQueryOptions,
-} from "#/lib/supabase/data/resource"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
+import { singleResourceDataQueryOptions } from "#/lib/supabase/data/resource"
 
 const parentRoute = getRouteApi(
   "/$schema/resource/$resource/$resourceId/detail"

@@ -33,8 +33,8 @@ import type { TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
+import { relatedTablesSchemaQueryOptions } from "#/lib/supabase/data/meta"
 import {
-  relatedTablesSchemaQueryOptions,
   resourceActionsQueryOptions,
   singleResourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"

@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 
 import type { TableMetadata } from "#/lib/database-meta.types"
-import { tableSchemaQueryOptions } from "#/lib/supabase/data/resource"
+import { tableSchemaQueryOptions } from "#/lib/supabase/data/meta"
 
 export function useInlineFormFlag(schema: string, resource: string) {
   const { data: tableSchema } = useQuery({

@@ -10,8 +10,10 @@ import type { TableMetadata } from "#/lib/database-meta.types"
 import {
   columnsSchemaQueryOptions,
   relatedTablesSchemaQueryOptions,
-  resourceActionsQueryOptions,
   resourcePrivilegesQueryOptions,
+} from "#/lib/supabase/data/meta"
+import {
+  resourceActionsQueryOptions,
   singleForeignTableDataQueryOptions,
   singleResourceDataQueryOptions,
 } from "#/lib/supabase/data/resource"

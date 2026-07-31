@@ -35,11 +35,11 @@ import type {
 } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
 import {
   reportDataQueryOptions,
   reportQueryOptions,
 } from "#/lib/supabase/data/report"
-import { columnsSchemaQueryOptions } from "#/lib/supabase/data/resource"
 
 export const Route = createFileRoute("/$schema/report/$report/")({
   params: z.object({

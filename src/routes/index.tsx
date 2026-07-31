@@ -15,7 +15,7 @@ import { Separator } from "#/components/ui/separator"
 import { Skeleton } from "#/components/ui/skeleton"
 import { useUser } from "#/hooks/use-user"
 import { pageTitle } from "#/lib/page-title"
-import { schemasQueryOptions } from "#/lib/supabase/data/resource"
+import { schemasQueryOptions } from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: pageTitle("Home") }] }),

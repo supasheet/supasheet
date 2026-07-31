@@ -52,7 +52,7 @@ import {
   navItemsQueryOptions,
   resourcesQueryOptions,
   schemasQueryOptions,
-} from "#/lib/supabase/data/resource"
+} from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/$schema")({
   params: z.object({

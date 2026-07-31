@@ -13,9 +13,9 @@ import { getMetaFields } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import {
   columnsSchemaQueryOptions,
-  singleResourceDataQueryOptions,
   tableSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+} from "#/lib/supabase/data/meta"
+import { singleResourceDataQueryOptions } from "#/lib/supabase/data/resource"
 import type { FileObject } from "#/types/fields"
 
 import { ResourceFormSheetContent } from "./resource-form-sheet-content"

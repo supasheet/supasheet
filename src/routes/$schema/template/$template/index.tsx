@@ -35,7 +35,7 @@ import type {
 } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
-import { columnsSchemaQueryOptions } from "#/lib/supabase/data/resource"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
 import {
   templateDataQueryOptions,
   templatesQueryOptions,

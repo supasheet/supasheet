@@ -28,10 +28,8 @@ import {
   parseImportFile,
 } from "#/lib/import"
 import type { ParsedData } from "#/lib/import"
-import {
-  columnsSchemaQueryOptions,
-  insertBulkResourceMutationOptions,
-} from "#/lib/supabase/data/resource"
+import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
+import { insertBulkResourceMutationOptions } from "#/lib/supabase/data/resource"
 import { cn } from "#/lib/utils"
 
 import { ResourceFormSheetSkeleton } from "./resource-form-sheet-skeleton"

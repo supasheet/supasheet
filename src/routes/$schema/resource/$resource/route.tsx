@@ -12,7 +12,7 @@ import {
   resourcePrivilegesQueryOptions,
   tableSchemaQueryOptions,
   viewSchemaQueryOptions,
-} from "#/lib/supabase/data/resource"
+} from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/$schema/resource/$resource")({
   params: z.object({
