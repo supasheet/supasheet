@@ -16,7 +16,8 @@
     "check": "prettier --write . && eslint --fix",
     "deploy": "vite build && wrangler deploy",
     "supabase": "supabase",
-    "examples": "bash ./supabase/examples/apply.sh"
+    "examples": "bash ./supabase/examples/apply.sh",
+    "examples:reset": "supabase db reset && bash ./supabase/examples/apply.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
