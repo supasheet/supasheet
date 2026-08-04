@@ -1,0 +1,67 @@
+<!--
+  Sample HTML-based PDF report template for
+  manufacturing.production_schedule_report.
+
+  Upload this file as-is to the `report-templates` storage bucket under
+  the `manufacturing` folder, as a user in the "x-admin" role — the
+  object key `manufacturing/production_schedule_report.hbs` IS the
+  report identity, so the filename must exactly match the view name
+  plus `.hbs`. This enables the "Print Report" button on the Production
+  Schedule page. The report page compiles this template with Handlebars
+  against `{ name, rows }`, where `rows` is the currently loaded report
+  data, and opens the result in a new tab for printing or saving as a
+  PDF — which is how a schedule ends up pinned to the wall by the line.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Works Order</th>
+      <th>SKU</th>
+      <th>Product</th>
+      <th>Status</th>
+      <th>Priority</th>
+      <th>Ordered</th>
+      <th>Started</th>
+      <th>Good</th>
+      <th>Scrap</th>
+      <th>Remaining</th>
+      <th>Yield %</th>
+      <th>Start</th>
+      <th>Due</th>
+      <th>Days Late</th>
+      <th>Ops</th>
+      <th>Std Hrs</th>
+      <th>Act Hrs</th>
+      <th>Reference</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{order_number}}</td>
+        <td>{{sku}}</td>
+        <td>{{product}}</td>
+        <td>{{status}}</td>
+        <td>{{priority}}</td>
+        <td>{{quantity_ordered}}</td>
+        <td>{{quantity_started}}</td>
+        <td>{{quantity_produced}}</td>
+        <td>{{quantity_scrapped}}</td>
+        <td>{{quantity_remaining}}</td>
+        <td>{{yield_percent}}</td>
+        <td>{{planned_start}}</td>
+        <td>{{planned_end}}</td>
+        <td>{{days_late}}</td>
+        <td>{{operation_count}}</td>
+        <td>{{standard_hours}}</td>
+        <td>{{actual_hours}}</td>
+        <td>{{sales_reference}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="18">No open works orders</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

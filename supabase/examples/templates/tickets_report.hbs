@@ -1,0 +1,51 @@
+<!--
+  Sample HTML-based PDF report template for desk.tickets_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `desk` folder, as a user in the "x-admin" role — the
+  object key `desk/tickets_report.hbs` IS the report identity, so
+  the filename must exactly match the view name plus `.hbs`. This
+  enables the "Print Report" button on the Ticket Report page. The
+  report page compiles this template with Handlebars against
+  `{ name, rows }`, where `rows` is the currently loaded report data,
+  and opens the result in a new tab for printing or saving as a PDF.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Ref</th>
+      <th>Subject</th>
+      <th>Status</th>
+      <th>Priority</th>
+      <th>Account</th>
+      <th>Team</th>
+      <th>Assignee</th>
+      <th>Due</th>
+      <th>SLA</th>
+      <th>Hours</th>
+      <th>CSAT</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{reference}}</td>
+        <td>{{subject}}</td>
+        <td>{{status}}</td>
+        <td>{{priority}}</td>
+        <td>{{customer}}</td>
+        <td>{{team}}</td>
+        <td>{{assignee}}</td>
+        <td>{{due_at}}</td>
+        <td>{{#if sla_breached}}Breached{{else}}OK{{/if}}</td>
+        <td>{{hours_logged}}</td>
+        <td>{{satisfaction_score}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="11">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

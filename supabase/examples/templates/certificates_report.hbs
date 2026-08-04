@@ -1,0 +1,48 @@
+<!--
+  Sample HTML-based PDF report template for lms.certificates_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `lms` folder, as a user in the "x-admin" role — the
+  object key `lms/certificates_report.hbs` IS the report identity, so
+  the filename must exactly match the view name plus `.hbs`. This
+  enables the "Print Report" button on the Certificates report page.
+  The report page compiles this template with Handlebars against
+  `{ name, rows }`, where `rows` is the currently loaded report data,
+  and opens the result in a new tab for printing or saving as a PDF —
+  the registry a verifier would check a certificate against.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Certificate</th>
+      <th>Verification Code</th>
+      <th>Course</th>
+      <th>Course Code</th>
+      <th>Learner</th>
+      <th>Learner Email</th>
+      <th>Instructor</th>
+      <th>Issued</th>
+      <th>Expires</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{certificate_number}}</td>
+        <td>{{verification_code}}</td>
+        <td>{{course}}</td>
+        <td>{{course_code}}</td>
+        <td>{{learner}}</td>
+        <td>{{learner_email}}</td>
+        <td>{{instructor}}</td>
+        <td>{{issued_at}}</td>
+        <td>{{expires_at}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="9">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

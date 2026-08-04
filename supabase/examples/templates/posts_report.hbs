@@ -1,0 +1,53 @@
+<!--
+  Sample HTML-based PDF report template for blog.posts_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `blog` folder, as a user in the "x-admin" role — the
+  object key `blog/posts_report.hbs` IS the report identity, so the
+  filename must exactly match the view name plus `.hbs`. This enables
+  the "Print Report" button on the Post Report page. The report page
+  compiles this template with Handlebars against `{ name, rows }`,
+  where `rows` is the currently loaded report data, and opens the
+  result in a new tab for printing or saving as a PDF.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Ref</th>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Format</th>
+      <th>Category</th>
+      <th>Author</th>
+      <th>Editor</th>
+      <th>Published</th>
+      <th>Words</th>
+      <th>Views</th>
+      <th>Comments</th>
+      <th>Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{reference}}</td>
+        <td>{{title}}</td>
+        <td>{{status}}</td>
+        <td>{{post_type}}</td>
+        <td>{{category}}</td>
+        <td>{{author}}</td>
+        <td>{{editor}}</td>
+        <td>{{published_at}}</td>
+        <td>{{word_count}}</td>
+        <td>{{view_count}}</td>
+        <td>{{comment_count}}</td>
+        <td>{{#if average_rating}}{{average_rating}}{{else}}—{{/if}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="12">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

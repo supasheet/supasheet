@@ -1,0 +1,59 @@
+<!--
+  Sample HTML-based PDF report template for store.sales_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `store` folder, as a user in the "x-admin" role — the
+  object key `store/sales_report.hbs` IS the report identity, so the
+  filename must exactly match the view name plus `.hbs`. This enables
+  the "Print Report" button on the Sales Report page. The report page
+  compiles this template with Handlebars against `{ name, rows }`,
+  where `rows` is the currently loaded report data, and opens the
+  result in a new tab for printing or saving as a PDF.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Order</th>
+      <th>Placed</th>
+      <th>Customer</th>
+      <th>Channel</th>
+      <th>Status</th>
+      <th>Payment</th>
+      <th>Fulfillment</th>
+      <th>Items</th>
+      <th>Subtotal</th>
+      <th>Discount</th>
+      <th>Shipping</th>
+      <th>Tax</th>
+      <th>Total</th>
+      <th>Refunded</th>
+      <th>Net</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{order_number}}</td>
+        <td>{{placed_at}}</td>
+        <td>{{customer}}</td>
+        <td>{{channel}}</td>
+        <td>{{status}}</td>
+        <td>{{payment_status}}</td>
+        <td>{{fulfillment_status}}</td>
+        <td>{{item_count}}</td>
+        <td>{{subtotal}}</td>
+        <td>{{discount_total}}</td>
+        <td>{{shipping_total}}</td>
+        <td>{{tax_total}}</td>
+        <td>{{grand_total}} {{currency}}</td>
+        <td>{{refunded_total}}</td>
+        <td>{{net_revenue}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="15">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

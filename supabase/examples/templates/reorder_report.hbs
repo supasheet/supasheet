@@ -1,0 +1,57 @@
+<!--
+  Sample HTML-based PDF report template for inventory.reorder_report.
+
+  Upload this file as-is to the `report-templates` storage bucket under
+  the `inventory` folder, as a user in the "x-admin" role — the object
+  key `inventory/reorder_report.hbs` IS the report identity, so the
+  filename must exactly match the view name plus `.hbs`. This enables
+  the "Print Report" button on the Reorder Report page. The report page
+  compiles this template with Handlebars against `{ name, rows }`,
+  where `rows` is the currently loaded report data, and opens the result
+  in a new tab for printing or saving as a PDF.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>SKU</th>
+      <th>Item</th>
+      <th>Category</th>
+      <th>Class</th>
+      <th>Available</th>
+      <th>On Order</th>
+      <th>Reorder At</th>
+      <th>Shortfall</th>
+      <th>Order Qty</th>
+      <th>Lead Days</th>
+      <th>Supplier</th>
+      <th>Supplier SKU</th>
+      <th>Unit Price</th>
+      <th>Order Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{sku}}</td>
+        <td>{{item}}</td>
+        <td>{{category}}</td>
+        <td>{{abc_class}}</td>
+        <td>{{available}}</td>
+        <td>{{on_order}}</td>
+        <td>{{reorder_point}}</td>
+        <td>{{shortfall}}</td>
+        <td>{{reorder_quantity}}</td>
+        <td>{{lead_time_days}}</td>
+        <td>{{supplier}}</td>
+        <td>{{supplier_sku}}</td>
+        <td>{{unit_price}}</td>
+        <td>{{suggested_order_value}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="14">Nothing below its reorder point</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

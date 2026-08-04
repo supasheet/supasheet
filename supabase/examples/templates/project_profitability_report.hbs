@@ -1,0 +1,54 @@
+<!--
+  Sample HTML-based PDF report template for pm.project_profitability_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `pm` folder, as a user in the "x-admin" role — the object
+  key `pm/project_profitability_report.hbs` IS the report identity,
+  so the filename must exactly match the view name plus `.hbs`. This
+  enables the "Print Report" button on the Project Profitability
+  report page. The report page compiles this template with
+  Handlebars against `{ name, rows }`, where `rows` is the currently
+  loaded report data, and opens the result in a new tab for printing
+  or saving as a PDF — the document a delivery review would hand out.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>Code</th>
+      <th>Status</th>
+      <th>Client</th>
+      <th>PM Lead</th>
+      <th>Budget Type</th>
+      <th>Budget</th>
+      <th>Budget Hours</th>
+      <th>Consumed Hours</th>
+      <th>Cost</th>
+      <th>Billed</th>
+      <th>Margin %</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{name}}</td>
+        <td>{{project_code}}</td>
+        <td>{{status}}</td>
+        <td>{{client}}</td>
+        <td>{{pm_lead}}</td>
+        <td>{{budget_type}}</td>
+        <td>{{budget_amount}}</td>
+        <td>{{budget_hours}}</td>
+        <td>{{consumed_hours}}</td>
+        <td>{{consumed_budget}}</td>
+        <td>{{billed_amount}}</td>
+        <td>{{margin_percent}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="12">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

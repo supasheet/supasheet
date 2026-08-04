@@ -1,0 +1,58 @@
+<!--
+  Sample HTML-based PDF report template for quality.capas_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `quality` folder, as a user in the "x-admin" role — the
+  object key `quality/capas_report.hbs` IS the report identity, so
+  the filename must exactly match the view name plus `.hbs`. This
+  enables the "Print Report" button on the CAPAs report page. The
+  report page compiles this template with Handlebars against
+  `{ name, rows }`, where `rows` is the currently loaded report data,
+  and opens the result in a new tab for printing or saving as a PDF —
+  the document a management review meeting would actually hand out.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>CAPA</th>
+      <th>Title</th>
+      <th>Type</th>
+      <th>Source</th>
+      <th>Status</th>
+      <th>Priority</th>
+      <th>Process</th>
+      <th>Owner</th>
+      <th>Opened By</th>
+      <th>Due</th>
+      <th>Actions</th>
+      <th>Completed</th>
+      <th>Effectiveness</th>
+      <th>Closed</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{capa_number}}</td>
+        <td>{{title}}</td>
+        <td>{{capa_type}}</td>
+        <td>{{source}}</td>
+        <td>{{status}}</td>
+        <td>{{priority}}</td>
+        <td>{{process}}</td>
+        <td>{{owner}}</td>
+        <td>{{opened_by}}</td>
+        <td>{{due_date}}</td>
+        <td>{{action_count}}</td>
+        <td>{{completed_action_count}}</td>
+        <td>{{effectiveness_result}}</td>
+        <td>{{closed_at}}</td>
+      </tr>
+    {{else}}
+      <tr>
+        <td colspan="14">No data</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

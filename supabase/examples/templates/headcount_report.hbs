@@ -1,0 +1,46 @@
+<!--
+  Sample HTML-based PDF report template for hr.headcount_report.
+
+  Upload this file as-is to the `report-templates` storage bucket
+  under the `hr` folder, as a user in the "x-admin" role — the object
+  key `hr/headcount_report.hbs` IS the report identity, so the
+  filename must exactly match the view name plus `.hbs`. This enables
+  the "Print Report" button on the Headcount Report page.
+-->
+<h1>{{name}}</h1>
+<table border="1" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Department</th>
+      <th>Code</th>
+      <th>Head</th>
+      <th>Headcount</th>
+      <th>Active</th>
+      <th>Onboarding</th>
+      <th>Leaving</th>
+      <th>Contractors</th>
+      <th>Avg tenure (mo)</th>
+      <th>FTE</th>
+      <th>Live openings</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+      <tr>
+        <td>{{department}}</td>
+        <td>{{code}}</td>
+        <td>{{#if department_head}}{{department_head}}{{else}}—{{/if}}</td>
+        <td>{{headcount}}</td>
+        <td>{{active}}</td>
+        <td>{{onboarding}}</td>
+        <td>{{leaving}}</td>
+        <td>{{contractors}}</td>
+        <td>{{average_tenure_months}}</td>
+        <td>{{total_fte}}</td>
+        <td>{{live_openings}}</td>
+      </tr>
+    {{else}}
+      <tr><td colspan="11">No data</td></tr>
+    {{/each}}
+  </tbody>
+</table>
