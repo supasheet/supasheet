@@ -5,10 +5,8 @@ import { useMemo, useState } from "react"
 import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { format, formatDistanceToNow } from "date-fns"
-import { PlusIcon } from "lucide-react"
 
 import { SelectCell } from "#/components/resource/cells/select-cell"
-import { NewRecordTrigger } from "#/components/resource/sheet/new-record-trigger"
 import { Button } from "#/components/ui/button"
 import {
   Timeline,
@@ -20,7 +18,6 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from "#/components/reui/timeline"
-import { useHasPermission } from "#/hooks/use-permissions"
 import { getColumnMetadata } from "#/lib/columns"
 import type {
   ColumnSchema,
@@ -52,12 +49,6 @@ export function ResourceForeignTimeline({
 
   const schema = resourceSchema.schema
   const table = resourceSchema.name
-
-  const canInsert = useHasPermission({
-    schema,
-    resource: table,
-    action: "insert",
-  })
 
   const defaultQuery = useMemo<TableMetadata["query"]>(() => {
     if (!resourceSchema.comment) return undefined
@@ -97,34 +88,8 @@ export function ResourceForeignTimeline({
     ? getColumnMetadata(resourceSchema, eventTypeColumn)
     : null
 
-  const defaults = hasParentValue
-    ? { [parentColumn]: String(parentValue) }
-    : undefined
-
-  const newRecordUrl = (() => {
-    const params = new URLSearchParams()
-    if (defaults) params.set("defaults", JSON.stringify(defaults))
-    const qs = params.toString()
-    return `/${schema}/resource/${table}/new${qs ? `?${qs}` : ""}`
-  })()
-
   return (
     <div className="flex flex-col gap-4">
-      {canInsert && (
-        <div className="flex justify-end">
-          <NewRecordTrigger
-            schema={schema}
-            resource={table}
-            defaults={defaults}
-            url={newRecordUrl}
-            size="sm"
-          >
-            <PlusIcon className="size-4" />
-            New entry
-          </NewRecordTrigger>
-        </div>
-      )}
-
       {data.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="font-medium text-sm">No activity yet</p>

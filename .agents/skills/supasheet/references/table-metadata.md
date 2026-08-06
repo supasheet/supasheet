@@ -173,7 +173,7 @@ A timeline entry is still just a regular FK-related child table — `timelines` 
 | `metadata`   | no       | raw JSON rendered inline (e.g. `{"from": "todo", "to": "done"}`)      |
 | `actor_id`   | no       | rendered as "by \<name\>" — requires a `query.join` entry aliased exactly `"actor"` pointing at the users table, with `name` in its `columns` |
 
-Timeline tables are typically trigger-populated activity logs: `display: "none"` (never browsable on their own), granted `select`-only (no insert/update/delete) so they're read-only, and never listed in the parent's own `fields.sections`. If `insert` is granted, a "New entry" button appears above the feed.
+Timeline tables are typically trigger-populated activity logs: `display: "none"` (never browsable on their own), granted `select`-only (no insert/update/delete) so they're read-only, and never listed in the parent's own `fields.sections`. The timeline renders no create button regardless of grants — rows come from a trigger, or from the child table's own resource route.
 
 ```json
 // on the child table (e.g. demo.task_events)
