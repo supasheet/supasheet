@@ -245,10 +245,10 @@ interface EventCalendarOffDaysConfig {
  * OAuth, tokens, and sync loops are application backend territory.
  */
 interface EventCalendarDataAdapter<TData = unknown> {
-  getEvents(
+  getEvents: (
     range: EventCalendarDateRange,
     signal?: AbortSignal
-  ): Promise<CalendarEvent<TData>[]>
+  ) => Promise<CalendarEvent<TData>[]>
 }
 
 export type {

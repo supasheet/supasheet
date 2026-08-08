@@ -1,16 +1,17 @@
 "use client"
 
 import {
-  type CSSProperties,
-  type Ref,
+  
+  
   useCallback,
   useEffect,
   useId,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react"
+import type {CSSProperties, Ref} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"

@@ -1,13 +1,14 @@
 "use client"
 
 import {
-  type CSSProperties,
-  type ReactNode,
+  
+  
   createContext,
   useContext,
   useMemo,
-  useState,
+  useState
 } from "react"
+import type {CSSProperties, ReactNode} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -68,7 +69,7 @@ interface GanttBarContextValue<TData = unknown> {
 }
 
 const GanttBarContext =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   createContext<GanttBarContextValue<any> | null>(null)
 
 /** The bar's subject; usable inside renderEvent content and bar children. */

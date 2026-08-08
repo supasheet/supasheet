@@ -1,10 +1,11 @@
 import {
-  type Locale,
+  
   format,
   isSameMonth,
   isSameYear,
-  subMilliseconds,
+  subMilliseconds
 } from "date-fns"
+import type {Locale} from "date-fns";
 
 import type {
   GanttDateRange,

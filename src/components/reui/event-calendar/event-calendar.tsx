@@ -1,9 +1,9 @@
 "use client"
 
 import {
-  type ComponentType,
-  type ReactNode,
-  type RefObject,
+  
+  
+  
   createContext,
   useCallback,
   useContext,
@@ -11,22 +11,25 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  useSyncExternalStore,
+  useSyncExternalStore
 } from "react"
+import type {ComponentType, ReactNode, RefObject} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { type Locale, addDays } from "date-fns"
+import {  addDays } from "date-fns"
+import type {Locale} from "date-fns";
 
 import {
-  type EventCalendarI18nConfig,
-  type EventCalendarI18nOverrides,
-  mergeEventCalendarI18n,
+  
+  
+  mergeEventCalendarI18n
 } from "#/components/reui/event-calendar/event-calendar-i18n.tsx"
+import type {EventCalendarI18nConfig, EventCalendarI18nOverrides} from "#/components/reui/event-calendar/event-calendar-i18n.tsx";
 import {
-  type EventCalendarDayBucket,
-  type EventCalendarIndex,
-  type WeekStartsOn,
+  
+  
+  
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -35,8 +38,9 @@ import {
   getViewDateRange,
   stepDate,
   toZoned,
-  zonedStartOfDay,
+  zonedStartOfDay
 } from "#/components/reui/event-calendar/event-calendar-lib.tsx"
+import type {EventCalendarDayBucket, EventCalendarIndex, WeekStartsOn} from "#/components/reui/event-calendar/event-calendar-lib.tsx";
 import type {
   CalendarEvent,
   CalendarView,
@@ -241,62 +245,62 @@ interface EventCalendarSettings<
 }
 
 interface EventCalendarApi<TData = unknown> {
-  next(): void
-  prev(): void
-  today(): void
-  goTo(date: Date): void
-  setView(view: CalendarView, opts?: { dayCount?: number }): void
-  setDayCount(count: number): void
-  getEvents(): CalendarEvent<TData>[]
-  getEvent(id: EventCalendarEventId): CalendarEvent<TData> | undefined
-  setEvents(events: CalendarEvent<TData>[]): void
-  addEvent(event: CalendarEvent<TData>): void
-  updateEvent(
+  next: () => void
+  prev: () => void
+  today: () => void
+  goTo: (date: Date) => void
+  setView: (view: CalendarView, opts?: { dayCount?: number }) => void
+  setDayCount: (count: number) => void
+  getEvents: () => CalendarEvent<TData>[]
+  getEvent: (id: EventCalendarEventId) => CalendarEvent<TData> | undefined
+  setEvents: (events: CalendarEvent<TData>[]) => void
+  addEvent: (event: CalendarEvent<TData>) => void
+  updateEvent: (
     id: EventCalendarEventId,
     patch: Partial<CalendarEvent<TData>>
-  ): void
-  removeEvent(id: EventCalendarEventId): void
-  getOccurrences(
+  ) => void
+  removeEvent: (id: EventCalendarEventId) => void
+  getOccurrences: (
     range?: EventCalendarDateRange
-  ): EventCalendarOccurrence<TData>[]
-  getOccurrencesForDay(day: Date): EventCalendarOccurrence<TData>[]
-  findOverlapping(candidate: {
+  ) => EventCalendarOccurrence<TData>[]
+  getOccurrencesForDay: (day: Date) => EventCalendarOccurrence<TData>[]
+  findOverlapping: (candidate: {
     start: Date
     end: Date
     excludeEventId?: string
-  }): EventCalendarOccurrence<TData>[]
-  select(selection: Partial<EventCalendarSelection>): void
-  selectEvent(key: string, opts?: { additive?: boolean }): void
-  clearSelection(): void
-  setInteractions(patch: Partial<EventCalendarInteractions>): void
-  setViewSettings(patch: EventCalendarViewSettings): void
-  getVisibleRange(): EventCalendarDateRange
-  getActiveRange(): EventCalendarDateRange
+  }) => EventCalendarOccurrence<TData>[]
+  select: (selection: Partial<EventCalendarSelection>) => void
+  selectEvent: (key: string, opts?: { additive?: boolean }) => void
+  clearSelection: () => void
+  setInteractions: (patch: Partial<EventCalendarInteractions>) => void
+  setViewSettings: (patch: EventCalendarViewSettings) => void
+  getVisibleRange: () => EventCalendarDateRange
+  getActiveRange: () => EventCalendarDateRange
   /** TZDate in the calendar's display time zone. */
-  toZoned(date: Date): Date
+  toZoned: (date: Date) => Date
   /** number = minutes from the zoned day start; no-op outside time-grid views. */
-  scrollToTime(time: Date | number): void
+  scrollToTime: (time: Date | number) => void
 }
 
 /** Cross-file plumbing for sibling view/interaction modules; not public API. */
 interface EventCalendarInternals<TData = unknown> {
-  getIndex(): EventCalendarIndex<TData>
-  setDrag(drag: EventCalendarDragState<TData> | null): void
-  setSlotDraft(draft: EventCalendarSlotDraft | null): void
-  registerScrollHandler(handler: ((time: Date | number) => void) | null): void
-  applyProposedUpdate(
+  getIndex: () => EventCalendarIndex<TData>
+  setDrag: (drag: EventCalendarDragState<TData> | null) => void
+  setSlotDraft: (draft: EventCalendarSlotDraft | null) => void
+  registerScrollHandler: (handler: ((time: Date | number) => void) | null) => void
+  applyProposedUpdate: (
     update: EventCalendarProposedUpdate<TData>,
     extraPatch?: Partial<CalendarEvent<TData>>
-  ): boolean
-  getSettingsVersion(): number
+  ) => boolean
+  getSettingsVersion: () => number
   /** The rendered calendar root element, or null before mount. */
-  getRootEl(): HTMLElement | null
-  setRootEl(el: HTMLElement | null): void
+  getRootEl: () => HTMLElement | null
+  setRootEl: (el: HTMLElement | null) => void
 }
 
 interface EventCalendarInstance<TData = unknown> {
-  getState(): EventCalendarState<TData>
-  subscribe(listener: () => void): () => void
+  getState: () => EventCalendarState<TData>
+  subscribe: (listener: () => void) => () => void
   api: EventCalendarApi<TData>
   settings: EventCalendarSettings<TData>
   internals: EventCalendarInternals<TData>
@@ -366,9 +370,9 @@ function warnOnce(key: string, message: string) {
 
 interface EventCalendarStore<TData> {
   instance: EventCalendarInstance<TData>
-  setOptions(next: UseEventCalendarStateOptions<TData>): boolean
-  notify(): void
-  emitRangeIfChanged(): void
+  setOptions: (next: UseEventCalendarStateOptions<TData>) => boolean
+  notify: () => void
+  emitRangeIfChanged: () => void
 }
 
 function createEventCalendarStore<TData>(
@@ -523,18 +527,18 @@ function createEventCalendarStore<TData>(
   ) => {
     const controlled = options[key] !== undefined
     if (!controlled) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       ;(internal as any)[key] = value
       invalidate()
     }
     const callbacks: Record<ControlledKey, ((v: never) => void) | undefined> = {
-      view: settings.onViewChange as never,
-      date: settings.onDateChange as never,
-      dayCount: settings.onDayCountChange as never,
-      events: settings.onEventsChange as never,
-      selection: settings.onSelectionChange as never,
-      interactions: settings.onInteractionsChange as never,
-      viewSettings: settings.onViewSettingsChange as never,
+      view: settings.onViewChange,
+      date: settings.onDateChange,
+      dayCount: settings.onDayCountChange,
+      events: settings.onEventsChange,
+      selection: settings.onSelectionChange,
+      interactions: settings.onInteractionsChange,
+      viewSettings: settings.onViewSettingsChange,
     }
     callbacks[key]?.(value as never)
     if (!controlled) notify()
@@ -954,7 +958,7 @@ function useEventCalendarState<TData = unknown>(
 }
 
 const EventCalendarContext =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   createContext<EventCalendarInstance<any> | null>(null)
 
 /** The stable calendar instance; throws outside <EventCalendar>. */
@@ -1650,7 +1654,7 @@ const DEFAULT_VIEW_CONFIG: EventCalendarViewConfig = {
 }
 
 const EventCalendarViewConfigContext = createContext<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   EventCalendarViewConfig<any>
 >(DEFAULT_VIEW_CONFIG)
 
@@ -1797,7 +1801,7 @@ function splitOptions<TData>(props: Record<string, unknown>): {
     } else rest[key] = value
   }
   return {
-    options: options as UseEventCalendarStateOptions<TData>,
+    options: options,
     viewConfig: viewConfig as unknown as EventCalendarViewConfig<TData>,
     rest,
   }
@@ -1816,7 +1820,7 @@ function EventCalendar<TData = unknown>({
   ...props
 }: EventCalendarProps<TData>) {
   const { options, viewConfig, rest } = splitOptions<TData>(
-    props as Record<string, unknown>
+    props
   )
 
   if (calendar && Object.keys(options).length > 0) {

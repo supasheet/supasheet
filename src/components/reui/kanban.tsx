@@ -23,8 +23,6 @@ import type {
   DropAnimation,
   Modifiers,
   UniqueIdentifier,
-} from "@dnd-kit/core"
-import {
   DndContext,
   DragOverlay,
   type DraggableAttributes,
@@ -35,18 +33,19 @@ import {
   TouchSensor,
   defaultDropAnimationSideEffects,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core"
 import {
-  type AnimateLayoutChanges,
+  
   SortableContext,
   arrayMove,
   defaultAnimateLayoutChanges,
   rectSortingStrategy,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable"
+import type {AnimateLayoutChanges} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
 
 import { cn } from "#/lib/utils.ts"

@@ -1,4 +1,4 @@
-import { type ComponentType, type ReactNode } from "react"
+import type {ComponentType, ReactNode} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"

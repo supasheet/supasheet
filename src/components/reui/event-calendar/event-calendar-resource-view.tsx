@@ -1,6 +1,7 @@
 "use client"
 
-import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react"
+import {  useEffect, useMemo, useRef, useState } from "react"
+import type {CSSProperties} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -498,7 +499,7 @@ function EventCalendarResourceColumn({
         const endMin = Math.min(segment.endMin ?? startMin, boundsEndMin)
         return endMin > boundsStartMin && startMin < boundsEndMin
       })
-      .map((segment) => ({ ...segment }) as EventCalendarSegment)
+      .map((segment) => ({ ...segment }))
     packTimedSegments(mine)
     return mine
   }, [segments.timed, resource.id, boundsStartMin, boundsEndMin])

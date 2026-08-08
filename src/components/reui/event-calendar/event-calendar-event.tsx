@@ -1,10 +1,11 @@
 import {
-  type CSSProperties,
-  type ReactNode,
+  
+  
   createContext,
   useContext,
-  useMemo,
+  useMemo
 } from "react"
+import type {CSSProperties, ReactNode} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -100,7 +101,7 @@ interface EventCalendarChipContextValue<TData = unknown> {
 }
 
 const EventCalendarChipContext =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   createContext<EventCalendarChipContextValue<any> | null>(null)
 
 /** The chip's subject; usable inside renderEvent content and chip children. */

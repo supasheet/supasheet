@@ -257,10 +257,10 @@ interface GanttOffDaysConfig {
  * OAuth, tokens, and sync loops are application backend territory.
  */
 interface GanttDataAdapter<TData = unknown> {
-  getEvents(
+  getEvents: (
     range: GanttDateRange,
     signal?: AbortSignal
-  ): Promise<GanttEvent<TData>[]>
+  ) => Promise<GanttEvent<TData>[]>
 }
 
 export type {

@@ -1,11 +1,12 @@
 import {
-  type CSSProperties,
-  type ReactNode,
+  
+  
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react"
+import type {CSSProperties, ReactNode} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -976,7 +977,7 @@ function EventCalendarDayColumn({
     })
     if (visible.length === segments.timed.length) return segments.timed
     const clones = visible.map(
-      (segment) => ({ ...segment }) as EventCalendarSegment
+      (segment) => ({ ...segment })
     )
     packTimedSegments(clones)
     return clones

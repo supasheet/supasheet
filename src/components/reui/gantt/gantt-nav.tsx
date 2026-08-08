@@ -1,6 +1,7 @@
 "use client"
 
-import { type ReactNode, useState } from "react"
+import {  useState } from "react"
+import type {ReactNode} from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
