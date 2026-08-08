@@ -1,13 +1,3 @@
-import { expandRecurrence } from "#/components/reui/event-calendar/event-calendar-recurrence.tsx"
-import type {
-  CalendarEvent,
-  CalendarView,
-  EventCalendarDateRange,
-  EventCalendarOccurrence,
-  EventCalendarOffDaysConfig,
-  EventCalendarResource,
-  EventCalendarSegment,
-} from "#/components/reui/event-calendar/event-calendar-types.tsx"
 import { TZDate } from "@date-fns/tz"
 import {
   addDays,
@@ -20,6 +10,17 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns"
+
+import { expandRecurrence } from "#/components/reui/event-calendar/event-calendar-recurrence.tsx"
+import type {
+  CalendarEvent,
+  CalendarView,
+  EventCalendarDateRange,
+  EventCalendarOccurrence,
+  EventCalendarOffDaysConfig,
+  EventCalendarResource,
+  EventCalendarSegment,
+} from "#/components/reui/event-calendar/event-calendar-types.tsx"
 
 type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6
 

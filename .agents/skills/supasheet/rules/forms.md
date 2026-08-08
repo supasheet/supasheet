@@ -13,7 +13,7 @@ requires:
 
 A custom form = a SQL function whose comment is `{"type": "form", "resource": ..., "name": ..., ...}`. Discovered by `supasheet.get_forms()`, it's listed as a card on the **target resource's overview page** (`/$schema/resource/$resource`) and opens at `/$schema/resource/$resource/form/$function_name`, where Supasheet renders the function's own arguments as a full form — sections, relation (FK-style) pickers, everything the standard create form supports — then calls the function via RPC on submit.
 
-Use this instead of a row action (a `{"type": "action"}`-tagged function that attaches a button to a resource's *rows* and auto-fills its arguments from the current record) when the operation needs **more than one or two auto-filled/row-derived arguments** — e.g. picking an unrelated record, entering several free-text/numeric fields, or logging a new record from a different resource's page. Row actions auto-fill from the current row and only support a single enum picker; forms show a full field UI for arbitrary parameters and aren't tied to any specific row.
+Use this instead of a row action (a `{"type": "action"}`-tagged function that attaches a button to a resource's _rows_ and auto-fills its arguments from the current record) when the operation needs **more than one or two auto-filled/row-derived arguments** — e.g. picking an unrelated record, entering several free-text/numeric fields, or logging a new record from a different resource's page. Row actions auto-fill from the current row and only support a single enum picker; forms show a full field UI for arbitrary parameters and aren't tied to any specific row.
 
 ## Full recipe
 
@@ -76,11 +76,26 @@ select supasheet.refresh_metadata ();
   "icon": "Clock",
   "success_message": "Time entry logged",
   "fields": {
-    "sections": [{ "id": "entry", "title": "Entry", "fields": ["p_task_id", "p_team_member_id"] }],
-    "behavior": { "p_notes": { "..." : "same FieldBehavior shape as table column comments" } },
-    "lookups": { "p_task_id": { "..." : "same LookupConfig shape as table column comments" } },
+    "sections": [
+      {
+        "id": "entry",
+        "title": "Entry",
+        "fields": ["p_task_id", "p_team_member_id"]
+      }
+    ],
+    "behavior": {
+      "p_notes": { "...": "same FieldBehavior shape as table column comments" }
+    },
+    "lookups": {
+      "p_task_id": { "...": "same LookupConfig shape as table column comments" }
+    },
     "relations": {
-      "p_task_id": { "schema": "demo", "table": "tasks", "column": "id", "display": ["title", "status"] }
+      "p_task_id": {
+        "schema": "demo",
+        "table": "tasks",
+        "column": "id",
+        "display": ["title", "status"]
+      }
     }
   }
 }

@@ -27,14 +27,14 @@ A table's `COMMENT` is a JSON object that configures its entire UI: sidebar visi
 
 Each entry: `{ "id", "name", "type", ...type-specific hints }`. The sheet (table) view always exists. Column hints name columns of this table.
 
-| type       | required                                | optional                                                                 |
-| ---------- | ---------------------------------------- | -------------------------------------------------------------------------- |
-| `kanban`   | `group` (enum col), `title`             | `description`, `badge`, `date`, `read_only`                             |
-| `calendar` | `title`, `start_date`                   | `end_date`, `badge`, `read_only`                                        |
-| `gallery`  | `cover` (FILE/AVATAR col), `title`      | `description`, `badge`                                                  |
-| `list`     | `title`                                 | `description`, `field_1`, `field_2`                                     |
-| `tree`     | `parent` (self-FK col), `title`         | `secondary`                                                              |
-| `gantt`    | `title`, `start_date`, `end_date`       | `group` (enum col), `progress` (numeric 0-100 col), `badge`, `read_only` |
+| type       | required                           | optional                                                                 |
+| ---------- | ---------------------------------- | ------------------------------------------------------------------------ |
+| `kanban`   | `group` (enum col), `title`        | `description`, `badge`, `date`, `read_only`                              |
+| `calendar` | `title`, `start_date`              | `end_date`, `badge`, `read_only`                                         |
+| `gallery`  | `cover` (FILE/AVATAR col), `title` | `description`, `badge`                                                   |
+| `list`     | `title`                            | `description`, `field_1`, `field_2`                                      |
+| `tree`     | `parent` (self-FK col), `title`    | `secondary`                                                              |
+| `gantt`    | `title`, `start_date`, `end_date`  | `group` (enum col), `progress` (numeric 0-100 col), `badge`, `read_only` |
 
 ```json
 "views": [
@@ -165,25 +165,32 @@ Table-only — view resources have no detail page. Configures the detail page's 
 
 A timeline entry is still just a regular FK-related child table — `timelines` only changes how that one tab renders. The child table needs specific columns for the feed to render correctly:
 
-| column       | required | renders as                                                          |
-| ------------ | -------- | -------------------------------------------------------------------- |
-| `occurred_at`| yes      | timestamp; feed is always sorted by this column descending (fixed, not configurable) |
-| `title`      | yes      | the event's headline text                                            |
-| `event_type` | no       | badge, if the column has enum metadata (`values` map) like any other enum column |
-| `metadata`   | no       | raw JSON rendered inline (e.g. `{"from": "todo", "to": "done"}`)      |
-| `actor_id`   | no       | rendered as "by \<name\>" — requires a `query.join` entry aliased exactly `"actor"` pointing at the users table, with `name` in its `columns` |
+| column        | required | renders as                                                                                                                                    |
+| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `occurred_at` | yes      | timestamp; feed is always sorted by this column descending (fixed, not configurable)                                                          |
+| `title`       | yes      | the event's headline text                                                                                                                     |
+| `event_type`  | no       | badge, if the column has enum metadata (`values` map) like any other enum column                                                              |
+| `metadata`    | no       | raw JSON rendered inline (e.g. `{"from": "todo", "to": "done"}`)                                                                              |
+| `actor_id`    | no       | rendered as "by \<name\>" — requires a `query.join` entry aliased exactly `"actor"` pointing at the users table, with `name` in its `columns` |
 
 Timeline tables are typically trigger-populated activity logs: `display: "none"` (never browsable on their own), granted `select`-only (no insert/update/delete) so they're read-only, and never listed in the parent's own `fields.sections`. The timeline renders no create button regardless of grants — rows come from a trigger, or from the child table's own resource route.
 
 ```json
 // on the child table (e.g. demo.task_events)
 {
-    "icon": "History",
-    "display": "none",
-    "query": {
-        "sort": [{"id": "occurred_at", "desc": true}],
-        "join": [{"table": "users", "on": "actor_id", "alias": "actor", "columns": ["name", "avatar"]}]
-    }
+  "icon": "History",
+  "display": "none",
+  "query": {
+    "sort": [{ "id": "occurred_at", "desc": true }],
+    "join": [
+      {
+        "table": "users",
+        "on": "actor_id",
+        "alias": "actor",
+        "columns": ["name", "avatar"]
+      }
+    ]
+  }
 }
 ```
 
@@ -192,7 +199,7 @@ See `demo.tasks` (`"detail": {"timelines": ["task_events"]}`) + `demo.task_event
 ## Special table modes
 
 - **Singleton**: `"singleton": true` — UI opens the single row directly (settings tables). Don't grant/permit `:delete`.
-- **Inline form**: `"inline_form": true` — governs *only* this table's own top-level views (table/grid/kanban/calendar/gallery/list/tree): records there open in the same-page sheet overlay instead of navigating to the full detail page. It has no effect on detail-page tabs — any FK-related table renders as a tab on its parent's detail page automatically (independent of `inline_form`), and rows inside a detail-page tab *always* open in the sheet overlay by design, `inline_form` or not.
+- **Inline form**: `"inline_form": true` — governs _only_ this table's own top-level views (table/grid/kanban/calendar/gallery/list/tree): records there open in the same-page sheet overlay instead of navigating to the full detail page. It has no effect on detail-page tabs — any FK-related table renders as a tab on its parent's detail page automatically (independent of `inline_form`), and rows inside a detail-page tab _always_ open in the sheet overlay by design, `inline_form` or not.
   `"display": "none"` is a separate, unrelated flag (hides the table from the sidebar). The two are commonly combined for junction/line-item tables — hide it from the sidebar, and if it's ever reached directly (e.g. by URL) keep interactions lightweight — but neither implies the other. See `demo.invoice_items`, `demo.project_members`.
 
 ## Gotchas

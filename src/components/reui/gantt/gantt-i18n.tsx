@@ -1,14 +1,15 @@
-import type {
-  GanttDateRange,
-  GanttScale,
-} from "#/components/reui/gantt/gantt-types.tsx"
 import {
+  type Locale,
   format,
   isSameMonth,
   isSameYear,
   subMilliseconds,
-  type Locale,
 } from "date-fns"
+
+import type {
+  GanttDateRange,
+  GanttScale,
+} from "#/components/reui/gantt/gantt-types.tsx"
 
 interface GanttI18nConfig {
   labels: {

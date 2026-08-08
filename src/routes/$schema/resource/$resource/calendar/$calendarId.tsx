@@ -17,8 +17,11 @@ import {
   ResourceCalendar,
   colorFromString,
 } from "#/components/resource/resource-calendar"
-import type { CalendarEvent, CalendarView } from "#/components/reui/event-calendar/event-calendar-types"
 import { ResourceViewSwitcher } from "#/components/resource/resource-view-switcher"
+import type {
+  CalendarEvent,
+  CalendarView,
+} from "#/components/reui/event-calendar/event-calendar-types"
 import { Button } from "#/components/ui/button"
 import {
   Empty,

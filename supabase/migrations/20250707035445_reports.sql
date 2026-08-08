@@ -66,7 +66,11 @@ select
     and path_tokens[2] like '%.hbs'
     and has_table_privilege(
       current_user,
-      format('%I.%I', path_tokens[1], regexp_replace (path_tokens[2], '\.hbs$', '')),
+      format(
+        '%I.%I',
+        path_tokens[1],
+        regexp_replace(path_tokens[2], '\.hbs$', '')
+      ),
       'select'
     )
   );
@@ -76,11 +80,11 @@ drop policy IF exists enable_write_admin_report_templates_objects on storage.obj
 create policy enable_write_admin_report_templates_objects on storage.objects as PERMISSIVE for all to authenticated using (
   bucket_id = 'report-templates'
   and path_tokens[2] like '%.hbs'
-  and pg_has_role (current_user, 'x-admin', 'member')
+  and pg_has_role(current_user, 'x-admin', 'member')
 )
 with
   check (
     bucket_id = 'report-templates'
     and path_tokens[2] like '%.hbs'
-    and pg_has_role (current_user, 'x-admin', 'member')
+    and pg_has_role(current_user, 'x-admin', 'member')
   );

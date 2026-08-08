@@ -116,7 +116,9 @@ export function ResourceActions({
               </DropdownMenuItem>
             </DropdownMenuGroup>
           ) : null}
-          {quickCreate?.length && quickCreateLink ? <DropdownMenuSeparator /> : null}
+          {quickCreate?.length && quickCreateLink ? (
+            <DropdownMenuSeparator />
+          ) : null}
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={handleImport} disabled={!importLink}>
               <UploadIcon />

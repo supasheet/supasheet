@@ -174,7 +174,12 @@ create type quality.version_status as enum(
   'obsolete'
 );
 
-create type quality.audit_type as enum('internal', 'external', 'supplier', 'certification');
+create type quality.audit_type as enum(
+  'internal',
+  'external',
+  'supplier',
+  'certification'
+);
 
 create type quality.audit_status as enum(
   'planned',
@@ -255,7 +260,13 @@ create type quality.action_type as enum('corrective', 'preventive', 'containment
 
 create type quality.action_status as enum('open', 'in_progress', 'completed', 'overdue');
 
-create type quality.risk_category as enum('process', 'product', 'supplier', 'safety', 'compliance');
+create type quality.risk_category as enum(
+  'process',
+  'product',
+  'supplier',
+  'safety',
+  'compliance'
+);
 
 create type quality.risk_status as enum(
   'identified',
@@ -782,8 +793,8 @@ with
 
 create policy doc_versions_delete on quality.document_versions for delete to authenticated using (true);
 
-create trigger doc_versions_updated_at before
-update on quality.document_versions for each row
+create trigger doc_versions_updated_at
+before update on quality.document_versions for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function quality.document_versions_guard () returns trigger language plpgsql security definer
@@ -827,8 +838,8 @@ begin
 end;
 $$;
 
-create trigger trg_document_versions_guard before
-update of status on quality.document_versions for each row
+create trigger trg_document_versions_guard
+before update of status on quality.document_versions for each row
 execute function quality.document_versions_guard ();
 
 -- Publishing a version effective is the one transition with side
@@ -858,8 +869,7 @@ end;
 $$;
 
 create trigger trg_document_versions_publish
-after
-update of status on quality.document_versions for each row
+after update of status on quality.document_versions for each row
 execute function quality.document_versions_publish ();
 
 create or replace function quality.document_versions_rollup () returns trigger language plpgsql security definer
@@ -882,8 +892,7 @@ end;
 $$;
 
 create trigger trg_document_versions_rollup
-after insert
-or delete on quality.document_versions for each row
+after insert or delete on quality.document_versions for each row
 execute function quality.document_versions_rollup ();
 
 ----------------------------------------------------------------
@@ -929,10 +938,10 @@ grant
 select
 ,
   insert,
-delete on table quality.document_acknowledgements to "x-admin",
-"qa-manager",
-"quality-auditor",
-"user";
+  delete on table quality.document_acknowledgements to "x-admin",
+  "qa-manager",
+  "quality-auditor",
+  "user";
 
 create index idx_qual_doc_acks_version_id on quality.document_acknowledgements (document_version_id);
 
@@ -949,9 +958,12 @@ with
   check (true);
 
 create policy doc_acks_delete on quality.document_acknowledgements for delete to authenticated using (
-  user_id = (select auth.uid ())
-  or pg_has_role (current_user, 'qa-manager', 'member')
-  or pg_has_role (current_user, 'x-admin', 'member')
+  user_id = (
+    select
+      auth.uid ()
+  )
+  or pg_has_role(current_user, 'qa-manager', 'member')
+  or pg_has_role(current_user, 'x-admin', 'member')
 );
 
 ----------------------------------------------------------------
@@ -962,11 +974,7 @@ create sequence if not exists quality.audit_number_seq;
 create table quality.audits (
   id uuid primary key default extensions.uuid_generate_v4 (),
   audit_number varchar(30) not null unique default (
-    'AUD-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('quality.audit_number_seq')::text,
-      5,
-      '0'
-    )
+    'AUD-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('quality.audit_number_seq')::text, 5, '0')
   ),
   audit_type quality.audit_type not null default 'internal',
   process_id uuid references quality.processes (id) on delete set null,
@@ -1121,8 +1129,8 @@ with
 
 create policy audits_delete on quality.audits for delete to authenticated using (true);
 
-create trigger audits_updated_at before
-update on quality.audits for each row
+create trigger audits_updated_at
+before update on quality.audits for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -1225,7 +1233,8 @@ begin
 end;
 $$;
 
-create trigger trg_checklist_items_set_number before insert on quality.audit_checklist_items for each row
+create trigger trg_checklist_items_set_number
+before insert on quality.audit_checklist_items for each row
 execute function quality.checklist_items_set_number ();
 
 ----------------------------------------------------------------
@@ -1361,7 +1370,8 @@ begin
 end;
 $$;
 
-create trigger trg_audit_findings_set_number before insert on quality.audit_findings for each row
+create trigger trg_audit_findings_set_number
+before insert on quality.audit_findings for each row
 execute function quality.audit_findings_set_number ();
 
 create or replace function quality.audit_findings_guard () returns trigger language plpgsql security definer
@@ -1393,8 +1403,8 @@ begin
 end;
 $$;
 
-create trigger trg_audit_findings_guard before
-update of status on quality.audit_findings for each row
+create trigger trg_audit_findings_guard
+before update of status on quality.audit_findings for each row
 execute function quality.audit_findings_guard ();
 
 create or replace function quality.audit_findings_rollup () returns trigger language plpgsql security definer
@@ -1428,10 +1438,7 @@ end;
 $$;
 
 create trigger trg_audit_findings_rollup
-after insert
-or delete
-or
-update on quality.audit_findings for each row
+after insert or delete or update on quality.audit_findings for each row
 execute function quality.audit_findings_rollup ();
 
 ----------------------------------------------------------------
@@ -1447,11 +1454,7 @@ create sequence if not exists quality.nc_number_seq;
 create table quality.nonconformances (
   id uuid primary key default extensions.uuid_generate_v4 (),
   nc_number varchar(30) not null unique default (
-    'NCR-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('quality.nc_number_seq')::text,
-      5,
-      '0'
-    )
+    'NCR-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('quality.nc_number_seq')::text, 5, '0')
   ),
   source quality.nc_source not null default 'internal_report',
   source_audit_finding_id uuid references quality.audit_findings (id) on delete set null,
@@ -1590,10 +1593,13 @@ alter table quality.nonconformances enable row level security;
 create policy nc_select on quality.nonconformances for
 select
   to authenticated using (
-    reported_by = (select auth.uid ())
-    or pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'quality-auditor', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    reported_by = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'quality-auditor', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy nc_insert on quality.nonconformances for insert to authenticated
@@ -1603,16 +1609,16 @@ with
 create policy nc_update on quality.nonconformances
 for update
   to authenticated using (
-    pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy nc_delete on quality.nonconformances for delete to authenticated using (true);
 
-create trigger nc_updated_at before
-update on quality.nonconformances for each row
+create trigger nc_updated_at
+before update on quality.nonconformances for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function quality.nonconformances_rollup () returns trigger language plpgsql security definer
@@ -1641,10 +1647,7 @@ end;
 $$;
 
 create trigger trg_nonconformances_rollup
-after insert
-or delete
-or
-update of process_id,
+after insert or delete or update of process_id,
 status on quality.nonconformances for each row
 execute function quality.nonconformances_rollup ();
 
@@ -1775,8 +1778,8 @@ with
 
 create policy complaints_delete on quality.customer_complaints for delete to authenticated using (true);
 
-create trigger complaints_updated_at before
-update on quality.customer_complaints for each row
+create trigger complaints_updated_at
+before update on quality.customer_complaints for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -1792,11 +1795,7 @@ create sequence if not exists quality.capa_number_seq;
 create table quality.capas (
   id uuid primary key default extensions.uuid_generate_v4 (),
   capa_number varchar(30) not null unique default (
-    'CAPA-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('quality.capa_number_seq')::text,
-      5,
-      '0'
-    )
+    'CAPA-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('quality.capa_number_seq')::text, 5, '0')
   ),
   capa_type quality.capa_type not null default 'corrective',
   source quality.capa_source not null default 'other',
@@ -1970,9 +1969,12 @@ with
 create policy capas_update on quality.capas
 for update
   to authenticated using (
-    owner_id = (select auth.uid ())
-    or pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    owner_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
@@ -2006,8 +2008,8 @@ begin
 end;
 $$;
 
-create trigger trg_capas_guard before
-update of status on quality.capas for each row
+create trigger trg_capas_guard
+before update of status on quality.capas for each row
 execute function quality.capas_guard ();
 
 -- Raising a CAPA against a finding, nonconformance or complaint moves
@@ -2071,10 +2073,7 @@ end;
 $$;
 
 create trigger trg_capas_rollup_process
-after insert
-or delete
-or
-update of process_id,
+after insert or delete or update of process_id,
 status on quality.capas for each row
 execute function quality.capas_rollup_process ();
 
@@ -2198,9 +2197,12 @@ with
 create policy capa_actions_update on quality.capa_actions
 for update
   to authenticated using (
-    assigned_to = (select auth.uid ())
-    or pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    assigned_to = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
@@ -2226,9 +2228,8 @@ begin
 end;
 $$;
 
-create trigger trg_capa_actions_guard before insert
-or
-update on quality.capa_actions for each row
+create trigger trg_capa_actions_guard
+before insert or update on quality.capa_actions for each row
 execute function quality.capa_actions_guard ();
 
 create or replace function quality.capa_actions_rollup () returns trigger language plpgsql security definer
@@ -2255,10 +2256,7 @@ end;
 $$;
 
 create trigger trg_capa_actions_rollup
-after insert
-or delete
-or
-update on quality.capa_actions for each row
+after insert or delete or update on quality.capa_actions for each row
 execute function quality.capa_actions_rollup ();
 
 ----------------------------------------------------------------
@@ -2350,9 +2348,7 @@ end;
 $$;
 
 create trigger trg_capas_log_event
-after insert
-or
-update of status on quality.capas for each row
+after insert or update of status on quality.capas for each row
 execute function quality.capas_log_event ();
 
 create or replace function quality.capa_actions_log_event () returns trigger language plpgsql security definer
@@ -2372,9 +2368,7 @@ end;
 $$;
 
 create trigger trg_capa_actions_log_event
-after insert
-or
-update of status on quality.capa_actions for each row
+after insert or update of status on quality.capa_actions for each row
 execute function quality.capa_actions_log_event ();
 
 ----------------------------------------------------------------
@@ -2388,11 +2382,7 @@ create sequence if not exists quality.risk_number_seq;
 create table quality.risk_assessments (
   id uuid primary key default extensions.uuid_generate_v4 (),
   risk_number varchar(30) not null unique default (
-    'RISK-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('quality.risk_number_seq')::text,
-      5,
-      '0'
-    )
+    'RISK-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('quality.risk_number_seq')::text, 5, '0')
   ),
   title varchar(300) not null,
   description supasheet.RICH_TEXT,
@@ -2537,8 +2527,8 @@ with
 
 create policy risk_delete on quality.risk_assessments for delete to authenticated using (true);
 
-create trigger risk_updated_at before
-update on quality.risk_assessments for each row
+create trigger risk_updated_at
+before update on quality.risk_assessments for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function quality.risk_assessments_set_rpn () returns trigger language plpgsql
@@ -2550,9 +2540,8 @@ begin
 end;
 $$;
 
-create trigger trg_risk_assessments_set_rpn before insert
-or
-update on quality.risk_assessments for each row
+create trigger trg_risk_assessments_set_rpn
+before insert or update on quality.risk_assessments for each row
 execute function quality.risk_assessments_set_rpn ();
 
 ----------------------------------------------------------------
@@ -2732,9 +2721,8 @@ begin
 end;
 $$;
 
-create trigger trg_equipment_set_status before insert
-or
-update on quality.equipment for each row
+create trigger trg_equipment_set_status
+before insert or update on quality.equipment for each row
 execute function quality.equipment_set_status ();
 
 ----------------------------------------------------------------
@@ -3051,10 +3039,13 @@ alter table quality.training_records enable row level security;
 create policy training_records_select on quality.training_records for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'quality-auditor', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'quality-auditor', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy training_records_insert on quality.training_records for insert to authenticated
@@ -3064,17 +3055,20 @@ with
 create policy training_records_update on quality.training_records
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'qa-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'qa-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy training_records_delete on quality.training_records for delete to authenticated using (true);
 
-create trigger training_records_updated_at before
-update on quality.training_records for each row
+create trigger training_records_updated_at
+before update on quality.training_records for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function quality.training_records_guard () returns trigger language plpgsql security definer
@@ -3107,9 +3101,8 @@ begin
 end;
 $$;
 
-create trigger trg_training_records_guard before insert
-or
-update on quality.training_records for each row
+create trigger trg_training_records_guard
+before insert or update on quality.training_records for each row
 execute function quality.training_records_guard ();
 
 create or replace function quality.training_records_rollup () returns trigger language plpgsql security definer
@@ -3132,8 +3125,7 @@ end;
 $$;
 
 create trigger trg_training_records_rollup
-after insert
-or delete on quality.training_records for each row
+after insert or delete on quality.training_records for each row
 execute function quality.training_records_rollup ();
 
 ----------------------------------------------------------------
@@ -3164,14 +3156,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_capas_notify on quality.capas;
 
 create trigger trg_capas_notify
-after insert
-or
-update of status on quality.capas for each row
+after insert or update of status on quality.capas for each row
 execute function quality.trg_capas_notify ();
 
 create or replace function quality.trg_capa_actions_notify () returns trigger as $$
@@ -3190,7 +3181,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_capa_actions_notify on quality.capa_actions;
 
@@ -3214,7 +3206,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_findings_notify on quality.audit_findings;
 
@@ -3244,7 +3237,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_nc_notify on quality.nonconformances;
 
@@ -3266,7 +3260,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_complaints_notify on quality.customer_complaints;
 
@@ -3288,7 +3283,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_training_records_notify on quality.training_records;
 
@@ -3312,13 +3308,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_equipment_notify on quality.equipment;
 
 create trigger trg_equipment_notify
-after
-update of status on quality.equipment for each row
+after update of status on quality.equipment for each row
 execute function quality.trg_equipment_notify ();
 
 ----------------------------------------------------------------
@@ -3329,11 +3325,11 @@ after insert on quality.documents for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_documents_update
-after
-update on quality.documents for each row
+after update on quality.documents for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_quality_documents_delete before delete on quality.documents for each row
+create trigger audit_quality_documents_delete
+before delete on quality.documents for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_document_versions_insert
@@ -3341,8 +3337,7 @@ after insert on quality.document_versions for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_document_versions_update
-after
-update on quality.document_versions for each row
+after update on quality.document_versions for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_capas_insert
@@ -3350,11 +3345,11 @@ after insert on quality.capas for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_capas_update
-after
-update on quality.capas for each row
+after update on quality.capas for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_quality_capas_delete before delete on quality.capas for each row
+create trigger audit_quality_capas_delete
+before delete on quality.capas for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_audits_insert
@@ -3362,8 +3357,7 @@ after insert on quality.audits for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_audits_update
-after
-update on quality.audits for each row
+after update on quality.audits for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_nc_insert
@@ -3371,8 +3365,7 @@ after insert on quality.nonconformances for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_quality_nc_update
-after
-update on quality.nonconformances for each row
+after update on quality.nonconformances for each row
 execute function supasheet.audit_trigger_function ();
 
 -- ================================================================
@@ -3439,25 +3432,37 @@ select
   count(*) as total,
   json_build_array(
     json_build_object(
-      'label', 'Open', 'value', count(*) filter (
+      'label',
+      'Open',
+      'value',
+      count(*) filter (
         where
           status in ('open', 'root_cause_analysis', 'action_planned')
       )
     ),
     json_build_object(
-      'label', 'In Progress', 'value', count(*) filter (
+      'label',
+      'In Progress',
+      'value',
+      count(*) filter (
         where
           status = 'in_progress'
       )
     ),
     json_build_object(
-      'label', 'Verification', 'value', count(*) filter (
+      'label',
+      'Verification',
+      'value',
+      count(*) filter (
         where
           status in ('pending_verification', 'verified')
       )
     ),
     json_build_object(
-      'label', 'Closed', 'value', count(*) filter (
+      'label',
+      'Closed',
+      'value',
+      count(*) filter (
         where
           status = 'closed'
       )
@@ -3960,7 +3965,8 @@ from
     select
       date_trunc('month', created_at)::date as month,
       count(*) as opened
-    from quality.nonconformances
+    from
+      quality.nonconformances
     group by
       1
   ) nc using (month)
@@ -3972,7 +3978,8 @@ from
         where
           status = 'closed'
       ) as closed
-    from quality.capas
+    from
+      quality.capas
     group by
       1
   ) capa using (month)
@@ -3984,7 +3991,8 @@ from
         where
           status = 'closed'
       ) as closed
-    from quality.audit_findings
+    from
+      quality.audit_findings
     group by
       1
   ) finding using (month);
@@ -4063,7 +4071,7 @@ where
       quality.audits a
     where
       a.process_id = p.id
-      and a.planned_date between current_date and current_date + 90
+      and a.planned_date between current_date and current_date  + 90
   );
 
 comment on view quality.annual_audit_schedule_template is '{
@@ -4115,7 +4123,13 @@ end;
 $$;
 
 comment on function quality.raise_capa_from_finding (
-  uuid, quality.capa_type, varchar, text, uuid, uuid, date
+  uuid,
+  quality.capa_type,
+  varchar,
+  text,
+  uuid,
+  uuid,
+  date
 ) is '{
     "type": "form",
     "resource": "audit_findings",
@@ -4163,7 +4177,13 @@ end;
 $$;
 
 comment on function quality.raise_capa_from_nonconformance (
-  uuid, quality.capa_type, varchar, text, uuid, uuid, date
+  uuid,
+  quality.capa_type,
+  varchar,
+  text,
+  uuid,
+  uuid,
+  date
 ) is '{
     "type": "form",
     "resource": "nonconformances",
@@ -4210,7 +4230,12 @@ end;
 $$;
 
 comment on function quality.log_calibration (
-  uuid, date, quality.calibration_result, date, varchar, varchar
+  uuid,
+  date,
+  quality.calibration_result,
+  date,
+  varchar,
+  varchar
 ) is '{
     "type": "form",
     "resource": "equipment",
@@ -4246,21 +4271,38 @@ $$;
 
 grant
 execute on function quality.raise_capa_from_finding (
-  uuid, quality.capa_type, varchar, text, uuid, uuid, date
+  uuid,
+  quality.capa_type,
+  varchar,
+  text,
+  uuid,
+  uuid,
+  date
 ) to "x-admin",
 "qa-manager",
 "quality-auditor";
 
 grant
 execute on function quality.raise_capa_from_nonconformance (
-  uuid, quality.capa_type, varchar, text, uuid, uuid, date
+  uuid,
+  quality.capa_type,
+  varchar,
+  text,
+  uuid,
+  uuid,
+  date
 ) to "x-admin",
 "qa-manager",
 "quality-auditor";
 
 grant
 execute on function quality.log_calibration (
-  uuid, date, quality.calibration_result, date, varchar, varchar
+  uuid,
+  date,
+  quality.calibration_result,
+  date,
+  varchar,
+  varchar
 ) to "x-admin",
 "qa-manager",
 "quality-auditor";
@@ -4489,9 +4531,7 @@ begin
 end;
 $$;
 
-comment on function quality.verify_capa_effectiveness (
-  uuid, quality.effectiveness_result, varchar
-) is '{
+comment on function quality.verify_capa_effectiveness (uuid, quality.effectiveness_result, varchar) is '{
     "type": "action",
     "resource": "capas",
     "name": "Verify Effectiveness",
@@ -4590,9 +4630,7 @@ execute on function quality.complete_capa_action (uuid) to "x-admin",
 "user";
 
 grant
-execute on function quality.verify_capa_effectiveness (
-  uuid, quality.effectiveness_result, varchar
-) to "x-admin",
+execute on function quality.verify_capa_effectiveness (uuid, quality.effectiveness_result, varchar) to "x-admin",
 "qa-manager";
 
 grant
@@ -4621,8 +4659,8 @@ select
   to authenticated using (
     bucket_id = 'quality-documents'
     and (
-      has_table_privilege (current_user, 'quality.audits', 'select')
-      or has_table_privilege (current_user, 'quality.equipment', 'select')
+      has_table_privilege(current_user, 'quality.audits', 'select')
+      or has_table_privilege(current_user, 'quality.equipment', 'select')
     )
   );
 
@@ -4633,8 +4671,8 @@ with
   check (
     bucket_id = 'quality-documents'
     and (
-      has_table_privilege (current_user, 'quality.audits', 'insert')
-      or has_table_privilege (current_user, 'quality.equipment', 'insert')
+      has_table_privilege(current_user, 'quality.audits', 'insert')
+      or has_table_privilege(current_user, 'quality.equipment', 'insert')
     )
   );
 
@@ -4644,14 +4682,14 @@ create policy quality_documents_update on storage.objects
 for update
   to authenticated using (
     bucket_id = 'quality-documents'
-    and has_table_privilege (current_user, 'quality.audits', 'update')
+    and has_table_privilege(current_user, 'quality.audits', 'update')
   );
 
 drop policy if exists quality_documents_delete on storage.objects;
 
 create policy quality_documents_delete on storage.objects for delete to authenticated using (
   bucket_id = 'quality-documents'
-  and has_table_privilege (current_user, 'quality.audits', 'delete')
+  and has_table_privilege(current_user, 'quality.audits', 'delete')
 );
 
 ----------------------------------------------------------------

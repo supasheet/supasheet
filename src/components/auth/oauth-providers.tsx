@@ -24,7 +24,8 @@ function providerLabel(provider: string): string {
 }
 
 function providerIconUrl(provider: string): string {
-  if (provider === "github") return `https://supabase.com/docs/img/icons/github-icon-light.svg`
+  if (provider === "github")
+    return `https://supabase.com/docs/img/icons/github-icon-light.svg`
   return `https://supabase.com/docs/img/icons/${providerSlug(provider)}-icon.svg`
 }
 

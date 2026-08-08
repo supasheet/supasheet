@@ -1,21 +1,16 @@
 import {
+  type CSSProperties,
+  type ReactNode,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
-  type ReactNode,
 } from "react"
-import {
-  EventCalendarViewContext,
-  useEventCalendar,
-  useEventCalendarDay,
-  useEventCalendarSelector,
-  useEventCalendarSettings,
-  useEventCalendarViewConfig,
-  useEventCalendarViewContext,
-  useEventCalendarViewSettings,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, addMinutes, differenceInMinutes, format } from "date-fns"
+
 import {
   useEventCalendarGestures,
   wasRecentChipPress,
@@ -42,12 +37,18 @@ import type {
   EventCalendarSegment,
   EventCalendarSlotDraft,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, addMinutes, differenceInMinutes, format } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
+import {
+  EventCalendarViewContext,
+  useEventCalendar,
+  useEventCalendarDay,
+  useEventCalendarSelector,
+  useEventCalendarSettings,
+  useEventCalendarViewConfig,
+  useEventCalendarViewContext,
+  useEventCalendarViewSettings,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import { ScrollArea } from "#/components/ui/scroll-area.tsx"
+import { cn } from "#/lib/utils.ts"
 
 /** Current time, refreshed on an interval and on tab focus. */
 function useNow(intervalMs = 30_000): Date {

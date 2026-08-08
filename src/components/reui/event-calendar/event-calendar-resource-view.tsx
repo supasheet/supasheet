@@ -1,15 +1,11 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
-import {
-  EventCalendarViewContext,
-  useEventCalendar,
-  useEventCalendarDay,
-  useEventCalendarSelector,
-  useEventCalendarSettings,
-  useEventCalendarViewConfig,
-  useEventCalendarViewSettings,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, addMinutes } from "date-fns"
+
 import {
   useEventCalendarGestures,
   wasRecentChipPress,
@@ -38,12 +34,17 @@ import type {
   EventCalendarResource,
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, addMinutes } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
+import {
+  EventCalendarViewContext,
+  useEventCalendar,
+  useEventCalendarDay,
+  useEventCalendarSelector,
+  useEventCalendarSettings,
+  useEventCalendarViewConfig,
+  useEventCalendarViewSettings,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import { ScrollArea } from "#/components/ui/scroll-area.tsx"
+import { cn } from "#/lib/utils.ts"
 
 const EMPTY_ALL_DAY_SEGMENTS: EventCalendarSegment[] = []
 

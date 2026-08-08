@@ -60,9 +60,7 @@ export function AvatarField({ columnMetadata, columnSchema }: FileFieldProps) {
           })
         } catch (uploadError) {
           setError(
-            uploadError instanceof Error
-              ? uploadError.message
-              : "Upload failed"
+            uploadError instanceof Error ? uploadError.message : "Upload failed"
           )
         }
       })()

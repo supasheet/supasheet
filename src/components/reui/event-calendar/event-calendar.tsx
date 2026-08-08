@@ -1,6 +1,9 @@
 "use client"
 
 import {
+  type ComponentType,
+  type ReactNode,
+  type RefObject,
   createContext,
   useCallback,
   useContext,
@@ -9,16 +12,21 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
-  type ComponentType,
-  type ReactNode,
-  type RefObject,
 } from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { type Locale, addDays } from "date-fns"
+
 import {
-  mergeEventCalendarI18n,
   type EventCalendarI18nConfig,
   type EventCalendarI18nOverrides,
+  mergeEventCalendarI18n,
 } from "#/components/reui/event-calendar/event-calendar-i18n.tsx"
 import {
+  type EventCalendarDayBucket,
+  type EventCalendarIndex,
+  type WeekStartsOn,
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -28,9 +36,6 @@ import {
   stepDate,
   toZoned,
   zonedStartOfDay,
-  type EventCalendarDayBucket,
-  type EventCalendarIndex,
-  type WeekStartsOn,
 } from "#/components/reui/event-calendar/event-calendar-lib.tsx"
 import type {
   CalendarEvent,
@@ -52,10 +57,6 @@ import type {
   EventCalendarUpdateResult,
   EventCalendarViewSettings,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, type Locale } from "date-fns"
-
 import { cn } from "#/lib/utils.ts"
 
 const BASE_VIEWS: CalendarView[] = ["month", "week", "day", "days", "agenda"]

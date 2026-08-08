@@ -1,4 +1,6 @@
 import {
+  type CSSProperties,
+  type RefObject,
   memo,
   useCallback,
   useEffect,
@@ -6,47 +8,8 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
-  type RefObject,
 } from "react"
-import {
-  DEFAULT_ROW_ALIGN,
-  resolveScheduleMode,
-  resolveTimelineLines,
-  useGantt,
-  useGanttSelector,
-  useGanttSettings,
-  useGanttViewConfig,
-  type GanttColumn,
-} from "#/components/reui/gantt/gantt.tsx"
-import { GanttBar } from "#/components/reui/gantt/gantt-bar.tsx"
-import {
-  cancelActiveGanttGestures,
-  markGestureEnd,
-  useGanttGestures,
-  useGanttGestureTeardown,
-  wasRecentDrag,
-} from "#/components/reui/gantt/gantt-dnd.tsx"
-import {
-  getDayKey,
-  getLaneKey,
-  getRangeKey,
-  MIN_PACK_SLOT,
-  packTimedSegments,
-  reorderResources,
-  resolveOffDay,
-  toZoned,
-  zonedStartOfDay,
-  type GanttLaneMemo,
-} from "#/components/reui/gantt/gantt-lib.tsx"
-import type {
-  GanttDateRange,
-  GanttEvent,
-  GanttOccurrence,
-  GanttResource,
-  GanttResourceReorder,
-  GanttSegment,
-} from "#/components/reui/gantt/gantt-types.tsx"
+
 import { mergeProps } from "@base-ui/react/merge-props"
 // Base UI's ScrollArea re-measures its thumb + overflow on mount, viewport
 // resize and scroll, but NOT on a content-size change unless the content sits
@@ -58,6 +21,7 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { useRender } from "@base-ui/react/use-render"
 import {
+  type Locale,
   addDays,
   addMinutes,
   addMonths,
@@ -66,10 +30,53 @@ import {
   startOfMonth,
   startOfQuarter,
   startOfWeek,
-  type Locale,
 } from "date-fns"
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  GripVerticalIcon,
+  MinusIcon,
+  PlusIcon,
+} from "lucide-react"
 
-import { cn } from "#/lib/utils.ts"
+import { GanttBar } from "#/components/reui/gantt/gantt-bar.tsx"
+import {
+  cancelActiveGanttGestures,
+  markGestureEnd,
+  useGanttGestureTeardown,
+  useGanttGestures,
+  wasRecentDrag,
+} from "#/components/reui/gantt/gantt-dnd.tsx"
+import {
+  type GanttLaneMemo,
+  MIN_PACK_SLOT,
+  getDayKey,
+  getLaneKey,
+  getRangeKey,
+  packTimedSegments,
+  reorderResources,
+  resolveOffDay,
+  toZoned,
+  zonedStartOfDay,
+} from "#/components/reui/gantt/gantt-lib.tsx"
+import type {
+  GanttDateRange,
+  GanttEvent,
+  GanttOccurrence,
+  GanttResource,
+  GanttResourceReorder,
+  GanttSegment,
+} from "#/components/reui/gantt/gantt-types.tsx"
+import {
+  DEFAULT_ROW_ALIGN,
+  type GanttColumn,
+  resolveScheduleMode,
+  resolveTimelineLines,
+  useGantt,
+  useGanttSelector,
+  useGanttSettings,
+  useGanttViewConfig,
+} from "#/components/reui/gantt/gantt.tsx"
 import { Button } from "#/components/ui/button.tsx"
 import { Checkbox } from "#/components/ui/checkbox.tsx"
 import {
@@ -84,7 +91,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip.tsx"
-import { PlusIcon, MinusIcon, GripVerticalIcon, ChevronRightIcon, ChevronLeftIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 /** Current time, refreshed on an interval and on tab focus. */
 function useNow(intervalMs = 30_000): Date {
@@ -2743,10 +2750,13 @@ const GanttTreeRow = memo(function GanttTreeRow({
                   )}
                   onClick={() => onToggle(row)}
                 >
-                  <ChevronRightIcon className={cn(
-                                                        "size-3.5 transition-transform",
-                                                        !row.collapsed && "rotate-90"
-                                                      )} aria-hidden="true" />
+                  <ChevronRightIcon
+                    className={cn(
+                      "size-3.5 transition-transform",
+                      !row.collapsed && "rotate-90"
+                    )}
+                    aria-hidden="true"
+                  />
                 </Button>
               ) : (
                 viewConfig.rowCheckboxes &&

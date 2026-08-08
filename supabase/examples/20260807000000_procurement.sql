@@ -161,12 +161,7 @@ create type procurement.requisition_status as enum(
   'cancelled'
 );
 
-create type procurement.approval_status as enum(
-  'pending',
-  'approved',
-  'rejected',
-  'skipped'
-);
+create type procurement.approval_status as enum('pending', 'approved', 'rejected', 'skipped');
 
 create type procurement.priority_level as enum('low', 'normal', 'high', 'urgent');
 
@@ -190,13 +185,7 @@ create type procurement.document_type as enum(
   'other'
 );
 
-create type procurement.rfq_status as enum(
-  'draft',
-  'sent',
-  'closed',
-  'awarded',
-  'cancelled'
-);
+create type procurement.rfq_status as enum('draft', 'sent', 'closed', 'awarded', 'cancelled');
 
 create type procurement.quote_status as enum(
   'invited',
@@ -929,9 +918,8 @@ begin
 end;
 $$;
 
-create trigger trg_supplier_documents_set_expired before insert
-or
-update on procurement.supplier_documents for each row
+create trigger trg_supplier_documents_set_expired
+before insert or update on procurement.supplier_documents for each row
 execute function procurement.supplier_documents_set_expired ();
 
 ----------------------------------------------------------------
@@ -1095,10 +1083,13 @@ alter table procurement.purchase_requisitions enable row level security;
 create policy requisitions_select on procurement.purchase_requisitions for
 select
   to authenticated using (
-    requester_id = (select auth.uid ())
-    or pg_has_role (current_user, 'buyer', 'member')
-    or pg_has_role (current_user, 'approver', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    requester_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'buyer', 'member')
+    or pg_has_role(current_user, 'approver', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy requisitions_insert on procurement.purchase_requisitions for insert to authenticated
@@ -1108,9 +1099,12 @@ with
 create policy requisitions_update on procurement.purchase_requisitions
 for update
   to authenticated using (
-    requester_id = (select auth.uid ())
-    or pg_has_role (current_user, 'buyer', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    requester_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'buyer', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
@@ -1204,10 +1198,13 @@ select
       where
         r.id = requisition_id
         and (
-          r.requester_id = (select auth.uid ())
-          or pg_has_role (current_user, 'buyer', 'member')
-          or pg_has_role (current_user, 'approver', 'member')
-          or pg_has_role (current_user, 'x-admin', 'member')
+          r.requester_id = (
+            select
+              auth.uid ()
+          )
+          or pg_has_role(current_user, 'buyer', 'member')
+          or pg_has_role(current_user, 'approver', 'member')
+          or pg_has_role(current_user, 'x-admin', 'member')
         )
     )
   );
@@ -1239,9 +1236,8 @@ begin
 end;
 $$;
 
-create trigger trg_requisition_lines_set_total before insert
-or
-update on procurement.requisition_lines for each row
+create trigger trg_requisition_lines_set_total
+before insert or update on procurement.requisition_lines for each row
 execute function procurement.requisition_lines_set_total ();
 
 create or replace function procurement.requisition_lines_rollup () returns trigger language plpgsql security definer
@@ -1268,10 +1264,7 @@ end;
 $$;
 
 create trigger trg_requisition_lines_rollup
-after insert
-or delete
-or
-update on procurement.requisition_lines for each row
+after insert or delete or update on procurement.requisition_lines for each row
 execute function procurement.requisition_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -1373,9 +1366,12 @@ alter table procurement.requisition_approvals enable row level security;
 create policy requisition_approvals_select on procurement.requisition_approvals for
 select
   to authenticated using (
-    approver_id = (select auth.uid ())
-    or pg_has_role (current_user, 'buyer', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    approver_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'buyer', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -1383,7 +1379,10 @@ select
         procurement.purchase_requisitions r
       where
         r.id = requisition_id
-        and r.requester_id = (select auth.uid ())
+        and r.requester_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -1447,8 +1446,8 @@ begin
 end;
 $$;
 
-create trigger trg_requisition_approvals_guard before
-update of status on procurement.requisition_approvals for each row
+create trigger trg_requisition_approvals_guard
+before update of status on procurement.requisition_approvals for each row
 execute function procurement.requisition_approvals_guard ();
 
 create or replace function procurement.requisition_approvals_rollup () returns trigger language plpgsql security definer
@@ -1504,10 +1503,7 @@ end;
 $$;
 
 create trigger trg_requisition_approvals_rollup
-after insert
-or delete
-or
-update on procurement.requisition_approvals for each row
+after insert or delete or update on procurement.requisition_approvals for each row
 execute function procurement.requisition_approvals_rollup ();
 
 ----------------------------------------------------------------
@@ -1731,7 +1727,8 @@ begin
 end;
 $$;
 
-create trigger trg_rfq_lines_set_number before insert on procurement.rfq_lines for each row
+create trigger trg_rfq_lines_set_number
+before insert on procurement.rfq_lines for each row
 execute function procurement.rfq_lines_set_number ();
 
 ----------------------------------------------------------------
@@ -1777,8 +1774,8 @@ grant
 select
 ,
   insert,
-delete on table procurement.rfq_suppliers to "x-admin",
-"buyer";
+  delete on table procurement.rfq_suppliers to "x-admin",
+  "buyer";
 
 create index idx_proc_rfq_suppliers_rfq_id on procurement.rfq_suppliers (rfq_id);
 
@@ -1814,8 +1811,7 @@ end;
 $$;
 
 create trigger trg_rfq_suppliers_rollup
-after insert
-or delete on procurement.rfq_suppliers for each row
+after insert or delete on procurement.rfq_suppliers for each row
 execute function procurement.rfq_suppliers_rollup ();
 
 ----------------------------------------------------------------
@@ -1958,10 +1954,7 @@ end;
 $$;
 
 create trigger trg_supplier_quotes_rollup_rfq
-after insert
-or delete
-or
-update on procurement.supplier_quotes for each row
+after insert or delete or update on procurement.supplier_quotes for each row
 execute function procurement.supplier_quotes_rollup_rfq ();
 
 create table procurement.quote_lines (
@@ -2048,9 +2041,8 @@ begin
 end;
 $$;
 
-create trigger trg_quote_lines_set_total before insert
-or
-update on procurement.quote_lines for each row
+create trigger trg_quote_lines_set_total
+before insert or update on procurement.quote_lines for each row
 execute function procurement.quote_lines_set_total ();
 
 create or replace function procurement.quote_lines_rollup () returns trigger language plpgsql security definer
@@ -2075,10 +2067,7 @@ end;
 $$;
 
 create trigger trg_quote_lines_rollup
-after insert
-or delete
-or
-update on procurement.quote_lines for each row
+after insert or delete or update on procurement.quote_lines for each row
 execute function procurement.quote_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -2250,8 +2239,8 @@ with
 
 create policy contracts_delete on procurement.contracts for delete to authenticated using (true);
 
-create trigger contracts_updated_at before
-update on procurement.contracts for each row
+create trigger contracts_updated_at
+before update on procurement.contracts for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -2449,20 +2438,16 @@ create index idx_proc_po_status on procurement.purchase_orders (status);
 
 create index idx_proc_po_open on procurement.purchase_orders (expected_delivery_date)
 where
-  status in (
-    'sent',
-    'acknowledged',
-    'partially_received'
-  );
+  status in ('sent', 'acknowledged', 'partially_received');
 
 alter table procurement.purchase_orders enable row level security;
 
 create policy po_select on procurement.purchase_orders for
 select
   to authenticated using (
-    pg_has_role (current_user, 'buyer', 'member')
-    or pg_has_role (current_user, 'approver', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'buyer', 'member')
+    or pg_has_role(current_user, 'approver', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -2470,7 +2455,10 @@ select
         procurement.purchase_requisitions r
       where
         r.id = requisition_id
-        and r.requester_id = (select auth.uid ())
+        and r.requester_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -2486,8 +2474,8 @@ with
 
 create policy po_delete on procurement.purchase_orders for delete to authenticated using (true);
 
-create trigger po_updated_at before
-update on procurement.purchase_orders for each row
+create trigger po_updated_at
+before update on procurement.purchase_orders for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function procurement.purchase_orders_guard () returns trigger language plpgsql security definer
@@ -2529,9 +2517,8 @@ begin
 end;
 $$;
 
-create trigger trg_purchase_orders_guard before insert
-or
-update of supplier_id,
+create trigger trg_purchase_orders_guard
+before insert or update of supplier_id,
 contract_id,
 total,
 status on procurement.purchase_orders for each row
@@ -2632,9 +2619,9 @@ select
       where
         po.id = po_id
         and (
-          pg_has_role (current_user, 'buyer', 'member')
-          or pg_has_role (current_user, 'approver', 'member')
-          or pg_has_role (current_user, 'x-admin', 'member')
+          pg_has_role(current_user, 'buyer', 'member')
+          or pg_has_role(current_user, 'approver', 'member')
+          or pg_has_role(current_user, 'x-admin', 'member')
           or exists (
             select
               1
@@ -2642,7 +2629,10 @@ select
               procurement.purchase_requisitions r
             where
               r.id = po.requisition_id
-              and r.requester_id = (select auth.uid ())
+              and r.requester_id = (
+                select
+                  auth.uid ()
+              )
           )
         )
     )
@@ -2677,9 +2667,8 @@ begin
 end;
 $$;
 
-create trigger trg_po_lines_set_total before insert
-or
-update on procurement.purchase_order_lines for each row
+create trigger trg_po_lines_set_total
+before insert or update on procurement.purchase_order_lines for each row
 execute function procurement.po_lines_set_total ();
 
 create or replace function procurement.po_lines_rollup () returns trigger language plpgsql security definer
@@ -2708,10 +2697,7 @@ end;
 $$;
 
 create trigger trg_po_lines_rollup
-after insert
-or delete
-or
-update on procurement.purchase_order_lines for each row
+after insert or delete or update on procurement.purchase_order_lines for each row
 execute function procurement.po_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -2802,9 +2788,12 @@ alter table procurement.po_approvals enable row level security;
 create policy po_approvals_select on procurement.po_approvals for
 select
   to authenticated using (
-    approver_id = (select auth.uid ())
-    or pg_has_role (current_user, 'buyer', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    approver_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'buyer', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy po_approvals_insert on procurement.po_approvals for insert to authenticated
@@ -2858,8 +2847,8 @@ begin
 end;
 $$;
 
-create trigger trg_po_approvals_guard before
-update of status on procurement.po_approvals for each row
+create trigger trg_po_approvals_guard
+before update of status on procurement.po_approvals for each row
 execute function procurement.po_approvals_guard ();
 
 create or replace function procurement.po_approvals_rollup () returns trigger language plpgsql security definer
@@ -2914,10 +2903,7 @@ end;
 $$;
 
 create trigger trg_po_approvals_rollup
-after insert
-or delete
-or
-update on procurement.po_approvals for each row
+after insert or delete or update on procurement.po_approvals for each row
 execute function procurement.po_approvals_rollup ();
 
 ----------------------------------------------------------------
@@ -3076,7 +3062,9 @@ create table procurement.goods_receipt_lines (
     and quantity_accepted >= 0
     and quantity_rejected >= 0
   ),
-  constraint receipt_lines_split_matches_received check (quantity_accepted + quantity_rejected = quantity_received)
+  constraint receipt_lines_split_matches_received check (
+    quantity_accepted + quantity_rejected = quantity_received
+  )
 );
 
 comment on column procurement.goods_receipt_lines.condition is '{
@@ -3184,9 +3172,8 @@ begin
 end;
 $$;
 
-create trigger trg_goods_receipt_lines_guard before insert
-or
-update of quantity_received,
+create trigger trg_goods_receipt_lines_guard
+before insert or update of quantity_received,
 quantity_accepted,
 quantity_rejected,
 po_line_id on procurement.goods_receipt_lines for each row
@@ -3259,10 +3246,7 @@ end;
 $$;
 
 create trigger trg_goods_receipt_lines_rollup
-after insert
-or delete
-or
-update on procurement.goods_receipt_lines for each row
+after insert or delete or update on procurement.goods_receipt_lines for each row
 execute function procurement.goods_receipt_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -3477,8 +3461,8 @@ begin
 end;
 $$;
 
-create trigger trg_vendor_invoices_guard before
-update of status on procurement.vendor_invoices for each row
+create trigger trg_vendor_invoices_guard
+before update of status on procurement.vendor_invoices for each row
 execute function procurement.vendor_invoices_guard ();
 
 ----------------------------------------------------------------
@@ -3616,9 +3600,8 @@ begin
 end;
 $$;
 
-create trigger trg_vendor_invoice_lines_match before insert
-or
-update on procurement.vendor_invoice_lines for each row
+create trigger trg_vendor_invoice_lines_match
+before insert or update on procurement.vendor_invoice_lines for each row
 execute function procurement.vendor_invoice_lines_match ();
 
 create or replace function procurement.vendor_invoice_lines_rollup () returns trigger language plpgsql security definer
@@ -3709,10 +3692,7 @@ end;
 $$;
 
 create trigger trg_vendor_invoice_lines_rollup
-after insert
-or delete
-or
-update on procurement.vendor_invoice_lines for each row
+after insert or delete or update on procurement.vendor_invoice_lines for each row
 execute function procurement.vendor_invoice_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -3835,10 +3815,7 @@ end;
 $$;
 
 create trigger trg_invoice_payments_rollup
-after insert
-or delete
-or
-update on procurement.invoice_payments for each row
+after insert or delete or update on procurement.invoice_payments for each row
 execute function procurement.invoice_payments_rollup ();
 
 ----------------------------------------------------------------
@@ -3948,9 +3925,7 @@ end;
 $$;
 
 create trigger trg_po_log_event
-after insert
-or
-update of status on procurement.purchase_orders for each row
+after insert or update of status on procurement.purchase_orders for each row
 execute function procurement.purchase_orders_log_event ();
 
 ----------------------------------------------------------------
@@ -4070,10 +4045,7 @@ end;
 $$;
 
 create trigger trg_purchase_orders_rollup
-after insert
-or delete
-or
-update of supplier_id,
+after insert or delete or update of supplier_id,
 contract_id,
 department_id,
 category_id,
@@ -4190,9 +4162,8 @@ begin
 end;
 $$;
 
-create trigger trg_supplier_reviews_set_overall before insert
-or
-update on procurement.supplier_performance_reviews for each row
+create trigger trg_supplier_reviews_set_overall
+before insert or update on procurement.supplier_performance_reviews for each row
 execute function procurement.supplier_reviews_set_overall ();
 
 create or replace function procurement.supplier_reviews_rollup () returns trigger language plpgsql security definer
@@ -4222,10 +4193,7 @@ end;
 $$;
 
 create trigger trg_supplier_reviews_rollup
-after insert
-or delete
-or
-update on procurement.supplier_performance_reviews for each row
+after insert or delete or update on procurement.supplier_performance_reviews for each row
 execute function procurement.supplier_reviews_rollup ();
 
 ----------------------------------------------------------------
@@ -4346,9 +4314,8 @@ begin
 end;
 $$;
 
-create trigger trg_cost_savings_set_amount before insert
-or
-update on procurement.cost_savings for each row
+create trigger trg_cost_savings_set_amount
+before insert or update on procurement.cost_savings for each row
 execute function procurement.cost_savings_set_amount ();
 
 ----------------------------------------------------------------
@@ -4389,13 +4356,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_requisitions_notify on procurement.purchase_requisitions;
 
 create trigger trg_requisitions_notify
-after
-update of status on procurement.purchase_requisitions for each row
+after update of status on procurement.purchase_requisitions for each row
 execute function procurement.trg_requisitions_notify ();
 
 create or replace function procurement.trg_po_notify () returns trigger as $$
@@ -4433,13 +4400,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_po_notify on procurement.purchase_orders;
 
 create trigger trg_po_notify
-after
-update of status on procurement.purchase_orders for each row
+after update of status on procurement.purchase_orders for each row
 execute function procurement.trg_po_notify ();
 
 create or replace function procurement.trg_receipts_notify () returns trigger as $$
@@ -4467,13 +4434,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_receipts_notify on procurement.goods_receipts;
 
 create trigger trg_receipts_notify
-after
-update of status on procurement.goods_receipts for each row
+after update of status on procurement.goods_receipts for each row
 execute function procurement.trg_receipts_notify ();
 
 create or replace function procurement.trg_invoices_notify () returns trigger as $$
@@ -4500,13 +4467,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_invoices_notify on procurement.vendor_invoices;
 
 create trigger trg_invoices_notify
-after
-update of match_status on procurement.vendor_invoices for each row
+after update of match_status on procurement.vendor_invoices for each row
 execute function procurement.trg_invoices_notify ();
 
 ----------------------------------------------------------------
@@ -4517,11 +4484,11 @@ after insert on procurement.suppliers for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_suppliers_update
-after
-update on procurement.suppliers for each row
+after update on procurement.suppliers for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_procurement_suppliers_delete before delete on procurement.suppliers for each row
+create trigger audit_procurement_suppliers_delete
+before delete on procurement.suppliers for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_contracts_insert
@@ -4529,11 +4496,11 @@ after insert on procurement.contracts for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_contracts_update
-after
-update on procurement.contracts for each row
+after update on procurement.contracts for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_procurement_contracts_delete before delete on procurement.contracts for each row
+create trigger audit_procurement_contracts_delete
+before delete on procurement.contracts for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_requisitions_insert
@@ -4541,11 +4508,11 @@ after insert on procurement.purchase_requisitions for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_requisitions_update
-after
-update on procurement.purchase_requisitions for each row
+after update on procurement.purchase_requisitions for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_procurement_requisitions_delete before delete on procurement.purchase_requisitions for each row
+create trigger audit_procurement_requisitions_delete
+before delete on procurement.purchase_requisitions for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_po_insert
@@ -4553,11 +4520,11 @@ after insert on procurement.purchase_orders for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_po_update
-after
-update on procurement.purchase_orders for each row
+after update on procurement.purchase_orders for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_procurement_po_delete before delete on procurement.purchase_orders for each row
+create trigger audit_procurement_po_delete
+before delete on procurement.purchase_orders for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_invoices_insert
@@ -4565,11 +4532,11 @@ after insert on procurement.vendor_invoices for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_procurement_invoices_update
-after
-update on procurement.vendor_invoices for each row
+after update on procurement.vendor_invoices for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_procurement_invoices_delete before delete on procurement.vendor_invoices for each row
+create trigger audit_procurement_invoices_delete
+before delete on procurement.vendor_invoices for each row
 execute function supasheet.audit_trigger_function ();
 
 -- ================================================================
@@ -4721,9 +4688,7 @@ select
   'dollar-sign' as icon,
   (
     select
-      json_agg(
-        json_build_object('label', name, 'value', total)
-      )
+      json_agg(json_build_object('label', name, 'value', total))
     from
       by_category
   ) as breakdown;
@@ -5249,11 +5214,7 @@ from
       ('PROF', 'Professional Services', 10000),
       ('RAW', 'Raw Materials', 15000),
       ('LOG', 'Logistics', 5000),
-      (
-        'MRO',
-        'Maintenance, Repair & Operating',
-        2000
-      )
+      ('MRO', 'Maintenance, Repair & Operating', 2000)
   ) as t (code, name, default_approval_threshold);
 
 comment on view procurement.standard_categories_template is '{
@@ -5484,7 +5445,11 @@ end;
 $$;
 
 comment on function procurement.record_invoice_payment (
-  uuid, numeric, date, procurement.payment_method, varchar
+  uuid,
+  numeric,
+  date,
+  procurement.payment_method,
+  varchar
 ) is '{
     "type": "form",
     "resource": "vendor_invoices",
@@ -5527,7 +5492,11 @@ execute on function procurement.convert_requisition_to_po (uuid, uuid, date, uui
 
 grant
 execute on function procurement.record_invoice_payment (
-  uuid, numeric, date, procurement.payment_method, varchar
+  uuid,
+  numeric,
+  date,
+  procurement.payment_method,
+  varchar
 ) to "x-admin",
 "buyer";
 
@@ -5944,8 +5913,12 @@ select
   to authenticated using (
     bucket_id = 'procurement-documents'
     and (
-      has_table_privilege (current_user, 'procurement.contracts', 'select')
-      or has_table_privilege (current_user, 'procurement.vendor_invoices', 'select')
+      has_table_privilege(current_user, 'procurement.contracts', 'select')
+      or has_table_privilege(
+        current_user,
+        'procurement.vendor_invoices',
+        'select'
+      )
     )
   );
 
@@ -5956,8 +5929,12 @@ with
   check (
     bucket_id = 'procurement-documents'
     and (
-      has_table_privilege (current_user, 'procurement.contracts', 'insert')
-      or has_table_privilege (current_user, 'procurement.vendor_invoices', 'insert')
+      has_table_privilege(current_user, 'procurement.contracts', 'insert')
+      or has_table_privilege(
+        current_user,
+        'procurement.vendor_invoices',
+        'insert'
+      )
     )
   );
 
@@ -5967,14 +5944,14 @@ create policy procurement_documents_update on storage.objects
 for update
   to authenticated using (
     bucket_id = 'procurement-documents'
-    and has_table_privilege (current_user, 'procurement.contracts', 'update')
+    and has_table_privilege(current_user, 'procurement.contracts', 'update')
   );
 
 drop policy if exists procurement_documents_delete on storage.objects;
 
 create policy procurement_documents_delete on storage.objects for delete to authenticated using (
   bucket_id = 'procurement-documents'
-  and has_table_privilege (current_user, 'procurement.contracts', 'delete')
+  and has_table_privilege(current_user, 'procurement.contracts', 'delete')
 );
 
 ----------------------------------------------------------------

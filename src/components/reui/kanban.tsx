@@ -10,6 +10,9 @@ import {
   useState,
   useSyncExternalStore,
 } from "react"
+
+import { createPortal } from "react-dom"
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import type {
@@ -22,30 +25,29 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core"
 import {
-  defaultDropAnimationSideEffects,
   DndContext,
   DragOverlay,
+  type DraggableAttributes,
+  type DraggableSyntheticListeners,
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
   TouchSensor,
+  defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
-  type DraggableAttributes,
-  type DraggableSyntheticListeners,
 } from "@dnd-kit/core"
 import {
+  type AnimateLayoutChanges,
+  SortableContext,
   arrayMove,
   defaultAnimateLayoutChanges,
   rectSortingStrategy,
-  SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-  type AnimateLayoutChanges,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { createPortal } from "react-dom"
 
 import { cn } from "#/lib/utils.ts"
 

@@ -1,6 +1,9 @@
 "use client"
 
 import {
+  type ComponentType,
+  type ReactNode,
+  type RefObject,
   createContext,
   useContext,
   useEffect,
@@ -8,16 +11,20 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
-  type ComponentType,
-  type ReactNode,
-  type RefObject,
 } from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import type { Locale } from "date-fns"
+
 import {
-  mergeGanttI18n,
   type GanttI18nConfig,
   type GanttI18nOverrides,
+  mergeGanttI18n,
 } from "#/components/reui/gantt/gantt-i18n.tsx"
 import {
+  type GanttIndex,
+  type WeekStartsOn,
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -26,8 +33,6 @@ import {
   getRangeKey,
   stepGanttDate,
   toZoned,
-  type GanttIndex,
-  type WeekStartsOn,
 } from "#/components/reui/gantt/gantt-lib.tsx"
 import type {
   GanttBarId,
@@ -52,10 +57,6 @@ import type {
   GanttState,
   GanttUpdateResult,
 } from "#/components/reui/gantt/gantt-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import type { Locale } from "date-fns"
-
 import { cn } from "#/lib/utils.ts"
 
 const DEFAULT_INTERACTIONS: GanttInteractions = {
@@ -433,11 +434,7 @@ function createGanttStore<TData>(
   }
 
   type ControlledKey =
-    | "scale"
-    | "date"
-    | "events"
-    | "selection"
-    | "interactions"
+    "scale" | "date" | "events" | "selection" | "interactions"
 
   const setField = <K extends ControlledKey>(
     key: K,

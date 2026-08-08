@@ -82,7 +82,8 @@ export function ResourceTree({
       const titleValue = row?.[treeView.title]
       return titleValue == null ? "Untitled" : String(titleValue)
     },
-    isItemFolder: (item) => (childrenByParent.get(item.getId())?.length ?? 0) > 0,
+    isItemFolder: (item) =>
+      (childrenByParent.get(item.getId())?.length ?? 0) > 0,
     dataLoader: {
       getItem: (itemId) => itemId,
       getChildren: (itemId) => childrenByParent.get(itemId) ?? [],
@@ -123,11 +124,7 @@ export function ResourceTree({
   }
 
   return (
-    <Tree
-      indent={indent}
-      tree={tree}
-      className="rounded-md border bg-card p-1"
-    >
+    <Tree indent={indent} tree={tree} className="rounded-md border bg-card p-1">
       {tree.getItems().map((item) => {
         const id = item.getId()
         if (id === ROOT_KEY) return null

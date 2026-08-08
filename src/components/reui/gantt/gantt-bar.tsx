@@ -1,18 +1,18 @@
 "use client"
 
 import {
+  type CSSProperties,
+  type ReactNode,
   createContext,
   useContext,
   useMemo,
   useState,
-  type CSSProperties,
-  type ReactNode,
 } from "react"
-import {
-  useGantt,
-  useGanttSelector,
-  useGanttViewConfig,
-} from "#/components/reui/gantt/gantt.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { CheckIcon, RepeatIcon } from "lucide-react"
+
 import {
   useGanttGestures,
   wasRecentDrag,
@@ -25,10 +25,11 @@ import type {
   GanttOccurrence,
   GanttSegment,
 } from "#/components/reui/gantt/gantt-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-
-import { cn } from "#/lib/utils.ts"
+import {
+  useGantt,
+  useGanttSelector,
+  useGanttViewConfig,
+} from "#/components/reui/gantt/gantt.tsx"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -40,7 +41,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip.tsx"
-import { RepeatIcon, CheckIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 /**
  * Effective Tailwind palette presets for bar colors; every entry works on
@@ -154,7 +155,10 @@ function GanttBar<TData = unknown>({
   const defaultContent = (
     <>
       {occurrence.isRecurring && (
-        <RepeatIcon className="size-2.5 shrink-0 opacity-70" aria-hidden="true" />
+        <RepeatIcon
+          className="size-2.5 shrink-0 opacity-70"
+          aria-hidden="true"
+        />
       )}
       <span className="truncate font-medium">{event.title}</span>
       {!occurrence.allDay && segment.isStart && (
@@ -310,7 +314,10 @@ function GanttBar<TData = unknown>({
         {progress === 100 && !consumerOwnsContent && (
           // done mark: completion chrome like the fill itself, so it shows
           // for outside-label bars too (where the inner content is empty)
-          <CheckIcon className="relative size-2.5 shrink-0 opacity-80" aria-hidden="true" />
+          <CheckIcon
+            className="relative size-2.5 shrink-0 opacity-80"
+            aria-hidden="true"
+          />
         )}
         {content}
         {resizeHandles}

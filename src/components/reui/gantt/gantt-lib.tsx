@@ -1,13 +1,3 @@
-import { expandRecurrence } from "#/components/reui/gantt/gantt-recurrence.tsx"
-import type {
-  GanttDateRange,
-  GanttEvent,
-  GanttOccurrence,
-  GanttOffDaysConfig,
-  GanttResource,
-  GanttScale,
-  GanttSegment,
-} from "#/components/reui/gantt/gantt-types.tsx"
 import { TZDate } from "@date-fns/tz"
 import {
   addDays,
@@ -22,6 +12,17 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns"
+
+import { expandRecurrence } from "#/components/reui/gantt/gantt-recurrence.tsx"
+import type {
+  GanttDateRange,
+  GanttEvent,
+  GanttOccurrence,
+  GanttOffDaysConfig,
+  GanttResource,
+  GanttScale,
+  GanttSegment,
+} from "#/components/reui/gantt/gantt-types.tsx"
 
 type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6
 

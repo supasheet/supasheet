@@ -1,11 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useMemo } from "react"
-import {
-  useEventCalendar,
-  useEventCalendarViewConfig,
-  type EventCalendarInstance,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { addDays, addMinutes, differenceInCalendarDays } from "date-fns"
+
 import {
   snapMinutes,
   toZoned,
@@ -15,7 +13,11 @@ import type {
   EventCalendarProposedUpdate,
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { addDays, addMinutes, differenceInCalendarDays } from "date-fns"
+import {
+  type EventCalendarInstance,
+  useEventCalendar,
+  useEventCalendarViewConfig,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 
 /**
  * Activation policy (dnd-kit parity where proven):

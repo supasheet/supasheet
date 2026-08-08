@@ -29,7 +29,6 @@
 --
 -- grant authenticated to "user",
 -- "admin";
-
 -- ================================================================
 -- Default role for new sign-ups (reference only — inactive)
 -- ================================================================
@@ -57,7 +56,6 @@
 -- create trigger on_auth_user_created_assign_role
 -- before insert on auth.users for each row
 -- execute function supasheet.assign_default_role ();
-
 insert into
   "auth"."users" (
     "instance_id",

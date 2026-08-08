@@ -1,17 +1,23 @@
-import { useState, type ReactNode } from "react"
+import { type ReactNode, useState } from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, format } from "date-fns"
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react"
+
+import { toZoned } from "#/components/reui/event-calendar/event-calendar-lib.tsx"
+import type { CalendarView } from "#/components/reui/event-calendar/event-calendar-types.tsx"
 import {
   useEventCalendarNavigation,
   useEventCalendarSettings,
   useEventCalendarView,
   useEventCalendarViewConfig,
 } from "#/components/reui/event-calendar/event-calendar.tsx"
-import { toZoned } from "#/components/reui/event-calendar/event-calendar-lib.tsx"
-import type { CalendarView } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, format } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
 import { Button } from "#/components/ui/button.tsx"
 import { Calendar } from "#/components/ui/calendar.tsx"
 import {
@@ -33,7 +39,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip.tsx"
-import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 /** Configured nav button variant/size (viewConfig.navButtonVariant/Size)
  *  plus the shared classNames.navButton hook, merged on every nav button. */
@@ -174,9 +180,7 @@ function EventCalendarNavPrev({
         render={render}
         {...props}
       >
-        {children ?? (
-          <ChevronLeftIcon className="size-4" aria-hidden="true" />
-        )}
+        {children ?? <ChevronLeftIcon className="size-4" aria-hidden="true" />}
       </Button>
     </NavTooltip>
   )
@@ -206,9 +210,7 @@ function EventCalendarNavNext({
         render={render}
         {...props}
       >
-        {children ?? (
-          <ChevronRightIcon className="size-4" aria-hidden="true" />
-        )}
+        {children ?? <ChevronRightIcon className="size-4" aria-hidden="true" />}
       </Button>
     </NavTooltip>
   )
@@ -324,7 +326,10 @@ function EventCalendarViewSwitcher({
           {children ?? (
             <>
               {viewLabel(view)}
-              <ChevronDownIcon className="size-4 opacity-60" aria-hidden="true" />
+              <ChevronDownIcon
+                className="size-4 opacity-60"
+                aria-hidden="true"
+              />
             </>
           )}
         </DropdownMenuTrigger>
@@ -474,9 +479,7 @@ function EventCalendarDatePicker({
           }
           {...props}
         >
-          {children ?? (
-            <CalendarIcon className="size-4" aria-hidden="true" />
-          )}
+          {children ?? <CalendarIcon className="size-4" aria-hidden="true" />}
         </PopoverTrigger>
       </NavTooltip>
       <PopoverContent

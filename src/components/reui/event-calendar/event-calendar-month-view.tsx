@@ -1,6 +1,8 @@
 "use client"
 
 import {
+  type CSSProperties,
+  type Ref,
   useCallback,
   useEffect,
   useId,
@@ -8,19 +10,13 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
-  type Ref,
 } from "react"
-import {
-  EventCalendarViewContext,
-  useEventCalendar,
-  useEventCalendarDay,
-  useEventCalendarSelector,
-  useEventCalendarSettings,
-  useEventCalendarViewConfig,
-  useEventCalendarViewSettings,
-  useEventCalendarWeek,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, format, getWeek } from "date-fns"
+import { PlusIcon } from "lucide-react"
+
 import {
   useEventCalendarGestures,
   wasRecentChipPress,
@@ -43,18 +39,23 @@ import type {
   EventCalendarEventId,
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, format, getWeek } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
+import {
+  EventCalendarViewContext,
+  useEventCalendar,
+  useEventCalendarDay,
+  useEventCalendarSelector,
+  useEventCalendarSettings,
+  useEventCalendarViewConfig,
+  useEventCalendarViewSettings,
+  useEventCalendarWeek,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "#/components/ui/popover.tsx"
 import { ScrollArea } from "#/components/ui/scroll-area.tsx"
-import { PlusIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 // Layout-effect on the client (measure before paint, no flash), plain effect on
 // the server (never runs there) to avoid the SSR useLayoutEffect warning.

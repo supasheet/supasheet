@@ -1,14 +1,15 @@
-import type {
-  CalendarView,
-  EventCalendarDateRange,
-} from "#/components/reui/event-calendar/event-calendar-types.tsx"
 import {
+  type Locale,
   format,
   isSameMonth,
   isSameYear,
   subMilliseconds,
-  type Locale,
 } from "date-fns"
+
+import type {
+  CalendarView,
+  EventCalendarDateRange,
+} from "#/components/reui/event-calendar/event-calendar-types.tsx"
 
 interface EventCalendarI18nConfig {
   labels: {

@@ -1,3 +1,6 @@
+import { TZDate } from "@date-fns/tz"
+import { addDays, addMonths, addWeeks, addYears } from "date-fns"
+
 import type {
   GanttDateRange,
   GanttEvent,
@@ -5,8 +8,6 @@ import type {
   GanttRecurrenceRule,
   GanttWeekday,
 } from "#/components/reui/gantt/gantt-types.tsx"
-import { TZDate } from "@date-fns/tz"
-import { addDays, addMonths, addWeeks, addYears } from "date-fns"
 
 /** Guard: max occurrences per event per expansion. */
 const MAX_OCCURRENCES = 1000

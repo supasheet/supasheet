@@ -3,9 +3,6 @@ import { useState } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { PencilIcon, SendIcon, Trash2Icon, XIcon } from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar"
-import { Button } from "#/components/ui/button"
-import { Textarea } from "#/components/ui/textarea"
 import {
   TimelineContent,
   TimelineDate,
@@ -14,6 +11,9 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from "#/components/reui/timeline"
+import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar"
+import { Button } from "#/components/ui/button"
+import { Textarea } from "#/components/ui/textarea"
 import type { ResourceComment } from "#/lib/supabase/data/resource"
 
 function userInitials(name: string | null) {

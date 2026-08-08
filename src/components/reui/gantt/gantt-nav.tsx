@@ -1,19 +1,25 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import { type ReactNode, useState } from "react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { format } from "date-fns"
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react"
+
+import { toZoned } from "#/components/reui/gantt/gantt-lib.tsx"
+import type { GanttScale } from "#/components/reui/gantt/gantt-types.tsx"
 import {
   useGanttNavigation,
   useGanttScale,
   useGanttSettings,
   useGanttViewConfig,
 } from "#/components/reui/gantt/gantt.tsx"
-import { toZoned } from "#/components/reui/gantt/gantt-lib.tsx"
-import type { GanttScale } from "#/components/reui/gantt/gantt-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { format } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
 import { Button } from "#/components/ui/button.tsx"
 import { Calendar } from "#/components/ui/calendar.tsx"
 import {
@@ -35,7 +41,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip.tsx"
-import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 const GANTT_SCALES: GanttScale[] = ["day", "week", "month", "quarter", "year"]
 
@@ -141,9 +147,7 @@ function GanttNavPrev({
         render={render}
         {...props}
       >
-        {children ?? (
-          <ChevronLeftIcon className="size-4" aria-hidden="true" />
-        )}
+        {children ?? <ChevronLeftIcon className="size-4" aria-hidden="true" />}
       </Button>
     </NavTooltip>
   )
@@ -173,9 +177,7 @@ function GanttNavNext({
         render={render}
         {...props}
       >
-        {children ?? (
-          <ChevronRightIcon className="size-4" aria-hidden="true" />
-        )}
+        {children ?? <ChevronRightIcon className="size-4" aria-hidden="true" />}
       </Button>
     </NavTooltip>
   )
@@ -284,7 +286,10 @@ function GanttScaleSwitcher({
           {children ?? (
             <>
               {labels.scales[scale]}
-              <ChevronDownIcon className="size-4 opacity-60" aria-hidden="true" />
+              <ChevronDownIcon
+                className="size-4 opacity-60"
+                aria-hidden="true"
+              />
             </>
           )}
         </DropdownMenuTrigger>

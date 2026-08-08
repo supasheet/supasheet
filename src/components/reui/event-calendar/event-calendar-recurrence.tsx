@@ -1,3 +1,6 @@
+import { TZDate } from "@date-fns/tz"
+import { addDays, addMonths, addWeeks, addYears } from "date-fns"
+
 import type {
   CalendarEvent,
   EventCalendarDateRange,
@@ -5,8 +8,6 @@ import type {
   EventCalendarRecurrenceRule,
   EventCalendarWeekday,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { TZDate } from "@date-fns/tz"
-import { addDays, addMonths, addWeeks, addYears } from "date-fns"
 
 /** Guard: max window-intersecting occurrences per event per expansion. */
 const MAX_OCCURRENCES = 1000

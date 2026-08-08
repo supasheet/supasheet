@@ -90,7 +90,8 @@ begin
 end;
 $$;
 
-create trigger aa_soft_delete_comments before delete on supasheet.comments for each row
+create trigger aa_soft_delete_comments
+before delete on supasheet.comments for each row
 execute function supasheet.trg_soft_delete_comment ();
 
 drop function if exists supasheet.get_comments (text, text, text);

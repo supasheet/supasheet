@@ -1,10 +1,7 @@
 import { useCallback, useEffect } from "react"
-import {
-  resolveScheduleMode,
-  useGantt,
-  useGanttViewConfig,
-  type GanttInstance,
-} from "#/components/reui/gantt/gantt.tsx"
+
+import { addDays, differenceInCalendarDays } from "date-fns"
+
 import {
   findResource,
   snapMinutes,
@@ -16,7 +13,12 @@ import type {
   GanttScheduleMode,
   GanttSegment,
 } from "#/components/reui/gantt/gantt-types.tsx"
-import { addDays, differenceInCalendarDays } from "date-fns"
+import {
+  type GanttInstance,
+  resolveScheduleMode,
+  useGantt,
+  useGanttViewConfig,
+} from "#/components/reui/gantt/gantt.tsx"
 
 /**
  * Activation policy (dnd-kit parity where proven):

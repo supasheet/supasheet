@@ -75,7 +75,12 @@ function RouteComponent() {
               </SidebarMenu>
             </SidebarGroup>
           ) : (
-            <NavResources schema="storage" items={buckets.filter(b => b.id !== "uploads" && b.id !== "report-templates")} />
+            <NavResources
+              schema="storage"
+              items={buckets.filter(
+                (b) => b.id !== "uploads" && b.id !== "report-templates"
+              )}
+            />
           )}
         </SidebarContent>
         <SidebarFooter>
@@ -84,10 +89,14 @@ function RouteComponent() {
               <QuickSearch
                 schema="storage"
                 items={[]}
-                resourceItems={buckets.filter(b => b.id !== "uploads" && b.id !== "report-templates").map((b) => ({
-                  ...b,
-                  url: `/storage/${b.id}`,
-                }))}
+                resourceItems={buckets
+                  .filter(
+                    (b) => b.id !== "uploads" && b.id !== "report-templates"
+                  )
+                  .map((b) => ({
+                    ...b,
+                    url: `/storage/${b.id}`,
+                  }))}
               />
               <NavSecondary
                 items={[

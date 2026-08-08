@@ -1,13 +1,12 @@
 "use client"
 
 import { useMemo } from "react"
-import {
-  EventCalendarViewContext,
-  useEventCalendar,
-  useEventCalendarSelector,
-  useEventCalendarSettings,
-  useEventCalendarViewConfig,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+
 import { EventCalendarEvent } from "#/components/reui/event-calendar/event-calendar-event.tsx"
 import {
   getDayKey,
@@ -19,14 +18,16 @@ import type {
   EventCalendarDateRange,
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
+import {
+  EventCalendarViewContext,
+  useEventCalendar,
+  useEventCalendarSelector,
+  useEventCalendarSettings,
+  useEventCalendarViewConfig,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import { IconStack } from "#/components/reui/icon-stack.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, format } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
 import { ScrollArea } from "#/components/ui/scroll-area.tsx"
-import { CalendarIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 // The agenda window length is the agendaDayCount SETTING (the store derives
 // visibleRange from it); a per-view prop here would silently disagree.

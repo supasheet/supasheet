@@ -339,72 +339,261 @@ on conflict do nothing;
 -- Clients
 ----------------------------------------------------------------
 insert into
-  pm.clients (id, code, name, contact_name, contact_email, industry, portal_user_id)
+  pm.clients (
+    id,
+    code,
+    name,
+    contact_name,
+    contact_email,
+    industry,
+    portal_user_id
+  )
 values
-  ('a1000000-0000-0000-0000-000000000001', 'ACME', 'Acme Robotics', 'Renee Castillo', 'renee.castillo@acmerobotics.example', 'Manufacturing', 'f03db03e-fb7a-424d-84ff-18e2791ce0b5'),
-  ('a1000000-0000-0000-0000-000000000002', 'MERIDIAN', 'Meridian Health', 'David Osei', 'david.osei@meridianhealth.example', 'Healthcare', null),
-  ('a1000000-0000-0000-0000-000000000003', 'NORTHWIND', 'Northwind Retail', 'Lucia Fontaine', 'lucia.fontaine@northwindretail.example', 'Retail', null);
+  (
+    'a1000000-0000-0000-0000-000000000001',
+    'ACME',
+    'Acme Robotics',
+    'Renee Castillo',
+    'renee.castillo@acmerobotics.example',
+    'Manufacturing',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b5'
+  ),
+  (
+    'a1000000-0000-0000-0000-000000000002',
+    'MERIDIAN',
+    'Meridian Health',
+    'David Osei',
+    'david.osei@meridianhealth.example',
+    'Healthcare',
+    null
+  ),
+  (
+    'a1000000-0000-0000-0000-000000000003',
+    'NORTHWIND',
+    'Northwind Retail',
+    'Lucia Fontaine',
+    'lucia.fontaine@northwindretail.example',
+    'Retail',
+    null
+  );
 
 insert into
-  pm.client_billing (client_id, billing_address, default_hourly_rate, default_cost_rate, payment_terms_days)
+  pm.client_billing (
+    client_id,
+    billing_address,
+    default_hourly_rate,
+    default_cost_rate,
+    payment_terms_days
+  )
 values
-  ('a1000000-0000-0000-0000-000000000001', '400 Foundry Way, Detroit, MI', 175, 90, 30),
-  ('a1000000-0000-0000-0000-000000000002', '12 Harbor Health Blvd, Boston, MA', 160, 85, 30),
-  ('a1000000-0000-0000-0000-000000000003', '88 Commerce St, Chicago, IL', 150, 80, 45);
+  (
+    'a1000000-0000-0000-0000-000000000001',
+    '400 Foundry Way, Detroit, MI',
+    175,
+    90,
+    30
+  ),
+  (
+    'a1000000-0000-0000-0000-000000000002',
+    '12 Harbor Health Blvd, Boston, MA',
+    160,
+    85,
+    30
+  ),
+  (
+    'a1000000-0000-0000-0000-000000000003',
+    '88 Commerce St, Chicago, IL',
+    150,
+    80,
+    45
+  );
 
 ----------------------------------------------------------------
 -- Projects
 ----------------------------------------------------------------
 insert into
   pm.projects (
-    id, name, client_id, pm_lead_id, status, budget_type, budget_amount, budget_hours, start_date, end_date, description
+    id,
+    name,
+    client_id,
+    pm_lead_id,
+    status,
+    budget_type,
+    budget_amount,
+    budget_hours,
+    start_date,
+    end_date,
+    description
   )
 values
   (
-    'a2000000-0000-0000-0000-000000000001', 'Robotics Fleet Management Platform', 'a1000000-0000-0000-0000-000000000001',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'active', 'time_and_materials', 150000, 800,
-    current_date - 70, current_date + 110, 'A telemetry and fleet-management platform for Acme''s warehouse robots.'
+    'a2000000-0000-0000-0000-000000000001',
+    'Robotics Fleet Management Platform',
+    'a1000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'active',
+    'time_and_materials',
+    150000,
+    800,
+    current_date - 70,
+    current_date + 110,
+    'A telemetry and fleet-management platform for Acme''s warehouse robots.'
   ),
   (
-    'a2000000-0000-0000-0000-000000000002', 'Patient Portal Redesign', 'a1000000-0000-0000-0000-000000000002',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'active', 'fixed', 80000, null,
-    current_date - 40, current_date + 50, 'A fixed-price redesign of the Meridian patient portal.'
+    'a2000000-0000-0000-0000-000000000002',
+    'Patient Portal Redesign',
+    'a1000000-0000-0000-0000-000000000002',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'active',
+    'fixed',
+    80000,
+    null,
+    current_date - 40,
+    current_date + 50,
+    'A fixed-price redesign of the Meridian patient portal.'
   ),
   (
-    'a2000000-0000-0000-0000-000000000003', 'Inventory Sync Integration', 'a1000000-0000-0000-0000-000000000001',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'active', 'time_and_materials', 40000, 200,
-    current_date - 30, current_date + 30, 'A connector syncing warehouse inventory counts with the new fleet platform.'
+    'a2000000-0000-0000-0000-000000000003',
+    'Inventory Sync Integration',
+    'a1000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'active',
+    'time_and_materials',
+    40000,
+    200,
+    current_date - 30,
+    current_date + 30,
+    'A connector syncing warehouse inventory counts with the new fleet platform.'
   ),
   (
-    'a2000000-0000-0000-0000-000000000004', 'Loyalty Program Pilot', 'a1000000-0000-0000-0000-000000000003',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'planning', 'retainer', 25000, null,
-    null, null, 'A pilot loyalty program for a handful of Northwind stores.'
+    'a2000000-0000-0000-0000-000000000004',
+    'Loyalty Program Pilot',
+    'a1000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'planning',
+    'retainer',
+    25000,
+    null,
+    null,
+    null,
+    'A pilot loyalty program for a handful of Northwind stores.'
   );
 
 ----------------------------------------------------------------
 -- Project members
 ----------------------------------------------------------------
 insert into
-  pm.project_members (project_id, user_id, role_on_project, billable_rate, cost_rate, allocation_percent)
+  pm.project_members (
+    project_id,
+    user_id,
+    role_on_project,
+    billable_rate,
+    cost_rate,
+    allocation_percent
+  )
 values
-  ('a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'Project Manager', 200, 100, 30),
-  ('a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', 'Senior Engineer', 175, 90, 80),
-  ('a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', 'Engineer', 140, 70, 100),
-  ('a2000000-0000-0000-0000-000000000002', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'Project Manager', 200, 100, 20),
-  ('a2000000-0000-0000-0000-000000000002', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', 'Product Designer', 160, 85, 50),
-  ('a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'Project Manager', 200, 100, 10),
-  ('a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', 'Integration Engineer', 150, 78, 60),
-  ('a2000000-0000-0000-0000-000000000004', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'Project Manager', 200, 100, 10);
+  (
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'Project Manager',
+    200,
+    100,
+    30
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    'Senior Engineer',
+    175,
+    90,
+    80
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    'Engineer',
+    140,
+    70,
+    100
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000002',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'Project Manager',
+    200,
+    100,
+    20
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000002',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    'Product Designer',
+    160,
+    85,
+    50
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'Project Manager',
+    200,
+    100,
+    10
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    'Integration Engineer',
+    150,
+    78,
+    60
+  ),
+  (
+    'a2000000-0000-0000-0000-000000000004',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'Project Manager',
+    200,
+    100,
+    10
+  );
 
 ----------------------------------------------------------------
 -- Phases
 ----------------------------------------------------------------
 insert into
-  pm.phases (id, project_id, name, start_date, end_date, status)
+  pm.phases (
+    id,
+    project_id,
+    name,
+    start_date,
+    end_date,
+    status
+  )
 values
-  ('a3000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'Discovery', current_date - 70, current_date - 45, 'completed'),
-  ('a3000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001', 'Build', current_date - 44, current_date + 60, 'in_progress'),
-  ('a3000000-0000-0000-0000-000000000003', 'a2000000-0000-0000-0000-000000000001', 'Launch', current_date + 61, current_date + 110, 'not_started');
+  (
+    'a3000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'Discovery',
+    current_date - 70,
+    current_date - 45,
+    'completed'
+  ),
+  (
+    'a3000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    'Build',
+    current_date - 44,
+    current_date + 60,
+    'in_progress'
+  ),
+  (
+    'a3000000-0000-0000-0000-000000000003',
+    'a2000000-0000-0000-0000-000000000001',
+    'Launch',
+    current_date + 61,
+    current_date + 110,
+    'not_started'
+  );
 
 ----------------------------------------------------------------
 -- Task lists
@@ -412,9 +601,24 @@ values
 insert into
   pm.task_lists (id, project_id, phase_id, name)
 values
-  ('a4000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'a3000000-0000-0000-0000-000000000002', 'Fleet Telemetry Backlog'),
-  ('a4000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000002', null, 'Sprint 1'),
-  ('a4000000-0000-0000-0000-000000000003', 'a2000000-0000-0000-0000-000000000003', null, 'Integration Work');
+  (
+    'a4000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Fleet Telemetry Backlog'
+  ),
+  (
+    'a4000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000002',
+    null,
+    'Sprint 1'
+  ),
+  (
+    'a4000000-0000-0000-0000-000000000003',
+    'a2000000-0000-0000-0000-000000000003',
+    null,
+    'Integration Work'
+  );
 
 ----------------------------------------------------------------
 -- Tasks
@@ -426,47 +630,110 @@ values
 ----------------------------------------------------------------
 insert into
   pm.tasks (
-    id, project_id, task_list_id, phase_id, title, status, priority, assignee_id, estimated_hours, due_date
+    id,
+    project_id,
+    task_list_id,
+    phase_id,
+    title,
+    status,
+    priority,
+    assignee_id,
+    estimated_hours,
+    due_date
   )
 values
   (
-    'a5000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'a4000000-0000-0000-0000-000000000001',
-    'a3000000-0000-0000-0000-000000000002', 'Design fleet telemetry schema', 'done', 'high',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b3', 8, current_date - 40
+    'a5000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'a4000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Design fleet telemetry schema',
+    'done',
+    'high',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    8,
+    current_date - 40
   ),
   (
-    'a5000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001', 'a4000000-0000-0000-0000-000000000001',
-    'a3000000-0000-0000-0000-000000000002', 'Implement telemetry ingestion API', 'done', 'high',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b4', 16, current_date - 30
+    'a5000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    'a4000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Implement telemetry ingestion API',
+    'done',
+    'high',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    16,
+    current_date - 30
   ),
   (
-    'a5000000-0000-0000-0000-000000000003', 'a2000000-0000-0000-0000-000000000001', 'a4000000-0000-0000-0000-000000000001',
-    'a3000000-0000-0000-0000-000000000002', 'Build fleet dashboard UI', 'in_progress', 'high',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b3', 24, current_date + 5
+    'a5000000-0000-0000-0000-000000000003',
+    'a2000000-0000-0000-0000-000000000001',
+    'a4000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Build fleet dashboard UI',
+    'in_progress',
+    'high',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    24,
+    current_date + 5
   ),
   (
-    'a5000000-0000-0000-0000-000000000004', 'a2000000-0000-0000-0000-000000000001', 'a4000000-0000-0000-0000-000000000001',
-    'a3000000-0000-0000-0000-000000000002', 'Write integration tests', 'todo', 'medium',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b4', 12, current_date + 10
+    'a5000000-0000-0000-0000-000000000004',
+    'a2000000-0000-0000-0000-000000000001',
+    'a4000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Write integration tests',
+    'todo',
+    'medium',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    12,
+    current_date + 10
   ),
   (
-    'a5000000-0000-0000-0000-000000000005', 'a2000000-0000-0000-0000-000000000001', 'a4000000-0000-0000-0000-000000000001',
-    'a3000000-0000-0000-0000-000000000002', 'Deploy to staging', 'blocked', 'medium',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 4, current_date + 12
+    'a5000000-0000-0000-0000-000000000005',
+    'a2000000-0000-0000-0000-000000000001',
+    'a4000000-0000-0000-0000-000000000001',
+    'a3000000-0000-0000-0000-000000000002',
+    'Deploy to staging',
+    'blocked',
+    'medium',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    4,
+    current_date + 12
   ),
   (
-    'a5000000-0000-0000-0000-000000000006', 'a2000000-0000-0000-0000-000000000003', 'a4000000-0000-0000-0000-000000000003',
-    null, 'Build sync connector', 'in_progress', 'high',
-    'f03db03e-fb7a-424d-84ff-18e2791ce0b4', 180, current_date + 8
+    'a5000000-0000-0000-0000-000000000006',
+    'a2000000-0000-0000-0000-000000000003',
+    'a4000000-0000-0000-0000-000000000003',
+    null,
+    'Build sync connector',
+    'in_progress',
+    'high',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    180,
+    current_date + 8
   );
 
 insert into
   pm.task_dependencies (task_id, depends_on_task_id)
 values
-  ('a5000000-0000-0000-0000-000000000002', 'a5000000-0000-0000-0000-000000000001'),
-  ('a5000000-0000-0000-0000-000000000003', 'a5000000-0000-0000-0000-000000000002'),
-  ('a5000000-0000-0000-0000-000000000004', 'a5000000-0000-0000-0000-000000000003'),
-  ('a5000000-0000-0000-0000-000000000005', 'a5000000-0000-0000-0000-000000000003');
+  (
+    'a5000000-0000-0000-0000-000000000002',
+    'a5000000-0000-0000-0000-000000000001'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000003',
+    'a5000000-0000-0000-0000-000000000002'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000004',
+    'a5000000-0000-0000-0000-000000000003'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000005',
+    'a5000000-0000-0000-0000-000000000003'
+  );
 
 ----------------------------------------------------------------
 -- Task comments
@@ -474,8 +741,16 @@ values
 insert into
   pm.task_comments (task_id, user_id, body)
 values
-  ('a5000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', 'Client asked for a map view in addition to the list — can we scope that into this task or spin off a follow-up?'),
-  ('a5000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', 'Spinning it off — map view will be its own task once this ships.');
+  (
+    'a5000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    'Client asked for a map view in addition to the list — can we scope that into this task or spin off a follow-up?'
+  ),
+  (
+    'a5000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    'Spinning it off — map view will be its own task once this ships.'
+  );
 
 ----------------------------------------------------------------
 -- Time entries
@@ -485,25 +760,133 @@ values
 -- bottom of this file has something real to bump into.
 ----------------------------------------------------------------
 insert into
-  pm.time_entries (id, task_id, project_id, user_id, entry_date, logged_duration, description, status)
+  pm.time_entries (
+    id,
+    task_id,
+    project_id,
+    user_id,
+    entry_date,
+    logged_duration,
+    description,
+    status
+  )
 values
-  ('a6000000-0000-0000-0000-000000000001', 'a5000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_date - 38, 28800000, 'Schema design', 'approved'),
-  ('a6000000-0000-0000-0000-000000000002', 'a5000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', current_date - 28, 57600000, 'Ingestion API implementation', 'approved'),
-  ('a6000000-0000-0000-0000-000000000003', 'a5000000-0000-0000-0000-000000000003', 'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_date - 3, 36000000, 'Dashboard UI — list view', 'approved'),
-  ('a6000000-0000-0000-0000-000000000004', 'a5000000-0000-0000-0000-000000000003', 'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_date - 1, 14400000, 'Dashboard UI — filters', 'submitted'),
-  ('a6000000-0000-0000-0000-000000000005', 'a5000000-0000-0000-0000-000000000006', 'a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', current_date - 28, 162000000, 'Week 1 sync connector work', 'approved'),
-  ('a6000000-0000-0000-0000-000000000006', 'a5000000-0000-0000-0000-000000000006', 'a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', current_date - 21, 162000000, 'Week 2 sync connector work', 'approved'),
-  ('a6000000-0000-0000-0000-000000000007', 'a5000000-0000-0000-0000-000000000006', 'a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', current_date - 14, 180000000, 'Week 3 sync connector work', 'approved'),
-  ('a6000000-0000-0000-0000-000000000008', 'a5000000-0000-0000-0000-000000000006', 'a2000000-0000-0000-0000-000000000003', 'f03db03e-fb7a-424d-84ff-18e2791ce0b4', current_date - 7, 180000000, 'Week 4 sync connector work', 'approved');
+  (
+    'a6000000-0000-0000-0000-000000000001',
+    'a5000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_date - 38,
+    28800000,
+    'Schema design',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000002',
+    'a5000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_date - 28,
+    57600000,
+    'Ingestion API implementation',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000003',
+    'a5000000-0000-0000-0000-000000000003',
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_date - 3,
+    36000000,
+    'Dashboard UI — list view',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000004',
+    'a5000000-0000-0000-0000-000000000003',
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_date - 1,
+    14400000,
+    'Dashboard UI — filters',
+    'submitted'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000005',
+    'a5000000-0000-0000-0000-000000000006',
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_date - 28,
+    162000000,
+    'Week 1 sync connector work',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000006',
+    'a5000000-0000-0000-0000-000000000006',
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_date - 21,
+    162000000,
+    'Week 2 sync connector work',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000007',
+    'a5000000-0000-0000-0000-000000000006',
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_date - 14,
+    180000000,
+    'Week 3 sync connector work',
+    'approved'
+  ),
+  (
+    'a6000000-0000-0000-0000-000000000008',
+    'a5000000-0000-0000-0000-000000000006',
+    'a2000000-0000-0000-0000-000000000003',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b4',
+    current_date - 7,
+    180000000,
+    'Week 4 sync connector work',
+    'approved'
+  );
 
 ----------------------------------------------------------------
 -- Milestones
 ----------------------------------------------------------------
 insert into
-  pm.milestones (id, project_id, name, due_date, status, completion_percent, billing_amount, is_billing_trigger)
+  pm.milestones (
+    id,
+    project_id,
+    name,
+    due_date,
+    status,
+    completion_percent,
+    billing_amount,
+    is_billing_trigger
+  )
 values
-  ('a7000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'Phase 1 Discovery Complete', current_date - 45, 'completed', 100, 20000, true),
-  ('a7000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001', 'MVP Launch', current_date + 60, 'pending', 0, 50000, true);
+  (
+    'a7000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'Phase 1 Discovery Complete',
+    current_date - 45,
+    'completed',
+    100,
+    20000,
+    true
+  ),
+  (
+    'a7000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    'MVP Launch',
+    current_date + 60,
+    'pending',
+    0,
+    50000,
+    true
+  );
 
 ----------------------------------------------------------------
 -- Deliverables
@@ -513,35 +896,106 @@ values
 -- live case a client-portal login would actually see waiting.
 ----------------------------------------------------------------
 insert into
-  pm.deliverables (id, project_id, milestone_id, name, submitted_by, created_at)
+  pm.deliverables (
+    id,
+    project_id,
+    milestone_id,
+    name,
+    submitted_by,
+    created_at
+  )
 values
-  ('a8000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'a7000000-0000-0000-0000-000000000001', 'Discovery Report', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_timestamp - interval '48 days'),
-  ('a8000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001', null, 'Fleet Dashboard Prototype', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_timestamp - interval '4 days');
+  (
+    'a8000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'a7000000-0000-0000-0000-000000000001',
+    'Discovery Report',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_timestamp - interval '48 days'
+  ),
+  (
+    'a8000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    null,
+    'Fleet Dashboard Prototype',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_timestamp - interval '4 days'
+  );
 
-update pm.deliverables set status = 'submitted' where id = 'a8000000-0000-0000-0000-000000000001';
-update pm.deliverables set status = 'in_review' where id = 'a8000000-0000-0000-0000-000000000001';
-update pm.deliverables set status = 'approved' where id = 'a8000000-0000-0000-0000-000000000001';
 update pm.deliverables
-set reviewed_by = 'f03db03e-fb7a-424d-84ff-18e2791ce0b5',
-  reviewed_at = current_timestamp - interval '44 days'
-where id = 'a8000000-0000-0000-0000-000000000001';
+set
+  status = 'submitted'
+where
+  id = 'a8000000-0000-0000-0000-000000000001';
 
-update pm.deliverables set status = 'submitted' where id = 'a8000000-0000-0000-0000-000000000002';
-update pm.deliverables set status = 'in_review' where id = 'a8000000-0000-0000-0000-000000000002';
+update pm.deliverables
+set
+  status = 'in_review'
+where
+  id = 'a8000000-0000-0000-0000-000000000001';
+
+update pm.deliverables
+set
+  status = 'approved'
+where
+  id = 'a8000000-0000-0000-0000-000000000001';
+
+update pm.deliverables
+set
+  reviewed_by = 'f03db03e-fb7a-424d-84ff-18e2791ce0b5',
+  reviewed_at = current_timestamp - interval '44 days'
+where
+  id = 'a8000000-0000-0000-0000-000000000001';
+
+update pm.deliverables
+set
+  status = 'submitted'
+where
+  id = 'a8000000-0000-0000-0000-000000000002';
+
+update pm.deliverables
+set
+  status = 'in_review'
+where
+  id = 'a8000000-0000-0000-0000-000000000002';
 
 ----------------------------------------------------------------
 -- Expenses
 ----------------------------------------------------------------
 insert into
-  pm.project_expenses (project_id, user_id, expense_date, category, description, amount, status, approved_by, approved_at)
+  pm.project_expenses (
+    project_id,
+    user_id,
+    expense_date,
+    category,
+    description,
+    amount,
+    status,
+    approved_by,
+    approved_at
+  )
 values
   (
-    'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_date - 35, 'travel',
-    'Client site visit flights', 450, 'approved', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', current_timestamp - interval '34 days'
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_date - 35,
+    'travel',
+    'Client site visit flights',
+    450,
+    'approved',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    current_timestamp - interval '34 days'
   ),
   (
-    'a2000000-0000-0000-0000-000000000001', 'f03db03e-fb7a-424d-84ff-18e2791ce0b3', current_date - 10, 'software',
-    'Design tool license renewal', 99, 'pending', null, null
+    'a2000000-0000-0000-0000-000000000001',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b3',
+    current_date - 10,
+    'software',
+    'Design tool license renewal',
+    99,
+    'pending',
+    null,
+    null
   );
 
 ----------------------------------------------------------------
@@ -549,32 +1003,91 @@ values
 -- completed Discovery milestone, sent for real, and partly paid.
 ----------------------------------------------------------------
 insert into
-  pm.invoices (id, project_id, client_id, period_start, period_end, issue_date, due_date)
+  pm.invoices (
+    id,
+    project_id,
+    client_id,
+    period_start,
+    period_end,
+    issue_date,
+    due_date
+  )
 values
   (
-    'a9000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001',
-    current_date - 45, current_date - 25, current_date - 24, current_date + 6
+    'a9000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'a1000000-0000-0000-0000-000000000001',
+    current_date - 45,
+    current_date - 25,
+    current_date - 24,
+    current_date + 6
   );
 
 insert into
-  pm.invoice_lines (invoice_id, line_type, description, source_time_entry_id, quantity, unit_price)
+  pm.invoice_lines (
+    invoice_id,
+    line_type,
+    description,
+    source_time_entry_id,
+    quantity,
+    unit_price
+  )
 values
-  ('a9000000-0000-0000-0000-000000000001', 'time', 'Design fleet telemetry schema', 'a6000000-0000-0000-0000-000000000001', 8, 175),
-  ('a9000000-0000-0000-0000-000000000001', 'time', 'Implement telemetry ingestion API', 'a6000000-0000-0000-0000-000000000002', 16, 140);
+  (
+    'a9000000-0000-0000-0000-000000000001',
+    'time',
+    'Design fleet telemetry schema',
+    'a6000000-0000-0000-0000-000000000001',
+    8,
+    175
+  ),
+  (
+    'a9000000-0000-0000-0000-000000000001',
+    'time',
+    'Implement telemetry ingestion API',
+    'a6000000-0000-0000-0000-000000000002',
+    16,
+    140
+  );
 
 insert into
-  pm.invoice_lines (invoice_id, line_type, description, source_milestone_id, quantity, unit_price)
+  pm.invoice_lines (
+    invoice_id,
+    line_type,
+    description,
+    source_milestone_id,
+    quantity,
+    unit_price
+  )
 values
-  ('a9000000-0000-0000-0000-000000000001', 'milestone', 'Phase 1 Discovery Complete — milestone billing', 'a7000000-0000-0000-0000-000000000001', 1, 20000);
+  (
+    'a9000000-0000-0000-0000-000000000001',
+    'milestone',
+    'Phase 1 Discovery Complete — milestone billing',
+    'a7000000-0000-0000-0000-000000000001',
+    1,
+    20000
+  );
 
 select
   pm.send_invoice ('a9000000-0000-0000-0000-000000000001');
 
 insert into
-  pm.invoice_payments (invoice_id, payment_date, amount, method, reference, recorded_by)
+  pm.invoice_payments (
+    invoice_id,
+    payment_date,
+    amount,
+    method,
+    reference,
+    recorded_by
+  )
 values
   (
-    'a9000000-0000-0000-0000-000000000001', current_date - 15, 10000, 'bank_transfer', 'ACH-55210',
+    'a9000000-0000-0000-0000-000000000001',
+    current_date - 15,
+    10000,
+    'bank_transfer',
+    'ACH-55210',
     'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
   );
 
@@ -582,17 +1095,39 @@ values
 -- Risks
 ----------------------------------------------------------------
 insert into
-  pm.risks (id, project_id, title, description, category, probability, impact, owner_id, review_date)
+  pm.risks (
+    id,
+    project_id,
+    title,
+    description,
+    category,
+    probability,
+    impact,
+    owner_id,
+    review_date
+  )
 values
   (
-    'aa000000-0000-0000-0000-000000000001', 'a2000000-0000-0000-0000-000000000001',
-    'Fleet telemetry data volume may exceed initial staging capacity', 'Ingestion rates in the design doc were conservative; real device counts run higher.',
-    'technical', 3, 4, 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', current_date + 20
+    'aa000000-0000-0000-0000-000000000001',
+    'a2000000-0000-0000-0000-000000000001',
+    'Fleet telemetry data volume may exceed initial staging capacity',
+    'Ingestion rates in the design doc were conservative; real device counts run higher.',
+    'technical',
+    3,
+    4,
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    current_date + 20
   ),
   (
-    'aa000000-0000-0000-0000-000000000002', 'a2000000-0000-0000-0000-000000000001',
-    'Key engineer has planned leave during the launch window', 'Jonas Weber has approved leave overlapping the current launch date.',
-    'resource', 4, 4, 'f03db03e-fb7a-424d-84ff-18e2791ce0b2', current_date + 5
+    'aa000000-0000-0000-0000-000000000002',
+    'a2000000-0000-0000-0000-000000000001',
+    'Key engineer has planned leave during the launch window',
+    'Jonas Weber has approved leave overlapping the current launch date.',
+    'resource',
+    4,
+    4,
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2',
+    current_date + 5
   );
 
 ----------------------------------------------------------------
@@ -602,21 +1137,46 @@ values
 -- health to amber — there is no other way to change it.
 ----------------------------------------------------------------
 insert into
-  pm.status_reports (project_id, report_date, overall_health, budget_health, schedule_health, summary, blockers, created_by)
+  pm.status_reports (
+    project_id,
+    report_date,
+    overall_health,
+    budget_health,
+    schedule_health,
+    summary,
+    blockers,
+    created_by
+  )
 values
   (
-    'a2000000-0000-0000-0000-000000000001', current_date - 20, 'green', 'green', 'green',
-    'Discovery complete, build phase underway on schedule.', null, 'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
+    'a2000000-0000-0000-0000-000000000001',
+    current_date - 20,
+    'green',
+    'green',
+    'green',
+    'Discovery complete, build phase underway on schedule.',
+    null,
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
   ),
   (
-    'a2000000-0000-0000-0000-000000000001', current_date - 2, 'amber', 'green', 'amber',
+    'a2000000-0000-0000-0000-000000000001',
+    current_date - 2,
+    'amber',
+    'green',
+    'amber',
     'Dashboard UI running slightly behind due to added map-view scope; the engineer-leave risk is now being actively monitored.',
-    'Awaiting client sign-off on the dashboard prototype.', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
+    'Awaiting client sign-off on the dashboard prototype.',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
   ),
   (
-    'a2000000-0000-0000-0000-000000000003', current_date - 1, 'red', 'red', 'amber',
+    'a2000000-0000-0000-0000-000000000003',
+    current_date - 1,
+    'red',
+    'red',
+    'amber',
     'Inventory Sync Integration is at 95% of its budgeted hours with meaningful scope remaining.',
-    'Need a budget increase or scope reduction decision from the client.', 'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
+    'Need a budget increase or scope reduction decision from the client.',
+    'f03db03e-fb7a-424d-84ff-18e2791ce0b2'
   );
 
 ----------------------------------------------------------------

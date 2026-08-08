@@ -1,16 +1,16 @@
 import {
+  type CSSProperties,
+  type ReactNode,
   createContext,
   useContext,
   useMemo,
-  type CSSProperties,
-  type ReactNode,
 } from "react"
-import {
-  useEventCalendar,
-  useEventCalendarSelector,
-  useEventCalendarViewConfig,
-  useEventCalendarViewContext,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { addDays, format } from "date-fns"
+import { RepeatIcon } from "lucide-react"
+
 import {
   markChipPress,
   useEventCalendarGestures,
@@ -25,18 +25,19 @@ import type {
   EventCalendarOccurrence,
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { addDays, format } from "date-fns"
-
-import { cn } from "#/lib/utils.ts"
+import {
+  useEventCalendar,
+  useEventCalendarSelector,
+  useEventCalendarViewConfig,
+  useEventCalendarViewContext,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "#/components/ui/tooltip.tsx"
-import { RepeatIcon } from "lucide-react"
+import { cn } from "#/lib/utils.ts"
 
 /**
  * Effective Tailwind palette presets for event colors; every entry works on
@@ -201,7 +202,10 @@ function EventCalendarEvent<TData = unknown>({
         />
       )}
       {occurrence.isRecurring && (
-        <RepeatIcon className="size-2.5 shrink-0 opacity-70" aria-hidden="true" />
+        <RepeatIcon
+          className="size-2.5 shrink-0 opacity-70"
+          aria-hidden="true"
+        />
       )}
       <span
         className={cn(
@@ -292,7 +296,10 @@ function EventCalendarEvent<TData = unknown>({
       />
       <span className="truncate text-sm">{event.title}</span>
       {occurrence.isRecurring && (
-        <RepeatIcon className="text-muted-foreground size-2.5 shrink-0" aria-hidden="true" />
+        <RepeatIcon
+          className="text-muted-foreground size-2.5 shrink-0"
+          aria-hidden="true"
+        />
       )}
     </>
   )

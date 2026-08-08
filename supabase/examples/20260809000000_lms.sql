@@ -157,12 +157,7 @@ create type lms.question_type as enum(
   'short_answer'
 );
 
-create type lms.enrollment_status as enum(
-  'active',
-  'completed',
-  'dropped',
-  'expired'
-);
+create type lms.enrollment_status as enum('active', 'completed', 'dropped', 'expired');
 
 create type lms.lesson_progress_status as enum('not_started', 'in_progress', 'completed');
 
@@ -376,8 +371,11 @@ with
 create policy instructors_update on lms.instructors
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
@@ -392,11 +390,7 @@ create sequence if not exists lms.course_number_seq;
 create table lms.courses (
   id uuid primary key default extensions.uuid_generate_v4 (),
   course_code varchar(30) not null unique default (
-    'CRS-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('lms.course_number_seq')::text,
-      5,
-      '0'
-    )
+    'CRS-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('lms.course_number_seq')::text, 5, '0')
   ),
   title varchar(200) not null,
   category_id uuid references lms.categories (id) on delete set null,
@@ -534,7 +528,7 @@ with
 create policy courses_update on lms.courses
 for update
   to authenticated using (
-    pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -542,7 +536,10 @@ for update
         lms.instructors i
       where
         i.id = instructor_id
-        and i.user_id = (select auth.uid ())
+        and i.user_id = (
+          select
+            auth.uid ()
+        )
     )
   )
 with
@@ -550,8 +547,8 @@ with
 
 create policy courses_delete on lms.courses for delete to authenticated using (true);
 
-create trigger courses_updated_at before
-update on lms.courses for each row
+create trigger courses_updated_at
+before update on lms.courses for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function lms.courses_rollup_instructor () returns trigger language plpgsql security definer
@@ -579,10 +576,7 @@ end;
 $$;
 
 create trigger trg_courses_rollup_instructor
-after insert
-or delete
-or
-update of instructor_id on lms.courses for each row
+after insert or delete or update of instructor_id on lms.courses for each row
 execute function lms.courses_rollup_instructor ();
 
 ----------------------------------------------------------------
@@ -682,7 +676,8 @@ begin
 end;
 $$;
 
-create trigger trg_course_modules_set_number before insert on lms.course_modules for each row
+create trigger trg_course_modules_set_number
+before insert on lms.course_modules for each row
 execute function lms.course_modules_set_number ();
 
 create or replace function lms.course_modules_rollup () returns trigger language plpgsql security definer
@@ -705,8 +700,7 @@ end;
 $$;
 
 create trigger trg_course_modules_rollup
-after insert
-or delete on lms.course_modules for each row
+after insert or delete on lms.course_modules for each row
 execute function lms.course_modules_rollup ();
 
 ----------------------------------------------------------------
@@ -837,7 +831,8 @@ begin
 end;
 $$;
 
-create trigger trg_lessons_set_number before insert on lms.lessons for each row
+create trigger trg_lessons_set_number
+before insert on lms.lessons for each row
 execute function lms.lessons_set_number ();
 
 create or replace function lms.lessons_rollup () returns trigger language plpgsql security definer
@@ -874,10 +869,7 @@ end;
 $$;
 
 create trigger trg_lessons_rollup
-after insert
-or delete
-or
-update of module_id,
+after insert or delete or update of module_id,
 course_id,
 duration_minutes on lms.lessons for each row
 execute function lms.lessons_rollup ();
@@ -985,8 +977,8 @@ with
 
 create policy quizzes_delete on lms.quizzes for delete to authenticated using (true);
 
-create trigger quizzes_updated_at before
-update on lms.quizzes for each row
+create trigger quizzes_updated_at
+before update on lms.quizzes for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -1089,7 +1081,8 @@ begin
 end;
 $$;
 
-create trigger trg_quiz_questions_set_number before insert on lms.quiz_questions for each row
+create trigger trg_quiz_questions_set_number
+before insert on lms.quiz_questions for each row
 execute function lms.quiz_questions_set_number ();
 
 create or replace function lms.quiz_questions_rollup () returns trigger language plpgsql security definer
@@ -1112,8 +1105,7 @@ end;
 $$;
 
 create trigger trg_quiz_questions_rollup
-after insert
-or delete on lms.quiz_questions for each row
+after insert or delete on lms.quiz_questions for each row
 execute function lms.quiz_questions_rollup ();
 
 ----------------------------------------------------------------
@@ -1173,7 +1165,13 @@ delete on table lms.quiz_options to "instructor";
 -- Learners see the choices, never which one is correct.
 grant
 select
-  (id, question_id, option_text, sequence_number, created_at) on table lms.quiz_options to "learning-manager",
+  (
+    id,
+    question_id,
+    option_text,
+    sequence_number,
+    created_at
+  ) on table lms.quiz_options to "learning-manager",
   "user";
 
 create index idx_lms_quiz_options_question_id on lms.quiz_options (question_id);
@@ -1209,7 +1207,8 @@ begin
 end;
 $$;
 
-create trigger trg_quiz_options_set_number before insert on lms.quiz_options for each row
+create trigger trg_quiz_options_set_number
+before insert on lms.quiz_options for each row
 execute function lms.quiz_options_set_number ();
 
 ----------------------------------------------------------------
@@ -1220,11 +1219,7 @@ create sequence if not exists lms.path_number_seq;
 create table lms.learning_paths (
   id uuid primary key default extensions.uuid_generate_v4 (),
   path_code varchar(30) not null unique default (
-    'PATH-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('lms.path_number_seq')::text,
-      5,
-      '0'
-    )
+    'PATH-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('lms.path_number_seq')::text, 5, '0')
   ),
   title varchar(200) not null,
   description supasheet.RICH_TEXT,
@@ -1322,8 +1317,8 @@ with
 
 create policy paths_delete on lms.learning_paths for delete to authenticated using (true);
 
-create trigger paths_updated_at before
-update on lms.learning_paths for each row
+create trigger paths_updated_at
+before update on lms.learning_paths for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -1368,8 +1363,8 @@ grant
 select
 ,
   insert,
-delete on table lms.learning_path_courses to "x-admin",
-"learning-manager";
+  delete on table lms.learning_path_courses to "x-admin",
+  "learning-manager";
 
 create index idx_lms_path_courses_path_id on lms.learning_path_courses (path_id);
 
@@ -1400,7 +1395,8 @@ begin
 end;
 $$;
 
-create trigger trg_path_courses_set_number before insert on lms.learning_path_courses for each row
+create trigger trg_path_courses_set_number
+before insert on lms.learning_path_courses for each row
 execute function lms.path_courses_set_number ();
 
 create or replace function lms.path_courses_rollup () returns trigger language plpgsql security definer
@@ -1427,8 +1423,7 @@ end;
 $$;
 
 create trigger trg_path_courses_rollup
-after insert
-or delete on lms.learning_path_courses for each row
+after insert or delete on lms.learning_path_courses for each row
 execute function lms.path_courses_rollup ();
 
 ----------------------------------------------------------------
@@ -1522,10 +1517,13 @@ alter table lms.learning_path_enrollments enable row level security;
 create policy path_enrollments_select on lms.learning_path_enrollments for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'learning-manager', 'member')
-    or pg_has_role (current_user, 'instructor', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'learning-manager', 'member')
+    or pg_has_role(current_user, 'instructor', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy path_enrollments_insert on lms.learning_path_enrollments for insert to authenticated
@@ -1661,9 +1659,12 @@ alter table lms.enrollments enable row level security;
 create policy enrollments_select on lms.enrollments for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'learning-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'learning-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -1672,7 +1673,10 @@ select
         join lms.instructors i on i.id = c.instructor_id
       where
         c.id = course_id
-        and i.user_id = (select auth.uid ())
+        and i.user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -1683,17 +1687,20 @@ with
 create policy enrollments_update on lms.enrollments
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'learning-manager', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'learning-manager', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy enrollments_delete on lms.enrollments for delete to authenticated using (true);
 
-create trigger enrollments_updated_at before
-update on lms.enrollments for each row
+create trigger enrollments_updated_at
+before update on lms.enrollments for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function lms.enrollments_guard () returns trigger language plpgsql security definer
@@ -1731,8 +1738,8 @@ begin
 end;
 $$;
 
-create trigger trg_enrollments_guard before
-update of status on lms.enrollments for each row
+create trigger trg_enrollments_guard
+before update of status on lms.enrollments for each row
 execute function lms.enrollments_guard ();
 
 -- Course-level enrollment/completion/rating rollups.
@@ -1781,10 +1788,7 @@ end;
 $$;
 
 create trigger trg_enrollments_rollup_course
-after insert
-or delete
-or
-update of status,
+after insert or delete or update of status,
 rating on lms.enrollments for each row
 execute function lms.enrollments_rollup_course ();
 
@@ -1874,10 +1878,13 @@ select
       where
         e.id = enrollment_id
         and (
-          e.user_id = (select auth.uid ())
-          or pg_has_role (current_user, 'learning-manager', 'member')
-          or pg_has_role (current_user, 'instructor', 'member')
-          or pg_has_role (current_user, 'x-admin', 'member')
+          e.user_id = (
+            select
+              auth.uid ()
+          )
+          or pg_has_role(current_user, 'learning-manager', 'member')
+          or pg_has_role(current_user, 'instructor', 'member')
+          or pg_has_role(current_user, 'x-admin', 'member')
         )
     )
   );
@@ -1910,8 +1917,8 @@ begin
 end;
 $$;
 
-create trigger trg_lesson_progress_guard before
-update on lms.lesson_progress for each row
+create trigger trg_lesson_progress_guard
+before update on lms.lesson_progress for each row
 execute function lms.lesson_progress_guard ();
 
 -- The rule made real: an enrollment's progress is always the share of
@@ -1947,10 +1954,7 @@ end;
 $$;
 
 create trigger trg_lesson_progress_rollup
-after insert
-or delete
-or
-update of status on lms.lesson_progress for each row
+after insert or delete or update of status on lms.lesson_progress for each row
 execute function lms.lesson_progress_rollup ();
 
 -- When one of a path's courses is completed, roll that forward into
@@ -2005,8 +2009,7 @@ end;
 $$;
 
 create trigger trg_enrollments_rollup_path
-after
-update of status on lms.enrollments for each row
+after update of status on lms.enrollments for each row
 execute function lms.enrollments_rollup_path ();
 
 ----------------------------------------------------------------
@@ -2099,10 +2102,13 @@ alter table lms.quiz_attempts enable row level security;
 create policy quiz_attempts_select on lms.quiz_attempts for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'learning-manager', 'member')
-    or pg_has_role (current_user, 'instructor', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'learning-manager', 'member')
+    or pg_has_role(current_user, 'instructor', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy quiz_attempts_insert on lms.quiz_attempts for insert to authenticated
@@ -2146,7 +2152,8 @@ begin
 end;
 $$;
 
-create trigger trg_quiz_attempts_guard before insert on lms.quiz_attempts for each row
+create trigger trg_quiz_attempts_guard
+before insert on lms.quiz_attempts for each row
 execute function lms.quiz_attempts_guard ();
 
 ----------------------------------------------------------------
@@ -2262,7 +2269,8 @@ begin
 end;
 $$;
 
-create trigger trg_quiz_responses_grade before insert on lms.quiz_responses for each row
+create trigger trg_quiz_responses_grade
+before insert on lms.quiz_responses for each row
 execute function lms.quiz_responses_grade ();
 
 -- The rule made real: an attempt's score is always the sum of points
@@ -2306,10 +2314,7 @@ end;
 $$;
 
 create trigger trg_quiz_responses_rollup
-after insert
-or delete
-or
-update of is_correct,
+after insert or delete or update of is_correct,
 points_awarded on lms.quiz_responses for each row
 execute function lms.quiz_responses_rollup ();
 
@@ -2384,7 +2389,7 @@ grant
 select
 ,
   insert,
-delete on table lms.certificates to "x-admin";
+  delete on table lms.certificates to "x-admin";
 
 grant
 select
@@ -2413,10 +2418,13 @@ alter table lms.certificates enable row level security;
 create policy certificates_select on lms.certificates for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'learning-manager', 'member')
-    or pg_has_role (current_user, 'instructor', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'learning-manager', 'member')
+    or pg_has_role(current_user, 'instructor', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy certificates_insert on lms.certificates for insert to authenticated
@@ -2449,7 +2457,8 @@ begin
 end;
 $$;
 
-create trigger trg_certificates_guard before insert on lms.certificates for each row
+create trigger trg_certificates_guard
+before insert on lms.certificates for each row
 execute function lms.certificates_guard ();
 
 ----------------------------------------------------------------
@@ -2528,19 +2537,25 @@ with
 create policy discussion_update on lms.discussion_posts
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy discussion_delete on lms.discussion_posts for delete to authenticated using (
-  user_id = (select auth.uid ())
-  or pg_has_role (current_user, 'x-admin', 'member')
+  user_id = (
+    select
+      auth.uid ()
+  )
+  or pg_has_role(current_user, 'x-admin', 'member')
 );
 
-create trigger discussion_updated_at before
-update on lms.discussion_posts for each row
+create trigger discussion_updated_at
+before update on lms.discussion_posts for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function lms.discussion_posts_set_instructor_flag () returns trigger language plpgsql security definer
@@ -2559,7 +2574,8 @@ begin
 end;
 $$;
 
-create trigger trg_discussion_posts_set_instructor_flag before insert on lms.discussion_posts for each row
+create trigger trg_discussion_posts_set_instructor_flag
+before insert on lms.discussion_posts for each row
 execute function lms.discussion_posts_set_instructor_flag ();
 
 ----------------------------------------------------------------
@@ -2611,14 +2627,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_enrollments_notify on lms.enrollments;
 
 create trigger trg_enrollments_notify
-after insert
-or
-update of status on lms.enrollments for each row
+after insert or update of status on lms.enrollments for each row
 execute function lms.trg_enrollments_notify ();
 
 create or replace function lms.trg_certificates_notify () returns trigger as $$
@@ -2635,7 +2650,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_certificates_notify on lms.certificates;
 
@@ -2684,7 +2700,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_discussion_notify on lms.discussion_posts;
 
@@ -2706,7 +2723,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_path_enrollments_notify on lms.learning_path_enrollments;
 
@@ -2722,11 +2740,11 @@ after insert on lms.courses for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_lms_courses_update
-after
-update on lms.courses for each row
+after update on lms.courses for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_lms_courses_delete before delete on lms.courses for each row
+create trigger audit_lms_courses_delete
+before delete on lms.courses for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_lms_enrollments_insert
@@ -2734,15 +2752,15 @@ after insert on lms.enrollments for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_lms_enrollments_update
-after
-update on lms.enrollments for each row
+after update on lms.enrollments for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_lms_certificates_insert
 after insert on lms.certificates for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_lms_certificates_delete before delete on lms.certificates for each row
+create trigger audit_lms_certificates_delete
+before delete on lms.certificates for each row
 execute function supasheet.audit_trigger_function ();
 
 -- ================================================================
@@ -2809,25 +2827,37 @@ select
   count(*) as total,
   json_build_array(
     json_build_object(
-      'label', 'Active', 'value', count(*) filter (
+      'label',
+      'Active',
+      'value',
+      count(*) filter (
         where
           status = 'active'
       )
     ),
     json_build_object(
-      'label', 'Completed', 'value', count(*) filter (
+      'label',
+      'Completed',
+      'value',
+      count(*) filter (
         where
           status = 'completed'
       )
     ),
     json_build_object(
-      'label', 'Dropped', 'value', count(*) filter (
+      'label',
+      'Dropped',
+      'value',
+      count(*) filter (
         where
           status = 'dropped'
       )
     ),
     json_build_object(
-      'label', 'Expired', 'value', count(*) filter (
+      'label',
+      'Expired',
+      'value',
+      count(*) filter (
         where
           status = 'expired'
       )
@@ -2852,9 +2882,7 @@ select
   'award' as icon,
   (
     select
-      json_agg(
-        json_build_object('label', name, 'value', n)
-      )
+      json_agg(json_build_object('label', name, 'value', n))
     from
       (
         select
@@ -3331,7 +3359,8 @@ from
           status = 'completed'
       ) as completions,
       round(avg(progress_percent), 1) as avg_progress
-    from lms.enrollments
+    from
+      lms.enrollments
     group by
       1
   ) en using (month)
@@ -3339,7 +3368,8 @@ from
     select
       date_trunc('month', issued_at)::date as month,
       count(*) as certificates_issued
-    from lms.certificates
+    from
+      lms.certificates
     group by
       1
   ) cert using (month);
@@ -3825,7 +3855,7 @@ create policy lms_documents_read on storage.objects for
 select
   to authenticated using (
     bucket_id = 'lms-documents'
-    and has_table_privilege (current_user, 'lms.courses', 'select')
+    and has_table_privilege(current_user, 'lms.courses', 'select')
   );
 
 drop policy if exists lms_documents_insert on storage.objects;
@@ -3834,7 +3864,7 @@ create policy lms_documents_insert on storage.objects for insert to authenticate
 with
   check (
     bucket_id = 'lms-documents'
-    and has_table_privilege (current_user, 'lms.courses', 'insert')
+    and has_table_privilege(current_user, 'lms.courses', 'insert')
   );
 
 drop policy if exists lms_documents_update on storage.objects;
@@ -3843,14 +3873,14 @@ create policy lms_documents_update on storage.objects
 for update
   to authenticated using (
     bucket_id = 'lms-documents'
-    and has_table_privilege (current_user, 'lms.courses', 'update')
+    and has_table_privilege(current_user, 'lms.courses', 'update')
   );
 
 drop policy if exists lms_documents_delete on storage.objects;
 
 create policy lms_documents_delete on storage.objects for delete to authenticated using (
   bucket_id = 'lms-documents'
-  and has_table_privilege (current_user, 'lms.courses', 'delete')
+  and has_table_privilege(current_user, 'lms.courses', 'delete')
 );
 
 ----------------------------------------------------------------

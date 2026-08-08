@@ -7,7 +7,6 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { format, formatDistanceToNow } from "date-fns"
 
 import { SelectCell } from "#/components/resource/cells/select-cell"
-import { Button } from "#/components/ui/button"
 import {
   Timeline,
   TimelineContent,
@@ -18,6 +17,7 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from "#/components/reui/timeline"
+import { Button } from "#/components/ui/button"
 import { getColumnMetadata } from "#/lib/columns"
 import type {
   ColumnSchema,

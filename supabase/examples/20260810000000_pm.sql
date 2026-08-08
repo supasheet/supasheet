@@ -177,12 +177,7 @@ create type pm.time_entry_status as enum(
   'invoiced'
 );
 
-create type pm.milestone_status as enum(
-  'pending',
-  'in_progress',
-  'completed',
-  'at_risk'
-);
+create type pm.milestone_status as enum('pending', 'in_progress', 'completed', 'at_risk');
 
 create type pm.deliverable_status as enum(
   'draft',
@@ -359,8 +354,8 @@ with
 
 create policy clients_delete on pm.clients for delete to authenticated using (true);
 
-create trigger clients_updated_at before
-update on pm.clients for each row
+create trigger clients_updated_at
+before update on pm.clients for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -441,8 +436,8 @@ with
 
 create policy client_billing_delete on pm.client_billing for delete to authenticated using (true);
 
-create trigger client_billing_updated_at before
-update on pm.client_billing for each row
+create trigger client_billing_updated_at
+before update on pm.client_billing for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -459,11 +454,7 @@ create sequence if not exists pm.project_number_seq;
 create table pm.projects (
   id uuid primary key default extensions.uuid_generate_v4 (),
   project_code varchar(30) not null unique default (
-    'PRJ-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('pm.project_number_seq')::text,
-      5,
-      '0'
-    )
+    'PRJ-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('pm.project_number_seq')::text, 5, '0')
   ),
   name varchar(200) not null,
   client_id uuid not null references pm.clients (id) on delete restrict,
@@ -623,8 +614,8 @@ create index idx_pm_projects_pm_lead_id on pm.projects (pm_lead_id);
 
 create index idx_pm_projects_status on pm.projects (status);
 
-create trigger projects_updated_at before
-update on pm.projects for each row
+create trigger projects_updated_at
+before update on pm.projects for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function pm.clients_rollup () returns trigger language plpgsql security definer
@@ -654,10 +645,7 @@ end;
 $$;
 
 create trigger trg_projects_rollup_client
-after insert
-or delete
-or
-update of client_id,
+after insert or delete or update of client_id,
 billed_amount on pm.projects for each row
 execute function pm.clients_rollup ();
 
@@ -762,8 +750,8 @@ alter table pm.projects enable row level security;
 create policy projects_select on pm.projects for
 select
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -771,7 +759,10 @@ select
         pm.project_members pmem
       where
         pmem.project_id = pm.projects.id
-        and pmem.user_id = (select auth.uid ())
+        and pmem.user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -895,7 +886,8 @@ begin
 end;
 $$;
 
-create trigger trg_phases_set_number before insert on pm.phases for each row
+create trigger trg_phases_set_number
+before insert on pm.phases for each row
 execute function pm.phases_set_number ();
 
 ----------------------------------------------------------------
@@ -988,11 +980,7 @@ create sequence if not exists pm.task_number_seq;
 create table pm.tasks (
   id uuid primary key default extensions.uuid_generate_v4 (),
   task_number varchar(30) not null unique default (
-    'TASK-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('pm.task_number_seq')::text,
-      6,
-      '0'
-    )
+    'TASK-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('pm.task_number_seq')::text, 6, '0')
   ),
   project_id uuid not null references pm.projects (id) on delete cascade,
   task_list_id uuid not null references pm.task_lists (id) on delete cascade,
@@ -1136,17 +1124,20 @@ with
 create policy tasks_update on pm.tasks
 for update
   to authenticated using (
-    assignee_id = (select auth.uid ())
-    or pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    assignee_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy tasks_delete on pm.tasks for delete to authenticated using (true);
 
-create trigger tasks_updated_at before
-update on pm.tasks for each row
+create trigger tasks_updated_at
+before update on pm.tasks for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function pm.tasks_set_number () returns trigger language plpgsql
@@ -1162,7 +1153,8 @@ begin
 end;
 $$;
 
-create trigger trg_tasks_set_number before insert on pm.tasks for each row
+create trigger trg_tasks_set_number
+before insert on pm.tasks for each row
 execute function pm.tasks_set_number ();
 
 create or replace function pm.tasks_rollup () returns trigger language plpgsql security definer
@@ -1228,10 +1220,7 @@ end;
 $$;
 
 create trigger trg_tasks_rollup
-after insert
-or delete
-or
-update of project_id,
+after insert or delete or update of project_id,
 task_list_id,
 phase_id,
 status on pm.tasks for each row
@@ -1286,8 +1275,8 @@ grant
 select
 ,
   insert,
-delete on table pm.task_dependencies to "x-admin",
-"pm-lead";
+  delete on table pm.task_dependencies to "x-admin",
+  "pm-lead";
 
 grant
 select
@@ -1353,7 +1342,8 @@ begin
 end;
 $$;
 
-create trigger trg_task_dependencies_guard before insert on pm.task_dependencies for each row
+create trigger trg_task_dependencies_guard
+before insert on pm.task_dependencies for each row
 execute function pm.task_dependencies_guard ();
 
 -- The second headline rule: a task cannot be marked done while a
@@ -1386,8 +1376,8 @@ begin
 end;
 $$;
 
-create trigger trg_tasks_completion_guard before
-update of status on pm.tasks for each row
+create trigger trg_tasks_completion_guard
+before update of status on pm.tasks for each row
 execute function pm.tasks_completion_guard ();
 
 ----------------------------------------------------------------
@@ -1450,19 +1440,25 @@ with
 create policy task_comments_update on pm.task_comments
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
 
 create policy task_comments_delete on pm.task_comments for delete to authenticated using (
-  user_id = (select auth.uid ())
-  or pg_has_role (current_user, 'x-admin', 'member')
+  user_id = (
+    select
+      auth.uid ()
+  )
+  or pg_has_role(current_user, 'x-admin', 'member')
 );
 
-create trigger task_comments_updated_at before
-update on pm.task_comments for each row
+create trigger task_comments_updated_at
+before update on pm.task_comments for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -1559,9 +1555,7 @@ end;
 $$;
 
 create trigger trg_tasks_log_event
-after insert
-or
-update of assignee_id,
+after insert or update of assignee_id,
 status on pm.tasks for each row
 execute function pm.tasks_log_event ();
 
@@ -1701,9 +1695,12 @@ alter table pm.time_entries enable row level security;
 create policy time_entries_select on pm.time_entries for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy time_entries_insert on pm.time_entries for insert to authenticated
@@ -1713,9 +1710,12 @@ with
 create policy time_entries_update on pm.time_entries
 for update
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   )
 with
   check (true);
@@ -1756,9 +1756,8 @@ begin
 end;
 $$;
 
-create trigger trg_time_entries_set_rates before insert
-or
-update of logged_duration,
+create trigger trg_time_entries_set_rates
+before insert or update of logged_duration,
 is_billable on pm.time_entries for each row
 execute function pm.time_entries_set_rates ();
 
@@ -1801,8 +1800,8 @@ begin
 end;
 $$;
 
-create trigger trg_time_entries_guard before
-update of status on pm.time_entries for each row
+create trigger trg_time_entries_guard
+before update of status on pm.time_entries for each row
 execute function pm.time_entries_guard ();
 
 create or replace function pm.time_entries_rollup () returns trigger language plpgsql security definer
@@ -1847,10 +1846,7 @@ end;
 $$;
 
 create trigger trg_time_entries_rollup
-after insert
-or delete
-or
-update of status,
+after insert or delete or update of status,
 logged_duration,
 billed_amount,
 cost_amount on pm.time_entries for each row
@@ -1950,9 +1946,9 @@ alter table pm.milestones enable row level security;
 create policy milestones_select on pm.milestones for
 select
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
-    or pg_has_role (current_user, 'user', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
+    or pg_has_role(current_user, 'user', 'member')
     or exists (
       select
         1
@@ -1961,7 +1957,10 @@ select
         join pm.clients c on c.id = p.client_id
       where
         p.id = project_id
-        and c.portal_user_id = (select auth.uid ())
+        and c.portal_user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -1977,8 +1976,8 @@ with
 
 create policy milestones_delete on pm.milestones for delete to authenticated using (true);
 
-create trigger milestones_updated_at before
-update on pm.milestones for each row
+create trigger milestones_updated_at
+before update on pm.milestones for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function pm.milestones_guard () returns trigger language plpgsql
@@ -1993,8 +1992,8 @@ begin
 end;
 $$;
 
-create trigger trg_milestones_guard before
-update of status on pm.milestones for each row
+create trigger trg_milestones_guard
+before update of status on pm.milestones for each row
 execute function pm.milestones_guard ();
 
 ----------------------------------------------------------------
@@ -2098,9 +2097,9 @@ alter table pm.deliverables enable row level security;
 create policy deliverables_select on pm.deliverables for
 select
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
-    or pg_has_role (current_user, 'user', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
+    or pg_has_role(current_user, 'user', 'member')
     or exists (
       select
         1
@@ -2109,7 +2108,10 @@ select
         join pm.clients c on c.id = p.client_id
       where
         p.id = project_id
-        and c.portal_user_id = (select auth.uid ())
+        and c.portal_user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -2120,8 +2122,8 @@ with
 create policy deliverables_update on pm.deliverables
 for update
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -2130,7 +2132,10 @@ for update
         join pm.clients c on c.id = p.client_id
       where
         p.id = project_id
-        and c.portal_user_id = (select auth.uid ())
+        and c.portal_user_id = (
+          select
+            auth.uid ()
+        )
     )
   )
 with
@@ -2138,8 +2143,8 @@ with
 
 create policy deliverables_delete on pm.deliverables for delete to authenticated using (true);
 
-create trigger deliverables_updated_at before
-update on pm.deliverables for each row
+create trigger deliverables_updated_at
+before update on pm.deliverables for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function pm.deliverables_guard () returns trigger language plpgsql security definer
@@ -2178,8 +2183,8 @@ begin
 end;
 $$;
 
-create trigger trg_deliverables_guard before
-update of status on pm.deliverables for each row
+create trigger trg_deliverables_guard
+before update of status on pm.deliverables for each row
 execute function pm.deliverables_guard ();
 
 ----------------------------------------------------------------
@@ -2293,9 +2298,12 @@ alter table pm.project_expenses enable row level security;
 create policy expenses_select on pm.project_expenses for
 select
   to authenticated using (
-    user_id = (select auth.uid ())
-    or pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    user_id = (
+      select
+        auth.uid ()
+    )
+    or pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
   );
 
 create policy expenses_insert on pm.project_expenses for insert to authenticated
@@ -2322,8 +2330,8 @@ begin
 end;
 $$;
 
-create trigger trg_expenses_guard before
-update of status on pm.project_expenses for each row
+create trigger trg_expenses_guard
+before update of status on pm.project_expenses for each row
 execute function pm.expenses_guard ();
 
 ----------------------------------------------------------------
@@ -2334,11 +2342,7 @@ create sequence if not exists pm.invoice_number_seq;
 create table pm.invoices (
   id uuid primary key default extensions.uuid_generate_v4 (),
   invoice_number varchar(30) not null unique default (
-    'INV-' || to_char(current_date, 'YYYY') || '-' || lpad(
-      nextval('pm.invoice_number_seq')::text,
-      5,
-      '0'
-    )
+    'INV-' || to_char(current_date, 'YYYY') || '-' || lpad(nextval('pm.invoice_number_seq')::text, 5, '0')
   ),
   project_id uuid not null references pm.projects (id) on delete restrict,
   client_id uuid not null references pm.clients (id) on delete restrict,
@@ -2453,8 +2457,8 @@ alter table pm.invoices enable row level security;
 create policy invoices_select on pm.invoices for
 select
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
     or exists (
       select
         1
@@ -2462,7 +2466,10 @@ select
         pm.clients c
       where
         c.id = client_id
-        and c.portal_user_id = (select auth.uid ())
+        and c.portal_user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -2478,8 +2485,8 @@ with
 
 create policy invoices_delete on pm.invoices for delete to authenticated using (true);
 
-create trigger invoices_updated_at before
-update on pm.invoices for each row
+create trigger invoices_updated_at
+before update on pm.invoices for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -2603,7 +2610,8 @@ begin
 end;
 $$;
 
-create trigger trg_invoice_lines_guard before insert on pm.invoice_lines for each row
+create trigger trg_invoice_lines_guard
+before insert on pm.invoice_lines for each row
 execute function pm.invoice_lines_guard ();
 
 create or replace function pm.invoice_lines_mark_source () returns trigger language plpgsql security definer
@@ -2658,10 +2666,7 @@ end;
 $$;
 
 create trigger trg_invoice_lines_rollup
-after insert
-or delete
-or
-update on pm.invoice_lines for each row
+after insert or delete or update on pm.invoice_lines for each row
 execute function pm.invoice_lines_rollup ();
 
 ----------------------------------------------------------------
@@ -2759,10 +2764,7 @@ end;
 $$;
 
 create trigger trg_invoice_payments_rollup
-after insert
-or delete
-or
-update on pm.invoice_payments for each row
+after insert or delete or update on pm.invoice_payments for each row
 execute function pm.invoice_payments_rollup ();
 
 ----------------------------------------------------------------
@@ -2885,8 +2887,8 @@ with
 
 create policy risks_delete on pm.risks for delete to authenticated using (true);
 
-create trigger risks_updated_at before
-update on pm.risks for each row
+create trigger risks_updated_at
+before update on pm.risks for each row
 execute function supasheet.set_updated_at ();
 
 create or replace function pm.risks_set_score () returns trigger language plpgsql
@@ -2898,9 +2900,8 @@ begin
 end;
 $$;
 
-create trigger trg_risks_set_score before insert
-or
-update on pm.risks for each row
+create trigger trg_risks_set_score
+before insert or update on pm.risks for each row
 execute function pm.risks_set_score ();
 
 ----------------------------------------------------------------
@@ -2995,9 +2996,9 @@ alter table pm.status_reports enable row level security;
 create policy status_reports_select on pm.status_reports for
 select
   to authenticated using (
-    pg_has_role (current_user, 'pm-lead', 'member')
-    or pg_has_role (current_user, 'x-admin', 'member')
-    or pg_has_role (current_user, 'user', 'member')
+    pg_has_role(current_user, 'pm-lead', 'member')
+    or pg_has_role(current_user, 'x-admin', 'member')
+    or pg_has_role(current_user, 'user', 'member')
     or exists (
       select
         1
@@ -3006,7 +3007,10 @@ select
         join pm.clients c on c.id = p.client_id
       where
         p.id = project_id
-        and c.portal_user_id = (select auth.uid ())
+        and c.portal_user_id = (
+          select
+            auth.uid ()
+        )
     )
   );
 
@@ -3036,9 +3040,7 @@ end;
 $$;
 
 create trigger trg_status_reports_sync_health
-after insert
-or
-update of overall_health on pm.status_reports for each row
+after insert or update of overall_health on pm.status_reports for each row
 execute function pm.status_reports_sync_project_health ();
 
 ----------------------------------------------------------------
@@ -3073,13 +3075,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_tasks_notify on pm.tasks;
 
 create trigger trg_tasks_notify
-after
-update of assignee_id,
+after update of assignee_id,
 status on pm.tasks for each row
 execute function pm.trg_tasks_notify ();
 
@@ -3099,13 +3101,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_time_entries_notify on pm.time_entries;
 
 create trigger trg_time_entries_notify
-after
-update of status on pm.time_entries for each row
+after update of status on pm.time_entries for each row
 execute function pm.trg_time_entries_notify ();
 
 create or replace function pm.trg_deliverables_notify () returns trigger as $$
@@ -3147,13 +3149,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_deliverables_notify on pm.deliverables;
 
 create trigger trg_deliverables_notify
-after
-update of status on pm.deliverables for each row
+after update of status on pm.deliverables for each row
 execute function pm.trg_deliverables_notify ();
 
 create or replace function pm.trg_invoices_notify () returns trigger as $$
@@ -3180,13 +3182,13 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_invoices_notify on pm.invoices;
 
 create trigger trg_invoices_notify
-after
-update of status on pm.invoices for each row
+after update of status on pm.invoices for each row
 execute function pm.trg_invoices_notify ();
 
 create or replace function pm.trg_risks_notify () returns trigger as $$
@@ -3205,7 +3207,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_risks_notify on pm.risks;
 
@@ -3229,7 +3232,8 @@ begin
   return new;
 end;
 $$ language plpgsql security definer
-set search_path = '';
+set
+  search_path = '';
 
 drop trigger if exists trg_status_reports_notify on pm.status_reports;
 
@@ -3245,11 +3249,11 @@ after insert on pm.projects for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_projects_update
-after
-update on pm.projects for each row
+after update on pm.projects for each row
 execute function supasheet.audit_trigger_function ();
 
-create trigger audit_pm_projects_delete before delete on pm.projects for each row
+create trigger audit_pm_projects_delete
+before delete on pm.projects for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_invoices_insert
@@ -3257,8 +3261,7 @@ after insert on pm.invoices for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_invoices_update
-after
-update on pm.invoices for each row
+after update on pm.invoices for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_deliverables_insert
@@ -3266,13 +3269,11 @@ after insert on pm.deliverables for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_deliverables_update
-after
-update on pm.deliverables for each row
+after update on pm.deliverables for each row
 execute function supasheet.audit_trigger_function ();
 
 create trigger audit_pm_time_entries_update
-after
-update on pm.time_entries for each row
+after update on pm.time_entries for each row
 execute function supasheet.audit_trigger_function ();
 
 -- ================================================================
@@ -3335,31 +3336,46 @@ select
   count(*) as total,
   json_build_array(
     json_build_object(
-      'label', 'To Do', 'value', count(*) filter (
+      'label',
+      'To Do',
+      'value',
+      count(*) filter (
         where
           status = 'todo'
       )
     ),
     json_build_object(
-      'label', 'In Progress', 'value', count(*) filter (
+      'label',
+      'In Progress',
+      'value',
+      count(*) filter (
         where
           status = 'in_progress'
       )
     ),
     json_build_object(
-      'label', 'In Review', 'value', count(*) filter (
+      'label',
+      'In Review',
+      'value',
+      count(*) filter (
         where
           status = 'in_review'
       )
     ),
     json_build_object(
-      'label', 'Blocked', 'value', count(*) filter (
+      'label',
+      'Blocked',
+      'value',
+      count(*) filter (
         where
           status = 'blocked'
       )
     ),
     json_build_object(
-      'label', 'Done', 'value', count(*) filter (
+      'label',
+      'Done',
+      'value',
+      count(*) filter (
         where
           status = 'done'
       )
@@ -3835,7 +3851,8 @@ from
         where
           is_billable
       ) / 3600000.0 as billable_hours
-    from pm.time_entries
+    from
+      pm.time_entries
     group by
       1
   ) te using (month);
@@ -3984,7 +4001,12 @@ end;
 $$;
 
 comment on function pm.open_project_for_client (
-  uuid, varchar, uuid, pm.budget_type, numeric, numeric
+  uuid,
+  varchar,
+  uuid,
+  pm.budget_type,
+  numeric,
+  numeric
 ) is '{
     "type": "form",
     "resource": "clients",
@@ -4161,9 +4183,7 @@ begin
 end;
 $$;
 
-comment on function pm.log_time_and_submit (
-  uuid, supasheet.DURATION, varchar, boolean
-) is '{
+comment on function pm.log_time_and_submit (uuid, supasheet.DURATION, varchar, boolean) is '{
     "type": "form",
     "resource": "tasks",
     "name": "Log Time",
@@ -4198,7 +4218,12 @@ $$;
 
 grant
 execute on function pm.open_project_for_client (
-  uuid, varchar, uuid, pm.budget_type, numeric, numeric
+  uuid,
+  varchar,
+  uuid,
+  pm.budget_type,
+  numeric,
+  numeric
 ) to "x-admin",
 "pm-lead";
 
@@ -4211,9 +4236,7 @@ execute on function pm.preview_team_utilization (uuid, date, date) to "x-admin",
 "pm-lead";
 
 grant
-execute on function pm.log_time_and_submit (
-  uuid, supasheet.DURATION, varchar, boolean
-) to "x-admin",
+execute on function pm.log_time_and_submit (uuid, supasheet.DURATION, varchar, boolean) to "x-admin",
 "pm-lead",
 "user";
 
@@ -4632,8 +4655,8 @@ for update
 with
   check (true);
 
-create trigger pm_settings_updated_at before
-update on pm.pm_settings for each row
+create trigger pm_settings_updated_at
+before update on pm.pm_settings for each row
 execute function supasheet.set_updated_at ();
 
 ----------------------------------------------------------------
@@ -4656,7 +4679,7 @@ create policy pm_documents_read on storage.objects for
 select
   to authenticated using (
     bucket_id = 'pm-documents'
-    and has_table_privilege (current_user, 'pm.projects', 'select')
+    and has_table_privilege(current_user, 'pm.projects', 'select')
   );
 
 drop policy if exists pm_documents_insert on storage.objects;
@@ -4665,7 +4688,7 @@ create policy pm_documents_insert on storage.objects for insert to authenticated
 with
   check (
     bucket_id = 'pm-documents'
-    and has_table_privilege (current_user, 'pm.projects', 'insert')
+    and has_table_privilege(current_user, 'pm.projects', 'insert')
   );
 
 drop policy if exists pm_documents_update on storage.objects;
@@ -4674,14 +4697,14 @@ create policy pm_documents_update on storage.objects
 for update
   to authenticated using (
     bucket_id = 'pm-documents'
-    and has_table_privilege (current_user, 'pm.projects', 'update')
+    and has_table_privilege(current_user, 'pm.projects', 'update')
   );
 
 drop policy if exists pm_documents_delete on storage.objects;
 
 create policy pm_documents_delete on storage.objects for delete to authenticated using (
   bucket_id = 'pm-documents'
-  and has_table_privilege (current_user, 'pm.projects', 'delete')
+  and has_table_privilege(current_user, 'pm.projects', 'delete')
 );
 
 ----------------------------------------------------------------

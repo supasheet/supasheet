@@ -1,20 +1,21 @@
 import { type ComponentType, type ReactNode } from "react"
-import {
-  useEventCalendarSelector,
-  useEventCalendarViewConfig,
-} from "#/components/reui/event-calendar/event-calendar.tsx"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+
 import { EventCalendarAgendaView } from "#/components/reui/event-calendar/event-calendar-agenda-view.tsx"
 import { EventCalendarMonthView } from "#/components/reui/event-calendar/event-calendar-month-view.tsx"
 import { EventCalendarResourceView } from "#/components/reui/event-calendar/event-calendar-resource-view.tsx"
 import {
-  EventCalendarDaysView,
   EventCalendarDayView,
+  EventCalendarDaysView,
   EventCalendarWeekView,
 } from "#/components/reui/event-calendar/event-calendar-time-grid.tsx"
 import type { CalendarView } from "#/components/reui/event-calendar/event-calendar-types.tsx"
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-
+import {
+  useEventCalendarSelector,
+  useEventCalendarViewConfig,
+} from "#/components/reui/event-calendar/event-calendar.tsx"
 import { cn } from "#/lib/utils.ts"
 
 const DEFAULT_VIEW_COMPONENTS: Record<CalendarView, ComponentType> = {

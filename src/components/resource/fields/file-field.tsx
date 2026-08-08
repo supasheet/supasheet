@@ -280,10 +280,7 @@ export function FileField({ columnMetadata, columnSchema }: FileFieldProps) {
                 <Attachment key={file.id} state={state} className="w-full">
                   <AttachmentMedia variant={isImage ? "image" : "icon"}>
                     {isImage && (file.preview || url) ? (
-                      <img
-                        src={file.preview || url}
-                        alt={file.file.name}
-                      />
+                      <img src={file.preview || url} alt={file.file.name} />
                     ) : (
                       <FileIcon />
                     )}

@@ -223,9 +223,7 @@ interface GanttProposedUpdate<TData = unknown> {
 
 /** false = reject/revert; void or true = accept; object = accept with adjustment. */
 type GanttUpdateResult =
-  | boolean
-  | void
-  | { start?: Date; end?: Date; allDay?: boolean }
+  boolean | void | { start?: Date; end?: Date; allDay?: boolean }
 
 /** A click is a point, not a range; `end` is reserved for future gestures. */
 interface GanttSlotInfo {
