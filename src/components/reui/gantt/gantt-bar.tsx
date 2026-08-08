@@ -1,14 +1,7 @@
 "use client"
 
-import {
-  
-  
-  createContext,
-  useContext,
-  useMemo,
-  useState
-} from "react"
-import type {CSSProperties, ReactNode} from "react";
+import { createContext, useContext, useMemo, useState } from "react"
+import type { CSSProperties, ReactNode } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -68,9 +61,7 @@ interface GanttBarContextValue<TData = unknown> {
   isSelected: boolean
 }
 
-const GanttBarContext =
-   
-  createContext<GanttBarContextValue<any> | null>(null)
+const GanttBarContext = createContext<GanttBarContextValue<any> | null>(null)
 
 /** The bar's subject; usable inside renderEvent content and bar children. */
 function useGanttBarContext<TData = unknown>(): GanttBarContextValue<TData> {

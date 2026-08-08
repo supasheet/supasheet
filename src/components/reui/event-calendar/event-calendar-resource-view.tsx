@@ -1,7 +1,7 @@
 "use client"
 
-import {  useEffect, useMemo, useRef, useState } from "react"
-import type {CSSProperties} from "react";
+import { useEffect, useMemo, useRef, useState } from "react"
+import type { CSSProperties } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"

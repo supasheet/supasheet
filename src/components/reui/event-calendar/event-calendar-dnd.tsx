@@ -14,11 +14,10 @@ import type {
   EventCalendarSegment,
 } from "#/components/reui/event-calendar/event-calendar-types.tsx"
 import {
-  
   useEventCalendar,
-  useEventCalendarViewConfig
+  useEventCalendarViewConfig,
 } from "#/components/reui/event-calendar/event-calendar.tsx"
-import type {EventCalendarInstance} from "#/components/reui/event-calendar/event-calendar.tsx";
+import type { EventCalendarInstance } from "#/components/reui/event-calendar/event-calendar.tsx"
 
 /**
  * Activation policy (dnd-kit parity where proven):
@@ -670,7 +669,7 @@ function beginGesture<TData>(config: BeginGestureConfig<TData>) {
     lastValid = valid
     setBodyDragging(true, !valid)
     internals.setDrag({
-      kind: kind === "move" ? "move" : (kind),
+      kind: kind === "move" ? "move" : kind,
       occurrence: occurrence!,
       proposedStart: proposal.start,
       proposedEnd: proposal.end,
@@ -908,8 +907,7 @@ function beginGesture<TData>(config: BeginGestureConfig<TData>) {
       end: drag.proposedEnd,
       allDay: drag.proposedAllDay,
       resourceId: drag.proposedResourceId,
-      source:
-        kind === "move" ? "drag" : (kind),
+      source: kind === "move" ? "drag" : kind,
     })
     // the polite live region is the only feedback a screen-reader user gets
     // that the drop landed, and on what; a vetoed commit stays silent

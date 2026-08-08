@@ -1,9 +1,6 @@
 "use client"
 
 import {
-  
-  
-  
   createContext,
   useCallback,
   useContext,
@@ -11,25 +8,21 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  useSyncExternalStore
+  useSyncExternalStore,
 } from "react"
-import type {ComponentType, ReactNode, RefObject} from "react";
+import type { ComponentType, ReactNode, RefObject } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import {  addDays } from "date-fns"
-import type {Locale} from "date-fns";
+import { addDays } from "date-fns"
+import type { Locale } from "date-fns"
 
-import {
-  
-  
-  mergeEventCalendarI18n
+import { mergeEventCalendarI18n } from "#/components/reui/event-calendar/event-calendar-i18n.tsx"
+import type {
+  EventCalendarI18nConfig,
+  EventCalendarI18nOverrides,
 } from "#/components/reui/event-calendar/event-calendar-i18n.tsx"
-import type {EventCalendarI18nConfig, EventCalendarI18nOverrides} from "#/components/reui/event-calendar/event-calendar-i18n.tsx";
 import {
-  
-  
-  
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -38,9 +31,13 @@ import {
   getViewDateRange,
   stepDate,
   toZoned,
-  zonedStartOfDay
+  zonedStartOfDay,
 } from "#/components/reui/event-calendar/event-calendar-lib.tsx"
-import type {EventCalendarDayBucket, EventCalendarIndex, WeekStartsOn} from "#/components/reui/event-calendar/event-calendar-lib.tsx";
+import type {
+  EventCalendarDayBucket,
+  EventCalendarIndex,
+  WeekStartsOn,
+} from "#/components/reui/event-calendar/event-calendar-lib.tsx"
 import type {
   CalendarEvent,
   CalendarView,
@@ -287,7 +284,9 @@ interface EventCalendarInternals<TData = unknown> {
   getIndex: () => EventCalendarIndex<TData>
   setDrag: (drag: EventCalendarDragState<TData> | null) => void
   setSlotDraft: (draft: EventCalendarSlotDraft | null) => void
-  registerScrollHandler: (handler: ((time: Date | number) => void) | null) => void
+  registerScrollHandler: (
+    handler: ((time: Date | number) => void) | null
+  ) => void
   applyProposedUpdate: (
     update: EventCalendarProposedUpdate<TData>,
     extraPatch?: Partial<CalendarEvent<TData>>
@@ -527,7 +526,6 @@ function createEventCalendarStore<TData>(
   ) => {
     const controlled = options[key] !== undefined
     if (!controlled) {
-       
       ;(internal as any)[key] = value
       invalidate()
     }
@@ -957,9 +955,9 @@ function useEventCalendarState<TData = unknown>(
   return store.instance
 }
 
-const EventCalendarContext =
-   
-  createContext<EventCalendarInstance<any> | null>(null)
+const EventCalendarContext = createContext<EventCalendarInstance<any> | null>(
+  null
+)
 
 /** The stable calendar instance; throws outside <EventCalendar>. */
 function useEventCalendar<TData = unknown>(): EventCalendarInstance<TData> {
@@ -1653,10 +1651,8 @@ const DEFAULT_VIEW_CONFIG: EventCalendarViewConfig = {
   agendaSummaryMaxDots: 6,
 }
 
-const EventCalendarViewConfigContext = createContext<
-   
-  EventCalendarViewConfig<any>
->(DEFAULT_VIEW_CONFIG)
+const EventCalendarViewConfigContext =
+  createContext<EventCalendarViewConfig<any>>(DEFAULT_VIEW_CONFIG)
 
 /** Root-level display props + render overrides, for view components. */
 function useEventCalendarViewConfig<
@@ -1819,9 +1815,7 @@ function EventCalendar<TData = unknown>({
   children,
   ...props
 }: EventCalendarProps<TData>) {
-  const { options, viewConfig, rest } = splitOptions<TData>(
-    props
-  )
+  const { options, viewConfig, rest } = splitOptions<TData>(props)
 
   if (calendar && Object.keys(options).length > 0) {
     warnOnce(

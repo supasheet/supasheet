@@ -1,32 +1,26 @@
 "use client"
 
 import {
-  
-  
-  
   createContext,
   useContext,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  useSyncExternalStore
+  useSyncExternalStore,
 } from "react"
-import type {ComponentType, ReactNode, RefObject} from "react";
+import type { ComponentType, ReactNode, RefObject } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import type { Locale } from "date-fns"
 
-import {
-  
-  
-  mergeGanttI18n
+import { mergeGanttI18n } from "#/components/reui/gantt/gantt-i18n.tsx"
+import type {
+  GanttI18nConfig,
+  GanttI18nOverrides,
 } from "#/components/reui/gantt/gantt-i18n.tsx"
-import type {GanttI18nConfig, GanttI18nOverrides} from "#/components/reui/gantt/gantt-i18n.tsx";
 import {
-  
-  
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -34,9 +28,12 @@ import {
   getGanttDateRange,
   getRangeKey,
   stepGanttDate,
-  toZoned
+  toZoned,
 } from "#/components/reui/gantt/gantt-lib.tsx"
-import type {GanttIndex, WeekStartsOn} from "#/components/reui/gantt/gantt-lib.tsx";
+import type {
+  GanttIndex,
+  WeekStartsOn,
+} from "#/components/reui/gantt/gantt-lib.tsx"
 import type {
   GanttBarId,
   GanttDateRange,
@@ -462,7 +459,6 @@ function createGanttStore<TData>(
       invalidate()
     }
     if (!controlled) {
-       
       ;(internal as any)[key] = value
       invalidate()
     }
@@ -857,9 +853,7 @@ function useGanttState<TData = unknown>(
   return store.instance
 }
 
-const GanttContext =
-   
-  createContext<GanttInstance<any> | null>(null)
+const GanttContext = createContext<GanttInstance<any> | null>(null)
 
 /** The stable calendar instance; throws outside <Gantt>. */
 function useGantt<TData = unknown>(): GanttInstance<TData> {
@@ -1459,10 +1453,8 @@ const DEFAULT_VIEW_CONFIG: GanttViewConfig = {
   rowAlign: "start",
 }
 
-const GanttViewConfigContext = createContext<
-   
-  GanttViewConfig<any>
->(DEFAULT_VIEW_CONFIG)
+const GanttViewConfigContext =
+  createContext<GanttViewConfig<any>>(DEFAULT_VIEW_CONFIG)
 
 /** Root-level display props + render overrides, for view components. */
 function useGanttViewConfig<TData = unknown>(): GanttViewConfig<TData> {
@@ -1623,9 +1615,7 @@ function Gantt<TData = unknown>({
   children,
   ...props
 }: GanttProps<TData>) {
-  const { options, viewConfig, rest } = splitOptions<TData>(
-    props
-  )
+  const { options, viewConfig, rest } = splitOptions<TData>(props)
 
   // Stable context identity: splitOptions builds a fresh object per render,
   // and every row subscribes to this context - hand out the previous object

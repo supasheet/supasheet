@@ -1,13 +1,6 @@
 import type React from "react"
-import {
-  
-  
-  
-  useCallback,
-  useRef,
-  useState
-} from "react"
-import type {ChangeEvent, DragEvent, InputHTMLAttributes} from "react";
+import { useCallback, useRef, useState } from "react"
+import type { ChangeEvent, DragEvent, InputHTMLAttributes } from "react"
 
 export type FileMetadata = {
   name: string
@@ -239,13 +232,13 @@ export const useFileUpload = (
         onFilesAdded?.(validFiles)
 
         setState((prev) => {
-          const newFiles = !multiple
+          const newFiles1 = !multiple
             ? validFiles
             : [...prev.files, ...validFiles]
-          onFilesChange?.(newFiles)
+          onFilesChange?.(newFiles1)
           return {
             ...prev,
-            files: newFiles,
+            files: newFiles1,
             errors,
           }
         })

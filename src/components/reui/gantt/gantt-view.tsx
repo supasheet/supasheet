@@ -1,15 +1,13 @@
 import {
-  
-  
   memo,
   useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from "react"
-import type {CSSProperties, RefObject} from "react";
+import type { CSSProperties, RefObject } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 // Base UI's ScrollArea re-measures its thumb + overflow on mount, viewport
@@ -22,7 +20,6 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { useRender } from "@base-ui/react/use-render"
 import {
-  
   addDays,
   addMinutes,
   addMonths,
@@ -30,9 +27,9 @@ import {
   getWeek,
   startOfMonth,
   startOfQuarter,
-  startOfWeek
+  startOfWeek,
 } from "date-fns"
-import type {Locale} from "date-fns";
+import type { Locale } from "date-fns"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -50,7 +47,6 @@ import {
   wasRecentDrag,
 } from "#/components/reui/gantt/gantt-dnd.tsx"
 import {
-  
   MIN_PACK_SLOT,
   getDayKey,
   getLaneKey,
@@ -59,9 +55,9 @@ import {
   reorderResources,
   resolveOffDay,
   toZoned,
-  zonedStartOfDay
+  zonedStartOfDay,
 } from "#/components/reui/gantt/gantt-lib.tsx"
-import type {GanttLaneMemo} from "#/components/reui/gantt/gantt-lib.tsx";
+import type { GanttLaneMemo } from "#/components/reui/gantt/gantt-lib.tsx"
 import type {
   GanttDateRange,
   GanttEvent,
@@ -72,15 +68,14 @@ import type {
 } from "#/components/reui/gantt/gantt-types.tsx"
 import {
   DEFAULT_ROW_ALIGN,
-  
   resolveScheduleMode,
   resolveTimelineLines,
   useGantt,
   useGanttSelector,
   useGanttSettings,
-  useGanttViewConfig
+  useGanttViewConfig,
 } from "#/components/reui/gantt/gantt.tsx"
-import type {GanttColumn} from "#/components/reui/gantt/gantt.tsx";
+import type { GanttColumn } from "#/components/reui/gantt/gantt.tsx"
 import { Button } from "#/components/ui/button.tsx"
 import { Checkbox } from "#/components/ui/checkbox.tsx"
 import {

@@ -17,11 +17,13 @@ export default [
   },
   {
     ignores: [
+      ".claude",
       "eslint.config.js",
       "prettier.config.js",
       "supabase/**",
       "src/lib/database.types.ts",
       "src/components/ui/**",
+      "src/components/reui/**",
       "src/routeTree.gen.ts",
       "worker.js",
     ],

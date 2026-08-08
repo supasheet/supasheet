@@ -1,11 +1,5 @@
-import {
-  
-  
-  createContext,
-  useContext,
-  useMemo
-} from "react"
-import type {CSSProperties, ReactNode} from "react";
+import { createContext, useContext, useMemo } from "react"
+import type { CSSProperties, ReactNode } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -101,7 +95,6 @@ interface EventCalendarChipContextValue<TData = unknown> {
 }
 
 const EventCalendarChipContext =
-   
   createContext<EventCalendarChipContextValue<any> | null>(null)
 
 /** The chip's subject; usable inside renderEvent content and chip children. */

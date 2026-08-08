@@ -14,12 +14,11 @@ import type {
   GanttSegment,
 } from "#/components/reui/gantt/gantt-types.tsx"
 import {
-  
   resolveScheduleMode,
   useGantt,
-  useGanttViewConfig
+  useGanttViewConfig,
 } from "#/components/reui/gantt/gantt.tsx"
-import type {GanttInstance} from "#/components/reui/gantt/gantt.tsx";
+import type { GanttInstance } from "#/components/reui/gantt/gantt.tsx"
 
 /**
  * Activation policy (dnd-kit parity where proven):
@@ -641,8 +640,7 @@ function beginGesture<TData>(config: BeginGestureConfig<TData>) {
       event: occurrence!.event,
       occurrence: occurrence!,
       ...proposal,
-      source:
-        kind === "move" ? "drag" : (kind),
+      source: kind === "move" ? "drag" : kind,
     }
     // "reject" is the one veto the engine owns: it both styles the ghost AND
     // blocks the commit below. canDropEvent stays advisory, as documented.
@@ -678,7 +676,7 @@ function beginGesture<TData>(config: BeginGestureConfig<TData>) {
     }
     setBodyDragging(true, !valid)
     internals.setDrag({
-      kind: kind === "move" ? "move" : (kind),
+      kind: kind === "move" ? "move" : kind,
       occurrence: occurrence!,
       proposedStart: proposal.start,
       proposedEnd: proposal.end,
@@ -835,8 +833,7 @@ function beginGesture<TData>(config: BeginGestureConfig<TData>) {
       end: drag.proposedEnd,
       allDay: drag.proposedAllDay,
       resourceId: drag.proposedResourceId,
-      source:
-        kind === "move" ? "drag" : (kind),
+      source: kind === "move" ? "drag" : kind,
     })
     if (accepted && announcer) {
       announcer.textContent = `${occurrence.event.title}, ${settings.i18n.functions.formatEventTime(

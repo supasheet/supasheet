@@ -16,36 +16,35 @@ import { createPortal } from "react-dom"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import type {
+  DndContext,
   DragCancelEvent,
   DragEndEvent,
   DragOverEvent,
-  DragStartEvent,
-  DropAnimation,
-  Modifiers,
-  UniqueIdentifier,
-  DndContext,
   DragOverlay,
+  DragStartEvent,
   type DraggableAttributes,
   type DraggableSyntheticListeners,
+  DropAnimation,
   KeyboardSensor,
   MeasuringStrategy,
+  Modifiers,
   MouseSensor,
   TouchSensor,
+  UniqueIdentifier,
   defaultDropAnimationSideEffects,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core"
 import {
-  
   SortableContext,
   arrayMove,
   defaultAnimateLayoutChanges,
   rectSortingStrategy,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
-import type {AnimateLayoutChanges} from "@dnd-kit/sortable";
+import type { AnimateLayoutChanges } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 
 import { cn } from "#/lib/utils.ts"
