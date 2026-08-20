@@ -1,3 +1,5 @@
+"use client"
+
 import { createContext, useContext } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"

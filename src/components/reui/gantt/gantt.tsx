@@ -1,6 +1,9 @@
 "use client"
 
 import {
+  type ComponentType,
+  type ReactNode,
+  type RefObject,
   createContext,
   useContext,
   useEffect,
@@ -9,18 +12,19 @@ import {
   useState,
   useSyncExternalStore,
 } from "react"
-import type { ComponentType, ReactNode, RefObject } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import type { Locale } from "date-fns"
 
-import { mergeGanttI18n } from "#/components/reui/gantt/gantt-i18n.tsx"
-import type {
-  GanttI18nConfig,
-  GanttI18nOverrides,
+import {
+  type GanttI18nConfig,
+  type GanttI18nOverrides,
+  mergeGanttI18n,
 } from "#/components/reui/gantt/gantt-i18n.tsx"
 import {
+  type GanttIndex,
+  type WeekStartsOn,
   buildEventIndex,
   defaultEventOrder,
   eventsOverlap,
@@ -29,10 +33,6 @@ import {
   getRangeKey,
   stepGanttDate,
   toZoned,
-} from "#/components/reui/gantt/gantt-lib.tsx"
-import type {
-  GanttIndex,
-  WeekStartsOn,
 } from "#/components/reui/gantt/gantt-lib.tsx"
 import type {
   GanttBarId,
@@ -209,57 +209,57 @@ interface GanttSettings<TData = unknown> extends GanttCallbacks<TData> {
 }
 
 interface GanttApi<TData = unknown> {
-  next: () => void
-  prev: () => void
-  today: () => void
-  goTo: (date: Date) => void
-  setScale: (scale: GanttScale) => void
-  getEvents: () => GanttEvent<TData>[]
-  getEvent: (id: GanttBarId) => GanttEvent<TData> | undefined
-  setEvents: (events: GanttEvent<TData>[]) => void
-  addEvent: (event: GanttEvent<TData>) => void
-  updateEvent: (id: GanttBarId, patch: Partial<GanttEvent<TData>>) => void
-  removeEvent: (id: GanttBarId) => void
-  getOccurrences: (range?: GanttDateRange) => GanttOccurrence<TData>[]
-  findOverlapping: (candidate: {
+  next(): void
+  prev(): void
+  today(): void
+  goTo(date: Date): void
+  setScale(scale: GanttScale): void
+  getEvents(): GanttEvent<TData>[]
+  getEvent(id: GanttBarId): GanttEvent<TData> | undefined
+  setEvents(events: GanttEvent<TData>[]): void
+  addEvent(event: GanttEvent<TData>): void
+  updateEvent(id: GanttBarId, patch: Partial<GanttEvent<TData>>): void
+  removeEvent(id: GanttBarId): void
+  getOccurrences(range?: GanttDateRange): GanttOccurrence<TData>[]
+  findOverlapping(candidate: {
     start: Date
     end: Date
     excludeEventId?: string
-  }) => GanttOccurrence<TData>[]
-  select: (selection: Partial<GanttSelection>) => void
-  selectEvent: (key: string, opts?: { additive?: boolean }) => void
-  clearSelection: () => void
-  setInteractions: (patch: Partial<GanttInteractions>) => void
-  getVisibleRange: () => GanttDateRange
-  getActiveRange: () => GanttDateRange
+  }): GanttOccurrence<TData>[]
+  select(selection: Partial<GanttSelection>): void
+  selectEvent(key: string, opts?: { additive?: boolean }): void
+  clearSelection(): void
+  setInteractions(patch: Partial<GanttInteractions>): void
+  getVisibleRange(): GanttDateRange
+  getActiveRange(): GanttDateRange
   /** TZDate in the gantt's display time zone. */
-  toZoned: (date: Date) => Date
+  toZoned(date: Date): Date
 }
 
 /** Cross-file plumbing for sibling view/interaction modules; not public API. */
 interface GanttInternals<TData = unknown> {
-  getIndex: () => GanttIndex<TData>
-  setDrag: (drag: GanttDragState<TData> | null) => void
-  setSlotDraft: (draft: GanttSlotDraft | null) => void
-  applyProposedUpdate: (update: GanttProposedUpdate<TData>) => boolean
-  getSettingsVersion: () => number
+  getIndex(): GanttIndex<TData>
+  setDrag(drag: GanttDragState<TData> | null): void
+  setSlotDraft(draft: GanttSlotDraft | null): void
+  applyProposedUpdate(update: GanttProposedUpdate<TData>): boolean
+  getSettingsVersion(): number
   /**
    * Grow visibleRange by whole periods for infinite scrolling; resets on
    * date/scale changes. Returns false once the growth cap is reached.
    */
-  extendRange: (direction: "before" | "after") => boolean
+  extendRange(direction: "before" | "after"): boolean
   /**
    * True when the LAST anchor-date change was an extendRange window slide
    * (not a navigation) - the view keeps its scroll guard across slides.
    */
-  didAnchorSlide: () => boolean
+  didAnchorSlide(): boolean
   /** View reports the visible-center instant (or null) for the nav title. */
-  setViewportCenter: (date: Date | null) => void
+  setViewportCenter(date: Date | null): void
 }
 
 interface GanttInstance<TData = unknown> {
-  getState: () => GanttState<TData>
-  subscribe: (listener: () => void) => () => void
+  getState(): GanttState<TData>
+  subscribe(listener: () => void): () => void
   api: GanttApi<TData>
   settings: GanttSettings<TData>
   internals: GanttInternals<TData>
@@ -322,9 +322,9 @@ function warnOnce(key: string, message: string) {
 
 interface GanttStore<TData> {
   instance: GanttInstance<TData>
-  setOptions: (next: UseGanttStateOptions<TData>) => boolean
-  notify: () => void
-  emitRangeIfChanged: () => void
+  setOptions(next: UseGanttStateOptions<TData>): boolean
+  notify(): void
+  emitRangeIfChanged(): void
 }
 
 function createGanttStore<TData>(
@@ -459,15 +459,16 @@ function createGanttStore<TData>(
       invalidate()
     }
     if (!controlled) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(internal as any)[key] = value
       invalidate()
     }
     const callbacks: Record<ControlledKey, ((v: never) => void) | undefined> = {
-      scale: settings.onScaleChange,
-      date: settings.onDateChange,
-      events: settings.onEventsChange,
-      selection: settings.onSelectionChange,
-      interactions: settings.onInteractionsChange,
+      scale: settings.onScaleChange as never,
+      date: settings.onDateChange as never,
+      events: settings.onEventsChange as never,
+      selection: settings.onSelectionChange as never,
+      interactions: settings.onInteractionsChange as never,
     }
     callbacks[key]?.(value as never)
     if (!controlled) notify()
@@ -853,7 +854,9 @@ function useGanttState<TData = unknown>(
   return store.instance
 }
 
-const GanttContext = createContext<GanttInstance<any> | null>(null)
+const GanttContext =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createContext<GanttInstance<any> | null>(null)
 
 /** The stable calendar instance; throws outside <Gantt>. */
 function useGantt<TData = unknown>(): GanttInstance<TData> {
@@ -1453,8 +1456,10 @@ const DEFAULT_VIEW_CONFIG: GanttViewConfig = {
   rowAlign: "start",
 }
 
-const GanttViewConfigContext =
-  createContext<GanttViewConfig<any>>(DEFAULT_VIEW_CONFIG)
+const GanttViewConfigContext = createContext<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  GanttViewConfig<any>
+>(DEFAULT_VIEW_CONFIG)
 
 /** Root-level display props + render overrides, for view components. */
 function useGanttViewConfig<TData = unknown>(): GanttViewConfig<TData> {
@@ -1597,7 +1602,7 @@ function splitOptions<TData>(props: Record<string, unknown>): {
     } else rest[key] = value
   }
   return {
-    options: options,
+    options: options as UseGanttStateOptions<TData>,
     viewConfig: viewConfig as unknown as GanttViewConfig<TData>,
     rest,
   }
@@ -1615,7 +1620,9 @@ function Gantt<TData = unknown>({
   children,
   ...props
 }: GanttProps<TData>) {
-  const { options, viewConfig, rest } = splitOptions<TData>(props)
+  const { options, viewConfig, rest } = splitOptions<TData>(
+    props as Record<string, unknown>
+  )
 
   // Stable context identity: splitOptions builds a fresh object per render,
   // and every row subscribes to this context - hand out the previous object

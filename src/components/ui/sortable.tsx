@@ -13,7 +13,7 @@ import {
 
 import * as ReactDOM from "react-dom"
 
-import { cn } from "@/lib/utils"
+import { cn } from "#/lib/utils"
 import {
   type Announcements,
   DndContext,

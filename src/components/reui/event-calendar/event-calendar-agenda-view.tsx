@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo } from "react"
 
 import { mergeProps } from "@base-ui/react/merge-props"

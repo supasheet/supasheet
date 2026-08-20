@@ -13,8 +13,8 @@ import {
   useSyncExternalStore,
 } from "react"
 
-import { useComposedRefs } from "@/lib/compose-refs"
-import { cn } from "@/lib/utils"
+import { useComposedRefs } from "#/lib/compose-refs"
+import { cn } from "#/lib/utils"
 import { Slot } from "@radix-ui/react-slot"
 import { Star } from "lucide-react"
 

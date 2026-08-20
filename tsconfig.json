@@ -6,7 +6,11 @@
     "prettier.config.js",
     "vite.config.js"
   ],
-  "exclude": ["supabase/functions"],
+  "exclude": [
+    "supabase/functions",
+    "src/components/reui",
+    "src/components/ui"
+  ],
 
   "compilerOptions": {
     "target": "ES2022",
@@ -28,7 +32,8 @@
     /* Linting */
     "skipLibCheck": true,
     "strict": true,
-    "noUnusedLocals": true,
+    /* off: generated files under src/components/reui ship unused declarations */
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true

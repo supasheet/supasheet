@@ -1,19 +1,14 @@
 import * as React from "react"
-
 import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "lucide-react"
-import {
-  type DayButton,
   DayPicker,
-  type Locale,
   getDefaultClassNames,
+  type DayButton,
+  type Locale,
 } from "react-day-picker"
 
-import { Button, buttonVariants } from "#/components/ui/button.tsx"
 import { cn } from "#/lib/utils.ts"
+import { Button, buttonVariants } from "#/components/ui/button.tsx"
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
 
 function Calendar({
   className,
@@ -156,10 +151,7 @@ function Calendar({
 
           if (orientation === "right") {
             return (
-              <ChevronRightIcon
-                className={cn("size-4", className)}
-                {...props}
-              />
+              <ChevronRightIcon className={cn("size-4", className)} {...props} />
             )
           }
 
