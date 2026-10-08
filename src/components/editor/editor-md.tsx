@@ -59,6 +59,8 @@ import {
   useLanguage,
 } from "#/components/editor/plugins/i18n-plugin"
 import { BlockFormatToolbarPlugin } from "#/components/editor/plugins/toolbar/block-format-toolbar-plugin"
+import { ClearToolbarPlugin } from "#/components/editor/plugins/toolbar/clear-toolbar-plugin"
+import { HistoryToolbarPlugin } from "#/components/editor/plugins/toolbar/history-toolbar-plugin"
 import { LinkToolbarPlugin } from "#/components/editor/plugins/toolbar/link-toolbar-plugin"
 import { TextFormatToolbarPlugin } from "#/components/editor/plugins/toolbar/text-format-toolbar-plugin"
 import { Toolbar } from "#/components/editor/plugins/toolbar/toolbar-plugin"
@@ -136,6 +138,7 @@ export function Editor({
         <EditorWrapper disabled={disabled}>
           {!disabled && (
             <Toolbar>
+              <HistoryToolbarPlugin />
               <BlockFormatToolbarPlugin />
               <TextFormatToolbarPlugin formats="basic" />
               <BlockInsert>
@@ -144,6 +147,7 @@ export function Editor({
                 <InsertImagePlugin />
                 <InsertTablePlugin />
               </BlockInsert>
+              <ClearToolbarPlugin />
             </Toolbar>
           )}
           <div className="relative min-w-0 flex-1 overflow-y-auto">
