@@ -130,7 +130,7 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
               </EmptyMedia>
               <EmptyTitle>Something went wrong</EmptyTitle>
               <EmptyDescription>
-                {error?.message ?? "An unexpected error occurred."}
+                {(error as Error)?.message ?? "An unexpected error occurred."}
               </EmptyDescription>
             </EmptyHeader>
             <div className="flex gap-2">

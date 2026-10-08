@@ -74,7 +74,7 @@ function ErrorScreen({ error, reset }: ErrorComponentProps) {
   return (
     <div className="flex h-svh flex-col items-center justify-center gap-4">
       <p className="text-sm text-muted-foreground">
-        {error?.message ?? "An unexpected error occurred."}
+        {(error as Error)?.message ?? "An unexpected error occurred."}
       </p>
       <div className="flex gap-2">
         <Button

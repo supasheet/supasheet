@@ -6,11 +6,7 @@
     "prettier.config.js",
     "vite.config.js"
   ],
-  "exclude": [
-    "supabase/functions",
-    "src/components/reui",
-    "src/components/ui"
-  ],
+  "exclude": ["supabase/functions", "src/components/reui", "src/components/ui"],
 
   "compilerOptions": {
     "target": "ES2022",

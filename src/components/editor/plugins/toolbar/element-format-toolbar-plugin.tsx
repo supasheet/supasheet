@@ -1,156 +1,104 @@
-"use client"
-
-import { useState } from "react"
-
-import { $isLinkNode } from "@lexical/link"
-import { $findMatchingParent } from "@lexical/utils"
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext"
+import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
+import { FORMAT_ELEMENT_COMMAND } from "lexical"
+import type { ElementFormatType } from "lexical"
 import {
-  $isElementNode,
-  $isRangeSelection,
-  FORMAT_ELEMENT_COMMAND,
-  INDENT_CONTENT_COMMAND,
-  OUTDENT_CONTENT_COMMAND,
-} from "lexical"
-import type { BaseSelection, ElementFormatType } from "lexical"
-import {
-  AlignCenterIcon,
-  AlignJustifyIcon,
-  AlignLeftIcon,
-  AlignRightIcon,
-  IndentDecreaseIcon,
-  IndentIncreaseIcon,
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
+  PilcrowLeft,
+  PilcrowRight,
 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-import { useToolbarContext } from "#/components/editor/context/toolbar-context"
-import { useUpdateToolbarHandler } from "#/components/editor/editor-hooks/use-update-toolbar"
-import { getSelectedNode } from "#/components/editor/utils/get-selected-node"
-import { Separator } from "#/components/ui/separator"
-import { ToggleGroup, ToggleGroupItem } from "#/components/ui/toggle-group"
+import { useFormatStateValue } from "#/components/editor/extensions/format-state.tsx"
+import type { Locale } from "#/components/editor/locales.ts"
+import { useTranslation } from "#/components/editor/plugins/i18n-plugin.tsx"
+import { ToggleGroup, ToggleGroupItem } from "#/components/ui/toggle-group.tsx"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "#/components/ui/tooltip.tsx"
 
-const ELEMENT_FORMAT_OPTIONS: {
-  [key in Exclude<ElementFormatType, "start" | "end" | "">]: {
-    icon: React.ReactNode
-    iconRTL: string
-    name: string
-  }
-} = {
-  left: {
-    icon: <AlignLeftIcon className="size-4" />,
-    iconRTL: "left-align",
-    name: "Left Align",
-  },
-  center: {
-    icon: <AlignCenterIcon className="size-4" />,
-    iconRTL: "center-align",
-    name: "Center Align",
-  },
-  right: {
-    icon: <AlignRightIcon className="size-4" />,
-    iconRTL: "right-align",
-    name: "Right Align",
-  },
-  justify: {
-    icon: <AlignJustifyIcon className="size-4" />,
-    iconRTL: "justify-align",
-    name: "Justify Align",
-  },
-} as const
+type AlignItem = {
+  value: Exclude<ElementFormatType, "">
+  labelKey: keyof Locale
+  icon: LucideIcon
+}
+
+function AlignToggleGroup({ items }: { items: AlignItem[] }) {
+  const [editor] = useLexicalComposerContext()
+  const { t } = useTranslation()
+  const elementFormat = useFormatStateValue("elementFormat")
+  const isEditable = useLexicalEditable()
+  return (
+    <ToggleGroup
+      variant="outline"
+      size="sm"
+      spacing={0}
+      disabled={!isEditable}
+      value={[elementFormat]}
+      onValueChange={(value) => {
+        const next = value[0] as Exclude<ElementFormatType, ""> | undefined
+        if (next) {
+          editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, next)
+        }
+      }}
+    >
+      {items.map(({ value, labelKey, icon: Icon }) => (
+        <Tooltip key={value}>
+          <TooltipTrigger
+            render={
+              <ToggleGroupItem value={value} aria-label={t[labelKey]}>
+                <Icon />
+              </ToggleGroupItem>
+            }
+          />
+          <TooltipContent>{t[labelKey]}</TooltipContent>
+        </Tooltip>
+      ))}
+    </ToggleGroup>
+  )
+}
 
 export function ElementFormatToolbarPlugin({
-  separator = true,
+  formats = "all",
 }: {
-  separator?: boolean
+  formats?: "basic" | "all"
 }) {
-  const { activeEditor } = useToolbarContext()
-  const [elementFormat, setElementFormat] = useState<ElementFormatType>("left")
+  const { dir } = useTranslation()
+  const isRtl = dir === "rtl"
 
-  const $updateToolbar = (selection: BaseSelection) => {
-    if ($isRangeSelection(selection)) {
-      const node = getSelectedNode(selection)
-      const parent = node.getParent()
+  const alignGroups: AlignItem[][] = [
+    [
+      { value: "left", icon: AlignLeft, labelKey: "alignLeft" },
+      { value: "center", icon: AlignCenter, labelKey: "alignCenter" },
+      { value: "right", icon: AlignRight, labelKey: "alignRight" },
+      { value: "justify", icon: AlignJustify, labelKey: "alignJustify" },
+    ],
+    [
+      {
+        value: "start",
+        icon: isRtl ? PilcrowRight : PilcrowLeft,
+        labelKey: "alignStart",
+      },
+      {
+        value: "end",
+        icon: isRtl ? PilcrowLeft : PilcrowRight,
+        labelKey: "alignEnd",
+      },
+    ],
+  ]
 
-      let matchingParent
-      if ($isLinkNode(parent)) {
-        // If node is a link, we need to fetch the parent paragraph node to set format
-        matchingParent = $findMatchingParent(
-          node,
-          (parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
-        )
-      }
-      setElementFormat(
-        $isElementNode(matchingParent)
-          ? matchingParent.getFormatType()
-          : $isElementNode(node)
-            ? node.getFormatType()
-            : parent?.getFormatType() || "left"
-      )
-    }
-  }
-
-  useUpdateToolbarHandler($updateToolbar)
-
-  const handleValueChange = (value: string) => {
-    if (!value) return // Prevent unselecting current value
-
-    setElementFormat(value as ElementFormatType)
-
-    if (value === "indent") {
-      activeEditor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined)
-    } else if (value === "outdent") {
-      activeEditor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined)
-    } else {
-      activeEditor.dispatchCommand(
-        FORMAT_ELEMENT_COMMAND,
-        value as ElementFormatType
-      )
-    }
-  }
+  const groups = formats === "basic" ? alignGroups.slice(0, 1) : alignGroups
 
   return (
     <>
-      <ToggleGroup
-        value={[elementFormat]}
-        defaultValue={[elementFormat]}
-        onValueChange={(values) => handleValueChange(values[0] || "")}
-      >
-        {/* Alignment toggles */}
-        {Object.entries(ELEMENT_FORMAT_OPTIONS).map(([value, option]) => (
-          <ToggleGroupItem
-            key={value}
-            value={value}
-            variant={"outline"}
-            size="sm"
-            aria-label={option.name}
-          >
-            {option.icon}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-      {separator && <Separator orientation="vertical" className="!h-7" />}
-      {/* Indentation toggles */}
-      <ToggleGroup
-        value={[elementFormat]}
-        defaultValue={[elementFormat]}
-        onValueChange={(values) => handleValueChange(values[0] || "")}
-      >
-        <ToggleGroupItem
-          value="outdent"
-          aria-label="Outdent"
-          variant={"outline"}
-          size="sm"
-        >
-          <IndentDecreaseIcon className="size-4" />
-        </ToggleGroupItem>
-
-        <ToggleGroupItem
-          value="indent"
-          variant={"outline"}
-          aria-label="Indent"
-          size="sm"
-        >
-          <IndentIncreaseIcon className="size-4" />
-        </ToggleGroupItem>
-      </ToggleGroup>
+      {groups.map((items, groupIndex) => (
+        <AlignToggleGroup key={groupIndex} items={items} />
+      ))}
     </>
   )
 }
