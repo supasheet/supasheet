@@ -40,12 +40,14 @@ export const Route = createFileRoute("/core/audit_logs/")({
     context,
     deps: { sortId, sortDesc, page, pageSize, filters },
   }) => {
-    context.queryClient.ensureQueryData(
-      auditLogsQueryOptions(page, pageSize, sortId, sortDesc, filters)
-    )
-    const columnsSchema = await context.queryClient.ensureQueryData(
-      columnsSchemaQueryOptions("supasheet", "audit_logs")
-    )
+    context.queryClient.query({
+      ...auditLogsQueryOptions(page, pageSize, sortId, sortDesc, filters),
+      staleTime: "static",
+    })
+    const columnsSchema = await context.queryClient.query({
+      ...columnsSchemaQueryOptions("supasheet", "audit_logs"),
+      staleTime: "static",
+    })
 
     return { columnsSchema }
   },

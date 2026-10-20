@@ -21,14 +21,16 @@ export const Route = createFileRoute(
     const primaryKeys = context.tableSchema?.primary_keys ?? []
     const pkName = primaryKeys[0]?.name ?? "id"
     const pk = { [pkName]: resourceId }
-    const record = await context.queryClient.ensureQueryData(
-      singleResourceDataQueryOptions(schema, resource, pk)
-    )
+    const record = await context.queryClient.query({
+      ...singleResourceDataQueryOptions(schema, resource, pk),
+      staleTime: "static",
+    })
     if (!record) throw notFound()
 
-    const updateColumnsSchema = await context.queryClient.ensureQueryData(
-      columnsSchemaQueryOptions(schema, resource, "update")
-    )
+    const updateColumnsSchema = await context.queryClient.query({
+      ...columnsSchemaQueryOptions(schema, resource, "update"),
+      staleTime: "static",
+    })
 
     return { updateColumnsSchema }
   },

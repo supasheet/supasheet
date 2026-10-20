@@ -74,9 +74,10 @@ export const Route = createFileRoute("/$schema/resource/$resource/new")({
     const { resourceSchema } = context
     if (!isTableSchema(resourceSchema)) throw notFound()
 
-    const columnsSchema = await context.queryClient.ensureQueryData(
-      columnsSchemaQueryOptions(schema, resource, "insert")
-    )
+    const columnsSchema = await context.queryClient.query({
+      ...columnsSchemaQueryOptions(schema, resource, "insert"),
+      staleTime: "static",
+    })
 
     return { columnsSchema, tableSchema: resourceSchema }
   },

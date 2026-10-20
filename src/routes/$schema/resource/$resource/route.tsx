@@ -23,21 +23,25 @@ export const Route = createFileRoute("/$schema/resource/$resource")({
   }),
   beforeLoad: async ({ context, params: { schema, resource } }) => {
     const [privileges, tableSchema, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        resourcePrivilegesQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        tableSchemaQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(
-        columnsSchemaQueryOptions(schema, resource)
-      ),
+      context.queryClient.query({
+        ...resourcePrivilegesQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...tableSchemaQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...columnsSchemaQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
     ])
 
     const viewSchema = !tableSchema
-      ? await context.queryClient.ensureQueryData(
-          viewSchemaQueryOptions(schema, resource)
-        )
+      ? await context.queryClient.query({
+          ...viewSchemaQueryOptions(schema, resource),
+          staleTime: "static",
+        })
       : null
 
     const resourceSchema = tableSchema ?? viewSchema

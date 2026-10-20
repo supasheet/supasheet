@@ -44,12 +44,14 @@ export const Route = createFileRoute("/core/users/")({
     context,
     deps: { sortId, sortDesc, page, pageSize, filters },
   }) => {
-    context.queryClient.ensureQueryData(
-      usersQueryOptions(page, pageSize, sortId, sortDesc, filters)
-    )
-    const columnsSchema = await context.queryClient.ensureQueryData(
-      columnsSchemaQueryOptions("supasheet", "users")
-    )
+    context.queryClient.query({
+      ...usersQueryOptions(page, pageSize, sortId, sortDesc, filters),
+      staleTime: "static",
+    })
+    const columnsSchema = await context.queryClient.query({
+      ...columnsSchemaQueryOptions("supasheet", "users"),
+      staleTime: "static",
+    })
 
     return { columnsSchema }
   },

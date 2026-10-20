@@ -13,9 +13,10 @@ import { storageBucketsQueryOptions } from "#/lib/supabase/data/storage"
 
 export const Route = createFileRoute("/storage/$bucketId")({
   loader: async ({ context, params: { bucketId } }) => {
-    const buckets = await context.queryClient.ensureQueryData(
-      storageBucketsQueryOptions
-    )
+    const buckets = await context.queryClient.query({
+      ...storageBucketsQueryOptions,
+      staleTime: "static",
+    })
     const bucket = buckets.find((b) => b.id === bucketId)
     if (!bucket) throw notFound()
     return { bucket }

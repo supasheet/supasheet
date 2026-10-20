@@ -20,15 +20,17 @@ import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 
 export const Route = createFileRoute("/core/users/$userId")({
   beforeLoad: async ({ context }) => {
-    const isXAdmin = await context.queryClient.ensureQueryData(
-      hasRoleQueryOptions("x-admin")
-    )
+    const isXAdmin = await context.queryClient.query({
+      ...hasRoleQueryOptions("x-admin"),
+      staleTime: "static",
+    })
     if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params: { userId } }) => {
-    const data = await context.queryClient.ensureQueryData(
-      adminGetUserQueryOptions(userId)
-    )
+    const data = await context.queryClient.query({
+      ...adminGetUserQueryOptions(userId),
+      staleTime: "static",
+    })
     if (!data?.user) throw notFound()
   },
   head: ({ params }) => ({

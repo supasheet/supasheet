@@ -49,12 +49,14 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
     if (!canSelect) throw notFound()
   },
   loader: async ({ context, params: { schema, resource } }) => {
-    context.queryClient.ensureQueryData(
-      resourceDataQueryOptions(schema, resource, undefined, 1, 1)
-    )
-    context.queryClient.ensureQueryData(
-      resourceActionsQueryOptions(schema, resource)
-    )
+    context.queryClient.query({
+      ...resourceDataQueryOptions(schema, resource, undefined, 1, 1),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...resourceActionsQueryOptions(schema, resource),
+      staleTime: "static",
+    })
     return { resourceSchema: context.resourceSchema }
   },
   head: ({ params, loaderData }) => {

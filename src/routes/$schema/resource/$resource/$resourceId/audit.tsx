@@ -22,9 +22,10 @@ export const Route = createFileRoute(
 )({
   beforeLoad: async ({ context }) => {
     const auditPermissions = context.authUser
-      ? await context.queryClient.ensureQueryData(
-          userPermissionsQueryOptions("supasheet")
-        )
+      ? await context.queryClient.query({
+          ...userPermissionsQueryOptions("supasheet"),
+          staleTime: "static",
+        })
       : null
     const hasAudit = hasResourcePermission(auditPermissions, {
       schema: "supasheet",
@@ -39,9 +40,10 @@ export const Route = createFileRoute(
     return { tableSchema }
   },
   loader: async ({ context, params: { schema, resource, resourceId } }) => {
-    context.queryClient.ensureQueryData(
-      resourceAuditLogsQueryOptions(schema, resource, resourceId)
-    )
+    context.queryClient.query({
+      ...resourceAuditLogsQueryOptions(schema, resource, resourceId),
+      staleTime: "static",
+    })
   },
   head: ({ params }) => ({
     meta: [

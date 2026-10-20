@@ -27,9 +27,10 @@ export const Route = createFileRoute(
 )({
   loader: async ({ context, params }) => {
     const { schema, resource, resourceId, tab } = params
-    const relatedTablesSchema = await context.queryClient.ensureQueryData(
-      relatedTablesSchemaQueryOptions(schema, resource)
-    )
+    const relatedTablesSchema = await context.queryClient.query({
+      ...relatedTablesSchemaQueryOptions(schema, resource),
+      staleTime: "static",
+    })
     const tableMeta = JSON.parse(
       context.tableSchema?.comment ?? "{}"
     ) as TableMetadata
@@ -50,9 +51,10 @@ export const Route = createFileRoute(
     const activeTable = embeddedTables.find((t) => t.__embedKey === tab)
     if (!activeTable) throw notFound()
 
-    const columnsSchema = await context.queryClient.ensureQueryData(
-      columnsSchemaQueryOptions(activeTable.schema, activeTable.name)
-    )
+    const columnsSchema = await context.queryClient.query({
+      ...columnsSchemaQueryOptions(activeTable.schema, activeTable.name),
+      staleTime: "static",
+    })
     const classification = classifyRelationships(
       schema,
       resource,
@@ -66,16 +68,22 @@ export const Route = createFileRoute(
       const primaryKeys = context.tableSchema?.primary_keys ?? []
       const pkName = primaryKeys[0]?.name ?? "id"
       const pk = { [pkName]: resourceId }
-      const parent = await context.queryClient.ensureQueryData(
-        singleResourceDataQueryOptions(schema, resource, pk)
-      )
+      const parent = await context.queryClient.query({
+        ...singleResourceDataQueryOptions(schema, resource, pk),
+        staleTime: "static",
+      })
       const matchValue = parent?.[oneToOne.__parentMatchColumn]
       if (matchValue != null) {
-        await context.queryClient.ensureQueryData(
-          singleForeignTableDataQueryOptions(oneToOne.schema, oneToOne.name, {
-            [oneToOne.__foreignMatchColumn]: matchValue,
-          })
-        )
+        await context.queryClient.query({
+          ...singleForeignTableDataQueryOptions(
+            oneToOne.schema,
+            oneToOne.name,
+            {
+              [oneToOne.__foreignMatchColumn]: matchValue,
+            }
+          ),
+          staleTime: "static",
+        })
       }
       return { ...classification, isTimeline }
     }
@@ -86,12 +94,14 @@ export const Route = createFileRoute(
     const primaryKeys = context.tableSchema?.primary_keys ?? []
     const pkName = primaryKeys[0]?.name ?? "id"
     const pk = { [pkName]: resourceId }
-    await context.queryClient.ensureQueryData(
-      singleResourceDataQueryOptions(schema, resource, pk)
-    )
-    context.queryClient.ensureQueryData(
-      resourceActionsQueryOptions(many.schema, many.name)
-    )
+    await context.queryClient.query({
+      ...singleResourceDataQueryOptions(schema, resource, pk),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...resourceActionsQueryOptions(many.schema, many.name),
+      staleTime: "static",
+    })
 
     return { ...classification, isTimeline }
   },

@@ -28,9 +28,10 @@ import { templatesQueryOptions } from "#/lib/supabase/data/template"
 
 export const Route = createFileRoute("/$schema/template/")({
   loader: async ({ context, params }) => {
-    const templates = await context.queryClient.ensureQueryData(
-      templatesQueryOptions(params.schema)
-    )
+    const templates = await context.queryClient.query({
+      ...templatesQueryOptions(params.schema),
+      staleTime: "static",
+    })
     return { templates }
   },
   head: ({ params }) => ({

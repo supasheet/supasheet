@@ -93,8 +93,8 @@ export const Route = createFileRoute("/$schema/resource/$resource/grid")({
     const metaData = JSON.parse(
       context.resourceSchema.comment ?? "{}"
     ) as TableMetadata
-    context.queryClient.ensureQueryData(
-      resourceDataQueryOptions(
+    context.queryClient.query({
+      ...resourceDataQueryOptions(
         schema,
         resource,
         metaData.query,
@@ -103,11 +103,13 @@ export const Route = createFileRoute("/$schema/resource/$resource/grid")({
         sortId,
         sortDesc,
         filters
-      )
-    )
-    context.queryClient.ensureQueryData(
-      resourceActionsQueryOptions(schema, resource)
-    )
+      ),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...resourceActionsQueryOptions(schema, resource),
+      staleTime: "static",
+    })
   },
   head: ({ params }) => ({
     meta: [

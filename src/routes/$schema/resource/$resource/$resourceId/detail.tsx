@@ -61,22 +61,25 @@ export const Route = createFileRoute(
   },
   loader: async ({ context, params }) => {
     const { schema, resource, resourceId } = params
-    const relatedTablesSchema = await context.queryClient.ensureQueryData(
-      relatedTablesSchemaQueryOptions(schema, resource)
-    )
+    const relatedTablesSchema = await context.queryClient.query({
+      ...relatedTablesSchemaQueryOptions(schema, resource),
+      staleTime: "static",
+    })
 
     const primaryKeys = context.tableSchema.primary_keys ?? []
     if (primaryKeys?.length === 0) throw notFound()
     const pkName = primaryKeys[0].name
 
-    context.queryClient.ensureQueryData(
-      singleResourceDataQueryOptions(schema, resource, {
+    context.queryClient.query({
+      ...singleResourceDataQueryOptions(schema, resource, {
         [pkName]: resourceId,
-      })
-    )
-    context.queryClient.ensureQueryData(
-      resourceActionsQueryOptions(schema, resource)
-    )
+      }),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...resourceActionsQueryOptions(schema, resource),
+      staleTime: "static",
+    })
 
     const metaJoins = (
       JSON.parse(context.tableSchema.comment ?? "{}") as TableMetadata

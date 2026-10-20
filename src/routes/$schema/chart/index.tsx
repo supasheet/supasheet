@@ -21,9 +21,10 @@ import { chartsQueryOptions } from "#/lib/supabase/data/chart"
 
 export const Route = createFileRoute("/$schema/chart/")({
   loader: async ({ context, params }) => {
-    const charts = await context.queryClient.ensureQueryData(
-      chartsQueryOptions(params.schema)
-    )
+    const charts = await context.queryClient.query({
+      ...chartsQueryOptions(params.schema),
+      staleTime: "static",
+    })
     return { charts }
   },
   head: ({ params }) => ({

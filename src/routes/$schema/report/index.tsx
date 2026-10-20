@@ -27,9 +27,10 @@ import { reportsQueryOptions } from "#/lib/supabase/data/report"
 
 export const Route = createFileRoute("/$schema/report/")({
   loader: async ({ context, params }) => {
-    const reports = await context.queryClient.ensureQueryData(
-      reportsQueryOptions(params.schema)
-    )
+    const reports = await context.queryClient.query({
+      ...reportsQueryOptions(params.schema),
+      staleTime: "static",
+    })
     return { reports }
   },
   head: ({ params }) => ({

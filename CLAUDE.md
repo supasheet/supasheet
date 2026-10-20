@@ -86,18 +86,18 @@ alias (not `@/`).
 
 Routes follow a two-layer pattern:
 
-**Loader** — prefetches into the TanStack Query cache via `ensureQueryData`.
+**Loader** — prefetches into the TanStack Query cache via `queryClient.query({ ...options, staleTime: "static" })`.
 Does **not** return mutable data; only returns schema/metadata that never
 changes (e.g. `tableSchema`, `columnsSchema`, `kanbanView`).
 
 ```ts
 loader: async ({ context, params, deps }) => {
   // Guard: await and check, but don't return mutable data
-  const record = await context.queryClient.ensureQueryData(dataQueryOptions(...))
+  const record = await context.queryClient.query({ ...dataQueryOptions(...), staleTime: "static" })
   if (!record) throw notFound()
 
   // Prefetch mutable data into cache (fire and forget)
-  context.queryClient.ensureQueryData(mutableDataQueryOptions(...))
+  context.queryClient.query({ ...mutableDataQueryOptions(...), staleTime: "static" })
 
   // Only return immutable schema/metadata
   return { tableSchema, columnsSchema }

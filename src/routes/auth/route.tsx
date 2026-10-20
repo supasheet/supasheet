@@ -16,9 +16,10 @@ export const Route = createFileRoute("/auth")({
     )
       throw redirect({ to: "/" })
 
-    const authConfig = await context.queryClient.ensureQueryData(
-      authConfigQueryOptions()
-    )
+    const authConfig = await context.queryClient.query({
+      ...authConfigQueryOptions(),
+      staleTime: "static",
+    })
     return { authConfig }
   },
   component: AuthLayout,

@@ -33,9 +33,10 @@ export const Route = createFileRoute(
     return { tableSchema }
   },
   loader: async ({ context, params: { schema, resource, resourceId } }) => {
-    context.queryClient.ensureQueryData(
-      resourceCommentsQueryOptions(schema, resource, resourceId)
-    )
+    context.queryClient.query({
+      ...resourceCommentsQueryOptions(schema, resource, resourceId),
+      staleTime: "static",
+    })
   },
   head: ({ params }) => ({
     meta: [

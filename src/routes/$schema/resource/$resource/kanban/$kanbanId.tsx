@@ -91,8 +91,8 @@ export const Route = createFileRoute(
     )
     if (!kanbanView) throw notFound()
 
-    context.queryClient.ensureQueryData(
-      resourceDataQueryOptions(
+    context.queryClient.query({
+      ...resourceDataQueryOptions(
         schema,
         resource,
         meta.query,
@@ -101,8 +101,9 @@ export const Route = createFileRoute(
         undefined,
         undefined,
         filters
-      )
-    )
+      ),
+      staleTime: "static",
+    })
 
     return { kanbanView }
   },

@@ -76,17 +76,21 @@ export const Route = createFileRoute("/$schema/template/$template/")({
     deps: { sortId, sortDesc, page, pageSize, filters },
   }) => {
     const [templates, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(templatesQueryOptions(params.schema)),
-      context.queryClient.ensureQueryData(
-        columnsSchemaQueryOptions(params.schema, params.template)
-      ),
+      context.queryClient.query({
+        ...templatesQueryOptions(params.schema),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...columnsSchemaQueryOptions(params.schema, params.template),
+        staleTime: "static",
+      }),
     ])
 
     const template = templates.find((t) => t.view_name === params.template)
     if (!template || !columnsSchema?.length) throw notFound()
 
-    context.queryClient.ensureQueryData(
-      templateDataQueryOptions(
+    context.queryClient.query({
+      ...templateDataQueryOptions(
         params.schema,
         params.template,
         page,
@@ -94,8 +98,9 @@ export const Route = createFileRoute("/$schema/template/$template/")({
         sortId,
         sortDesc,
         filters
-      )
-    )
+      ),
+      staleTime: "static",
+    })
     return { columnsSchema, template }
   },
   head: ({ params }) => ({

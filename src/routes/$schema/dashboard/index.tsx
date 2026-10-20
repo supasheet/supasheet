@@ -30,9 +30,10 @@ const TABLE_WIDGET_ORDER = [
 
 export const Route = createFileRoute("/$schema/dashboard/")({
   loader: async ({ context, params }) => {
-    const widgets = await context.queryClient.ensureQueryData(
-      dashboardWidgetsQueryOptions(params.schema)
-    )
+    const widgets = await context.queryClient.query({
+      ...dashboardWidgetsQueryOptions(params.schema),
+      staleTime: "static",
+    })
     return { widgets }
   },
   head: ({ params }) => ({

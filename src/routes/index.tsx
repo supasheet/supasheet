@@ -20,8 +20,10 @@ import { schemasQueryOptions } from "#/lib/supabase/data/meta"
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: pageTitle("Home") }] }),
   loader: async ({ context }) => {
-    const schemas =
-      await context.queryClient.ensureQueryData(schemasQueryOptions)
+    const schemas = await context.queryClient.query({
+      ...schemasQueryOptions,
+      staleTime: "static",
+    })
     return { schemas }
   },
   pendingComponent: HomePageSkeleton,

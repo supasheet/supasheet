@@ -60,9 +60,10 @@ export const Route = createFileRoute("/$schema")({
   }),
   beforeLoad: async ({ context, params }) => {
     const permissions = context.authUser
-      ? await context.queryClient.ensureQueryData(
-          userPermissionsQueryOptions(params.schema)
-        )
+      ? await context.queryClient.query({
+          ...userPermissionsQueryOptions(params.schema),
+          staleTime: "static",
+        })
       : null
     if (context.authUser && !Object.keys(permissions ?? {}).length)
       throw notFound()

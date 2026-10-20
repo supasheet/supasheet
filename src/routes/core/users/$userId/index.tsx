@@ -11,9 +11,10 @@ import { adminGetUserQueryOptions } from "#/lib/supabase/data/admin-auth"
 export const Route = createFileRoute("/core/users/$userId/")({
   head: () => ({ meta: [{ title: pageTitle("Overview | Users") }] }),
   loader: async ({ context, params }) => {
-    const data = await context.queryClient.ensureQueryData(
-      adminGetUserQueryOptions(params.userId)
-    )
+    const data = await context.queryClient.query({
+      ...adminGetUserQueryOptions(params.userId),
+      staleTime: "static",
+    })
     if (!data?.user) throw notFound()
   },
   pendingComponent: () => (

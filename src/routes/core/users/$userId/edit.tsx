@@ -13,15 +13,17 @@ export const Route = createFileRoute("/core/users/$userId/edit")({
   head: () => ({ meta: [{ title: pageTitle("Edit User") }] }),
   beforeLoad: async ({ context, params: { userId } }) => {
     if (context.authUser?.id === userId) throw notFound()
-    const isXAdmin = await context.queryClient.ensureQueryData(
-      hasRoleQueryOptions("x-admin")
-    )
+    const isXAdmin = await context.queryClient.query({
+      ...hasRoleQueryOptions("x-admin"),
+      staleTime: "static",
+    })
     if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params }) => {
-    const user = await context.queryClient.ensureQueryData(
-      adminGetUserQueryOptions(params.userId)
-    )
+    const user = await context.queryClient.query({
+      ...adminGetUserQueryOptions(params.userId),
+      staleTime: "static",
+    })
     if (!user?.user) throw notFound()
   },
   pendingComponent: () => (

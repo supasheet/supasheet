@@ -10,9 +10,10 @@ import { hasRoleQueryOptions } from "#/lib/supabase/data/core"
 export const Route = createFileRoute("/core/users/new")({
   head: () => ({ meta: [{ title: pageTitle("New User") }] }),
   beforeLoad: async ({ context }) => {
-    const isXAdmin = await context.queryClient.ensureQueryData(
-      hasRoleQueryOptions("x-admin")
-    )
+    const isXAdmin = await context.queryClient.query({
+      ...hasRoleQueryOptions("x-admin"),
+      staleTime: "static",
+    })
     if (!isXAdmin) throw notFound()
   },
   pendingComponent: PendingComponent,

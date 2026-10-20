@@ -26,9 +26,10 @@ export const Route = createFileRoute("/storage/$bucketId/$")({
     const segments = (_splat ?? "").split("/").filter(Boolean)
     const fileName = segments[segments.length - 1]
     const folderPathStr = segments.slice(0, -1).join("/")
-    const files = await context.queryClient.ensureQueryData(
-      storageFilesQueryOptions(bucketId, folderPathStr)
-    )
+    const files = await context.queryClient.query({
+      ...storageFilesQueryOptions(bucketId, folderPathStr),
+      staleTime: "static",
+    })
     const file = files.find((f) => f.name === fileName) ?? null
     return { data: { file } }
   },

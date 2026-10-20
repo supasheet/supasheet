@@ -17,18 +17,20 @@ export const Route = createFileRoute("/core/users/$userId/security")({
   head: () => ({ meta: [{ title: pageTitle("User Security") }] }),
   beforeLoad: async ({ context, params: { userId } }) => {
     if (context.authUser?.id === userId) throw notFound()
-    const isXAdmin = await context.queryClient.ensureQueryData(
-      hasRoleQueryOptions("x-admin")
-    )
+    const isXAdmin = await context.queryClient.query({
+      ...hasRoleQueryOptions("x-admin"),
+      staleTime: "static",
+    })
     if (!isXAdmin) throw notFound()
   },
   loader: async ({ context, params }) => {
-    const data = await context.queryClient.ensureQueryData(
-      adminGetUserQueryOptions(params.userId)
-    )
+    const data = await context.queryClient.query({
+      ...adminGetUserQueryOptions(params.userId),
+      staleTime: "static",
+    })
     if (!data?.user) throw notFound()
 
-    context.queryClient.ensureQueryData(rolesQueryOptions)
+    context.queryClient.query({ ...rolesQueryOptions, staleTime: "static" })
   },
   pendingComponent: () => (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 py-4">

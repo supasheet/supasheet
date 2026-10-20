@@ -43,15 +43,18 @@ const CORE_RESOURCES = [
 export const Route = createFileRoute("/core")({
   beforeLoad: async ({ context }) => {
     const permissions = context.authUser
-      ? await context.queryClient.ensureQueryData(
-          userPermissionsQueryOptions("supasheet")
-        )
+      ? await context.queryClient.query({
+          ...userPermissionsQueryOptions("supasheet"),
+          staleTime: "static",
+        })
       : null
     return { permissions }
   },
   loader: async ({ context }) => {
-    const schemas =
-      await context.queryClient.ensureQueryData(schemasQueryOptions)
+    const schemas = await context.queryClient.query({
+      ...schemasQueryOptions,
+      staleTime: "static",
+    })
     return { schemas }
   },
   component: RouteComponent,

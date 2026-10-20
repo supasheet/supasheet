@@ -63,9 +63,10 @@ export const Route = createFileRoute(
     )
     if (!galleryView) throw notFound()
 
-    context.queryClient.ensureQueryData(
-      resourceDataQueryOptions(schema, resource, meta.query)
-    )
+    context.queryClient.query({
+      ...resourceDataQueryOptions(schema, resource, meta.query),
+      staleTime: "static",
+    })
 
     return { galleryView }
   },

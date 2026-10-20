@@ -32,15 +32,17 @@ export const Route = createFileRoute(
   "/$schema/resource/$resource/form/$formid"
 )({
   loader: async ({ context, params: { schema, resource, formid } }) => {
-    const forms = await context.queryClient.ensureQueryData(
-      resourceFormsQueryOptions(schema, resource)
-    )
+    const forms = await context.queryClient.query({
+      ...resourceFormsQueryOptions(schema, resource),
+      staleTime: "static",
+    })
     const formRow = forms.find((form) => form.name === formid)
     if (!formRow) throw notFound()
 
-    const fieldsSchema = await context.queryClient.ensureQueryData(
-      resourceFormFieldsQueryOptions(schema, formid)
-    )
+    const fieldsSchema = await context.queryClient.query({
+      ...resourceFormFieldsQueryOptions(schema, formid),
+      staleTime: "static",
+    })
 
     return { formRow, fieldsSchema }
   },

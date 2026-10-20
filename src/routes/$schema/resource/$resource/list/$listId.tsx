@@ -98,8 +98,8 @@ export const Route = createFileRoute(
     )
     if (!listView) throw notFound()
 
-    context.queryClient.ensureQueryData(
-      resourceDataQueryOptions(
+    context.queryClient.query({
+      ...resourceDataQueryOptions(
         schema,
         resource,
         meta.query,
@@ -108,8 +108,9 @@ export const Route = createFileRoute(
         sortId,
         sortDesc,
         filters
-      )
-    )
+      ),
+      staleTime: "static",
+    })
 
     return { listView }
   },

@@ -34,8 +34,14 @@ interface RouterContext {
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async ({ context, location }) => {
     const [authUser, appConfig] = await Promise.all([
-      context.queryClient.ensureQueryData(authUserQueryOptions),
-      context.queryClient.ensureQueryData(appConfigQueryOptions()),
+      context.queryClient.query({
+        ...authUserQueryOptions,
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...appConfigQueryOptions(),
+        staleTime: "static",
+      }),
     ])
     if (!authUser && !location.pathname.startsWith("/auth")) {
       const segment = location.pathname.split("/")[1] ?? ""
@@ -47,7 +53,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       }
     }
     const user = authUser
-      ? await context.queryClient.ensureQueryData(userQueryOptions(authUser.id))
+      ? await context.queryClient.query({
+          ...userQueryOptions(authUser.id),
+          staleTime: "static",
+        })
       : null
     return { authUser, user, appConfig }
   },

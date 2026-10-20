@@ -22,9 +22,10 @@ export const Route = createFileRoute("/core/audit_logs/$auditLogId")({
     params: { auditLogId },
   }): Promise<{ data: AuditLogRow }> => {
     if (!auditLogId) throw notFound()
-    const auditLog = await context.queryClient.ensureQueryData(
-      auditLogQueryOptions(auditLogId)
-    )
+    const auditLog = await context.queryClient.query({
+      ...auditLogQueryOptions(auditLogId),
+      staleTime: "static",
+    })
     if (!auditLog) throw notFound()
     return { data: auditLog }
   },

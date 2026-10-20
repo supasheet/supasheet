@@ -61,13 +61,18 @@ export const Route = createFileRoute("/$schema/resource/$resource/")({
   },
   loader: async ({ context, params: { schema, resource } }) => {
     const [widgets, charts, forms] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        dashboardWidgetsQueryOptions(schema, resource)
-      ),
-      context.queryClient.ensureQueryData(chartsQueryOptions(schema, resource)),
-      context.queryClient.ensureQueryData(
-        resourceFormsQueryOptions(schema, resource)
-      ),
+      context.queryClient.query({
+        ...dashboardWidgetsQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...chartsQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...resourceFormsQueryOptions(schema, resource),
+        staleTime: "static",
+      }),
     ])
 
     const meta = JSON.parse(

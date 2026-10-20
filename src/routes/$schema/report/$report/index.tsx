@@ -76,18 +76,20 @@ export const Route = createFileRoute("/$schema/report/$report/")({
     deps: { sortId, sortDesc, page, pageSize, filters },
   }) => {
     const [report, columnsSchema] = await Promise.all([
-      context.queryClient.ensureQueryData(
-        reportQueryOptions(params.schema, params.report)
-      ),
-      context.queryClient.ensureQueryData(
-        columnsSchemaQueryOptions(params.schema, params.report)
-      ),
+      context.queryClient.query({
+        ...reportQueryOptions(params.schema, params.report),
+        staleTime: "static",
+      }),
+      context.queryClient.query({
+        ...columnsSchemaQueryOptions(params.schema, params.report),
+        staleTime: "static",
+      }),
     ])
 
     if (!report || !columnsSchema?.length) throw notFound()
 
-    context.queryClient.ensureQueryData(
-      reportDataQueryOptions(
+    context.queryClient.query({
+      ...reportDataQueryOptions(
         params.schema,
         params.report,
         page,
@@ -95,8 +97,9 @@ export const Route = createFileRoute("/$schema/report/$report/")({
         sortId,
         sortDesc,
         filters
-      )
-    )
+      ),
+      staleTime: "static",
+    })
     return { columnsSchema }
   },
   head: ({ params }) => ({
