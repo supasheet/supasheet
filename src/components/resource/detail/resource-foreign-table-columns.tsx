@@ -4,8 +4,8 @@ import type {
   ColumnSchema,
   ResourceDataSchema,
   ResourceSchema,
-} from "@/lib/database-meta.types"
-import { isTableSchema } from "@/lib/database-meta.types"
+} from "#/lib/database-meta.types"
+import { isTableSchema } from "#/lib/database-meta.types"
 import { ArrowUpRightIcon } from "lucide-react"
 
 import { Checkbox } from "#/components/ui/checkbox"
