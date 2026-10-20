@@ -74,7 +74,7 @@ export function Card5<S extends DatabaseSchemas>({
   if (!hasHeadline && breakdown.length === 0) return null
 
   return (
-    <Card className="col-span-1 @container/stats md:col-span-2">
+    <Card className="@container/stats col-span-1 md:col-span-2">
       <CardHeader>
         <CardTitle>{widget.name}</CardTitle>
         <CardDescription>{widget.description}</CardDescription>
@@ -107,7 +107,7 @@ export function Card5<S extends DatabaseSchemas>({
                       <span className="truncate text-foreground">
                         {item.label}
                       </span>
-                      <span className="shrink-0 font-medium tabular-nums text-foreground">
+                      <span className="shrink-0 font-medium text-foreground tabular-nums">
                         {item.value}
                       </span>
                     </div>

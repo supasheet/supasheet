@@ -124,7 +124,7 @@ export function ResourceRowActions({
                 <Button
                   variant="outline"
                   size="icon-xs"
-                  className="opacity-0 transition-opacity group-hover:opacity-100 size-5"
+                  className="size-5 opacity-0 transition-opacity group-hover:opacity-100"
                 />
               )
             }

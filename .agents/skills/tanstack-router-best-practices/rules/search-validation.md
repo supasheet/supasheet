@@ -101,6 +101,7 @@ function ProductsPage() {
 
 ```tsx
 import { valibotSearchValidator } from "@tanstack/router-valibot-adapter"
+
 import * as v from "valibot"
 
 const searchSchema = v.object({

@@ -62,7 +62,8 @@ export type ViewSchema<S extends DatabaseSchemas = DatabaseSchemas> =
   }
 
 export type ResourceSchema<S extends DatabaseSchemas = DatabaseSchemas> =
-  TableSchema<S> | ViewSchema<S>
+  | TableSchema<S>
+  | ViewSchema<S>
 
 export function isTableSchema<S extends DatabaseSchemas>(
   schema: ResourceSchema<S>
@@ -138,7 +139,8 @@ export type LookupConfig = {
 }
 
 export type FieldSectionFields =
-  ColumnName[] | Partial<Record<FormMode, ColumnName[]>>
+  | ColumnName[]
+  | Partial<Record<FormMode, ColumnName[]>>
 
 export type FieldSection = {
   id: string
@@ -390,7 +392,13 @@ export type FormMeta = {
 }
 
 export type AggregateFunction =
-  "none" | "count" | "count_distinct" | "sum" | "avg" | "min" | "max"
+  | "none"
+  | "count"
+  | "count_distinct"
+  | "sum"
+  | "avg"
+  | "min"
+  | "max"
 
 export type ColumnMetadata = {
   name?: string
@@ -406,7 +414,12 @@ export type EnumColumnMetadata = ColumnMetadata & {
     [key: string]: {
       icon?: IconName
       variant:
-        "default" | "secondary" | "success" | "warning" | "destructive" | "info"
+        | "default"
+        | "secondary"
+        | "success"
+        | "warning"
+        | "destructive"
+        | "info"
     }
   }
 }

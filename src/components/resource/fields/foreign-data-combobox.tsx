@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react"
 
-import { useQuery } from "@tanstack/react-query"
-
 import { useStore } from "@tanstack/react-form"
+import { useQuery } from "@tanstack/react-query"
 
 import {
   Combobox,
@@ -56,8 +55,9 @@ export function ForeignDataCombobox({
     (s) => {
       const vals: Record<string, unknown> = {}
       for (const rule of filterRules) {
-        vals[rule.source_column] = (s as { values: Record<string, unknown> })
-          .values?.[rule.source_column]
+        vals[rule.source_column] = (
+          s as { values: Record<string, unknown> }
+        ).values?.[rule.source_column]
       }
       return vals
     }

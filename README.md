@@ -83,7 +83,6 @@ npx supabase start # Start local Supabase instance
 npm run dev        # Start dev server on port 3000
 npm run build      # Production build
 npm run typecheck  # TypeScript check
-npm run lint       # ESLint
+npm run lint       # Oxlint
 npm run check      # Format + lint fix
-npm run test       # Run tests
 ```

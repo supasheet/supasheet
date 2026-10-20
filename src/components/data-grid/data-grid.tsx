@@ -79,7 +79,7 @@ export function DataGrid<TData>({
         defaultColumnOptions={{ resizable: true }}
         renderers={{
           noRowsFallback: (
-            <div className="py-12 text-center col-span-full">No Results.</div>
+            <div className="col-span-full py-12 text-center">No Results.</div>
           ),
         }}
       />

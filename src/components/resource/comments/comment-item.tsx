@@ -96,7 +96,7 @@ export function CommentTimelineItem({
             )}
           </div>
           <p
-            className={`mt-2 whitespace-pre-wrap wrap-break-word text-sm text-muted-foreground ${isDeleted ? "italic" : ""}`}
+            className={`mt-2 text-sm wrap-break-word whitespace-pre-wrap text-muted-foreground ${isDeleted ? "italic" : ""}`}
           >
             {isDeleted
               ? `This comment was deleted by ${comment.created_by_name ?? "its author"}.`

@@ -7,6 +7,7 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable"
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection"
 import katex from "katex"
+
 import "katex/dist/katex.min.css"
 import {
   $applyNodeReplacement,
@@ -320,11 +321,13 @@ function EquationComponent({
   const $onEnter = useCallback(
     (event: null | KeyboardEvent) => {
       const latestSelection = $getSelection()
-      if (!(
-        $isNodeSelection(latestSelection) &&
-        latestSelection.has(nodeKey) &&
-        latestSelection.getNodes().length === 1
-      )) {
+      if (
+        !(
+          $isNodeSelection(latestSelection) &&
+          latestSelection.has(nodeKey) &&
+          latestSelection.getNodes().length === 1
+        )
+      ) {
         return false
       }
       const node = $getNodeByKey(nodeKey)

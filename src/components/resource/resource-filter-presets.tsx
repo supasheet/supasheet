@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 
 import { useNavigate } from "@tanstack/react-router"
-
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import { ChevronDownIcon, FilterIcon } from "lucide-react"

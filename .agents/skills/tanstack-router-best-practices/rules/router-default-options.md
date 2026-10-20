@@ -23,13 +23,12 @@ const router = createRouter({
 ## Good Example: Full Configuration
 
 ```tsx
-import { createRouter } from "@tanstack/react-router"
-
 import { QueryClient } from "@tanstack/react-query"
+import { createRouter } from "@tanstack/react-router"
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary"
 import { DefaultNotFound } from "@/components/DefaultNotFound"
-import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 
 import { routeTree } from "./routeTree.gen"
 

@@ -51,8 +51,10 @@ export const Route = createFileRoute("/dashboard")({
 
 // routes/dashboard.lazy.tsx - Lazy-loaded component
 import { createLazyFileRoute } from "@tanstack/react-router"
-import { HeavyChartLibrary } from "heavy-chart-library"
+
 import { ComplexDataGrid } from "complex-data-grid"
+import { HeavyChartLibrary } from "heavy-chart-library"
+
 import { AnalyticsWidgets } from "./components/AnalyticsWidgets"
 
 export const Route = createLazyFileRoute("/dashboard")({

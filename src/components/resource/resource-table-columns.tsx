@@ -67,7 +67,7 @@ export function getResourceTableColumns({
               primaryKeyNames={primaryKeyNames}
               size="icon-xs"
               variant="outline"
-              className="opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3 size-5"
+              className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
             >
               <ArrowUpRightIcon />
             </DetailRecordTrigger>

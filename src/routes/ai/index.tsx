@@ -1,8 +1,7 @@
 import { useState } from "react"
 
-import { createFileRoute } from "@tanstack/react-router"
-
 import { useMutation } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
 
 import { SparklesIcon, TableIcon } from "lucide-react"
 import { toast } from "sonner"

@@ -35,7 +35,7 @@ export function MutationConfirmBar({
 }) {
   const rowCount = pendingMutation.value.length
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-warning/40 bg-warning/10 px-4 py-3">
+    <div className="border-warning/40 bg-warning/10 flex flex-wrap items-center justify-between gap-3 rounded-md border px-4 py-3">
       <div className="min-w-0">
         <p className="font-medium">{TITLE[pendingMutation.kind]}</p>
         <p className="text-sm text-muted-foreground">

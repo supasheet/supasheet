@@ -60,7 +60,7 @@ export function DataTableActionBar<TData>({
   return (
     <>
       <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
-        <ActionBarSelection className="hidden sm:flex whitespace-nowrap">
+        <ActionBarSelection className="hidden whitespace-nowrap sm:flex">
           {rows.length} selected
         </ActionBarSelection>
         <ActionBarSeparator className="hidden sm:block" />

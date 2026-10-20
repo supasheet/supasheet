@@ -52,7 +52,7 @@ export function RolesPermissionsCard() {
             <div className="flex-1 space-y-3 pt-1">
               <p className="text-sm leading-none font-medium">{role}</p>
               {Object.keys(grouped).length > 0 ? (
-                <div className="overflow-hidden rounded-md border divide-y">
+                <div className="divide-y overflow-hidden rounded-md border">
                   {Object.entries(grouped).flatMap(([schema, tables]) => [
                     <div
                       key={`${schema}-header`}

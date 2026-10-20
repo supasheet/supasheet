@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-
 import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
@@ -162,7 +161,7 @@ export function ForeignTableSheet({
           <div className="flex min-h-0 flex-1 flex-col gap-2 p-4">
             <DataTable
               table={table}
-              className="flex-1 min-h-0 [&>div:nth-child(2)]:flex-1 [&>div:nth-child(2)]:min-h-0 [&>div:nth-child(2)]:overflow-auto"
+              className="min-h-0 flex-1 [&>div:nth-child(2)]:min-h-0 [&>div:nth-child(2)]:flex-1 [&>div:nth-child(2)]:overflow-auto"
             >
               <DataTableToolbar table={table} />
             </DataTable>

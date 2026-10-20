@@ -8,7 +8,6 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-
 import type {
   ColumnFiltersState,
   PaginationState,

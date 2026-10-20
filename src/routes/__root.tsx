@@ -1,3 +1,6 @@
+import { TanStackDevtools } from "@tanstack/react-devtools"
+import type { QueryClient } from "@tanstack/react-query"
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import {
   HeadContent,
   Outlet,
@@ -5,11 +8,6 @@ import {
   useRouter,
 } from "@tanstack/react-router"
 import type { ErrorComponentProps } from "@tanstack/react-router"
-
-import type { QueryClient } from "@tanstack/react-query"
-
-import { TanStackDevtools } from "@tanstack/react-devtools"
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
 import { InstallPromptBanner } from "#/components/pwa/install-prompt-banner"

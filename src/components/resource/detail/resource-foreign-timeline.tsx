@@ -92,8 +92,8 @@ export function ResourceForeignTimeline({
     <div className="flex flex-col gap-4">
       {data.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="font-medium text-sm">No activity yet</p>
-          <p className="mt-1 text-muted-foreground text-xs">
+          <p className="text-sm font-medium">No activity yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">
             Events for this record will appear here.
           </p>
         </div>
@@ -131,7 +131,7 @@ export function ResourceForeignTimeline({
                     </TimelineTitle>
                   </TimelineHeader>
                   {(actor?.name || metadata != null) && (
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       {actor?.name && <span>by {actor.name}</span>}
                       {actor?.name && metadata != null && (
                         <span className="text-muted-foreground/50">·</span>

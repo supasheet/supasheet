@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react"
 import type { JSX, RefCallback } from "react"
-
 import { createPortal } from "react-dom"
 
 import { namedSignals } from "@lexical/extension"

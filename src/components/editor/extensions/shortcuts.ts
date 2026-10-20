@@ -123,7 +123,12 @@ function buildShortcuts(): NamedKeyboardShortcuts {
 }
 
 type BlockType =
-  "paragraph" | HeadingTagType | "number" | "bullet" | "check" | "quote"
+  | "paragraph"
+  | HeadingTagType
+  | "number"
+  | "bullet"
+  | "check"
+  | "quote"
 
 function $getBlockType(): BlockType | null {
   const selection = $getSelection()

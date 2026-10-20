@@ -30,9 +30,8 @@ function App() {
 ## Good Example: Basic Persistence with localStorage
 
 ```tsx
-import { QueryClient } from "@tanstack/react-query"
-
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
+import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 
 const queryClient = new QueryClient({
@@ -68,6 +67,7 @@ function App() {
 
 ```tsx
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
+
 import { del, get, set } from "idb-keyval"
 
 const persister = createAsyncStoragePersister({
@@ -130,8 +130,9 @@ persistQueryClient({
 ## Good Example: React Native with AsyncStorage
 
 ```tsx
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
+
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,

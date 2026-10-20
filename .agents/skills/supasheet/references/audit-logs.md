@@ -40,7 +40,7 @@ shared across every table rather than seeded per resource.
 
 - The `supasheet.audit_logs` table itself: rows are visible to their own
   `created_by`, plus x-admin sees all (`pg_has_role(current_user, 'x-admin',
-'member')`) — this gates the **global** Core → Audit Logs page.
+  'member')`) — this gates the **global** Core → Audit Logs page.
 - Read helper: `supasheet.get_audit_logs(p_schema, p_table, p_record_id)` —
   security definer, gates on the same x-admin check, joins actor name/email/picture.
 - Manual/system events can be written with `supasheet.create_audit_log(p_operation, p_schema_name, p_table_name, p_record_id, p_old_data, p_new_data, p_metadata)`.

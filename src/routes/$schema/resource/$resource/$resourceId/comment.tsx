@@ -1,8 +1,7 @@
 import { Suspense } from "react"
 
-import { createFileRoute, notFound } from "@tanstack/react-router"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 
 import { MessageSquareIcon } from "lucide-react"
 

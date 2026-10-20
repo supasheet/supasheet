@@ -43,7 +43,7 @@ this automatically; everyone else should read the files directly.
   JWT's `role` claim (via a Custom Access Token Hook) drives PostgREST's
   `SET ROLE`. Most policies are just `using (true)` since grants already gate
   who can attempt the operation; use `pg_has_role(current_user, '<role>',
-'member')` for row-level admin overrides
+  'member')` for row-level admin overrides
 - Revoke all default grants, then grant back exactly the intended operations
   directly to the specific native roles that should hold them — never to
   `authenticated` itself
@@ -132,10 +132,9 @@ queryClient.invalidateQueries({
 ```bash
 npm run dev          # dev server on :3000
 npm run build        # production build
-npm run test         # vitest
-npm run lint         # eslint
+npm run lint         # oxlint (vp lint)
 npm run typecheck    # tsc --noEmit
-npm run check        # prettier --write + eslint --fix
+npm run check        # oxfmt + oxlint --fix (vp check --fix)
 
 npx supabase start          # local Supabase stack
 npx supabase migration up   # apply new migrations

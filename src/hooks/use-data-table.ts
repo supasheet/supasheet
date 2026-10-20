@@ -1,7 +1,6 @@
 import { startTransition, useCallback, useState } from "react"
 
 import { useNavigate } from "@tanstack/react-router"
-
 import type {
   ColumnDef,
   ColumnFiltersState,

@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link,
   Outlet,
@@ -8,8 +9,6 @@ import {
   useRouter,
 } from "@tanstack/react-router"
 import type { ErrorComponentProps } from "@tanstack/react-router"
-
-import { useSuspenseQuery } from "@tanstack/react-query"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 

@@ -23,7 +23,7 @@ export function ResourceImportDropzone({
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
-      <UploadIcon className="text-muted-foreground size-8" />
+      <UploadIcon className="size-8 text-muted-foreground" />
       <div className="text-sm">
         <span className="text-muted-foreground">
           Drag & drop a file here, or{" "}
@@ -36,7 +36,7 @@ export function ResourceImportDropzone({
           browse
         </button>
       </div>
-      <p className="text-muted-foreground text-xs">
+      <p className="text-xs text-muted-foreground">
         Supports .csv, .tsv, and .json files
       </p>
       <input

@@ -160,7 +160,7 @@ export function ResourceTree({
                     "inline-flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground opacity-0 transition-opacity",
                     "hover:bg-accent-foreground/10 hover:text-foreground",
                     "group-hover:opacity-100 focus-visible:opacity-100",
-                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    "focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                   )}
                   onClick={(e) => {
                     e.stopPropagation()

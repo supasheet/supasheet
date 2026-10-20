@@ -1,15 +1,15 @@
 import type { Column, ColumnDef, Row } from "@tanstack/react-table"
 
+import { ArrowUpRightIcon } from "lucide-react"
+
+import { Checkbox } from "#/components/ui/checkbox"
+import { getColumnMetadata } from "#/lib/columns"
 import type {
   ColumnSchema,
   ResourceDataSchema,
   ResourceSchema,
 } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
-import { ArrowUpRightIcon } from "lucide-react"
-
-import { Checkbox } from "#/components/ui/checkbox"
-import { getColumnMetadata } from "#/lib/columns"
 import type { ResourceActionRow } from "#/lib/supabase/data/resource"
 
 import { ResourceColumnHeader } from "../resource-column-header"
@@ -66,7 +66,7 @@ export function getResourceForeignTableColumns({
                   resource={resourceSchema.name}
                   size="icon-xs"
                   variant="outline"
-                  className="opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3 size-5"
+                  className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
                 >
                   <ArrowUpRightIcon />
                 </DetailRecordTrigger>

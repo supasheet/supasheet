@@ -118,9 +118,9 @@ export function LinkEditorPlugin() {
           setDismissed(false)
           $updateLinkState()
           const selection = $getSelection()
-          if (!(
-            $isRangeSelection(selection) && $getSelectedLinkNode(selection)
-          )) {
+          if (
+            !($isRangeSelection(selection) && $getSelectedLinkNode(selection))
+          ) {
             setIsEditMode(false)
           }
           return false

@@ -110,6 +110,7 @@ export function render({ request }: { request: Request }) {
 ```tsx
 // src/entry-client.tsx
 import { RouterClient } from "@tanstack/react-router/ssr/client"
+
 import { hydrateRoot } from "react-dom/client"
 
 import { createRouter } from "./router"
@@ -312,6 +313,7 @@ import {
   createRequestHandler,
   renderRouterToString,
 } from "@tanstack/react-router/ssr/server"
+
 import type express from "express"
 import { pipeline } from "node:stream/promises"
 

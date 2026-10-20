@@ -32,9 +32,10 @@ export async function POST(request: Request) {
 **Correct (non-blocking):**
 
 ```tsx
-import { logUserAction } from "@/app/utils"
 import { cookies, headers } from "next/headers"
 import { after } from "next/server"
+
+import { logUserAction } from "@/app/utils"
 
 export async function POST(request: Request) {
   // Perform mutation

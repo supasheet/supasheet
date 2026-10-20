@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router"
-
 import type { ColumnDef } from "@tanstack/react-table"
 
 import { AlertCircleIcon, ArrowUpRightIcon } from "lucide-react"

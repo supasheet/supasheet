@@ -38,6 +38,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query"
+
 import { postQueries } from "@/lib/queries"
 
 export default async function PostsPage() {
@@ -56,6 +57,7 @@ export default async function PostsPage() {
 ;("use client")
 
 import { useSuspenseQuery } from "@tanstack/react-query"
+
 import { postQueries } from "@/lib/queries"
 
 export function PostList() {
@@ -98,6 +100,7 @@ function PostsPage() {
 ```tsx
 // server.tsx
 import { dehydrate, QueryClient } from "@tanstack/react-query"
+
 import { renderToString } from "react-dom/server"
 
 export async function render(url: string) {

@@ -1,8 +1,7 @@
 "use client"
 
-import { useNavigate } from "@tanstack/react-router"
-
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 import {
   MoreHorizontalIcon,

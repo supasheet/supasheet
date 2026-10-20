@@ -80,10 +80,9 @@ function Posts() {
 ## Good Example: With TanStack Router
 
 ```tsx
+import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 // Route-level error handling
 import { createFileRoute } from "@tanstack/react-router"
-
-import { useQueryErrorResetBoundary } from "@tanstack/react-query"
 
 export const Route = createFileRoute("/posts")({
   loader: ({ context: { queryClient } }) =>

@@ -1,6 +1,5 @@
-import { Link } from "@tanstack/react-router"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
 
 import { ArrowRight, ChevronRightIcon } from "lucide-react"
 

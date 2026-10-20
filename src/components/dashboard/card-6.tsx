@@ -107,7 +107,7 @@ export function Card6<S extends DatabaseSchemas>({
   if (metrics.length === 0) return null
 
   return (
-    <Card className="col-span-1 @container/stats md:col-span-2 lg:col-span-4">
+    <Card className="@container/stats col-span-1 md:col-span-2 lg:col-span-4">
       <CardHeader>
         <CardTitle>{widget.name}</CardTitle>
         <CardDescription>{widget.description}</CardDescription>

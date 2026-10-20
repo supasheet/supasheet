@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query"
 import {
   Link,
   Outlet,
@@ -6,8 +7,6 @@ import {
   useRouter,
 } from "@tanstack/react-router"
 import type { ErrorComponentProps } from "@tanstack/react-router"
-
-import { useQuery } from "@tanstack/react-query"
 
 import {
   AlertCircleIcon,

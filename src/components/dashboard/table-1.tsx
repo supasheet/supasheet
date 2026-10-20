@@ -1,6 +1,5 @@
-import { Link, useNavigate } from "@tanstack/react-router"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
 
 import { ArrowRight } from "lucide-react"
 

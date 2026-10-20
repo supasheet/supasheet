@@ -65,7 +65,7 @@ export function Card3<S extends DatabaseSchemas>({
           </Badge>
         </CardAction>
       </CardHeader>
-      <CardFooter className="flex-col items-start text-sm flex-1">
+      <CardFooter className="flex-1 flex-col items-start text-sm">
         <div className="line-clamp-1 flex gap-2 font-medium">{widget.name}</div>
         <div className="text-muted-foreground">{widget.description}</div>
       </CardFooter>

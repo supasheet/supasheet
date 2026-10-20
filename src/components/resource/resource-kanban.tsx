@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { useNavigate } from "@tanstack/react-router"
-
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-
+import { useNavigate } from "@tanstack/react-router"
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import { AlignStartHorizontalIcon, AlignStartVerticalIcon } from "lucide-react"
@@ -229,7 +227,7 @@ export function ResourceKanban({
                     layout === "board" &&
                       (collapsed
                         ? "w-14 shrink-0 items-center"
-                        : "min-w-sm max-w-2xl")
+                        : "max-w-2xl min-w-sm")
                   )}
                 >
                   <div
@@ -249,7 +247,7 @@ export function ResourceKanban({
                         className={cn(
                           "text-sm font-semibold",
                           collapsed &&
-                            "[writing-mode:vertical-rl] rotate-180 whitespace-nowrap"
+                            "rotate-180 whitespace-nowrap [writing-mode:vertical-rl]"
                         )}
                       >
                         {columnValue}
@@ -305,7 +303,7 @@ export function ResourceKanban({
                                   </span>
                                 )}
                                 {task.date && (
-                                  <time className="text-[10px] tabular-nums whitespace-nowrap">
+                                  <time className="text-[10px] whitespace-nowrap tabular-nums">
                                     {new Date(task.date).toDateString()}
                                   </time>
                                 )}

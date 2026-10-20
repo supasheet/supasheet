@@ -58,7 +58,9 @@ export const ResourceRowCell = memo(function ({
   if (joinConfig) {
     const embedKey = joinConfig.alias ?? joinConfig.table
     const joinedObj = row.original?.[embedKey] as
-      Record<string, unknown> | null | undefined
+      | Record<string, unknown>
+      | null
+      | undefined
     const joinedValue = joinedObj?.[joinConfig.columns[0]]
 
     return (
@@ -73,7 +75,7 @@ export const ResourceRowCell = memo(function ({
             resource={relationship.target_table_name}
             size="icon-xs"
             variant="outline"
-            className="absolute top-1/2 left-0 -translate-y-1/2 [&_svg]:size-3 size-5"
+            className="absolute top-1/2 left-0 size-5 -translate-y-1/2 [&_svg]:size-3"
           >
             <ArrowUpRightIcon />
           </DetailRecordTrigger>
@@ -96,7 +98,7 @@ export const ResourceRowCell = memo(function ({
             resource={relationship.target_table_name}
             size="icon-xs"
             variant="outline"
-            className="absolute top-1/2 left-0 -translate-y-1/2 [&_svg]:size-3 size-5"
+            className="absolute top-1/2 left-0 size-5 -translate-y-1/2 [&_svg]:size-3"
           >
             <ArrowUpRightIcon />
           </DetailRecordTrigger>

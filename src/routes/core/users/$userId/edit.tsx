@@ -1,6 +1,5 @@
-import { createFileRoute, notFound } from "@tanstack/react-router"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, notFound } from "@tanstack/react-router"
 
 import { Card, CardContent, CardFooter, CardHeader } from "#/components/ui/card"
 import { Skeleton } from "#/components/ui/skeleton"

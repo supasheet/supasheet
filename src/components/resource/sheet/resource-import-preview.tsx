@@ -30,10 +30,10 @@ export function ResourceImportPreview({
   return (
     <>
       <div className="flex items-start justify-between gap-2 text-sm">
-        <span className="text-muted-foreground truncate">{filename}</span>
+        <span className="truncate text-muted-foreground">{filename}</span>
         <button
           type="button"
-          className="text-muted-foreground hover:text-foreground shrink-0 text-xs underline-offset-2 hover:underline"
+          className="shrink-0 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           onClick={onReset}
           disabled={importing}
         >
@@ -42,15 +42,15 @@ export function ResourceImportPreview({
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="bg-muted/50 rounded-md p-3">
-          <p className="text-muted-foreground text-xs">Rows</p>
+        <div className="rounded-md bg-muted/50 p-3">
+          <p className="text-xs text-muted-foreground">Rows</p>
           <p className="font-medium">{parsed.rows.length}</p>
         </div>
-        <div className="bg-muted/50 rounded-md p-3">
-          <p className="text-muted-foreground text-xs">Columns matched</p>
+        <div className="rounded-md bg-muted/50 p-3">
+          <p className="text-xs text-muted-foreground">Columns matched</p>
           <p className="font-medium">
             {matchedHeaders.length}{" "}
-            <span className="text-muted-foreground font-normal">
+            <span className="font-normal text-muted-foreground">
               / {parsed.headers.length}
             </span>
           </p>
@@ -73,13 +73,13 @@ export function ResourceImportPreview({
         </div>
       ) : (
         <div className="flex flex-col gap-1.5">
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             Preview (first {Math.min(5, previewRows.length)} rows)
           </p>
           <ScrollArea className="rounded-md border">
             <div className="min-w-max">
               <table className="w-full text-xs">
-                <thead className="bg-muted/50 sticky top-0">
+                <thead className="sticky top-0 bg-muted/50">
                   <tr>
                     {matchedHeaders.map((h) => (
                       <th
@@ -97,7 +97,7 @@ export function ResourceImportPreview({
                       {matchedHeaders.map((h) => (
                         <td
                           key={h}
-                          className="text-muted-foreground max-w-[180px] truncate px-3 py-1.5"
+                          className="max-w-[180px] truncate px-3 py-1.5 text-muted-foreground"
                         >
                           {row[h]}
                         </td>
@@ -109,7 +109,7 @@ export function ResourceImportPreview({
             </div>
           </ScrollArea>
           {parsed.rows.length > 5 && (
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               + {parsed.rows.length - 5} more rows
             </p>
           )}
@@ -118,7 +118,7 @@ export function ResourceImportPreview({
 
       {importing && (
         <Progress value={progress}>
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             Importing… {progress}%
           </span>
         </Progress>
@@ -134,12 +134,12 @@ export function ResourceImportPreview({
 
       {errors.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <p className="text-destructive text-xs font-medium">
+          <p className="text-xs font-medium text-destructive">
             Errors ({errors.length})
           </p>
-          <ScrollArea className="bg-destructive/5 max-h-32 rounded-md border border-destructive/20 p-2">
+          <ScrollArea className="max-h-32 rounded-md border border-destructive/20 bg-destructive/5 p-2">
             {errors.map((e, i) => (
-              <p key={i} className="text-destructive text-xs">
+              <p key={i} className="text-xs text-destructive">
                 {e}
               </p>
             ))}

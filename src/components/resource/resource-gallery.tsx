@@ -1,6 +1,5 @@
-import { useNavigate } from "@tanstack/react-router"
-
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 import { EyeIcon, Image as ImageIcon, Trash } from "lucide-react"
 import { toast } from "sonner"
@@ -161,7 +160,7 @@ function GalleryCard<S extends DatabaseSchemas>({
             ) : null}
             <div
               className={cn(
-                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                 item.cover && "hidden"
               )}
             >
@@ -172,7 +171,7 @@ function GalleryCard<S extends DatabaseSchemas>({
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-5">
               <div className="flex items-center gap-1">
-                <span className="text-secondary-foreground font-medium line-clamp-1">
+                <span className="line-clamp-1 font-medium text-secondary-foreground">
                   {item.title}
                 </span>
               </div>
@@ -184,7 +183,7 @@ function GalleryCard<S extends DatabaseSchemas>({
               )}
             </div>
 
-            <p className="text-foreground text-sm line-clamp-2">
+            <p className="line-clamp-2 text-sm text-foreground">
               {item.description}
             </p>
           </div>

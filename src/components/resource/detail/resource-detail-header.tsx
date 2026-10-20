@@ -1,6 +1,5 @@
-import { useNavigate } from "@tanstack/react-router"
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 import { Trash2Icon } from "lucide-react"
 import { toast } from "sonner"

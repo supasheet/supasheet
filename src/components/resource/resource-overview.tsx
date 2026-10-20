@@ -1,7 +1,6 @@
 import { Fragment, Suspense, useMemo } from "react"
 
 import { Link, useNavigate } from "@tanstack/react-router"
-
 import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import type { LucideIcon } from "lucide-react"

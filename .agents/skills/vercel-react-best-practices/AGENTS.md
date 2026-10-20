@@ -746,8 +746,9 @@ export async function deleteUser(userId: string) {
 ```typescript
 "use server"
 
-import { verifySession } from "@/lib/auth"
 import { z } from "zod"
+
+import { verifySession } from "@/lib/auth"
 
 const updateProfileSchema = z.object({
   userId: z.string().uuid(),
@@ -1308,9 +1309,10 @@ export async function POST(request: Request) {
 **Correct: non-blocking**
 
 ```tsx
-import { logUserAction } from "@/app/utils"
 import { cookies, headers } from "next/headers"
 import { after } from "next/server"
+
+import { logUserAction } from "@/app/utils"
 
 export async function POST(request: Request) {
   // Perform mutation
@@ -2391,7 +2393,7 @@ Apply `content-visibility: auto` to defer off-screen rendering.
 ```tsx
 function MessageList({ messages }: { messages: Message[] }) {
   return (
-    <div className="overflow-y-auto h-screen">
+    <div className="h-screen overflow-y-auto">
       {messages.map((msg) => (
         <div key={msg.id} className="message-item">
           <Avatar user={msg.author} />
@@ -2415,7 +2417,7 @@ Extract static JSX outside components to avoid re-creation.
 
 ```tsx
 function LoadingSkeleton() {
-  return <div className="animate-pulse h-20 bg-gray-200" />
+  return <div className="h-20 animate-pulse bg-gray-200" />
 }
 
 function Container() {
@@ -2426,7 +2428,7 @@ function Container() {
 **Correct: reuses same element**
 
 ```tsx
-const loadingSkeleton = <div className="animate-pulse h-20 bg-gray-200" />
+const loadingSkeleton = <div className="h-20 animate-pulse bg-gray-200" />
 
 function Container() {
   return <div>{loading && loadingSkeleton}</div>
@@ -3408,22 +3410,18 @@ const userNames = users.flatMap((user) => (user.isActive ? [user.name] : []))
 // Extract valid emails from responses
 // Before
 const emails = responses
-  .map(r => r.success ? r.data.email : null)
+  .map((r) => (r.success ? r.data.email : null))
   .filter(Boolean)
 
 // After
-const emails = responses.flatMap(r =>
-  r.success ? [r.data.email] : []
-)
+const emails = responses.flatMap((r) => (r.success ? [r.data.email] : []))
 
 // Parse and filter valid numbers
 // Before
-const numbers = strings
-  .map(s => parseInt(s, 10))
-  .filter(n => !isNaN(n))
+const numbers = strings.map((s) => parseInt(s, 10)).filter((n) => !isNaN(n))
 
 // After
-const numbers = strings.flatMap(s => {
+const numbers = strings.flatMap((s) => {
   const n = parseInt(s, 10)
   return isNaN(n) ? [] : [n]
 })

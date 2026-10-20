@@ -1,6 +1,5 @@
-import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router"
-
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router"
 
 import { ResourceFullDetail } from "#/components/resource/detail/resource-full-detail"
 import { ResourceUpdateForm } from "#/components/resource/resource-update-form"

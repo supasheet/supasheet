@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link,
   Outlet,
@@ -9,9 +10,6 @@ import type {
   ErrorComponentProps,
   SearchSchemaInput,
 } from "@tanstack/react-router"
-
-import { useSuspenseQuery } from "@tanstack/react-query"
-
 import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"

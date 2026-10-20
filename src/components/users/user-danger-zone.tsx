@@ -2,9 +2,8 @@ import { useState } from "react"
 
 import type { User as AuthUser } from "@supabase/supabase-js"
 
-import { useNavigate } from "@tanstack/react-router"
-
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 import { toast } from "sonner"
 

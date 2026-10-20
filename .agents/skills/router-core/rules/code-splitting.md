@@ -47,6 +47,7 @@ Enable `autoCodeSplitting: true` in the bundler plugin. This is the recommended 
 ```ts
 // vite.config.ts
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
+
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
@@ -213,6 +214,7 @@ function PostsComponent() {
 ```ts
 // vite.config.ts
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
+
 import { defineConfig } from "vite"
 
 export default defineConfig({
@@ -240,6 +242,7 @@ export default defineConfig({
 ```ts
 // vite.config.ts
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
+
 import { defineConfig } from "vite"
 
 export default defineConfig({

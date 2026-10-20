@@ -142,7 +142,7 @@ export function ResourceAuditLogDetail({ data }: { data: ResourceAuditLog }) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium leading-none">
+                  <span className="text-sm leading-none font-medium">
                     {data.created_by_name ?? (
                       <span className="font-mono text-xs text-muted-foreground">
                         {data.created_by}

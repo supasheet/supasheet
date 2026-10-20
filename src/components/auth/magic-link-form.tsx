@@ -1,8 +1,7 @@
 import { useState } from "react"
 
-import { getRouteApi } from "@tanstack/react-router"
-
 import { useForm } from "@tanstack/react-form"
+import { getRouteApi } from "@tanstack/react-router"
 
 import { MailCheckIcon } from "lucide-react"
 import { toast } from "sonner"

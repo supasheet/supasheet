@@ -1,6 +1,5 @@
-import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router"
-
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute, getRouteApi, notFound } from "@tanstack/react-router"
 
 import { addEmbedKeys } from "#/components/resource/detail/add-embed-keys"
 import { classifyRelationships } from "#/components/resource/detail/classify-relationships"

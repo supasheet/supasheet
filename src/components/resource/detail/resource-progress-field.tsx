@@ -60,7 +60,8 @@ export function ResourceProgressField({
             const filled = isCompleted || isActive
             const Icon = cfg.icon
               ? (LucideIcons[cfg.icon as keyof typeof LucideIcons] as
-                  LucideIcon | undefined)
+                  | LucideIcon
+                  | undefined)
               : null
             const isLast = i === steps.length - 1
             return (

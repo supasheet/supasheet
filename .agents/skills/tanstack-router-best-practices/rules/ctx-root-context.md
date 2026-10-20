@@ -12,6 +12,7 @@ Use `createRootRouteWithContext` to define typed context that flows through your
 // No context - importing globals directly
 // routes/__root.tsx
 import { createRootRoute } from "@tanstack/react-router"
+
 import { queryClient } from "@/lib/query-client" // Global import
 
 export const Route = createRootRoute({
@@ -32,9 +33,9 @@ export const Route = createFileRoute("/posts")({
 ## Good Example
 
 ```tsx
+import { QueryClient } from "@tanstack/react-query"
 // routes/__root.tsx
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
-import { QueryClient } from "@tanstack/react-query"
 
 // Define the context interface
 interface RouterContext {
@@ -61,10 +62,11 @@ function RootComponent() {
   )
 }
 
+import { QueryClient } from "@tanstack/react-query"
 // router.tsx - Provide context when creating router
 import { createRouter } from "@tanstack/react-router"
-import { QueryClient } from "@tanstack/react-query"
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
+
 import { routeTree } from "./routeTree.gen"
 
 export function getRouter(

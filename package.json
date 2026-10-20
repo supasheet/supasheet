@@ -6,15 +6,14 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "lint": "eslint",
+    "dev": "vp dev --port 3000",
+    "build": "vp build",
+    "preview": "vp preview",
+    "lint": "vp lint",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --check .",
-    "check": "prettier --write . && eslint --fix",
-    "deploy": "vite build && wrangler deploy",
+    "format": "vp fmt --check",
+    "check": "vp check --fix",
+    "deploy": "vp build && wrangler deploy",
     "supabase": "supabase",
     "examples": "bash ./supabase/examples/apply.sh",
     "examples:reset": "supabase db reset && bash ./supabase/examples/apply.sh"
@@ -87,11 +86,9 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-vite": "latest",
-    "@tanstack/eslint-config": "latest",
     "@tanstack/router-plugin": "latest",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/katex": "^0.16.8",
     "@types/lodash": "^4.17.25",
     "@types/node": "^26.6.4",
@@ -99,14 +96,14 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "jsdom": "^30.1.2",
-    "prettier": "^3.9.9",
-    "prettier-plugin-sql": "^0.20.0",
-    "prettier-plugin-tailwindcss": "^0.8.1",
     "supabase": "^2.120.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.3",
-    "vitest": "^5.0.3",
+    "vite-plus": "^1.3.0",
     "wrangler": "^4.148.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.3.0",
+    "vitest": "5.0.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

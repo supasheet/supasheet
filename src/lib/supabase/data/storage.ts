@@ -1,6 +1,6 @@
-import { mutationOptions, queryOptions } from "@tanstack/react-query"
-
 import type { FileObject, SearchOptions } from "@supabase/storage-js"
+
+import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
 import type { IconName } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"

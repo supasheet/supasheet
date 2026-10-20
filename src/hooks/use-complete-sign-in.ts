@@ -1,8 +1,7 @@
 import type { User } from "@supabase/supabase-js"
 
-import { useNavigate } from "@tanstack/react-router"
-
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 
 import { supabase } from "#/lib/supabase/client"
 import { authUserQueryOptions } from "#/lib/supabase/data/auth"

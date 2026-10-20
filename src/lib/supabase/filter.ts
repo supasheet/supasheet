@@ -1,9 +1,9 @@
-import type { ColumnFiltersState } from "@tanstack/react-table"
-
 import type {
   PostgrestClientOptions,
   PostgrestFilterBuilder,
 } from "@supabase/postgrest-js"
+
+import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import { decodeFilterValue } from "#/lib/data-table"
 

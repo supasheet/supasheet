@@ -1,6 +1,5 @@
-import { useRouterState } from "@tanstack/react-router"
-
 import { useQuery } from "@tanstack/react-query"
+import { useRouterState } from "@tanstack/react-router"
 
 import type { AppRole, PermissionsMap } from "#/lib/supabase/data/core"
 import {
