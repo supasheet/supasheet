@@ -9,6 +9,7 @@ import type { ErrorComponentProps } from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 
 import { TanStackDevtools } from "@tanstack/react-devtools"
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
 import { InstallPromptBanner } from "#/components/pwa/install-prompt-banner"
@@ -24,8 +25,6 @@ import {
 } from "#/lib/supabase/data/config"
 import { userQueryOptions } from "#/lib/supabase/data/users"
 
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools"
-import TanStackQueryProvider from "../integrations/tanstack-query/root-provider"
 import "../styles.css"
 
 interface RouterContext {
@@ -106,15 +105,13 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <TanStackQueryProvider>
-        <ThemeProvider>
-          <TooltipProvider>
-            <Outlet />
-            <Toaster />
-            <InstallPromptBanner />
-          </TooltipProvider>
-        </ThemeProvider>
-      </TanStackQueryProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Outlet />
+          <Toaster />
+          <InstallPromptBanner />
+        </TooltipProvider>
+      </ThemeProvider>
       <TanStackDevtools
         config={{
           position: "bottom-right",
@@ -124,7 +121,10 @@ function RootComponent() {
             name: "TanStack Router",
             render: <TanStackRouterDevtoolsPanel />,
           },
-          TanStackQueryDevtools,
+          {
+            name: "TanStack Query",
+            render: <ReactQueryDevtoolsPanel />,
+          },
         ]}
       />
     </>
