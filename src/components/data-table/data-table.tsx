@@ -58,7 +58,7 @@ export function DataTable<TData extends RowData>({
       {...props}
     >
       {children}
-      <div className="isolate overflow-hidden rounded-md border">
+      <div className="isolate flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border [&_[data-slot=table-container]]:min-h-0 [&_[data-slot=table-container]]:flex-1 [&_[data-slot=table-container]]:overflow-auto [&_[data-slot=table-header]]:sticky [&_[data-slot=table-header]]:top-0 [&_[data-slot=table-header]]:z-10 [&_[data-slot=table-header]]:bg-background">
         <DataTableLayout
           table={table}
           aria-label={ariaLabel}

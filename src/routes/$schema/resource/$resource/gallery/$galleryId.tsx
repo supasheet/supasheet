@@ -85,7 +85,7 @@ export const Route = createFileRoute(
             { title: "Gallery" },
           ]}
         />
-        <div className="flex flex-1 flex-col gap-4 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-4 p-2">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
@@ -253,7 +253,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col px-4 py-4">
+      <div className="flex flex-1 flex-col p-2">
         <ResourceGallery data={data} resourceSchema={resourceSchema} />
       </div>
       <Outlet />

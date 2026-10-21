@@ -76,7 +76,7 @@ function PendingComponent() {
       </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <DataTableSkeleton columnCount={6} />
           </div>
         </div>
@@ -105,7 +105,7 @@ function RouteComponent() {
       </DefaultHeader>
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <UsersTable
               data={data?.result ?? []}
               columnsSchema={columnsSchema}

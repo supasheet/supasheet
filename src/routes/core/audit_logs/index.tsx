@@ -42,7 +42,7 @@ function PendingComponent() {
       />
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <DataTableSkeleton columnCount={8} />
           </div>
         </div>
@@ -71,7 +71,7 @@ function RouteComponent() {
       />
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <AuditLogTable
               data={data.result}
               columnsSchema={columnsSchema}

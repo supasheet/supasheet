@@ -44,7 +44,7 @@ function RouteComponent() {
         } as React.CSSProperties
       }
     >
-      <Sidebar collapsible="offcanvas" variant="inset">
+      <Sidebar collapsible="offcanvas" variant="floating">
         <SidebarHeader>
           <div className="flex items-center gap-1">
             <SidebarMenuButton className="min-w-0 flex-1 px-2">

@@ -31,8 +31,8 @@ export function DefaultHeader({
   const lastItem = breadcrumbs.at(-1)
 
   return (
-    <div className="w-full">
-      <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+    <div className="w-full p-2 pb-0">
+      <header className="flex h-12 shrink-0 items-center gap-2 rounded-lg bg-background px-3 ring-1 ring-sidebar-border">
         <div className="flex flex-1 items-center gap-2">
           {authUser && <SidebarTrigger />}
           {lastItem && (

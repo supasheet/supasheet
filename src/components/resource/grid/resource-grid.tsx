@@ -121,6 +121,7 @@ export function ResourceGrid({
   return (
     <DataGrid
       table={table}
+      className="min-h-0 flex-1"
       isEditable={!!tableSchema}
       onRowsChange={handleRowsChange}
     >

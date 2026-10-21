@@ -96,7 +96,7 @@ export const Route = createFileRoute(
             { title: "Calendar" },
           ]}
         />
-        <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-2 p-2">
           {/* Calendar header: prev/next + title + view switcher */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -271,7 +271,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col px-4 py-4" style={{ minHeight: 0 }}>
+      <div className="flex flex-1 flex-col p-2" style={{ minHeight: 0 }}>
         <ResourceCalendar
           view={view}
           data={data}

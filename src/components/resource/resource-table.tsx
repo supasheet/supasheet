@@ -96,6 +96,7 @@ export function ResourceTable({
   return (
     <DataTable
       table={table}
+      className="min-h-0 flex-1"
       actionBar={
         <DataTableBulkActions
           table={table}

@@ -84,7 +84,7 @@ export const Route = createFileRoute(
             { title: "Tree" },
           ]}
         />
-        <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-2 p-2">
           {Array.from({ length: 8 }).map((_, i) => (
             <Skeleton
               key={i}
@@ -230,7 +230,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col px-4 py-4">
+      <div className="flex flex-1 flex-col p-2">
         <ResourceTree
           rows={resourceData?.result ?? []}
           resourceSchema={resourceSchema}

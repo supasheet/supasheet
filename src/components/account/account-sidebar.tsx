@@ -52,7 +52,7 @@ const items = [
 export function AccountSidebar() {
   const location = useLocation()
   return (
-    <Sidebar collapsible="offcanvas" variant="inset">
+    <Sidebar collapsible="offcanvas" variant="floating">
       <SidebarHeader>
         <SidebarMenu className="px-2">
           <SidebarMenuItem>

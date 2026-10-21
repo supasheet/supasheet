@@ -95,7 +95,7 @@ export const Route = createFileRoute(
             { title: "Gantt" },
           ]}
         />
-        <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-2 p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Skeleton className="h-8 w-8" />
@@ -248,7 +248,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col px-4 py-4" style={{ minHeight: 0 }}>
+      <div className="flex flex-1 flex-col p-2" style={{ minHeight: 0 }}>
         <ResourceGantt
           scale={scale}
           resources={resources}

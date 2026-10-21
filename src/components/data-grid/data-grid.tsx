@@ -73,7 +73,7 @@ export function DataGrid<TData extends RowData>({
     <div className={cn("flex w-full flex-col gap-2", className)}>
       {children}
       <ReactDataGrid
-        className="h-min! overflow-auto!"
+        className="min-h-0 flex-1 overflow-auto!"
         columns={gridColumns}
         rows={localRows}
         onRowsChange={handleRowsChange}

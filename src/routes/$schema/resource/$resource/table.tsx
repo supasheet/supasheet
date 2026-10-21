@@ -98,7 +98,7 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
       <>
         <DefaultHeader breadcrumbs={[{ title: formatTitle(resource) }]} />
         <div className="flex flex-1 flex-col">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <DataTableSkeleton columnCount={5} />
           </div>
         </div>
@@ -221,7 +221,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="p-4">
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <ResourceTable
           data={resourceData?.result ?? []}
           columnsSchema={columnsSchema ?? []}

@@ -100,7 +100,7 @@ export const Route = createFileRoute(
           breadcrumbs={[{ title: formatTitle(resource) }, { title: "List" }]}
         />
         <div className="flex flex-1 flex-col">
-          <div className="flex flex-col gap-4 px-4 py-4">
+          <div className="flex flex-col gap-4 p-2">
             <DataTableSkeleton columnCount={3} />
           </div>
         </div>
@@ -236,7 +236,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="p-4">
+      <div className="p-2">
         <ResourceList
           data={resourceData?.result ?? []}
           columnsSchema={columnsSchema ?? []}

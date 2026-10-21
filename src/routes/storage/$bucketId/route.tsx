@@ -38,7 +38,7 @@ function PendingComponent() {
           { title: bucketId },
         ]}
       />
-      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
+      <div className="flex flex-1 flex-col gap-3 p-2">
         <Skeleton className="h-7 w-48" />
         <Skeleton className="h-8 w-full max-w-sm" />
         <div className="space-y-2">
@@ -67,7 +67,7 @@ function RouteComponent() {
           { title: bucketId },
         ]}
       />
-      <div className="flex flex-1 flex-col gap-3 px-4 py-4">
+      <div className="flex flex-1 flex-col gap-3 p-2">
         <StorageExplorer
           bucketId={bucketId}
           isPublic={bucket.isPublic}

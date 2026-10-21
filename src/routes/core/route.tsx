@@ -79,7 +79,7 @@ function RouteComponent() {
       }
       className="h-svh overflow-hidden"
     >
-      <Sidebar collapsible="offcanvas" variant="inset">
+      <Sidebar collapsible="offcanvas" variant="floating">
         <SidebarHeader>
           <div className="flex items-center gap-1">
             <div className="min-w-0 flex-1">

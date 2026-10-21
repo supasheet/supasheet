@@ -88,7 +88,7 @@ export const Route = createFileRoute(
             { title: "Kanban" },
           ]}
         />
-        <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-2 p-2">
           {/* Kanban columns */}
           <div className="flex gap-4 overflow-x-auto">
             {Array.from({ length: 4 }).map((_, col) => (
@@ -279,7 +279,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex min-h-0 flex-1 flex-col px-4 py-4">
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <ResourceKanban
           data={data}
           resourceSchema={resourceSchema}

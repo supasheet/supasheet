@@ -5,9 +5,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
 import { DataTable } from "#/components/data-table/data-table"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
 import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
 import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import { useDataTable } from "#/hooks/use-data-table"
 import { useHasRole } from "#/hooks/use-permissions"
 import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
@@ -71,9 +73,11 @@ export function UsersTable({
         />
       }
     >
-      <DataTableToolbar table={table}>
+      <DataTableAdvancedToolbar table={table}>
+        <DataTableFilterMenu table={table} />
+        <DataTableSortMenu table={table} />
         <DataTableExportButton table={table} filename="users" />
-      </DataTableToolbar>
+      </DataTableAdvancedToolbar>
     </DataTable>
   )
 }
