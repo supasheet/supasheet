@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useState } from "react"
 import type { ReactNode } from "react"
 
-import type { Table } from "@tanstack/react-table"
 import { flexRender } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import type { Column, RowsChangeData } from "react-data-grid"
 
 import { DataGrid as ReactDataGrid } from "#/components/ui/data-grid"
+import type { DataTableInstance } from "#/lib/data-table-types"
 import { cn } from "#/lib/utils"
 
 import { DataTablePagination } from "../data-table/data-table-pagination"
@@ -14,15 +15,15 @@ import { getEditCell } from "./data-grid-edit-cell"
 
 type GridRow = Record<string, unknown>
 
-interface DataGridProps<TData> {
-  table: Table<TData>
+interface DataGridProps<TData extends RowData> {
+  table: DataTableInstance<TData>
   isEditable?: boolean
   onRowsChange?: (rows: GridRow[], data: RowsChangeData<GridRow>) => void
   className?: string
   children?: ReactNode
 }
 
-export function DataGrid<TData>({
+export function DataGrid<TData extends RowData>({
   table,
   isEditable = true,
   onRowsChange,
@@ -47,7 +48,7 @@ export function DataGrid<TData>({
     .getHeaderGroups()
     .flatMap((headerGroup) =>
       headerGroup.headers.map((header) => {
-        const meta = header.column.columnDef.meta
+        const meta = header.column.columnDef.meta?.field
         return {
           key: header.id,
           name: header.id,

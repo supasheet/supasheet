@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import * as LucideIcons from "lucide-react"
 
+import type { DataTableColumnMeta, FilterVariant } from "#/lib/data-table-types"
 import {
   getMetaFields,
   isTableSchema,
@@ -29,6 +30,7 @@ import {
 import type {
   ColumnMetadata,
   ColumnSchema,
+  DatabaseSchemas,
   PrimaryKey,
   Relationship,
   TableSchema,
@@ -464,7 +466,7 @@ export function getColumnMetadata(
       return {
         ...baseOptions,
         variant: "time",
-        filterVariant: "time",
+        filterVariant: "text",
         icon: baseOptions.icon ?? (
           <ClockIcon className="size-4 shrink-0 text-muted-foreground" />
         ),
@@ -474,7 +476,7 @@ export function getColumnMetadata(
       return {
         ...baseOptions,
         variant: "time",
-        filterVariant: "timetz",
+        filterVariant: "text",
         icon: baseOptions.icon ?? (
           <ClockIcon className="size-4 shrink-0 text-muted-foreground" />
         ),
@@ -484,7 +486,7 @@ export function getColumnMetadata(
       return {
         ...baseOptions,
         variant: "datetime",
-        filterVariant: "timestamptz",
+        filterVariant: "date",
         icon: baseOptions.icon ?? (
           <CalendarClockIcon className="size-4 shrink-0 text-muted-foreground" />
         ),
@@ -494,7 +496,7 @@ export function getColumnMetadata(
       return {
         ...baseOptions,
         variant: "datetime",
-        filterVariant: "timestamp",
+        filterVariant: "date",
         icon: baseOptions.icon ?? (
           <CalendarClockIcon className="size-4 shrink-0 text-muted-foreground" />
         ),
@@ -529,4 +531,34 @@ export function getColumnMetadata(
         icon: columnIcon,
       }
   }
+}
+
+/**
+ * Column meta for the data table: filter label/variant/options plus the full
+ * Supasheet column metadata under `field`.
+ */
+export function getColumnDefMeta(
+  tableSchema: TableSchema | ViewSchema | null,
+  columnSchema = {} as ColumnSchema
+): DataTableColumnMeta {
+  const field = getColumnMetadata(tableSchema, columnSchema)
+  return {
+    label: field.name,
+    variant: field.filterVariant,
+    options: field.options?.length ? field.options : undefined,
+    field,
+  }
+}
+
+/** Filter variant per column id, used to parse filter params from the URL. */
+export function getFilterVariants<S extends DatabaseSchemas>(
+  tableSchema: TableSchema | ViewSchema | null,
+  columnsSchema: ColumnSchema<S>[] = []
+): Record<string, FilterVariant> {
+  return Object.fromEntries(
+    columnsSchema.map((col) => [
+      col.name ?? col.id,
+      getColumnMetadata(tableSchema, col as ColumnSchema).filterVariant,
+    ])
+  )
 }

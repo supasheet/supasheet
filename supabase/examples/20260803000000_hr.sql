@@ -765,7 +765,7 @@ comment on table hr.positions is '{
     ],
     "filter_presets": [
         {"id": "active", "name": "Active", "filters": [{"id": "is_active", "value": "true", "operator": "eq"}]},
-        {"id": "engineering", "name": "Engineering", "filters": [{"id": "job_family", "value": "engineering", "operator": "eq"}]},
+        {"id": "engineering", "name": "Engineering", "filters": [{"id": "job_family", "value": "engineering", "operator": "in"}]},
         {"id": "vacant", "name": "Nobody In Seat", "filters": [{"id": "filled_count", "value": "0", "operator": "eq"}]}
     ],
     "fields": {
@@ -979,11 +979,11 @@ comment on table hr.employees is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "eq"}]},
-        {"id": "onboarding", "name": "Onboarding", "filters": [{"id": "employment_status", "value": "onboarding", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "in"}]},
+        {"id": "onboarding", "name": "Onboarding", "filters": [{"id": "employment_status", "value": "onboarding", "operator": "in"}]},
         {"id": "leavers", "name": "Leavers", "filters": [{"id": "employment_status", "value": ["notice_period", "terminated"], "operator": "in"}]},
         {"id": "managers", "name": "Managers", "filters": [{"id": "direct_report_count", "value": "0", "operator": "gt"}]},
-        {"id": "remote", "name": "Remote", "filters": [{"id": "work_mode", "value": "remote", "operator": "eq"}]}
+        {"id": "remote", "name": "Remote", "filters": [{"id": "work_mode", "value": "remote", "operator": "in"}]}
     ],
     "links": [
         {"id": "headcount", "name": "Headcount Report", "url": "/hr/report/headcount_report", "icon": "Users", "description": "Headcount, cost and attrition by department"},
@@ -1022,7 +1022,7 @@ comment on table hr.employees is '{
     },
     "query": {
         "sort": [{"id": "name", "desc": false}],
-        "filter": [{"id": "employment_status", "value": "terminated", "operator": "neq"}],
+        "filter": [{"id": "employment_status", "value": "terminated", "operator": "not.in"}],
         "join": [
             {"table": "employees", "on": "manager_id", "alias": "manager", "columns": ["name", "work_email"]},
             {"table": "departments", "on": "department_id", "columns": ["name", "code"]},
@@ -1505,7 +1505,7 @@ comment on table hr.job_changes is '{
         }
     ],
     "filter_presets": [
-        {"id": "promotions", "name": "Promotions", "filters": [{"id": "change_type", "value": "promotion", "operator": "eq"}]},
+        {"id": "promotions", "name": "Promotions", "filters": [{"id": "change_type", "value": "promotion", "operator": "in"}]},
         {"id": "moves", "name": "Moves", "filters": [{"id": "change_type", "value": ["lateral_move", "manager_change", "location_change"], "operator": "in"}]}
     ],
     "fields": {
@@ -1945,7 +1945,7 @@ comment on table hr.leave_requests is '{
         }
     ],
     "filter_presets": [
-        {"id": "pending", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending", "operator": "eq"}]},
+        {"id": "pending", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending", "operator": "in"}]},
         {"id": "approved", "name": "Approved", "filters": [{"id": "status", "value": ["approved", "taken"], "operator": "in"}]},
         {"id": "long", "name": "A Week Or More", "filters": [{"id": "working_days", "value": "5", "operator": "gte"}]}
     ],
@@ -2235,7 +2235,7 @@ comment on table hr.timesheet_entries is '{
         }
     ],
     "filter_presets": [
-        {"id": "submitted", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]},
+        {"id": "submitted", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]},
         {"id": "billable", "name": "Billable", "filters": [{"id": "is_billable", "value": "true", "operator": "eq"}]},
         {"id": "overtime", "name": "With Overtime", "filters": [{"id": "overtime_hours", "value": "0", "operator": "gt"}]}
     ],
@@ -2725,7 +2725,7 @@ comment on table hr.goals is '{
     ],
     "filter_presets": [
         {"id": "active", "name": "Active", "filters": [{"id": "status", "value": ["active", "at_risk"], "operator": "in"}]},
-        {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "at_risk", "operator": "eq"}]},
+        {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "at_risk", "operator": "in"}]},
         {"id": "company", "name": "Company Level", "filters": [{"id": "employee_id", "value": "null", "operator": "is"}]}
     ],
     "fields": {
@@ -2889,7 +2889,7 @@ comment on table hr.training_courses is '{
     ],
     "filter_presets": [
         {"id": "mandatory", "name": "Mandatory", "filters": [{"id": "is_mandatory", "value": "true", "operator": "eq"}]},
-        {"id": "certifications", "name": "Certifications", "filters": [{"id": "format", "value": "certification", "operator": "eq"}]}
+        {"id": "certifications", "name": "Certifications", "filters": [{"id": "format", "value": "certification", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["code", "title", "format"],
@@ -3161,9 +3161,9 @@ comment on table hr.job_openings is '{
         }
     ],
     "filter_presets": [
-        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "eq"}]},
+        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "in"}]},
         {"id": "stalled", "name": "No Applicants", "filters": [{"id": "applicant_count", "value": "0", "operator": "eq"}]},
-        {"id": "on_hold", "name": "On Hold", "filters": [{"id": "status", "value": "on_hold", "operator": "eq"}]}
+        {"id": "on_hold", "name": "On Hold", "filters": [{"id": "status", "value": "on_hold", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["code", "title", "department_id", "headcount"],
@@ -3338,7 +3338,7 @@ comment on table hr.candidates is '{
     ],
     "filter_presets": [
         {"id": "live", "name": "Live", "filters": [{"id": "stage", "value": ["applied", "screening", "interviewing", "offer"], "operator": "in"}]},
-        {"id": "offers", "name": "At Offer", "filters": [{"id": "stage", "value": "offer", "operator": "eq"}]},
+        {"id": "offers", "name": "At Offer", "filters": [{"id": "stage", "value": "offer", "operator": "in"}]},
         {"id": "referrals", "name": "Referrals", "filters": [{"id": "referred_by_id", "value": "null", "operator": "not.is"}]},
         {"id": "strong", "name": "Rated 4+", "filters": [{"id": "rating", "value": "4", "operator": "gte"}]}
     ],

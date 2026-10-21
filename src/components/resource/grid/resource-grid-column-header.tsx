@@ -1,6 +1,6 @@
 import { memo } from "react"
 
-import type { Column } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import { ChevronDown, ChevronUp, ChevronsUpDown, EyeOff, X } from "lucide-react"
 
@@ -11,17 +11,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
+import type { DataTableColumn } from "#/lib/data-table-types"
 import type { ColumnSchema, TableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
 import { cn } from "#/lib/utils"
 
-export const ResourceGridColumnHeader = memo(function <TData, TValue>({
+export const ResourceGridColumnHeader = memo(function <
+  TData extends RowData,
+  TValue,
+>({
   column,
   title,
   className,
   isSorted,
 }: {
-  column: Column<TData, TValue>
+  column: DataTableColumn<TData, TValue>
   title: string
   className?: string
   isSorted: false | "asc" | "desc"
@@ -29,8 +33,8 @@ export const ResourceGridColumnHeader = memo(function <TData, TValue>({
   if (!column.getCanSort() && !column.getCanHide()) {
     return (
       <div className={cn("flex items-center gap-2 truncate", className)}>
-        {column.columnDef.meta?.icon && (
-          <span className="shrink-0">{column.columnDef.meta.icon}</span>
+        {column.columnDef.meta?.field?.icon && (
+          <span className="shrink-0">{column.columnDef.meta.field?.icon}</span>
         )}
         {formatTitle(title)}
       </div>
@@ -45,8 +49,8 @@ export const ResourceGridColumnHeader = memo(function <TData, TValue>({
           className
         )}
       >
-        {column.columnDef.meta?.icon && (
-          <span className="shrink-0">{column.columnDef.meta.icon}</span>
+        {column.columnDef.meta?.field?.icon && (
+          <span className="shrink-0">{column.columnDef.meta.field?.icon}</span>
         )}
         <span className="truncate">{formatTitle(title)}</span>
         {column.getCanSort() &&
@@ -95,8 +99,8 @@ export const ResourceGridColumnHeader = memo(function <TData, TValue>({
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}) as <TData, TValue>(props: {
-  column: Column<TData, TValue>
+}) as <TData extends RowData, TValue>(props: {
+  column: DataTableColumn<TData, TValue>
   title: string
   className?: string
   tableSchema: TableSchema | null

@@ -1,3 +1,5 @@
+import { useDeferredValue, useMemo } from "react"
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link,
@@ -5,11 +7,7 @@ import {
   notFound,
   useRouter,
 } from "@tanstack/react-router"
-import type {
-  ErrorComponentProps,
-  SearchSchemaInput,
-} from "@tanstack/react-router"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
+import type { ErrorComponentProps } from "@tanstack/react-router"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 import z from "zod"
@@ -26,6 +24,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import type {
   DatabaseSchemas,
   DatabaseTables,
@@ -42,37 +42,11 @@ import {
 export const Route = createFileRoute("/$schema/report/$report/")({
   params: z.object({
     schema: z.string<DatabaseSchemas>(),
-    report: z.string<
-      DatabaseTables<DatabaseSchemas> | DatabaseViews<DatabaseSchemas>
-    >(),
+    report: z.string<DatabaseTables<DatabaseSchemas>>(),
   }),
-  validateSearch: (
-    search: {
-      sortId?: string
-      sortDesc?: boolean
-      page?: number
-      pageSize?: number
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => ({
-    sortId: search.sortId,
-    sortDesc: search.sortDesc ?? false,
-    page: search.page ?? 1,
-    pageSize: search.pageSize ?? 20,
-    filters: search.filters ?? [],
-  }),
-  loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({
-    sortId,
-    sortDesc,
-    page,
-    pageSize,
-    filters,
-  }),
-  loader: async ({
-    context,
-    params,
-    deps: { sortId, sortDesc, page, pageSize, filters },
-  }) => {
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, params, deps: { search } }) => {
     const [report, columnsSchema] = await Promise.all([
       context.queryClient.query({
         ...reportQueryOptions(params.schema, params.report),
@@ -90,11 +64,7 @@ export const Route = createFileRoute("/$schema/report/$report/")({
       ...reportDataQueryOptions(
         params.schema,
         params.report,
-        page,
-        pageSize,
-        sortId,
-        sortDesc,
-        filters
+        getTableQuery(search, getFilterVariants(null, columnsSchema))
       ),
       staleTime: "static",
     })
@@ -190,29 +160,22 @@ export const Route = createFileRoute("/$schema/report/$report/")({
 
 function RouteComponent() {
   const params = Route.useParams()
-  const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
+  const search = Route.useSearch()
 
   const { columnsSchema } = Route.useLoaderData()
   const { data: report } = useSuspenseQuery(
     reportQueryOptions(params.schema, params.report)
   )
+  const liveTableQuery = useMemo(
+    () => getTableQuery(search, getFilterVariants(null, columnsSchema ?? [])),
+    [search, columnsSchema]
+  )
+  const tableQuery = useDeferredValue(liveTableQuery)
   const { data: reportData } = useSuspenseQuery(
-    reportDataQueryOptions(
-      params.schema,
-      params.report,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters
-    )
+    reportDataQueryOptions(params.schema, params.report, tableQuery)
   )
 
-  const sorting = (
-    sortId ? [{ id: sortId, desc: sortDesc }] : []
-  ) as SortingState
-  const pagination = { pageIndex: page - 1, pageSize }
-  const pageCount = Math.ceil((reportData?.count ?? 0) / pageSize)
+  const pageCount = Math.ceil((reportData?.count ?? 0) / tableQuery.perPage)
 
   return (
     <>
@@ -236,9 +199,6 @@ function RouteComponent() {
           <ReportTable
             data={reportData?.result ?? []}
             columnsSchema={columnsSchema ?? []}
-            sorting={sorting}
-            pagination={pagination}
-            columnFilters={filters}
             pageCount={pageCount}
             filename={params.report}
           />

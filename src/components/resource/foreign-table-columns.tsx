@@ -1,6 +1,5 @@
-import type { ColumnDef } from "@tanstack/react-table"
-
-import { getColumnCell, getColumnMetadata } from "#/lib/columns"
+import { getColumnCell, getColumnDefMeta } from "#/lib/columns"
+import type { DataTableColumnDef } from "#/lib/data-table-types"
 import type {
   ColumnSchema,
   ResourceDataSchema,
@@ -13,16 +12,16 @@ export function foreignTableColumns({
   columnsSchema: ColumnSchema[]
   setRecord: (record: ResourceDataSchema) => void
 }) {
-  const cols: ColumnDef<ResourceDataSchema, unknown>[] = []
+  const cols: DataTableColumnDef<ResourceDataSchema>[] = []
 
   cols.push(
     ...((columnsSchema ?? []).map((c) => {
-      const meta = getColumnMetadata(null, c)
+      const meta = getColumnDefMeta(null, c)
 
       return {
         id: c.name,
         accessorKey: c.name,
-        header: () => <div className="truncate select-none">{meta.name}</div>,
+        header: () => <div className="truncate select-none">{meta.label}</div>,
         cell: ({ row }) => {
           const cell = getColumnCell(c)
 
@@ -56,7 +55,7 @@ export function foreignTableColumns({
         enableSorting: true,
         enableHiding: true,
       }
-    }) as ColumnDef<ResourceDataSchema, unknown>[])
+    }) as DataTableColumnDef<ResourceDataSchema>[])
   )
 
   return cols

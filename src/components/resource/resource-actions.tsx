@@ -1,5 +1,3 @@
-"use client"
-
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 
@@ -87,14 +85,14 @@ export function ResourceActions({
 
   return (
     <ButtonGroup>
-      <NewRecordTrigger size="sm">
+      <NewRecordTrigger>
         <PlusIcon className="mr-1.5 size-3.5" />
         New record
       </NewRecordTrigger>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button size="icon-sm" aria-label="More Options">
+            <Button size="icon" aria-label="More Options">
               <MoreHorizontalIcon />
             </Button>
           }

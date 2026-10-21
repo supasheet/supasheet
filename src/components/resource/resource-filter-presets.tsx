@@ -1,7 +1,5 @@
-import { useMemo } from "react"
-
-import { useNavigate } from "@tanstack/react-router"
-import type { ColumnFiltersState } from "@tanstack/react-table"
+import { Subscribe } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import { ChevronDownIcon, FilterIcon } from "lucide-react"
 
@@ -16,95 +14,94 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
-import { encodeFilterValue } from "#/lib/data-table"
+import type { DataTableInstance, FilterVariant } from "#/lib/data-table-types"
 import type { FilterPreset } from "#/lib/database-meta.types"
+import { getFiltersSignature, ruleToFilterItem } from "#/lib/filter-presets"
 
 const ALL_RECORDS_ID = "__all__"
 
-function encodePresetFilters(preset: FilterPreset): ColumnFiltersState {
-  return preset.filters.map((f) => ({
-    id: f.id,
-    value: encodeFilterValue(f.operator, f.value),
-  }))
+function getVariants<TData extends RowData>(table: DataTableInstance<TData>) {
+  return Object.fromEntries(
+    table
+      .getAllColumns()
+      .map((column) => [column.id, column.columnDef.meta?.variant])
+  ) as Record<string, FilterVariant | undefined>
 }
 
-function filtersEqual(a: ColumnFiltersState, b: ColumnFiltersState): boolean {
-  if (a.length !== b.length) return false
-  const bById = new Map(b.map((f) => [f.id, f.value]))
-  return a.every((f) => bById.get(f.id) === f.value)
-}
-
-export function ResourceFilterPresets({
+export function ResourceFilterPresets<TData extends RowData>({
+  table,
   filterPresets,
-  currentFilters,
 }: {
+  table: DataTableInstance<TData>
   filterPresets: FilterPreset[]
-  currentFilters: ColumnFiltersState
 }) {
-  const navigate = useNavigate()
-
-  const activePresetId = useMemo(() => {
-    if (currentFilters.length === 0) return ALL_RECORDS_ID
-    const match = filterPresets.find((t) =>
-      filtersEqual(encodePresetFilters(t), currentFilters)
-    )
-    return match?.id
-  }, [filterPresets, currentFilters])
-
   if (filterPresets.length === 0) return null
 
-  const activePreset = filterPresets.find((t) => t.id === activePresetId)
-  const triggerLabel =
-    activePresetId === ALL_RECORDS_ID
-      ? "All records"
-      : (activePreset?.name ?? "Custom filter")
+  function getPresetFilters(preset: FilterPreset) {
+    const variants = getVariants(table)
+    return preset.filters.map((rule, index) =>
+      ruleToFilterItem(rule, variants, index)
+    )
+  }
 
   function handleSelect(value: string) {
     if (value === ALL_RECORDS_ID) {
-      navigate({
-        to: ".",
-        search: (prev) => ({ ...prev, filters: undefined, page: 1 }),
-      })
+      table.resetColumnFilters(true)
       return
     }
     const preset = filterPresets.find((t) => t.id === value)
     if (!preset) return
-    navigate({
-      to: ".",
-      search: (prev) => ({
-        ...prev,
-        filters: encodePresetFilters(preset),
-        page: 1,
-      }),
-    })
+    table.setJoinOperator("and")
+    table.setColumnFilters(getPresetFilters(preset))
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
-        <FilterIcon className="size-3" />
-        <span className="truncate font-medium">{triggerLabel}</span>
-        <ChevronDownIcon className="size-3.5 opacity-50" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-fit rounded-lg">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Filter presets</DropdownMenuLabel>
-        </DropdownMenuGroup>
-        <DropdownMenuRadioGroup
-          value={activePresetId}
-          onValueChange={handleSelect}
-        >
-          <DropdownMenuRadioItem value={ALL_RECORDS_ID}>
-            All records
-          </DropdownMenuRadioItem>
-          <DropdownMenuSeparator />
-          {filterPresets.map((preset) => (
-            <DropdownMenuRadioItem key={preset.id} value={preset.id}>
-              {preset.name}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Subscribe source={table.atoms.columnFilters}>
+      {(columnFilters) => {
+        const current = table.getColumnFilterItems()
+        const activePresetId =
+          columnFilters.length === 0
+            ? ALL_RECORDS_ID
+            : filterPresets.find(
+                (preset) =>
+                  getFiltersSignature(getPresetFilters(preset)) ===
+                  getFiltersSignature(current)
+              )?.id
+        const activePreset = filterPresets.find((t) => t.id === activePresetId)
+        const triggerLabel =
+          activePresetId === ALL_RECORDS_ID
+            ? "All records"
+            : (activePreset?.name ?? "Custom filter")
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" />}>
+              <FilterIcon className="size-3" />
+              <span className="truncate font-medium">{triggerLabel}</span>
+              <ChevronDownIcon className="size-3.5 opacity-50" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-fit rounded-lg">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Filter presets</DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuRadioGroup
+                value={activePresetId}
+                onValueChange={handleSelect}
+              >
+                <DropdownMenuRadioItem value={ALL_RECORDS_ID}>
+                  All records
+                </DropdownMenuRadioItem>
+                <DropdownMenuSeparator />
+                {filterPresets.map((preset) => (
+                  <DropdownMenuRadioItem key={preset.id} value={preset.id}>
+                    {preset.name}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      }}
+    </Subscribe>
   )
 }

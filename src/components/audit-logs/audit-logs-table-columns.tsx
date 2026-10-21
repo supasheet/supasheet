@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router"
-import type { ColumnDef } from "@tanstack/react-table"
 
 import { AlertCircleIcon, ArrowUpRightIcon } from "lucide-react"
 
 import { DataTableColumnHeader } from "#/components/data-table/data-table-column-header"
+import { getDataTableSelectColumn } from "#/components/data-table/data-table-select-column"
 import { Badge } from "#/components/ui/badge"
-import { Checkbox } from "#/components/ui/checkbox"
-import { getColumnMetadata } from "#/lib/columns"
+import { getColumnDefMeta } from "#/lib/columns"
+import type { DataTableColumnDef } from "#/lib/data-table-types"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import type { Database } from "#/lib/database.types"
 import { formatDate } from "#/lib/format"
@@ -17,54 +17,38 @@ export function getAuditLogsTableColumns({
   columnsSchema,
 }: {
   columnsSchema: ColumnSchema<"supasheet">[]
-}): ColumnDef<AuditLog, unknown>[] {
+}): DataTableColumnDef<AuditLog>[] {
   return [
+    getDataTableSelectColumn<AuditLog>(),
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          indeterminate={
-            table.getIsSomePageRowsSelected() &&
-            !table.getIsAllPageRowsSelected()
-          }
-          onCheckedChange={(checked) =>
-            table.toggleAllPageRowsSelected(!!checked)
-          }
-          aria-label="Select all"
-        />
-      ),
+      id: "detail",
+      header: () => null,
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(checked) => row.toggleSelected(!!checked)}
-            aria-label="Select row"
-          />
-          <Link
-            to="/core/audit_logs/$auditLogId"
-            params={{ auditLogId: row.original.id }}
-            className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ArrowUpRightIcon className="size-3" />
-          </Link>
-        </div>
+        <Link
+          to="/core/audit_logs/$auditLogId"
+          params={{ auditLogId: row.original.id }}
+          className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ArrowUpRightIcon className="size-3" />
+        </Link>
       ),
+      size: 40,
       enableSorting: false,
       enableHiding: false,
     },
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" />
+        <DataTableColumnHeader column={column} label="ID" />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-xs text-muted-foreground">
           {row.original.id.slice(0, 8)}…
         </span>
       ),
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "id") as ColumnSchema
       ),
@@ -72,7 +56,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "created_at",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} label="Created At" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string>("created_at")
@@ -82,7 +66,8 @@ export function getAuditLogsTableColumns({
           </span>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "created_at") as ColumnSchema
       ),
@@ -90,7 +75,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "operation",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Operation" />
+        <DataTableColumnHeader column={column} label="Operation" />
       ),
       cell: ({ row }) => {
         const op = row.getValue<string>("operation")
@@ -104,7 +89,8 @@ export function getAuditLogsTableColumns({
                 : "outline"
         return <Badge variant={variant}>{op}</Badge>
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "operation") as ColumnSchema
       ),
@@ -112,14 +98,15 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "schema_name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Schema" />
+        <DataTableColumnHeader column={column} label="Schema" />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-sm text-muted-foreground">
           {row.getValue("schema_name")}
         </span>
       ),
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "schema_name") as ColumnSchema
       ),
@@ -127,12 +114,13 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "table_name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Table" />
+        <DataTableColumnHeader column={column} label="Table" />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-sm">{row.getValue("table_name")}</span>
       ),
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "table_name") as ColumnSchema
       ),
@@ -140,7 +128,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "record_id",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Record ID" />
+        <DataTableColumnHeader column={column} label="Record ID" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string | null>("record_id")
@@ -150,7 +138,8 @@ export function getAuditLogsTableColumns({
           </span>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "record_id") as ColumnSchema
       ),
@@ -158,7 +147,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "role",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Role" />
+        <DataTableColumnHeader column={column} label="Role" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string | null>("role")
@@ -166,7 +155,8 @@ export function getAuditLogsTableColumns({
           return <span className="text-sm text-muted-foreground">—</span>
         return <Badge variant="outline">{value}</Badge>
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "role") as ColumnSchema
       ),
@@ -174,7 +164,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "user_type",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="User Type" />
+        <DataTableColumnHeader column={column} label="User Type" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string>("user_type")
@@ -184,7 +174,8 @@ export function getAuditLogsTableColumns({
           </Badge>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "user_type") as ColumnSchema
       ),
@@ -192,7 +183,7 @@ export function getAuditLogsTableColumns({
     {
       accessorKey: "is_error",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Error" />
+        <DataTableColumnHeader column={column} label="Error" />
       ),
       cell: ({ row }) => {
         const isError = row.getValue("is_error")
@@ -205,7 +196,8 @@ export function getAuditLogsTableColumns({
           </div>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "is_error") as ColumnSchema
       ),

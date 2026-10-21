@@ -531,7 +531,7 @@ comment on table pm.projects is '{
         {"id": "list", "name": "All Projects", "type": "list", "title": "name", "description": "project_code", "field_1": "status", "field_2": "consumed_budget"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "at_risk", "name": "At Risk", "filters": [{"id": "health", "value": ["amber", "red"], "operator": "in"}]},
         {"id": "over_budget", "name": "Over Budget Hours", "filters": [{"id": "consumed_hours", "value": "0", "operator": "gt"}]}
     ],
@@ -1045,8 +1045,8 @@ comment on table pm.tasks is '{
     "filter_presets": [
         {"id": "mine", "name": "Assigned To Me", "filters": [{"id": "assignee_id", "value": "me", "operator": "eq"}]},
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["todo", "in_progress", "in_review", "blocked"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "due_date", "value": "today", "operator": "lt"}, {"id": "status", "value": "done", "operator": "neq"}]},
-        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "eq"}]}
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "due_date", "value": "today", "operator": "lt"}, {"id": "status", "value": "done", "operator": "not.in"}]},
+        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["project_id", "task_list_id", "title", "assignee_id", "due_date"],
@@ -1629,8 +1629,8 @@ comment on table pm.time_entries is '{
     ],
     "filter_presets": [
         {"id": "mine", "name": "My Time", "filters": [{"id": "user_id", "value": "me", "operator": "eq"}]},
-        {"id": "unsubmitted", "name": "Unsubmitted", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]},
-        {"id": "awaiting_approval", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]}
+        {"id": "unsubmitted", "name": "Unsubmitted", "filters": [{"id": "status", "value": "draft", "operator": "in"}]},
+        {"id": "awaiting_approval", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["task_id", "entry_date", "logged_duration", "description"],
@@ -1896,7 +1896,7 @@ comment on table pm.milestones is '{
     ],
     "filter_presets": [
         {"id": "upcoming", "name": "Upcoming", "filters": [{"id": "status", "value": ["pending", "in_progress"], "operator": "in"}]},
-        {"id": "billable_uninvoiced", "name": "Ready To Bill", "filters": [{"id": "is_billing_trigger", "value": "true", "operator": "eq"}, {"id": "status", "value": "completed", "operator": "eq"}, {"id": "invoiced", "value": "false", "operator": "eq"}]}
+        {"id": "billable_uninvoiced", "name": "Ready To Bill", "filters": [{"id": "is_billing_trigger", "value": "true", "operator": "eq"}, {"id": "status", "value": "completed", "operator": "in"}, {"id": "invoiced", "value": "false", "operator": "eq"}]}
     ],
     "fields": {
         "quick_create": ["project_id", "name", "due_date"],
@@ -2242,7 +2242,7 @@ comment on table pm.project_expenses is '{
     ],
     "filter_presets": [
         {"id": "mine", "name": "My Expenses", "filters": [{"id": "user_id", "value": "me", "operator": "eq"}]},
-        {"id": "pending", "name": "Pending Approval", "filters": [{"id": "status", "value": "pending", "operator": "eq"}]}
+        {"id": "pending", "name": "Pending Approval", "filters": [{"id": "status", "value": "pending", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["project_id", "category", "description", "amount"],
@@ -2392,7 +2392,7 @@ comment on table pm.invoices is '{
     ],
     "filter_presets": [
         {"id": "outstanding", "name": "Outstanding", "filters": [{"id": "status", "value": ["sent", "overdue"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "eq"}]}
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["project_id", "period_start", "period_end"],

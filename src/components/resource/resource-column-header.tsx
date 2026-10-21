@@ -1,6 +1,6 @@
 import { memo } from "react"
 
-import type { Column } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import { ChevronDown, ChevronUp, ChevronsUpDown, EyeOff, X } from "lucide-react"
 
@@ -11,16 +11,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
+import type { DataTableColumn } from "#/lib/data-table-types"
 import { formatTitle } from "#/lib/format"
 import { cn } from "#/lib/utils"
 
-export const ResourceColumnHeader = memo(function <TData, TValue>({
+export const ResourceColumnHeader = memo(function <
+  TData extends RowData,
+  TValue,
+>({
   column,
   title,
   className,
   isSorted,
 }: {
-  column: Column<TData, TValue>
+  column: DataTableColumn<TData, TValue>
   title: string
   className?: string
   isSorted: false | "asc" | "desc"
@@ -28,11 +32,11 @@ export const ResourceColumnHeader = memo(function <TData, TValue>({
   if (!column.getCanSort() && !column.getCanHide()) {
     return (
       <div className={cn("flex items-center gap-2 truncate", className)}>
-        {column.columnDef.meta?.icon && (
-          <span>{column.columnDef.meta.icon}</span>
+        {column.columnDef.meta?.field?.icon && (
+          <span>{column.columnDef.meta.field?.icon}</span>
         )}
         {formatTitle(
-          column.columnDef.meta?.isRelationship && title.endsWith("_id")
+          column.columnDef.meta?.field?.isRelationship && title.endsWith("_id")
             ? title.slice(0, -3)
             : title
         )}
@@ -48,12 +52,13 @@ export const ResourceColumnHeader = memo(function <TData, TValue>({
           className
         )}
       >
-        {column.columnDef.meta?.icon && (
-          <span>{column.columnDef.meta.icon}</span>
+        {column.columnDef.meta?.field?.icon && (
+          <span>{column.columnDef.meta.field?.icon}</span>
         )}
         <span className="truncate">
           {formatTitle(
-            column.columnDef.meta?.isRelationship && title.endsWith("_id")
+            column.columnDef.meta?.field?.isRelationship &&
+              title.endsWith("_id")
               ? title.slice(0, -3)
               : title
           )}
@@ -104,8 +109,8 @@ export const ResourceColumnHeader = memo(function <TData, TValue>({
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}) as <TData, TValue>(props: {
-  column: Column<TData, TValue>
+}) as <TData extends RowData, TValue>(props: {
+  column: DataTableColumn<TData, TValue>
   title: string
   className?: string
   isSorted: false | "asc" | "desc"

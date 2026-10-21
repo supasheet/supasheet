@@ -556,7 +556,7 @@ comment on table crm.sales_reps is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "taking_leads", "name": "Taking Leads", "filters": [{"id": "is_accepting_leads", "value": "true", "operator": "eq"}]},
         {"id": "leadership", "name": "Leadership", "filters": [{"id": "level", "value": ["manager", "director"], "operator": "in"}]}
     ],
@@ -945,8 +945,8 @@ comment on table crm.accounts is '{
         }
     ],
     "filter_presets": [
-        {"id": "my_accounts", "name": "Customers", "filters": [{"id": "account_type", "value": "customer", "operator": "eq"}]},
-        {"id": "prospects", "name": "Prospects", "filters": [{"id": "account_type", "value": "prospect", "operator": "eq"}]},
+        {"id": "my_accounts", "name": "Customers", "filters": [{"id": "account_type", "value": "customer", "operator": "in"}]},
+        {"id": "prospects", "name": "Prospects", "filters": [{"id": "account_type", "value": "prospect", "operator": "in"}]},
         {"id": "at_risk", "name": "At Risk", "filters": [{"id": "health", "value": ["at_risk", "churned"], "operator": "in"}]},
         {"id": "strategic", "name": "Enterprise & Strategic", "filters": [{"id": "tier", "value": ["enterprise", "strategic"], "operator": "in"}]},
         {"id": "unowned", "name": "Unassigned", "filters": [{"id": "owner_id", "value": "null", "operator": "is"}]}
@@ -1358,7 +1358,7 @@ comment on table crm.campaigns is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "over_budget", "name": "Over Budget", "filters": [{"id": "status", "value": ["active", "completed"], "operator": "in"}]}
     ],
     "fields": {
@@ -1558,8 +1558,8 @@ comment on table crm.leads is '{
     "filter_presets": [
         {"id": "mine", "name": "Unassigned", "filters": [{"id": "owner_id", "value": "null", "operator": "is"}]},
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["new", "working", "nurturing"], "operator": "in"}]},
-        {"id": "hot", "name": "Hot", "filters": [{"id": "rating", "value": "hot", "operator": "eq"}]},
-        {"id": "qualified", "name": "Qualified", "filters": [{"id": "status", "value": "qualified", "operator": "eq"}]},
+        {"id": "hot", "name": "Hot", "filters": [{"id": "rating", "value": "hot", "operator": "in"}]},
+        {"id": "qualified", "name": "Qualified", "filters": [{"id": "status", "value": "qualified", "operator": "in"}]},
         {"id": "high_score", "name": "Score 70+", "filters": [{"id": "score", "value": "70", "operator": "gte"}]}
     ],
     "fields": {
@@ -1861,7 +1861,7 @@ comment on table crm.products is '{
     ],
     "filter_presets": [
         {"id": "active", "name": "Active", "filters": [{"id": "is_active", "value": "true", "operator": "eq"}]},
-        {"id": "platform", "name": "Platform", "filters": [{"id": "family", "value": "platform", "operator": "eq"}]}
+        {"id": "platform", "name": "Platform", "filters": [{"id": "family", "value": "platform", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["code", "name", "family", "list_price"],
@@ -2075,11 +2075,11 @@ comment on table crm.opportunities is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "stage", "value": ["qualification", "discovery", "proposal", "negotiation"], "operator": "in"}]},
-        {"id": "commit", "name": "Commit", "filters": [{"id": "forecast_category", "value": "commit", "operator": "eq"}]},
+        {"id": "commit", "name": "Commit", "filters": [{"id": "forecast_category", "value": "commit", "operator": "in"}]},
         {"id": "key", "name": "Key Deals", "filters": [{"id": "is_key_deal", "value": "true", "operator": "eq"}]},
         {"id": "stalled", "name": "Stalled 30d+", "filters": [{"id": "days_in_stage", "value": "30", "operator": "gte"}]},
-        {"id": "won", "name": "Won", "filters": [{"id": "stage", "value": "closed_won", "operator": "eq"}]},
-        {"id": "lost", "name": "Lost", "filters": [{"id": "stage", "value": "closed_lost", "operator": "eq"}]}
+        {"id": "won", "name": "Won", "filters": [{"id": "stage", "value": "closed_won", "operator": "in"}]},
+        {"id": "lost", "name": "Lost", "filters": [{"id": "stage", "value": "closed_lost", "operator": "in"}]}
     ],
     "links": [
         {"id": "pipeline_report", "name": "Pipeline Report", "url": "/crm/report/pipeline_report", "icon": "FileText", "description": "Every deal with account, owner and forecast context"},
@@ -2558,8 +2558,8 @@ comment on table crm.quotes is '{
         }
     ],
     "filter_presets": [
-        {"id": "open", "name": "Awaiting Decision", "filters": [{"id": "status", "value": "sent", "operator": "eq"}]},
-        {"id": "accepted", "name": "Accepted", "filters": [{"id": "status", "value": "accepted", "operator": "eq"}]}
+        {"id": "open", "name": "Awaiting Decision", "filters": [{"id": "status", "value": "sent", "operator": "in"}]},
+        {"id": "accepted", "name": "Accepted", "filters": [{"id": "status", "value": "accepted", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["opportunity_id", "valid_until", "total"],
@@ -2764,7 +2764,7 @@ comment on table crm.activities is '{
     ],
     "filter_presets": [
         {"id": "meetings", "name": "Meetings & Demos", "filters": [{"id": "activity_type", "value": ["meeting", "demo"], "operator": "in"}]},
-        {"id": "inbound", "name": "Inbound", "filters": [{"id": "direction", "value": "inbound", "operator": "eq"}]},
+        {"id": "inbound", "name": "Inbound", "filters": [{"id": "direction", "value": "inbound", "operator": "in"}]},
         {"id": "needs_follow_up", "name": "Needs Follow-up", "filters": [{"id": "follow_up_on", "value": "null", "operator": "not.is"}]}
     ],
     "fields": {

@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
-import type { ColumnFiltersState } from "@tanstack/react-table"
 
+import type { TableQuery } from "#/lib/data-table-search"
 import type {
   DatabaseSchemas,
   DatabaseViews,
@@ -40,36 +40,23 @@ export const templatesQueryOptions = (schema: DatabaseSchemas) =>
 export const templateDataQueryOptions = <S extends DatabaseSchemas>(
   schema: S,
   viewName: DatabaseViews<S>,
-  page: number,
-  pageSize: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
+  tableQuery: TableQuery
 ) =>
   queryOptions({
-    queryKey: [
-      "supasheet",
-      "template-data",
-      schema,
-      viewName,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
-    ],
+    queryKey: ["supasheet", "template-data", schema, viewName, tableQuery],
     queryFn: async () => {
+      const { page, perPage, sorting, filters, joinOperator } = tableQuery
       let query = supabase
         .schema(schema)
         .from(viewName)
         .select("*", { count: "exact" })
-        .range((page - 1) * pageSize, page * pageSize - 1)
+        .range((page - 1) * perPage, page * perPage - 1)
 
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
+      for (const sort of sorting) {
+        query = query.order(sort.id, { ascending: !sort.desc })
       }
 
-      query = applyFilters(query, filters)
+      query = applyFilters(query, filters, joinOperator)
 
       const { data, count, error } = await query
       if (error) throw error

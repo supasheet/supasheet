@@ -89,8 +89,8 @@ export function ArrayField({
             DEFAULT VALUE
           </p>
         )}
-        <SortableContent asChild>
-          <div className="space-y-2">
+        <SortableContent render={<div className="space-y-2" />}>
+          <>
             {Array.isArray(value) &&
               value.map((_, index) => (
                 <SortableItem
@@ -100,14 +100,16 @@ export function ArrayField({
                   <form.AppField name={`${field.name}[${index}]`}>
                     {() => (
                       <ButtonGroup className="flex w-full gap-2">
-                        <SortableItemHandle asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-8"
-                          >
-                            <GripVertical className="h-4 w-4" />
-                          </Button>
+                        <SortableItemHandle
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8"
+                            />
+                          }
+                        >
+                          <GripVertical className="h-4 w-4" />
                         </SortableItemHandle>
                         <ButtonGroup className="flex-1">
                           <AllFields
@@ -136,7 +138,7 @@ export function ArrayField({
                   </form.AppField>
                 </SortableItem>
               ))}
-          </div>
+          </>
         </SortableContent>
         <ButtonGroup className="flex w-full gap-2">
           <ButtonGroup className="flex-1">

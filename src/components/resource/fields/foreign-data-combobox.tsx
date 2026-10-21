@@ -17,6 +17,7 @@ import {
   ItemDescription,
   ItemTitle,
 } from "#/components/ui/item"
+import type { ColumnFilterItem } from "#/lib/data-table-types"
 import type { LookupConfig, Relationship } from "#/lib/database-meta.types"
 import { resourceDataQueryOptions } from "#/lib/supabase/data/resource"
 import type { FieldProps } from "#/types/fields"
@@ -84,9 +85,12 @@ export function ForeignDataCombobox({
         watchedValues[r.source_column] != null &&
         watchedValues[r.source_column] !== ""
     )
-    .map((r) => ({
+    .map((r, index): ColumnFilterItem => ({
       id: r.target_column,
-      value: `eq.${watchedValues[r.source_column]}`,
+      variant: "text",
+      operator: "eq",
+      value: String(watchedValues[r.source_column]),
+      filterId: `${r.target_column}-${index}`,
     }))
 
   // Build select columns: PK + join display columns + fill source columns
@@ -105,11 +109,7 @@ export function ForeignDataCombobox({
       relationship.target_table_schema,
       relationship.target_table_name,
       { select: selectColumns },
-      1,
-      100,
-      undefined,
-      undefined,
-      dynamicFilters
+      { page: 1, perPage: 100, filters: dynamicFilters }
     )
   )
 

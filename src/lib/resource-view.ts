@@ -36,7 +36,6 @@ function resolveMetaViewTarget<S extends DatabaseSchemas>(
     return {
       to: "/$schema/resource/$resource/kanban/$kanbanId" as const,
       params: () => ({ schema, resource, kanbanId: view.id }),
-      search: { layout: "board" },
     }
   }
   if (view.type === "calendar") {

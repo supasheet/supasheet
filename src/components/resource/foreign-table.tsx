@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
 import { DataTable } from "#/components/data-table/data-table"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import {
   Empty,
   EmptyContent,
@@ -21,6 +21,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "#/components/ui/sheet"
+import {
+  useLocalDataTable,
+  useLocalTableState,
+} from "#/hooks/use-local-data-table"
 import { useIsMobile } from "#/hooks/use-mobile"
 import type {
   Relationship,
@@ -48,29 +52,6 @@ export function ForeignTableSheet({
   const isMobile = useIsMobile()
   const side = isMobile ? "bottom" : "right"
 
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 20,
-  })
-
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-
-  const sortCol = sorting[0]
-
-  const { data } = useQuery(
-    resourceDataQueryOptions(
-      relationship.target_table_schema,
-      relationship.target_table_name,
-      {},
-      pagination.pageIndex + 1,
-      pagination.pageSize,
-      sortCol?.id,
-      sortCol?.desc,
-      columnFilters
-    )
-  )
-
   const { data: columnsSchema } = useQuery(
     columnsSchemaQueryOptions(
       relationship.target_table_schema,
@@ -84,30 +65,25 @@ export function ForeignTableSheet({
         columnsSchema: columnsSchema ?? [],
         setRecord,
       }),
-    [
-      relationship.target_table_schema,
-      relationship.target_table_name,
-      columnsSchema,
-      setRecord,
-    ]
+    [columnsSchema, setRecord]
   )
 
-  const table = useReactTable({
+  const { query, state } = useLocalTableState(columns)
+
+  const { data } = useQuery(
+    resourceDataQueryOptions(
+      relationship.target_table_schema,
+      relationship.target_table_name,
+      {},
+      query
+    )
+  )
+
+  const { table } = useLocalDataTable({
     data: data?.result ?? [],
     columns,
-    state: {
-      pagination,
-      sorting,
-      columnFilters,
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    manualSorting: true,
-    manualFiltering: true,
-    rowCount: data?.count ?? 0,
+    tableState: state,
+    pageCount: Math.ceil((data?.count ?? 0) / query.perPage),
     enableRowSelection: false,
   })
 
@@ -163,7 +139,10 @@ export function ForeignTableSheet({
               table={table}
               className="min-h-0 flex-1 [&>div:nth-child(2)]:min-h-0 [&>div:nth-child(2)]:flex-1 [&>div:nth-child(2)]:overflow-auto"
             >
-              <DataTableToolbar table={table} />
+              <DataTableAdvancedToolbar table={table}>
+                <DataTableFilterMenu table={table} />
+                <DataTableSortMenu table={table} />
+              </DataTableAdvancedToolbar>
             </DataTable>
           </div>
         )}

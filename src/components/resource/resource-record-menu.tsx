@@ -83,7 +83,7 @@ export function ResourceRecordMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>
         <CurrentIcon className="size-3.5" />
         <span className="truncate font-medium">{currentView.label}</span>
         <ChevronDownIcon className="size-3.5 opacity-50" />

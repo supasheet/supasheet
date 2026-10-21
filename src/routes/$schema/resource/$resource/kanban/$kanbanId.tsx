@@ -6,11 +6,7 @@ import {
   notFound,
   useRouter,
 } from "@tanstack/react-router"
-import type {
-  ErrorComponentProps,
-  SearchSchemaInput,
-} from "@tanstack/react-router"
-import type { ColumnFiltersState } from "@tanstack/react-table"
+import type { ErrorComponentProps } from "@tanstack/react-router"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
@@ -18,7 +14,6 @@ import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceActions } from "#/components/resource/resource-actions"
 import { ResourceKanban } from "#/components/resource/resource-kanban"
 import type {
-  KanbanBoardMode,
   KanbanViewData,
   KanbanViewReducedData,
 } from "#/components/resource/resource-kanban"
@@ -58,26 +53,7 @@ export const Route = createFileRoute(
       : hasPrivilege
     if (!canSelect) throw notFound()
   },
-  validateSearch: (
-    search: {
-      layout?: string
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => {
-    let filters: ColumnFiltersState = []
-    try {
-      const f = search.filters
-      if (Array.isArray(f)) filters = f
-    } catch {}
-    return {
-      layout: (["board", "list"].includes(search.layout as string)
-        ? search.layout
-        : "board") as KanbanBoardMode,
-      filters,
-    }
-  },
-  loaderDeps: ({ search: { layout, filters } }) => ({ layout, filters }),
-  loader: async ({ context, params, deps: { filters } }) => {
+  loader: async ({ context, params }) => {
     const { schema, resource, kanbanId } = params
 
     const meta = JSON.parse(
@@ -90,16 +66,7 @@ export const Route = createFileRoute(
     if (!kanbanView) throw notFound()
 
     context.queryClient.query({
-      ...resourceDataQueryOptions(
-        schema,
-        resource,
-        meta.query,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        filters
-      ),
+      ...resourceDataQueryOptions(schema, resource, meta.query),
       staleTime: "static",
     })
 
@@ -122,11 +89,6 @@ export const Route = createFileRoute(
           ]}
         />
         <div className="flex flex-1 flex-col gap-2 px-4 py-4">
-          {/* Layout toggle */}
-          <div className="flex justify-end gap-1">
-            <Skeleton className="h-8 w-8" />
-            <Skeleton className="h-8 w-8" />
-          </div>
           {/* Kanban columns */}
           <div className="flex gap-4 overflow-x-auto">
             {Array.from({ length: 4 }).map((_, col) => (
@@ -238,22 +200,12 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
-  const { layout, filters } = Route.useSearch()
   const { kanbanView } = Route.useLoaderData()
   const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
   const { data: resourceData } = useSuspenseQuery(
-    resourceDataQueryOptions(
-      schema,
-      resource,
-      meta.query,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      filters
-    )
+    resourceDataQueryOptions(schema, resource, meta.query)
   )
 
   const titleField = kanbanView.title
@@ -327,16 +279,13 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col px-4 py-4">
+      <div className="flex min-h-0 flex-1 flex-col px-4 py-4">
         <ResourceKanban
           data={data}
           resourceSchema={resourceSchema}
           groupBy={groupByField ?? ""}
           groupValues={groupValues}
           groupMeta={groupMeta}
-          layout={layout}
-          filterPresets={meta.filter_presets ?? []}
-          currentFilters={filters}
           readOnly={kanbanView.read_only ?? false}
         />
       </div>

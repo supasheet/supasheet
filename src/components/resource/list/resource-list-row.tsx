@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router"
-import type { Row } from "@tanstack/react-table"
 
 import { Checkbox } from "#/components/ui/checkbox"
 import { useInlineFormFlag } from "#/hooks/use-inline-form-flag"
 import { useSheetHref } from "#/hooks/use-sheet-href"
+import type { DataTableRow } from "#/lib/data-table-types"
 import type {
   DatabaseSchemas,
   DatabaseTables,
@@ -17,7 +17,7 @@ import { cn } from "#/lib/utils"
 import { readField } from "./read-field"
 
 interface ResourceListRowProps<S extends DatabaseSchemas> {
-  row: Row<Record<string, unknown>>
+  row: DataTableRow<Record<string, unknown>>
   listView: ListLayout
   schema: S
   resource: DatabaseTables<S> | DatabaseViews<S>

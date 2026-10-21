@@ -1,17 +1,16 @@
 import { useCallback, useMemo } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table"
 
 import { toast } from "sonner"
 
 import { DataGrid } from "#/components/data-grid/data-grid"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import { useDataTable } from "#/hooks/use-data-table"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
 import type {
   ColumnSchema,
   FilterPreset,
@@ -28,9 +27,6 @@ interface ResourceGridProps {
   data: Record<string, unknown>[]
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
-  sorting: SortingState
-  pagination: PaginationState
-  columnFilters: ColumnFiltersState
   pageCount: number
   filterPresets?: FilterPreset[]
 }
@@ -39,9 +35,6 @@ export function ResourceGrid({
   data,
   columnsSchema,
   resourceSchema,
-  sorting,
-  pagination,
-  columnFilters,
   pageCount,
   filterPresets = [],
 }: ResourceGridProps) {
@@ -69,13 +62,12 @@ export function ResourceGrid({
     })
   }, [columnsSchema, tableSchema, resourceSchema.comment])
 
-  const table = useDataTable({
+  const { table } = useDataTable({
     columns,
     data,
     pageCount,
-    state: { sorting, pagination, columnFilters },
+    initialState: { pagination: DEFAULT_PAGINATION },
     getRowId: (row) => primaryKeys.map((key) => row[key.name]).join("/"),
-    meta: { filename: resource },
   })
 
   const { mutateAsync: updateRow } = useMutation(
@@ -132,12 +124,12 @@ export function ResourceGrid({
       isEditable={!!tableSchema}
       onRowsChange={handleRowsChange}
     >
-      <DataTableToolbar table={table}>
-        <ResourceFilterPresets
-          filterPresets={filterPresets}
-          currentFilters={columnFilters}
-        />
-      </DataTableToolbar>
+      <DataTableAdvancedToolbar table={table}>
+        <ResourceFilterPresets table={table} filterPresets={filterPresets} />
+        <DataTableFilterMenu table={table} />
+        <DataTableSortMenu table={table} />
+        <DataTableExportButton table={table} filename={resource} />
+      </DataTableAdvancedToolbar>
     </DataGrid>
   )
 }

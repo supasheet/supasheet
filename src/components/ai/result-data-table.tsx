@@ -1,22 +1,16 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
-import type {
-  ColumnDef,
-  PaginationState,
-  SortingState,
-  VisibilityState,
-} from "@tanstack/react-table"
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import { useTable } from "@tanstack/react-table"
 
 import { DataTable } from "#/components/data-table/data-table"
 import { DataTableColumnHeader } from "#/components/data-table/data-table-column-header"
-import { DataTableColumnVisibility } from "#/components/data-table/data-table-column-visibility"
-import { DataTableExportButton } from "#/components/data-table/data-table-toolbar"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
+import { DataTableViewOptions } from "#/components/data-table/data-table-view-options"
+import { dataTableFeatures } from "#/lib/data-table-features"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
+import type { DataTableColumnDef } from "#/lib/data-table-types"
+
+type ResultRow = Record<string, unknown>
 
 function formatCell(v: unknown): string {
   if (v === null || v === undefined) return ""
@@ -24,58 +18,43 @@ function formatCell(v: unknown): string {
   return String(v)
 }
 
-export function ResultDataTable({ rows }: { rows: Record<string, unknown>[] }) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 20,
-  })
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-
-  const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
+/**
+ * Client-side table for AI query results. Unlike the resource tables its state
+ * stays in memory, since several results can be on screen at once.
+ */
+export function ResultDataTable({ rows }: { rows: ResultRow[] }) {
+  const columns = useMemo<DataTableColumnDef<ResultRow>[]>(() => {
     if (rows.length === 0) return []
     return Object.keys(rows[0]).map((key) => ({
       id: key,
       accessorKey: key,
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={key} />
+        <DataTableColumnHeader column={column} label={key} />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-xs">
           {formatCell(row.getValue(key))}
         </span>
       ),
-      sortingFn: (a, b, id) => {
-        const av = a.getValue(id)
-        const bv = b.getValue(id)
-        if (av === null || av === undefined) return 1
-        if (bv === null || bv === undefined) return -1
-        if (typeof av === "number" && typeof bv === "number") return av - bv
-        return String(av).localeCompare(String(bv), undefined, {
-          numeric: true,
-        })
-      },
+      meta: { label: key },
     }))
   }, [rows])
 
-  const table = useReactTable({
-    data: rows,
-    columns,
-    state: { sorting, pagination, columnVisibility },
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    meta: { filename: "ai-result" },
-  })
+  const table = useTable(
+    {
+      features: dataTableFeatures,
+      data: rows,
+      columns,
+      initialState: { pagination: DEFAULT_PAGINATION },
+    },
+    (state) => ({ sorting: state.sorting, pagination: state.pagination })
+  )
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-end gap-2">
         <DataTableExportButton table={table} filename="ai-result" />
-        <DataTableColumnVisibility table={table} />
+        <DataTableViewOptions table={table} align="end" />
       </div>
       <DataTable table={table} />
     </div>

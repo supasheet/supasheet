@@ -611,7 +611,7 @@ comment on table procurement.suppliers is '{
         {"id": "list", "name": "All Suppliers", "type": "list", "title": "name", "description": "code", "field_1": "overall_rating", "field_2": "total_spend"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "preferred", "name": "Preferred", "filters": [{"id": "is_preferred", "value": "true", "operator": "eq"}]},
         {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": ["on_hold", "blacklisted"], "operator": "in"}]},
         {"id": "high_risk", "name": "High Risk", "filters": [{"id": "risk_rating", "value": ["high", "critical"], "operator": "in"}]}
@@ -1003,9 +1003,9 @@ comment on table procurement.purchase_requisitions is '{
     ],
     "filter_presets": [
         {"id": "mine", "name": "My Requisitions", "filters": [{"id": "requester_id", "value": "me", "operator": "eq"}]},
-        {"id": "pending", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending_approval", "operator": "eq"}]},
-        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "eq"}]},
-        {"id": "approved", "name": "Ready To Convert", "filters": [{"id": "status", "value": "approved", "operator": "eq"}]}
+        {"id": "pending", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending_approval", "operator": "in"}]},
+        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "in"}]},
+        {"id": "approved", "name": "Ready To Convert", "filters": [{"id": "status", "value": "approved", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["department_id", "category_id", "needed_by", "priority"],
@@ -1312,7 +1312,7 @@ comment on table procurement.requisition_approvals is '{
         {"id": "list", "name": "All Approvals", "type": "list", "title": "step_number", "description": "comment", "field_1": "status", "field_2": "decided_at"}
     ],
     "filter_presets": [
-        {"id": "mine", "name": "Awaiting Me", "filters": [{"id": "approver_id", "value": "me", "operator": "eq"}, {"id": "status", "value": "pending", "operator": "eq"}]}
+        {"id": "mine", "name": "Awaiting Me", "filters": [{"id": "approver_id", "value": "me", "operator": "eq"}, {"id": "status", "value": "pending", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -1572,7 +1572,7 @@ comment on table procurement.rfqs is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["draft", "sent"], "operator": "in"}]},
-        {"id": "awarded", "name": "Awarded", "filters": [{"id": "status", "value": "awarded", "operator": "eq"}]},
+        {"id": "awarded", "name": "Awarded", "filters": [{"id": "status", "value": "awarded", "operator": "in"}]},
         {"id": "no_quotes", "name": "No Quotes Yet", "filters": [{"id": "quote_count", "value": "0", "operator": "eq"}]}
     ],
     "fields": {
@@ -1867,8 +1867,8 @@ comment on table procurement.supplier_quotes is '{
         {"id": "list", "name": "All Quotes", "type": "list", "title": "quote_reference", "description": "currency", "field_1": "status", "field_2": "total"}
     ],
     "filter_presets": [
-        {"id": "submitted", "name": "Submitted", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]},
-        {"id": "shortlisted", "name": "Shortlisted", "filters": [{"id": "status", "value": "shortlisted", "operator": "eq"}]},
+        {"id": "submitted", "name": "Submitted", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]},
+        {"id": "shortlisted", "name": "Shortlisted", "filters": [{"id": "status", "value": "shortlisted", "operator": "in"}]},
         {"id": "non_compliant", "name": "Non-Compliant", "filters": [{"id": "is_compliant", "value": "false", "operator": "eq"}]}
     ],
     "fields": {
@@ -2149,8 +2149,8 @@ comment on table procurement.contracts is '{
         {"id": "list", "name": "All Contracts", "type": "list", "title": "title", "description": "contract_number", "field_1": "ceiling_amount", "field_2": "consumed_amount"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "expiring_soon", "name": "Expiring Within 60 Days", "filters": [{"id": "end_date", "value": "60_days_from_now", "operator": "lte"}, {"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "expiring_soon", "name": "Expiring Within 60 Days", "filters": [{"id": "end_date", "value": "60_days_from_now", "operator": "lte"}, {"id": "status", "value": "active", "operator": "in"}]},
         {"id": "near_ceiling", "name": "Near Ceiling", "filters": [{"id": "consumed_amount", "value": "0", "operator": "gt"}]}
     ],
     "fields": {
@@ -2350,9 +2350,9 @@ comment on table procurement.purchase_orders is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["draft", "pending_approval", "approved", "sent", "acknowledged", "partially_received"], "operator": "in"}]},
-        {"id": "pending_approval", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending_approval", "operator": "eq"}]},
+        {"id": "pending_approval", "name": "Awaiting Approval", "filters": [{"id": "status", "value": "pending_approval", "operator": "in"}]},
         {"id": "overdue", "name": "Overdue Delivery", "filters": [{"id": "expected_delivery_date", "value": "today", "operator": "lt"}, {"id": "status", "value": ["sent", "acknowledged", "partially_received"], "operator": "in"}]},
-        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "eq"}]}
+        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "in"}]}
     ],
     "links": [
         {"id": "print", "name": "Printable Order", "url": "/procurement/report/purchase_orders_report", "icon": "Printer", "description": "The order document to send to the supplier"}
@@ -2738,7 +2738,7 @@ comment on table procurement.po_approvals is '{
         {"id": "list", "name": "All Approvals", "type": "list", "title": "step_number", "description": "comment", "field_1": "status", "field_2": "decided_at"}
     ],
     "filter_presets": [
-        {"id": "mine", "name": "Awaiting Me", "filters": [{"id": "approver_id", "value": "me", "operator": "eq"}, {"id": "status", "value": "pending", "operator": "eq"}]}
+        {"id": "mine", "name": "Awaiting Me", "filters": [{"id": "approver_id", "value": "me", "operator": "eq"}, {"id": "status", "value": "pending", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -2966,7 +2966,7 @@ comment on table procurement.goods_receipts is '{
     ],
     "filter_presets": [
         {"id": "with_rejections", "name": "With Rejections", "filters": [{"id": "total_rejected_value", "value": "0", "operator": "gt"}]},
-        {"id": "disputed", "name": "Disputed", "filters": [{"id": "status", "value": "disputed", "operator": "eq"}]}
+        {"id": "disputed", "name": "Disputed", "filters": [{"id": "status", "value": "disputed", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["purchase_order_id", "received_on", "delivery_note_reference"],
@@ -3345,7 +3345,7 @@ comment on table procurement.vendor_invoices is '{
     "filter_presets": [
         {"id": "discrepancies", "name": "Discrepancies", "filters": [{"id": "match_status", "value": ["over_tolerance", "under_tolerance"], "operator": "in"}]},
         {"id": "unpaid", "name": "Unpaid", "filters": [{"id": "status", "value": ["approved", "matched"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "due_date", "value": "today", "operator": "lt"}, {"id": "status", "value": "paid", "operator": "neq"}]}
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "due_date", "value": "today", "operator": "lt"}, {"id": "status", "value": "paid", "operator": "not.in"}]}
     ],
     "fields": {
         "quick_create": ["purchase_order_id", "supplier_invoice_number", "invoice_date", "document"],

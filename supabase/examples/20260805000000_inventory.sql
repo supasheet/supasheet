@@ -570,10 +570,10 @@ comment on table inventory.items is '{
     ],
     "filter_presets": [
         {"id": "reorder", "name": "Below Reorder Point", "filters": [{"id": "is_below_reorder_point", "value": "true", "operator": "eq"}]},
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "serialised", "name": "Serialised", "filters": [{"id": "tracking", "value": "serial", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "serialised", "name": "Serialised", "filters": [{"id": "tracking", "value": "serial", "operator": "in"}]},
         {"id": "no_stock", "name": "Out Of Stock", "filters": [{"id": "on_hand", "value": "0", "operator": "lte"}]},
-        {"id": "class_a", "name": "A Class", "filters": [{"id": "abc_class", "value": "a", "operator": "eq"}]}
+        {"id": "class_a", "name": "A Class", "filters": [{"id": "abc_class", "value": "a", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["sku", "name", "category_id", "uom_id"],
@@ -949,7 +949,7 @@ comment on table inventory.zones is '{
         {"id": "list", "name": "All Zones", "type": "list", "title": "name", "description": "code", "field_1": "zone_type", "field_2": "location_count"}
     ],
     "filter_presets": [
-        {"id": "quarantine", "name": "Quarantine", "filters": [{"id": "zone_type", "value": "quarantine", "operator": "eq"}]}
+        {"id": "quarantine", "name": "Quarantine", "filters": [{"id": "zone_type", "value": "quarantine", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["warehouse_id", "code", "name", "zone_type"],
@@ -1188,7 +1188,7 @@ comment on table inventory.suppliers is '{
         {"id": "kanban", "name": "By Status", "type": "kanban", "group": "status", "title": "name", "description": "country", "date": "last_order_on", "badge": "quality_rating"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "late", "name": "Poor Delivery", "filters": [{"id": "on_time_rate", "value": "85", "operator": "lt"}]},
         {"id": "open", "name": "With Open Orders", "filters": [{"id": "open_order_value", "value": "0", "operator": "gt"}]}
     ],
@@ -1412,7 +1412,7 @@ comment on table inventory.lots is '{
     "filter_presets": [
         {"id": "in_stock", "name": "In Stock", "filters": [{"id": "on_hand", "value": "0", "operator": "gt"}]},
         {"id": "expiring", "name": "Expiring Soon", "filters": [{"id": "days_to_expiry", "value": "45", "operator": "lte"}]},
-        {"id": "quarantine", "name": "Quarantined", "filters": [{"id": "status", "value": "quarantine", "operator": "eq"}]}
+        {"id": "quarantine", "name": "Quarantined", "filters": [{"id": "status", "value": "quarantine", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["item_id", "lot_code", "expires_on"],
@@ -1528,8 +1528,8 @@ comment on table inventory.serials is '{
         {"id": "list", "name": "All Serials", "type": "list", "title": "serial_number", "description": "status", "field_1": "received_on", "field_2": "warranty_expires_on"}
     ],
     "filter_presets": [
-        {"id": "in_stock", "name": "In Stock", "filters": [{"id": "status", "value": "in_stock", "operator": "eq"}]},
-        {"id": "shipped", "name": "Shipped", "filters": [{"id": "status", "value": "shipped", "operator": "eq"}]}
+        {"id": "in_stock", "name": "In Stock", "filters": [{"id": "status", "value": "in_stock", "operator": "in"}]},
+        {"id": "shipped", "name": "Shipped", "filters": [{"id": "status", "value": "shipped", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["item_id", "serial_number"],
@@ -1988,9 +1988,9 @@ comment on table inventory.purchase_orders is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["approved", "partially_received"], "operator": "in"}]},
-        {"id": "awaiting", "name": "To Approve", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]},
+        {"id": "awaiting", "name": "To Approve", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]},
         {"id": "late", "name": "Late", "filters": [{"id": "days_late", "value": "0", "operator": "gt"}]},
-        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "eq"}]}
+        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["supplier_id", "warehouse_id", "expected_on", "priority"],
@@ -2265,7 +2265,7 @@ comment on table inventory.receipts is '{
         {"id": "list", "name": "All Receipts", "type": "list", "title": "receipt_number", "description": "carrier", "field_1": "total_quantity", "field_2": "received_on"}
     ],
     "filter_presets": [
-        {"id": "to_put_away", "name": "To Put Away", "filters": [{"id": "status", "value": "checking", "operator": "eq"}]},
+        {"id": "to_put_away", "name": "To Put Away", "filters": [{"id": "status", "value": "checking", "operator": "in"}]},
         {"id": "discrepancies", "name": "With Discrepancies", "filters": [{"id": "has_discrepancy", "value": "true", "operator": "eq"}]}
     ],
     "fields": {
@@ -2524,7 +2524,7 @@ comment on table inventory.stock_transfers is '{
         {"id": "list", "name": "All Transfers", "type": "list", "title": "transfer_number", "description": "reason", "field_1": "status", "field_2": "total_quantity"}
     ],
     "filter_presets": [
-        {"id": "in_transit", "name": "In Transit", "filters": [{"id": "status", "value": "in_transit", "operator": "eq"}]},
+        {"id": "in_transit", "name": "In Transit", "filters": [{"id": "status", "value": "in_transit", "operator": "in"}]},
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["draft", "picked", "in_transit"], "operator": "in"}]}
     ],
     "fields": {
@@ -2751,9 +2751,9 @@ comment on table inventory.stock_requests is '{
         {"id": "list", "name": "All Requests", "type": "list", "title": "request_number", "description": "purpose", "field_1": "status", "field_2": "needed_by"}
     ],
     "filter_presets": [
-        {"id": "to_decide", "name": "To Decide", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]},
-        {"id": "to_pick", "name": "To Pick", "filters": [{"id": "status", "value": "approved", "operator": "eq"}]},
-        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "eq"}]}
+        {"id": "to_decide", "name": "To Decide", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]},
+        {"id": "to_pick", "name": "To Pick", "filters": [{"id": "status", "value": "approved", "operator": "in"}]},
+        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["purpose", "needed_by", "priority"],
@@ -3251,7 +3251,7 @@ comment on table inventory.cycle_counts is '{
     ],
     "filter_presets": [
         {"id": "due", "name": "Due", "filters": [{"id": "status", "value": ["planned", "counting"], "operator": "in"}]},
-        {"id": "review", "name": "To Review", "filters": [{"id": "status", "value": "review", "operator": "eq"}]},
+        {"id": "review", "name": "To Review", "filters": [{"id": "status", "value": "review", "operator": "in"}]},
         {"id": "variances", "name": "With Variances", "filters": [{"id": "variance_lines", "value": "0", "operator": "gt"}]}
     ],
     "fields": {
@@ -3524,7 +3524,7 @@ comment on table inventory.stock_adjustments is '{
         {"id": "calendar", "name": "By Day", "type": "calendar", "title": "adjustment_number", "badge": "reason", "start_date": "adjusted_on"}
     ],
     "filter_presets": [
-        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "pending_approval", "operator": "eq"}]},
+        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "pending_approval", "operator": "in"}]},
         {"id": "write_offs", "name": "Write-offs", "filters": [{"id": "reason", "value": ["damage", "expiry", "theft", "scrap"], "operator": "in"}]}
     ],
     "fields": {

@@ -1,19 +1,19 @@
 import { useMemo } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table"
+import { Subscribe } from "@tanstack/react-table"
 
 import { toast } from "sonner"
 
-import { DataTableActionBar } from "#/components/data-table/data-table-action-bar"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
+import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
 import { DataTablePagination } from "#/components/data-table/data-table-pagination"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import { useDataTable } from "#/hooks/use-data-table"
 import { useHasPermission } from "#/hooks/use-permissions"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
 import type {
   ColumnSchema,
   FilterPreset,
@@ -33,9 +33,6 @@ interface ResourceListProps {
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
   listView: ListLayout
-  sorting: SortingState
-  pagination: PaginationState
-  columnFilters: ColumnFiltersState
   pageCount: number
   filterPresets?: FilterPreset[]
 }
@@ -45,9 +42,6 @@ export function ResourceList({
   columnsSchema,
   resourceSchema,
   listView,
-  sorting,
-  pagination,
-  columnFilters,
   pageCount,
   filterPresets = [],
 }: ResourceListProps) {
@@ -91,11 +85,11 @@ export function ResourceList({
     [columnsSchema, resourceSchema]
   )
 
-  const table = useDataTable({
+  const { table } = useDataTable({
     columns,
     data,
     pageCount,
-    state: { sorting, pagination, columnFilters },
+    initialState: { pagination: DEFAULT_PAGINATION },
     getRowId: (row) => primaryKeys.map((key) => row[key.name]).join("/"),
   })
 
@@ -103,31 +97,36 @@ export function ResourceList({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <DataTableToolbar table={table} hideColumnVisibility>
-        <ResourceFilterPresets
-          filterPresets={filterPresets}
-          currentFilters={columnFilters}
-        />
-      </DataTableToolbar>
-      <DataTableActionBar
+      <DataTableAdvancedToolbar table={table} hideViewOptions>
+        <ResourceFilterPresets table={table} filterPresets={filterPresets} />
+        <DataTableFilterMenu table={table} />
+        <DataTableSortMenu table={table} />
+        <DataTableExportButton table={table} filename={resource} />
+      </DataTableAdvancedToolbar>
+      <DataTableBulkActions
         table={table}
+        filename={resource}
         onDelete={canDelete ? handleDelete : undefined}
       />
       {rows.length === 0 ? (
         <ResourceListEmpty />
       ) : (
-        <div className="divide-y overflow-hidden rounded-md border bg-card">
-          {rows.map((row) => (
-            <ResourceListRow
-              key={row.id}
-              row={row}
-              listView={listView}
-              schema={schema}
-              resource={resource}
-              primaryKeys={primaryKeys}
-            />
-          ))}
-        </div>
+        <Subscribe source={table.atoms.rowSelection}>
+          {() => (
+            <div className="divide-y overflow-hidden rounded-md border bg-card">
+              {rows.map((row) => (
+                <ResourceListRow
+                  key={row.id}
+                  row={row}
+                  listView={listView}
+                  schema={schema}
+                  resource={resource}
+                  primaryKeys={primaryKeys}
+                />
+              ))}
+            </div>
+          )}
+        </Subscribe>
       )}
       <DataTablePagination table={table} />
     </div>

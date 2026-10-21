@@ -2,13 +2,11 @@ import { useCallback, useEffect, useState } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import type { ColumnFiltersState } from "@tanstack/react-table"
 
-import { AlignStartHorizontalIcon, AlignStartVerticalIcon } from "lucide-react"
+import { AlignStartHorizontalIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { DynamicIcon } from "#/components/resource/resource-definition-utils"
-import { ResourceFilterPresets } from "#/components/resource/resource-filter-presets"
 import {
   Kanban,
   KanbanBoard,
@@ -20,8 +18,6 @@ import {
 } from "#/components/reui/kanban"
 import type { KanbanCommitMeta } from "#/components/reui/kanban"
 import { Badge } from "#/components/ui/badge"
-import { Button } from "#/components/ui/button"
-import { ButtonGroup } from "#/components/ui/button-group"
 import {
   Empty,
   EmptyDescription,
@@ -29,7 +25,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
-import type { FilterPreset, ResourceSchema } from "#/lib/database-meta.types"
+import type { ResourceSchema } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import type { EnumBadgeMeta } from "#/lib/fields"
 import { getPkValue } from "#/lib/fields"
@@ -47,8 +43,6 @@ export interface KanbanViewData {
 }
 
 export type KanbanViewReducedData = Record<string, KanbanViewData[]>
-
-export type KanbanBoardMode = "board" | "list"
 
 function seedGroupColumns(
   data: KanbanViewReducedData,
@@ -72,9 +66,6 @@ export function ResourceKanban({
   groupBy,
   groupValues = [],
   groupMeta = {},
-  layout,
-  filterPresets = [],
-  currentFilters = [],
   readOnly = false,
 }: {
   data: KanbanViewReducedData
@@ -82,9 +73,6 @@ export function ResourceKanban({
   groupBy: string
   groupValues?: string[]
   groupMeta?: Record<string, EnumBadgeMeta>
-  layout: KanbanBoardMode
-  filterPresets?: FilterPreset[]
-  currentFilters?: ColumnFiltersState
   readOnly?: boolean
 }) {
   const schema = resourceSchema.schema ?? ""
@@ -145,48 +133,12 @@ export function ResourceKanban({
     [primaryKeys, groupBy, updateResource, queryClient, schema, resource]
   )
 
-  function goToLayout(l: KanbanBoardMode) {
-    void navigate({
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        layout: l,
-      }),
-    })
-  }
-
   const hasNoData =
     Object.keys(columns).length === 0 ||
     Object.values(columns).every((tasks) => tasks.length === 0)
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <ResourceFilterPresets
-            filterPresets={filterPresets}
-            currentFilters={currentFilters}
-          />
-        </div>
-        <ButtonGroup>
-          <Button
-            size="icon-sm"
-            variant={layout === "board" ? "default" : "outline"}
-            aria-label="Board layout"
-            onClick={() => goToLayout("board")}
-          >
-            <AlignStartHorizontalIcon />
-          </Button>
-          <Button
-            size="icon-sm"
-            variant={layout === "list" ? "default" : "outline"}
-            aria-label="List layout"
-            onClick={() => goToLayout("list")}
-          >
-            <AlignStartVerticalIcon />
-          </Button>
-        </ButtonGroup>
-      </div>
-
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
       {hasNoData ? (
         <Empty className="min-h-[400px] border">
           <EmptyHeader>
@@ -201,21 +153,15 @@ export function ResourceKanban({
         </Empty>
       ) : (
         <Kanban
+          className="flex min-h-0 flex-1 flex-col"
           value={columns}
           onValueChange={setColumns}
           onValueCommit={readOnly ? undefined : handleValueCommit}
           getItemValue={buildId}
         >
-          <KanbanBoard
-            className={cn(
-              "overflow-x-auto",
-              layout === "board"
-                ? "flex h-[calc(100svh-135px)] flex-row"
-                : "flex flex-col"
-            )}
-          >
+          <KanbanBoard className="flex min-h-0 flex-1 flex-row overflow-x-auto">
             {Object.entries(columns).map(([columnValue, tasks]) => {
-              const collapsed = layout === "board" && tasks.length === 0
+              const collapsed = tasks.length === 0
               const meta = groupMeta[columnValue]
 
               return (
@@ -224,10 +170,9 @@ export function ResourceKanban({
                   value={columnValue}
                   className={cn(
                     "flex flex-col gap-2 rounded-lg border bg-card p-2.5",
-                    layout === "board" &&
-                      (collapsed
-                        ? "w-14 shrink-0 items-center"
-                        : "max-w-2xl min-w-sm")
+                    collapsed
+                      ? "w-14 shrink-0 items-center"
+                      : "max-w-2xl min-w-sm"
                   )}
                 >
                   <div

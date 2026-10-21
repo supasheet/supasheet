@@ -10,6 +10,8 @@ import {
 import type { ErrorComponentProps } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router"
+
 import { ThemeProvider } from "#/components/theme-provider"
 import { Button } from "#/components/ui/button"
 import { Toaster } from "#/components/ui/sonner"
@@ -111,12 +113,14 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <ThemeProvider>
-        <TooltipProvider>
-          <Outlet />
-          <Toaster />
-        </TooltipProvider>
-      </ThemeProvider>
+      <NuqsAdapter>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Outlet />
+            <Toaster />
+          </TooltipProvider>
+        </ThemeProvider>
+      </NuqsAdapter>
       <TanStackDevtools
         config={{
           position: "bottom-right",

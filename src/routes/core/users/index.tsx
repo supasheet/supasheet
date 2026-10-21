@@ -1,7 +1,7 @@
+import { useDeferredValue, useMemo } from "react"
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Link, createFileRoute } from "@tanstack/react-router"
-import type { SearchSchemaInput } from "@tanstack/react-router"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 
 import { MailPlusIcon, PlusIcon } from "lucide-react"
 
@@ -10,44 +10,25 @@ import { DefaultHeader } from "#/components/layouts/default-header"
 import { Button } from "#/components/ui/button"
 import { UsersTable } from "#/components/users/users-table"
 import { useHasRole } from "#/hooks/use-permissions"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import { pageTitle } from "#/lib/page-title"
 import { usersQueryOptions } from "#/lib/supabase/data/core"
 import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/core/users/")({
   head: () => ({ meta: [{ title: pageTitle("Users") }] }),
-  validateSearch: (
-    search: {
-      sortId?: string
-      sortDesc?: boolean
-      page?: number
-      pageSize?: number
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => ({
-    sortId: search.sortId,
-    sortDesc: search.sortDesc ?? false,
-    page: search.page ?? 1,
-    pageSize: search.pageSize ?? 20,
-    filters: search.filters ?? [],
-  }),
-  loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({
-    sortId,
-    sortDesc,
-    page,
-    pageSize,
-    filters,
-  }),
-  loader: async ({
-    context,
-    deps: { sortId, sortDesc, page, pageSize, filters },
-  }) => {
-    context.queryClient.query({
-      ...usersQueryOptions(page, pageSize, sortId, sortDesc, filters),
-      staleTime: "static",
-    })
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, deps: { search } }) => {
     const columnsSchema = await context.queryClient.query({
       ...columnsSchemaQueryOptions("supasheet", "users"),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...usersQueryOptions(
+        getTableQuery(search, getFilterVariants(null, columnsSchema))
+      ),
       staleTime: "static",
     })
 
@@ -105,18 +86,17 @@ function PendingComponent() {
 }
 
 function RouteComponent() {
-  const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
+  const search = Route.useSearch()
   const { columnsSchema } = Route.useLoaderData()
 
-  const { data } = useSuspenseQuery(
-    usersQueryOptions(page, pageSize, sortId, sortDesc, filters)
+  const liveTableQuery = useMemo(
+    () => getTableQuery(search, getFilterVariants(null, columnsSchema)),
+    [search, columnsSchema]
   )
+  const tableQuery = useDeferredValue(liveTableQuery)
+  const { data } = useSuspenseQuery(usersQueryOptions(tableQuery))
 
-  const sorting = (
-    sortId ? [{ id: sortId, desc: sortDesc }] : []
-  ) as SortingState
-  const pagination = { pageIndex: page - 1, pageSize }
-  const pageCount = Math.ceil((data?.count ?? 0) / pageSize)
+  const pageCount = Math.ceil((data?.count ?? 0) / tableQuery.perPage)
 
   return (
     <>
@@ -129,9 +109,6 @@ function RouteComponent() {
             <UsersTable
               data={data?.result ?? []}
               columnsSchema={columnsSchema}
-              sorting={sorting}
-              pagination={pagination}
-              columnFilters={filters}
               pageCount={pageCount}
             />
           </div>

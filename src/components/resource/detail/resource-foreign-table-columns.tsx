@@ -1,9 +1,12 @@
-import type { Column, ColumnDef, Row } from "@tanstack/react-table"
-
 import { ArrowUpRightIcon } from "lucide-react"
 
-import { Checkbox } from "#/components/ui/checkbox"
-import { getColumnMetadata } from "#/lib/columns"
+import { getDataTableSelectColumn } from "#/components/data-table/data-table-select-column"
+import { getColumnDefMeta } from "#/lib/columns"
+import type {
+  DataTableColumn,
+  DataTableColumnDef,
+  DataTableRow,
+} from "#/lib/data-table-types"
 import type {
   ColumnSchema,
   ResourceDataSchema,
@@ -31,63 +34,46 @@ export function getResourceForeignTableColumns({
   const primaryKeyNames = primaryKeys.map((k) => k.name)
   const hasPrimaryKeys = primaryKeys.length > 0
 
-  const selectColumn: ColumnDef<ResourceDataSchema, unknown> | null =
-    hasPrimaryKeys
-      ? {
-          id: "select",
-          header: ({ table }) => (
-            <Checkbox
-              checked={table.getIsAllPageRowsSelected()}
-              indeterminate={
-                table.getIsSomePageRowsSelected() &&
-                !table.getIsAllPageRowsSelected()
-              }
-              onCheckedChange={(checked) =>
-                table.toggleAllPageRowsSelected(!!checked)
-              }
-              aria-label="Select all"
-            />
-          ),
+  const selectColumns: DataTableColumnDef<ResourceDataSchema>[] = hasPrimaryKeys
+    ? [
+        getDataTableSelectColumn<ResourceDataSchema>(),
+        {
+          id: "detail",
+          header: () => null,
           cell: ({ row }) => {
             const pk = Object.fromEntries(
               primaryKeys.map((k) => [k.name, row.original[k.name]])
             )
             return (
-              <div className="flex items-center gap-1.5">
-                <Checkbox
-                  checked={row.getIsSelected()}
-                  onCheckedChange={(checked) => row.toggleSelected(!!checked)}
-                  aria-label="Select row"
-                />
-                <DetailRecordTrigger
-                  pk={pk}
-                  primaryKeyNames={primaryKeyNames}
-                  schema={resourceSchema.schema}
-                  resource={resourceSchema.name}
-                  size="icon-xs"
-                  variant="outline"
-                  className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
-                >
-                  <ArrowUpRightIcon />
-                </DetailRecordTrigger>
-              </div>
+              <DetailRecordTrigger
+                pk={pk}
+                primaryKeyNames={primaryKeyNames}
+                schema={resourceSchema.schema}
+                resource={resourceSchema.name}
+                size="icon-xs"
+                variant="outline"
+                className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
+              >
+                <ArrowUpRightIcon />
+              </DetailRecordTrigger>
             )
           },
-          size: 60,
+          size: 40,
           enableSorting: false,
           enableHiding: false,
           enableColumnFilter: false,
-        }
-      : null
+        },
+      ]
+    : []
 
   return [
-    ...(selectColumn ? [selectColumn] : []),
+    ...selectColumns,
     ...(actions.length > 0
       ? [
           {
             id: "actions",
             header: () => null,
-            cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+            cell: ({ row }: { row: DataTableRow<ResourceDataSchema> }) => (
               <ResourceRowActions
                 schema={resourceSchema.schema}
                 resource={resourceSchema.name}
@@ -104,7 +90,7 @@ export function getResourceForeignTableColumns({
         ]
       : []),
     ...(columnsSchema ?? []).map((c) => {
-      const meta = getColumnMetadata(resourceSchema, c)
+      const meta = getColumnDefMeta(resourceSchema, c)
 
       return {
         id: c.name,
@@ -112,15 +98,15 @@ export function getResourceForeignTableColumns({
         header: ({
           column,
         }: {
-          column: Column<ResourceDataSchema, unknown>
+          column: DataTableColumn<ResourceDataSchema>
         }) => (
           <ResourceColumnHeader
             column={column}
-            title={meta.name}
+            title={meta.field?.name ?? c.name}
             isSorted={column.getIsSorted()}
           />
         ),
-        cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+        cell: ({ row }: { row: DataTableRow<ResourceDataSchema> }) => (
           <ResourceRowCell
             row={row}
             columnSchema={c}
@@ -134,5 +120,5 @@ export function getResourceForeignTableColumns({
         meta,
       }
     }),
-  ] as ColumnDef<ResourceDataSchema, unknown>[]
+  ] as DataTableColumnDef<ResourceDataSchema>[]
 }

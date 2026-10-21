@@ -592,7 +592,7 @@ comment on table quality.documents is '{
         {"id": "calendar", "name": "Review Calendar", "type": "calendar", "title": "title", "badge": "document_type", "start_date": "next_review_date", "read_only": true}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "review_due", "name": "Review Due", "filters": [{"id": "next_review_date", "value": "today", "operator": "lte"}]}
     ],
     "fields": {
@@ -725,8 +725,8 @@ comment on table quality.document_versions is '{
         {"id": "list", "name": "All Versions", "type": "list", "title": "version_number", "description": "change_summary", "field_1": "status", "field_2": "effective_date"}
     ],
     "filter_presets": [
-        {"id": "effective", "name": "Effective", "filters": [{"id": "status", "value": "effective", "operator": "eq"}]},
-        {"id": "in_review", "name": "In Review", "filters": [{"id": "status", "value": "in_review", "operator": "eq"}]}
+        {"id": "effective", "name": "Effective", "filters": [{"id": "status", "value": "effective", "operator": "in"}]},
+        {"id": "in_review", "name": "In Review", "filters": [{"id": "status", "value": "in_review", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["document_id", "version_number", "file"],
@@ -1051,7 +1051,7 @@ comment on table quality.audits is '{
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["planned", "scheduled", "in_progress"], "operator": "in"}]},
         {"id": "with_findings", "name": "With Open Findings", "filters": [{"id": "open_finding_count", "value": "0", "operator": "gt"}]},
-        {"id": "failed", "name": "Failed", "filters": [{"id": "result", "value": "fail", "operator": "eq"}]}
+        {"id": "failed", "name": "Failed", "filters": [{"id": "result", "value": "fail", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["audit_type", "process_id", "lead_auditor_id", "planned_date"],
@@ -1298,7 +1298,7 @@ comment on table quality.audit_findings is '{
         {"id": "list", "name": "All Findings", "type": "list", "title": "description", "description": "clause_reference", "field_1": "severity", "field_2": "status"}
     ],
     "filter_presets": [
-        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "eq"}]},
+        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "in"}]},
         {"id": "serious", "name": "Major & Critical", "filters": [{"id": "severity", "value": ["major", "critical"], "operator": "in"}]}
     ],
     "fields": {
@@ -1885,7 +1885,7 @@ comment on table quality.capas is '{
         {"id": "mine", "name": "Owned By Me", "filters": [{"id": "owner_id", "value": "me", "operator": "eq"}]},
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["closed", "cancelled"], "operator": "not.in"}]},
         {"id": "overdue", "name": "Overdue", "filters": [{"id": "due_date", "value": "today", "operator": "lt"}, {"id": "status", "value": ["closed", "cancelled"], "operator": "not.in"}]},
-        {"id": "awaiting_verification", "name": "Awaiting Verification", "filters": [{"id": "status", "value": "pending_verification", "operator": "eq"}]}
+        {"id": "awaiting_verification", "name": "Awaiting Verification", "filters": [{"id": "status", "value": "pending_verification", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["title", "capa_type", "process_id", "owner_id", "due_date"],
@@ -2130,7 +2130,7 @@ comment on table quality.capa_actions is '{
     "filter_presets": [
         {"id": "mine", "name": "Assigned To Me", "filters": [{"id": "assigned_to", "value": "me", "operator": "eq"}]},
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["open", "in_progress", "overdue"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "eq"}]}
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["capa_id", "action_type", "description", "assigned_to", "due_date"],
@@ -2620,8 +2620,8 @@ comment on table quality.equipment is '{
     ],
     "filter_presets": [
         {"id": "overdue", "name": "Overdue", "filters": [{"id": "is_overdue", "value": "true", "operator": "eq"}]},
-        {"id": "due_soon", "name": "Due Within 30 Days", "filters": [{"id": "status", "value": "due", "operator": "eq"}]},
-        {"id": "in_service", "name": "In Service", "filters": [{"id": "status", "value": "in_service", "operator": "eq"}]}
+        {"id": "due_soon", "name": "Due Within 30 Days", "filters": [{"id": "status", "value": "due", "operator": "in"}]},
+        {"id": "in_service", "name": "In Service", "filters": [{"id": "status", "value": "in_service", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["name", "category", "location", "calibration_frequency_days"],
@@ -2979,7 +2979,7 @@ comment on table quality.training_records is '{
     "filter_presets": [
         {"id": "mine", "name": "My Training", "filters": [{"id": "user_id", "value": "me", "operator": "eq"}]},
         {"id": "outstanding", "name": "Not Completed", "filters": [{"id": "status", "value": ["not_started", "in_progress"], "operator": "in"}]},
-        {"id": "expired", "name": "Expired", "filters": [{"id": "status", "value": "expired", "operator": "eq"}]}
+        {"id": "expired", "name": "Expired", "filters": [{"id": "status", "value": "expired", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["course_id", "user_id", "due_date"],

@@ -65,8 +65,8 @@ alias (not `@/`).
   `dashboard/`, `chart/`, `report/`, `audit-logs/`, `users/`, `account/`,
   `layouts/`, `editor/`, `data-table/`; shadcn/ui primitives in `ui/`
 - `src/config/` — app-level constants (data table defaults, database config)
-- `src/hooks/` — shared hooks (permissions, user, file upload, mobile, data table)
-- `src/lib/` — utilities: formatting, field definitions, column builders, exports
+- `src/hooks/` — shared hooks (permissions, user, file upload, mobile, `use-data-table` / `use-local-data-table`)
+- `src/lib/` — utilities: formatting, field definitions, column builders, exports, `data-table-*` (Dice UI table, TanStack Table v9)
 - `src/lib/supabase/` — all backend logic: `client.ts`, `filter.ts`, and `data/`
   with query/mutation functions per domain (`auth.ts`, `resource.ts`, `users.ts`,
   `storage.ts`, `chart.ts`, `dashboard.ts`, `report.ts`, `security.ts`, ...)
@@ -81,6 +81,17 @@ alias (not `@/`).
     `dashboard/`, `chart/`, `report/$report/`, `sql-editor/$snippet/`
 - `supabase/` — `migrations/` (ordered SQL), `functions/` (admin-\* Deno edge
   functions for user operations), `examples/` (seed SQL)
+
+## Data tables
+
+Tables use the [Dice UI data table](https://diceui.com/docs/components/base/data-table)
+on TanStack Table v9. Table state (page, sort, per-column filters, join
+operator) lives in the URL via `nuqs`; routes keep the search params as-is
+(`validateTableSearch`) and the loader derives the query with `getTableQuery`.
+Resource tables use the advanced toolbar (`DataTableFilterMenu` +
+`DataTableSortMenu`); other tables use `DataTableToolbar`. Tables embedded in
+sheets/tabs keep state in React with `useLocalTableState` + `useLocalDataTable`.
+Filters are turned into PostgREST in `src/lib/supabase/filter.ts`.
 
 ## Data fetching pattern (routes)
 

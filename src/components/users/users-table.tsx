@@ -1,19 +1,16 @@
 import { useMemo } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table"
 
 import { toast } from "sonner"
 
 import { DataTable } from "#/components/data-table/data-table"
-import { DataTableActionBar } from "#/components/data-table/data-table-action-bar"
+import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
 import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
 import { useDataTable } from "#/hooks/use-data-table"
 import { useHasRole } from "#/hooks/use-permissions"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import { adminDeleteUserMutationOptions } from "#/lib/supabase/data/admin-auth"
 
@@ -23,18 +20,12 @@ import type { User } from "./users-table-columns"
 interface UsersTableProps {
   data: User[]
   columnsSchema: ColumnSchema<"supasheet">[]
-  sorting: SortingState
-  pagination: PaginationState
-  columnFilters: ColumnFiltersState
   pageCount: number
 }
 
 export function UsersTable({
   data,
   columnsSchema,
-  sorting,
-  pagination,
-  columnFilters,
   pageCount,
 }: UsersTableProps) {
   const queryClient = useQueryClient()
@@ -44,12 +35,12 @@ export function UsersTable({
     () => getUsersTableColumns({ columnsSchema, canViewAll }),
     [columnsSchema, canViewAll]
   )
-  const table = useDataTable({
+  const { table } = useDataTable({
     columns,
     data,
     pageCount,
-    state: { sorting, pagination, columnFilters },
-    meta: { filename: "users" },
+    initialState: { pagination: DEFAULT_PAGINATION },
+    getRowId: (row) => row.id,
   })
 
   const { mutateAsync: deleteUser } = useMutation(
@@ -70,12 +61,19 @@ export function UsersTable({
   }
 
   return (
-    <DataTable table={table}>
-      <DataTableToolbar table={table} />
-      <DataTableActionBar
-        table={table}
-        onDelete={canDelete ? handleDelete : undefined}
-      />
+    <DataTable
+      table={table}
+      actionBar={
+        <DataTableBulkActions
+          table={table}
+          filename="users"
+          onDelete={canDelete ? handleDelete : undefined}
+        />
+      }
+    >
+      <DataTableToolbar table={table}>
+        <DataTableExportButton table={table} filename="users" />
+      </DataTableToolbar>
     </DataTable>
   )
 }

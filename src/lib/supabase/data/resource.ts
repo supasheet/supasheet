@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
-import type { ColumnFiltersState } from "@tanstack/react-table"
 
+import type { TableQuery } from "#/lib/data-table-search"
 import type {
   DatabaseSchemas,
   DatabaseTables,
@@ -9,7 +9,7 @@ import type {
   TableMetadata,
 } from "#/lib/database-meta.types"
 import { supabase } from "#/lib/supabase/client"
-import { applyFilters } from "#/lib/supabase/filter"
+import { applyFilterRules, applyFilters } from "#/lib/supabase/filter"
 
 function buildJoinsSelect(resource: string, join: JoinClause[] | undefined) {
   return (
@@ -26,24 +26,10 @@ export const resourceDataQueryOptions = <S extends DatabaseSchemas>(
   schema: S,
   resource: DatabaseTables<S> | DatabaseViews<S>,
   defaultQuery: TableMetadata["query"],
-  page?: number,
-  pageSize?: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
+  tableQuery: Partial<TableQuery> = {}
 ) =>
   queryOptions({
-    queryKey: [
-      "supasheet",
-      "resource-data",
-      schema,
-      resource,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
-    ],
+    queryKey: ["supasheet", "resource-data", schema, resource, tableQuery],
     queryFn: async () => {
       const joins = buildJoinsSelect(resource, defaultQuery?.join)
 
@@ -54,24 +40,24 @@ export const resourceDataQueryOptions = <S extends DatabaseSchemas>(
           count: "exact",
         })
 
-      if (page && pageSize) {
-        query = query.range((page - 1) * pageSize, page * pageSize - 1)
+      const { page, perPage, sorting, filters = [], joinOperator } = tableQuery
+
+      if (page && perPage) {
+        query = query.range((page - 1) * perPage, page * perPage - 1)
       }
 
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
+      if (sorting?.length) {
+        for (const sort of sorting) {
+          query = query.order(sort.id, { ascending: !sort.desc })
+        }
       } else if (defaultQuery?.sort?.length) {
         for (const s of defaultQuery.sort) {
           query = query.order(s.id, { ascending: !s.desc })
         }
       }
 
-      const metaFilters: ColumnFiltersState =
-        defaultQuery?.filter?.map((f) => ({
-          id: f.id,
-          value: `${f.operator}.${Array.isArray(f.value) ? f.value.join(",") : f.value}`,
-        })) ?? []
-      query = applyFilters(query, [...metaFilters, ...filters])
+      query = applyFilterRules(query, defaultQuery?.filter ?? [])
+      query = applyFilters(query, filters, joinOperator)
 
       const { data, count, error } = await query
       if (error) throw error
@@ -92,11 +78,7 @@ export const foreignTableDataQueryOptions = <S extends DatabaseSchemas>(
   parentValue: unknown,
   defaultQuery?: TableMetadata["query"],
   selectClause?: string,
-  page?: number,
-  pageSize?: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
+  tableQuery: Partial<TableQuery> = {}
 ) =>
   queryOptions({
     queryKey: [
@@ -110,11 +92,7 @@ export const foreignTableDataQueryOptions = <S extends DatabaseSchemas>(
       parentValue,
       defaultQuery,
       selectClause,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
+      tableQuery,
     ],
     queryFn: async () => {
       const joins = buildJoinsSelect(resource, defaultQuery?.join)
@@ -127,24 +105,24 @@ export const foreignTableDataQueryOptions = <S extends DatabaseSchemas>(
         .select(baseSelect + joins, { count: "exact" })
         .eq(parentColumn as never, parentValue as never)
 
-      if (page && pageSize) {
-        query = query.range((page - 1) * pageSize, page * pageSize - 1)
+      const { page, perPage, sorting, filters = [], joinOperator } = tableQuery
+
+      if (page && perPage) {
+        query = query.range((page - 1) * perPage, page * perPage - 1)
       }
 
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
+      if (sorting?.length) {
+        for (const sort of sorting) {
+          query = query.order(sort.id, { ascending: !sort.desc })
+        }
       } else if (defaultQuery?.sort?.length) {
         for (const s of defaultQuery.sort) {
           query = query.order(s.id, { ascending: !s.desc })
         }
       }
 
-      const metaFilters: ColumnFiltersState =
-        defaultQuery?.filter?.map((f) => ({
-          id: f.id,
-          value: `${f.operator}.${Array.isArray(f.value) ? f.value.join(",") : f.value}`,
-        })) ?? []
-      query = applyFilters(query, [...metaFilters, ...filters])
+      query = applyFilterRules(query, defaultQuery?.filter ?? [])
+      query = applyFilters(query, filters, joinOperator)
 
       const { data, count, error } = await query
       if (error) throw error

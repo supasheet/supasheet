@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
-import type { ColumnFiltersState } from "@tanstack/react-table"
 
+import type { TableQuery } from "#/lib/data-table-search"
 import type { Json } from "#/lib/database.types"
 
 import { supabase } from "../client"
@@ -9,37 +9,26 @@ import { applyFilters } from "../filter"
 export type AppRole = string
 export type PermissionsMap = Record<string, Record<string, string[]>>
 
-export const auditLogsQueryOptions = (
-  page: number,
-  pageSize: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
-) =>
+export const auditLogsQueryOptions = (tableQuery: TableQuery) =>
   queryOptions({
-    queryKey: [
-      "supasheet",
-      "audit_logs",
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters,
-    ],
+    queryKey: ["supasheet", "audit_logs", tableQuery],
     queryFn: async () => {
+      const { page, perPage, sorting, filters, joinOperator } = tableQuery
       let query = supabase
         .schema("supasheet")
         .from("audit_logs")
         .select("*", { count: "exact" })
-        .range((page - 1) * pageSize, page * pageSize - 1)
+        .range((page - 1) * perPage, page * perPage - 1)
 
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
+      if (sorting.length) {
+        for (const sort of sorting) {
+          query = query.order(sort.id, { ascending: !sort.desc })
+        }
       } else {
         query = query.order("created_at", { ascending: false })
       }
 
-      query = applyFilters(query, filters)
+      query = applyFilters(query, filters, joinOperator)
 
       const { data, count, error } = await query
       if (error) throw error
@@ -48,33 +37,28 @@ export const auditLogsQueryOptions = (
         result: data,
         count: count,
         page: page,
-        pageSize: pageSize,
+        pageSize: perPage,
       }
     },
     staleTime: 1000 * 60 * 5,
   })
 
-export const usersQueryOptions = (
-  page: number,
-  pageSize: number,
-  sortId?: string,
-  sortDesc?: boolean,
-  filters: ColumnFiltersState = []
-) =>
+export const usersQueryOptions = (tableQuery: TableQuery) =>
   queryOptions({
-    queryKey: ["supasheet", "users", page, pageSize, sortId, sortDesc, filters],
+    queryKey: ["supasheet", "users", tableQuery],
     queryFn: async () => {
+      const { page, perPage, sorting, filters, joinOperator } = tableQuery
       let query = supabase
         .schema("supasheet")
         .from("users")
         .select("*", { count: "exact" })
-        .range((page - 1) * pageSize, page * pageSize - 1)
+        .range((page - 1) * perPage, page * perPage - 1)
 
-      if (sortId) {
-        query = query.order(sortId, { ascending: !sortDesc })
+      for (const sort of sorting) {
+        query = query.order(sort.id, { ascending: !sort.desc })
       }
 
-      query = applyFilters(query, filters)
+      query = applyFilters(query, filters, joinOperator)
 
       const { data, count, error } = await query
       if (error) throw error
@@ -83,7 +67,7 @@ export const usersQueryOptions = (
         result: data,
         count: count,
         page: page,
-        pageSize: pageSize,
+        pageSize: perPage,
       }
     },
     staleTime: 1000 * 60 * 5,

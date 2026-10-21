@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router"
-import type { ColumnDef } from "@tanstack/react-table"
 
 import { ArrowUpRightIcon, UserIcon } from "lucide-react"
 
 import { DataTableColumnHeader } from "#/components/data-table/data-table-column-header"
+import { getDataTableSelectColumn } from "#/components/data-table/data-table-select-column"
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar"
-import { Checkbox } from "#/components/ui/checkbox"
-import { getColumnMetadata } from "#/lib/columns"
+import { getColumnDefMeta } from "#/lib/columns"
+import type { DataTableColumnDef } from "#/lib/data-table-types"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 import type { Database } from "#/lib/database.types"
 import { formatDate } from "#/lib/format"
@@ -19,56 +19,39 @@ export function getUsersTableColumns({
 }: {
   columnsSchema: ColumnSchema<"supasheet">[]
   canViewAll?: boolean
-}): ColumnDef<User, unknown>[] {
+}): DataTableColumnDef<User>[] {
   return [
+    getDataTableSelectColumn<User>(),
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          indeterminate={
-            table.getIsSomePageRowsSelected() &&
-            !table.getIsAllPageRowsSelected()
-          }
-          onCheckedChange={(checked) =>
-            table.toggleAllPageRowsSelected(!!checked)
-          }
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1.5">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(checked) => row.toggleSelected(!!checked)}
-            aria-label="Select row"
-          />
-          {canViewAll && (
-            <Link
-              to="/core/users/$userId"
-              params={{ userId: row.original.id }}
-              className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ArrowUpRightIcon className="size-3" />
-            </Link>
-          )}
-        </div>
-      ),
+      id: "detail",
+      header: () => null,
+      cell: ({ row }) =>
+        canViewAll ? (
+          <Link
+            to="/core/users/$userId"
+            params={{ userId: row.original.id }}
+            className="inline-flex rounded border p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ArrowUpRightIcon className="size-3" />
+          </Link>
+        ) : null,
+      size: 40,
       enableSorting: false,
       enableHiding: false,
     },
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" />
+        <DataTableColumnHeader column={column} label="ID" />
       ),
       cell: ({ row }) => (
         <span className="font-mono text-xs text-muted-foreground">
           {row.original.id}
         </span>
       ),
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "id") as ColumnSchema
       ),
@@ -76,7 +59,7 @@ export function getUsersTableColumns({
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Name" />
+        <DataTableColumnHeader column={column} label="Name" />
       ),
       cell: ({ row }) => {
         const name = row.getValue<string>("name")
@@ -95,7 +78,8 @@ export function getUsersTableColumns({
           </div>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "name") as ColumnSchema
       ),
@@ -103,14 +87,15 @@ export function getUsersTableColumns({
     {
       accessorKey: "email",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Email" />
+        <DataTableColumnHeader column={column} label="Email" />
       ),
       cell: ({ row }) => (
         <span className="text-sm text-muted-foreground">
           {row.getValue("email") ?? "—"}
         </span>
       ),
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "email") as ColumnSchema
       ),
@@ -118,7 +103,7 @@ export function getUsersTableColumns({
     {
       accessorKey: "created_at",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} label="Created At" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string | null>("created_at")
@@ -130,7 +115,8 @@ export function getUsersTableColumns({
           </span>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "created_at") as ColumnSchema
       ),
@@ -138,7 +124,7 @@ export function getUsersTableColumns({
     {
       accessorKey: "updated_at",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated At" />
+        <DataTableColumnHeader column={column} label="Updated At" />
       ),
       cell: ({ row }) => {
         const value = row.getValue<string | null>("updated_at")
@@ -150,7 +136,8 @@ export function getUsersTableColumns({
           </span>
         )
       },
-      meta: getColumnMetadata(
+      enableColumnFilter: true,
+      meta: getColumnDefMeta(
         null,
         columnsSchema.find((col) => col.name === "updated_at") as ColumnSchema
       ),

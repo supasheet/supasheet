@@ -26,7 +26,6 @@ function RouteComponent() {
         navigate({
           to: "/$schema/resource/$resource/kanban/$kanbanId",
           params: { schema, resource, kanbanId },
-          search: { layout: "board" },
         })
       }
     />

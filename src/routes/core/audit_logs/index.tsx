@@ -1,49 +1,30 @@
+import { useDeferredValue, useMemo } from "react"
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import type { SearchSchemaInput } from "@tanstack/react-router"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
 
 import { AuditLogTable } from "#/components/audit-logs/audit-logs-table"
 import { DataTableSkeleton } from "#/components/data-table/data-table-skeleton"
 import { DefaultHeader } from "#/components/layouts/default-header"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import { pageTitle } from "#/lib/page-title"
 import { auditLogsQueryOptions } from "#/lib/supabase/data/core"
 import { columnsSchemaQueryOptions } from "#/lib/supabase/data/meta"
 
 export const Route = createFileRoute("/core/audit_logs/")({
   head: () => ({ meta: [{ title: pageTitle("Audit Logs") }] }),
-  validateSearch: (
-    search: {
-      sortId?: string
-      sortDesc?: boolean
-      page?: number
-      pageSize?: number
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => ({
-    sortId: search.sortId,
-    sortDesc: search.sortDesc ?? true,
-    page: search.page ?? 1,
-    pageSize: search.pageSize ?? 20,
-    filters: search.filters ?? [],
-  }),
-  loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({
-    sortId,
-    sortDesc,
-    page,
-    pageSize,
-    filters,
-  }),
-  loader: async ({
-    context,
-    deps: { sortId, sortDesc, page, pageSize, filters },
-  }) => {
-    context.queryClient.query({
-      ...auditLogsQueryOptions(page, pageSize, sortId, sortDesc, filters),
-      staleTime: "static",
-    })
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, deps: { search } }) => {
     const columnsSchema = await context.queryClient.query({
       ...columnsSchemaQueryOptions("supasheet", "audit_logs"),
+      staleTime: "static",
+    })
+    context.queryClient.query({
+      ...auditLogsQueryOptions(
+        getTableQuery(search, getFilterVariants(null, columnsSchema))
+      ),
       staleTime: "static",
     })
 
@@ -71,18 +52,17 @@ function PendingComponent() {
 }
 
 function RouteComponent() {
-  const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
+  const search = Route.useSearch()
   const { columnsSchema } = Route.useLoaderData()
 
-  const { data } = useSuspenseQuery(
-    auditLogsQueryOptions(page, pageSize, sortId, sortDesc, filters)
+  const liveTableQuery = useMemo(
+    () => getTableQuery(search, getFilterVariants(null, columnsSchema)),
+    [search, columnsSchema]
   )
+  const tableQuery = useDeferredValue(liveTableQuery)
+  const { data } = useSuspenseQuery(auditLogsQueryOptions(tableQuery))
 
-  const sorting = (
-    sortId ? [{ id: sortId, desc: sortDesc }] : []
-  ) as SortingState
-  const pagination = { pageIndex: page - 1, pageSize }
-  const pageCount = Math.ceil((data?.count ?? 0) / pageSize)
+  const pageCount = Math.ceil((data?.count ?? 0) / tableQuery.perPage)
 
   return (
     <>
@@ -95,9 +75,6 @@ function RouteComponent() {
             <AuditLogTable
               data={data.result}
               columnsSchema={columnsSchema}
-              sorting={sorting}
-              pagination={pagination}
-              columnFilters={filters}
               pageCount={pageCount}
             />
           </div>

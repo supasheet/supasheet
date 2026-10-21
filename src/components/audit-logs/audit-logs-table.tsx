@@ -1,14 +1,11 @@
 import { useMemo } from "react"
 
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table"
-
 import { DataTable } from "#/components/data-table/data-table"
+import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
 import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
 import { useDataTable } from "#/hooks/use-data-table"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 
 import type { AuditLog } from "./audit-logs-table-columns"
@@ -17,34 +14,33 @@ import { getAuditLogsTableColumns } from "./audit-logs-table-columns"
 interface AuditLogTableProps {
   data: AuditLog[]
   columnsSchema: ColumnSchema<"supasheet">[]
-  sorting: SortingState
-  pagination: PaginationState
-  columnFilters: ColumnFiltersState
   pageCount: number
 }
 
 export function AuditLogTable({
   data,
   columnsSchema,
-  sorting,
-  pagination,
-  columnFilters,
   pageCount,
 }: AuditLogTableProps) {
   const columns = useMemo(
     () => getAuditLogsTableColumns({ columnsSchema }),
     [columnsSchema]
   )
-  const table = useDataTable({
+  const { table } = useDataTable({
     columns,
     data,
     pageCount,
-    state: { sorting, pagination, columnFilters },
-    meta: { filename: "audit_logs" },
+    initialState: { pagination: DEFAULT_PAGINATION },
+    getRowId: (row) => row.id,
   })
   return (
-    <DataTable table={table}>
-      <DataTableToolbar table={table} />
+    <DataTable
+      table={table}
+      actionBar={<DataTableBulkActions table={table} filename="audit_logs" />}
+    >
+      <DataTableToolbar table={table}>
+        <DataTableExportButton table={table} filename="audit_logs" />
+      </DataTableToolbar>
     </DataTable>
   )
 }

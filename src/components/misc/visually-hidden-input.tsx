@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import type { CSSProperties, InputHTMLAttributes } from "react"
 

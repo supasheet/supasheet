@@ -448,7 +448,7 @@ comment on table lms.courses is '{
         {"id": "list", "name": "All Courses", "type": "list", "title": "title", "description": "course_code", "field_1": "enrollment_count", "field_2": "avg_rating"}
     ],
     "filter_presets": [
-        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "eq"}]},
+        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "in"}]},
         {"id": "featured", "name": "Featured", "filters": [{"id": "is_featured", "value": "true", "operator": "eq"}]},
         {"id": "top_rated", "name": "Top Rated", "filters": [{"id": "avg_rating", "value": "4", "operator": "gte"}]}
     ],
@@ -1596,8 +1596,8 @@ comment on table lms.enrollments is '{
     ],
     "filter_presets": [
         {"id": "mine", "name": "My Enrollments", "filters": [{"id": "user_id", "value": "me", "operator": "eq"}]},
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["course_id", "user_id", "due_date"],

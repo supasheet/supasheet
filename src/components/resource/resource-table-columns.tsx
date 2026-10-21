@@ -1,10 +1,13 @@
-import type { Column, ColumnDef, Row } from "@tanstack/react-table"
-
 import { ArrowUpRightIcon } from "lucide-react"
 
+import { getDataTableSelectColumn } from "#/components/data-table/data-table-select-column"
 import { DetailRecordTrigger } from "#/components/resource/sheet/detail-record-trigger"
-import { Checkbox } from "#/components/ui/checkbox"
-import { getColumnMetadata } from "#/lib/columns"
+import { getColumnDefMeta } from "#/lib/columns"
+import type {
+  DataTableColumn,
+  DataTableColumnDef,
+  DataTableRow,
+} from "#/lib/data-table-types"
 import type {
   ColumnSchema,
   ResourceDataSchema,
@@ -31,49 +34,31 @@ export function getResourceTableColumns({
 
   const tableMeta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
 
-  const cols: ColumnDef<Record<string, unknown>, unknown>[] = []
+  const cols: DataTableColumnDef<ResourceDataSchema>[] = []
 
   if (tableSchema?.primary_keys) {
     const primaryKeys = tableSchema.primary_keys ?? []
     const primaryKeyNames = primaryKeys.map((k) => k.name)
-    cols.push({
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          indeterminate={
-            table.getIsSomePageRowsSelected() &&
-            !table.getIsAllPageRowsSelected()
-          }
-          onCheckedChange={(checked) =>
-            table.toggleAllPageRowsSelected(!!checked)
-          }
-          aria-label="Select all"
-        />
-      ),
+    cols.push(getDataTableSelectColumn<ResourceDataSchema>(), {
+      id: "detail",
+      header: () => null,
       cell: ({ row }) => {
         const pk = Object.fromEntries(
           primaryKeys.map((k) => [k.name, row.original[k.name]])
         )
         return (
-          <div className="flex items-center gap-1.5">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(checked) => row.toggleSelected(!!checked)}
-              aria-label="Select row"
-            />
-            <DetailRecordTrigger
-              pk={pk}
-              primaryKeyNames={primaryKeyNames}
-              size="icon-xs"
-              variant="outline"
-              className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
-            >
-              <ArrowUpRightIcon />
-            </DetailRecordTrigger>
-          </div>
+          <DetailRecordTrigger
+            pk={pk}
+            primaryKeyNames={primaryKeyNames}
+            size="icon-xs"
+            variant="outline"
+            className="size-5 opacity-0 transition-opacity group-hover:opacity-100 [&_svg]:size-3"
+          >
+            <ArrowUpRightIcon />
+          </DetailRecordTrigger>
         )
       },
+      size: 40,
       enableSorting: false,
       enableHiding: false,
     })
@@ -83,7 +68,7 @@ export function getResourceTableColumns({
     cols.push({
       id: "actions",
       header: () => null,
-      cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+      cell: ({ row }: { row: DataTableRow<ResourceDataSchema> }) => (
         <ResourceRowActions
           schema={resourceSchema.schema}
           resource={resourceSchema.name}
@@ -110,23 +95,19 @@ export function getResourceTableColumns({
 
   for (const col of visibleColumns) {
     const name = col.name ?? col.id
-    const meta = getColumnMetadata(tableSchema, col)
+    const meta = getColumnDefMeta(tableSchema, col)
 
     cols.push({
       id: name,
       accessorKey: name,
-      header: ({
-        column,
-      }: {
-        column: Column<Record<string, unknown>, unknown>
-      }) => (
+      header: ({ column }: { column: DataTableColumn<ResourceDataSchema> }) => (
         <ResourceColumnHeader
           column={column}
-          title={meta.name}
+          title={meta.field?.name ?? name}
           isSorted={column.getIsSorted()}
         />
       ),
-      cell: ({ row }: { row: Row<ResourceDataSchema> }) => (
+      cell: ({ row }: { row: DataTableRow<ResourceDataSchema> }) => (
         <ResourceRowCell
           row={row}
           columnSchema={col}

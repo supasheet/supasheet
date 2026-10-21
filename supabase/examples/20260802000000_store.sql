@@ -747,8 +747,8 @@ comment on table store.products is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "in"}]},
         {"id": "featured", "name": "Featured", "filters": [{"id": "is_featured", "value": "true", "operator": "eq"}]},
         {"id": "out_of_stock", "name": "Out Of Stock", "filters": [{"id": "inventory_quantity", "value": "0", "operator": "lte"}]},
         {"id": "on_sale", "name": "On Sale", "filters": [{"id": "compare_at_price", "value": "null", "operator": "not.is"}]}
@@ -1605,7 +1605,7 @@ comment on table store.customers is '{
         {"id": "vip", "name": "VIP & Wholesale", "filters": [{"id": "customer_group", "value": ["vip", "wholesale"], "operator": "in"}]},
         {"id": "marketing", "name": "Marketable", "filters": [{"id": "accepts_marketing", "value": "true", "operator": "eq"}]},
         {"id": "repeat", "name": "Repeat Buyers", "filters": [{"id": "order_count", "value": "1", "operator": "gt"}]},
-        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "eq"}]}
+        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "in"}]}
     ],
     "links": [
         {"id": "customer_report", "name": "Customer Report", "url": "/store/report/customer_report", "icon": "FileText", "description": "Spend, frequency and recency per customer"}
@@ -1974,8 +1974,8 @@ comment on table store.discounts is '{
         }
     ],
     "filter_presets": [
-        {"id": "live", "name": "Live", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "upcoming", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "eq"}]},
+        {"id": "live", "name": "Live", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "upcoming", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "in"}]},
         {"id": "exhausted", "name": "Exhausted", "filters": [{"id": "redemption_rate", "value": "100", "operator": "gte"}]}
     ],
     "fields": {
@@ -2203,7 +2203,7 @@ comment on table store.orders is '{
         {"id": "unpaid", "name": "Awaiting Payment", "filters": [{"id": "payment_status", "value": ["unpaid", "authorized", "partially_paid"], "operator": "in"}]},
         {"id": "to_ship", "name": "To Ship", "filters": [{"id": "fulfillment_status", "value": ["unfulfilled", "partially_fulfilled"], "operator": "in"}]},
         {"id": "refunded", "name": "Refunded", "filters": [{"id": "payment_status", "value": ["refunded", "partially_refunded"], "operator": "in"}]},
-        {"id": "cancelled", "name": "Cancelled", "filters": [{"id": "status", "value": "cancelled", "operator": "eq"}]}
+        {"id": "cancelled", "name": "Cancelled", "filters": [{"id": "status", "value": "cancelled", "operator": "in"}]}
     ],
     "links": [
         {"id": "sales_report", "name": "Sales Report", "url": "/store/report/sales_report", "icon": "FileText", "description": "Every order with customer, channel and settlement context"},
@@ -2547,8 +2547,8 @@ comment on table store.payments is '{
         }
     ],
     "filter_presets": [
-        {"id": "captured", "name": "Captured", "filters": [{"id": "state", "value": "captured", "operator": "eq"}]},
-        {"id": "failed", "name": "Failed", "filters": [{"id": "state", "value": "failed", "operator": "eq"}]},
+        {"id": "captured", "name": "Captured", "filters": [{"id": "state", "value": "captured", "operator": "in"}]},
+        {"id": "failed", "name": "Failed", "filters": [{"id": "state", "value": "failed", "operator": "in"}]},
         {"id": "refunds", "name": "Refunds", "filters": [{"id": "is_refund", "value": "true", "operator": "eq"}]}
     ],
     "fields": {
@@ -2709,7 +2709,7 @@ comment on table store.shipments is '{
     ],
     "filter_presets": [
         {"id": "in_transit", "name": "In Transit", "filters": [{"id": "status", "value": ["in_transit", "out_for_delivery"], "operator": "in"}]},
-        {"id": "delivered", "name": "Delivered", "filters": [{"id": "status", "value": "delivered", "operator": "eq"}]},
+        {"id": "delivered", "name": "Delivered", "filters": [{"id": "status", "value": "delivered", "operator": "in"}]},
         {"id": "problem", "name": "Problems", "filters": [{"id": "status", "value": ["failed", "returned"], "operator": "in"}]}
     ],
     "fields": {
@@ -2885,8 +2885,8 @@ comment on table store.return_requests is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["requested", "approved", "received"], "operator": "in"}]},
-        {"id": "damaged", "name": "Damaged", "filters": [{"id": "reason", "value": "damaged", "operator": "eq"}]},
-        {"id": "refunded", "name": "Refunded", "filters": [{"id": "status", "value": "refunded", "operator": "eq"}]}
+        {"id": "damaged", "name": "Damaged", "filters": [{"id": "reason", "value": "damaged", "operator": "in"}]},
+        {"id": "refunded", "name": "Refunded", "filters": [{"id": "status", "value": "refunded", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["order_id", "customer_id", "reason"],
@@ -3146,7 +3146,7 @@ comment on table store.reviews is '{
         }
     ],
     "filter_presets": [
-        {"id": "pending", "name": "Awaiting Moderation", "filters": [{"id": "status", "value": "pending", "operator": "eq"}]},
+        {"id": "pending", "name": "Awaiting Moderation", "filters": [{"id": "status", "value": "pending", "operator": "in"}]},
         {"id": "critical", "name": "1 & 2 Star", "filters": [{"id": "rating", "value": "2", "operator": "lte"}]},
         {"id": "verified", "name": "Verified Purchases", "filters": [{"id": "is_verified_purchase", "value": "true", "operator": "eq"}]},
         {"id": "unanswered", "name": "No Response", "filters": [{"id": "merchant_response", "value": "null", "operator": "is"}]}

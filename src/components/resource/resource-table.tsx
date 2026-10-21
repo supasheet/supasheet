@@ -1,19 +1,18 @@
 import { useMemo } from "react"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  SortingState,
-} from "@tanstack/react-table"
 
 import { toast } from "sonner"
 
 import { DataTable } from "#/components/data-table/data-table"
-import { DataTableActionBar } from "#/components/data-table/data-table-action-bar"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
+import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
+import { DataTableExportButton } from "#/components/data-table/data-table-export-button"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import { useDataTable } from "#/hooks/use-data-table"
 import { useHasPermission } from "#/hooks/use-permissions"
+import { DEFAULT_PAGINATION } from "#/lib/data-table-search"
 import type {
   ColumnSchema,
   FilterPreset,
@@ -32,9 +31,6 @@ interface ResourceTableProps {
   data: Record<string, unknown>[]
   columnsSchema: ColumnSchema[]
   resourceSchema: ResourceSchema
-  sorting: SortingState
-  pagination: PaginationState
-  columnFilters: ColumnFiltersState
   pageCount: number
   filterPresets?: FilterPreset[]
 }
@@ -43,9 +39,6 @@ export function ResourceTable({
   data,
   columnsSchema,
   resourceSchema,
-  sorting,
-  pagination,
-  columnFilters,
   pageCount,
   filterPresets = [],
 }: ResourceTableProps) {
@@ -92,27 +85,31 @@ export function ResourceTable({
     [columnsSchema, resourceSchema, actions]
   )
 
-  const table = useDataTable({
+  const { table } = useDataTable({
     columns,
     data,
     pageCount,
-    state: { sorting, pagination, columnFilters },
+    initialState: { pagination: DEFAULT_PAGINATION },
     getRowId: (row) => primaryKeys.map((key) => row[key.name]).join("/"),
-    meta: { filename: resource },
   })
 
   return (
-    <DataTable table={table}>
-      <DataTableToolbar table={table}>
-        <ResourceFilterPresets
-          filterPresets={filterPresets}
-          currentFilters={columnFilters}
+    <DataTable
+      table={table}
+      actionBar={
+        <DataTableBulkActions
+          table={table}
+          filename={resource}
+          onDelete={canDelete ? handleDelete : undefined}
         />
-      </DataTableToolbar>
-      <DataTableActionBar
-        table={table}
-        onDelete={canDelete ? handleDelete : undefined}
-      />
+      }
+    >
+      <DataTableAdvancedToolbar table={table}>
+        <ResourceFilterPresets table={table} filterPresets={filterPresets} />
+        <DataTableFilterMenu table={table} />
+        <DataTableSortMenu table={table} />
+        <DataTableExportButton table={table} filename={resource} />
+      </DataTableAdvancedToolbar>
     </DataTable>
   )
 }

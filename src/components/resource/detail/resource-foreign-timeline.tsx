@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo, useState } from "react"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
@@ -71,11 +69,11 @@ export function ResourceForeignTimeline({
       hasParentValue ? parentValue : "__noop__",
       defaultQuery,
       selectClause,
-      1,
-      pageSize,
-      "occurred_at",
-      true,
-      []
+      {
+        page: 1,
+        perPage: pageSize,
+        sorting: [{ id: "occurred_at", desc: true }],
+      }
     )
   )
 

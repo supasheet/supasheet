@@ -1,6 +1,8 @@
-import type { Column, ColumnDef } from "@tanstack/react-table"
-
-import { getColumnMetadata } from "#/lib/columns"
+import { getColumnDefMeta } from "#/lib/columns"
+import type {
+  DataTableColumn,
+  DataTableColumnDef,
+} from "#/lib/data-table-types"
 import type { ColumnSchema, TableSchema } from "#/lib/database-meta.types"
 
 import { ResourceGridColumnHeader } from "./resource-grid-column-header"
@@ -12,11 +14,11 @@ export function getResourceGridColumns({
   columnsSchema: ColumnSchema[]
   tableSchema: TableSchema | null
 }) {
-  const cols: ColumnDef<Record<string, unknown>, unknown>[] = []
+  const cols: DataTableColumnDef<Record<string, unknown>>[] = []
 
   for (const col of columnsSchema) {
     const name = col.name ?? col.id
-    const meta = getColumnMetadata(tableSchema, col)
+    const meta = getColumnDefMeta(tableSchema, col)
 
     cols.push({
       id: name,
@@ -24,11 +26,11 @@ export function getResourceGridColumns({
       header: ({
         column,
       }: {
-        column: Column<Record<string, unknown>, unknown>
+        column: DataTableColumn<Record<string, unknown>>
       }) => (
         <ResourceGridColumnHeader
           column={column}
-          title={meta.name}
+          title={meta.field?.name ?? name}
           tableSchema={tableSchema}
           columnSchema={col}
           isSorted={column.getIsSorted()}

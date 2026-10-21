@@ -1,7 +1,10 @@
-import type { Column, ColumnDef, Row } from "@tanstack/react-table"
-
 import { DataTableColumnHeader } from "#/components/data-table/data-table-column-header"
-import { getColumnMetadata } from "#/lib/columns"
+import { getColumnDefMeta } from "#/lib/columns"
+import type {
+  DataTableColumn,
+  DataTableColumnDef,
+  DataTableRow,
+} from "#/lib/data-table-types"
 import type { ColumnSchema } from "#/lib/database-meta.types"
 
 function formatCellValue(value: unknown): string {
@@ -12,7 +15,7 @@ function formatCellValue(value: unknown): string {
 
 export function getReportTableColumns(columnsSchema: ColumnSchema[]) {
   return columnsSchema.map((col) => {
-    const meta = getColumnMetadata(null, col)
+    const meta = getColumnDefMeta(null, col)
 
     return {
       id: col.name ?? col.id,
@@ -20,9 +23,11 @@ export function getReportTableColumns(columnsSchema: ColumnSchema[]) {
       header: ({
         column,
       }: {
-        column: Column<Record<string, unknown>, unknown>
-      }) => <DataTableColumnHeader column={column} title={meta.name} />,
-      cell: ({ row }: { row: Row<Record<string, unknown>> }) => {
+        column: DataTableColumn<Record<string, unknown>>
+      }) => (
+        <DataTableColumnHeader column={column} label={meta.label ?? col.name} />
+      ),
+      cell: ({ row }: { row: DataTableRow<Record<string, unknown>> }) => {
         const value = row.getValue(col.name)
         return (
           <span className="text-sm text-muted-foreground">
@@ -36,5 +41,5 @@ export function getReportTableColumns(columnsSchema: ColumnSchema[]) {
       enableColumnFilter: true,
       meta,
     }
-  }) as ColumnDef<Record<string, unknown>, unknown>[]
+  }) as DataTableColumnDef<Record<string, unknown>>[]
 }

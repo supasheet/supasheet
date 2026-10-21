@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react"
+import { useState } from "react"
 
-import type { Table } from "@tanstack/react-table"
+import { Subscribe } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import { DownloadIcon, Trash2Icon } from "lucide-react"
 
@@ -27,39 +28,52 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
+import type { DataTableInstance } from "#/lib/data-table-types"
+import { getVisibleSelectedRows } from "#/lib/data-table-utils"
 import { EXPORT_FORMATS, exportTable } from "#/lib/export"
 
-interface DataTableActionBarProps<TData> {
-  table: Table<TData>
+interface DataTableBulkActionsProps<TData extends RowData> {
+  table: DataTableInstance<TData>
+  filename?: string
   onDelete?: (rows: TData[]) => void | Promise<void>
 }
 
-export function DataTableActionBar<TData>({
-  table,
-  onDelete,
-}: DataTableActionBarProps<TData>) {
-  const [confirmOpen, setConfirmOpen] = useState(false)
-  const rows = table.getFilteredSelectedRowModel().rows
-  const filename = table.options.meta?.filename
-
-  const onOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        table.toggleAllRowsSelected(false)
-      }
-    },
-    [table]
+/**
+ * Floating bar shown while rows are selected. Pass it to `DataTable` via the
+ * `actionBar` prop, which only renders it when a visible row is selected.
+ */
+export function DataTableBulkActions<TData extends RowData>(
+  props: DataTableBulkActionsProps<TData>
+) {
+  return (
+    <Subscribe source={props.table.atoms.rowSelection}>
+      {() => <BulkActionsContent {...props} />}
+    </Subscribe>
   )
+}
+
+function BulkActionsContent<TData extends RowData>({
+  table,
+  filename,
+  onDelete,
+}: DataTableBulkActionsProps<TData>) {
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const rows = getVisibleSelectedRows(table)
 
   async function handleConfirm() {
-    await onDelete?.(rows.map((r) => r.original))
-    table.toggleAllRowsSelected(false)
+    await onDelete?.(rows.map((row) => row.original))
+    table.resetRowSelection()
     setConfirmOpen(false)
   }
 
   return (
     <>
-      <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
+      <ActionBar
+        open={rows.length > 0}
+        onOpenChange={(open) => {
+          if (!open) table.resetRowSelection()
+        }}
+      >
         <ActionBarSelection className="hidden whitespace-nowrap sm:flex">
           {rows.length} selected
         </ActionBarSelection>

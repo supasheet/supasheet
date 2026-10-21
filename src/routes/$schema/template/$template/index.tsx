@@ -1,3 +1,5 @@
+import { useDeferredValue, useMemo } from "react"
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link,
@@ -5,11 +7,7 @@ import {
   notFound,
   useRouter,
 } from "@tanstack/react-router"
-import type {
-  ErrorComponentProps,
-  SearchSchemaInput,
-} from "@tanstack/react-router"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
+import type { ErrorComponentProps } from "@tanstack/react-router"
 
 import { AlertCircleIcon, FileXIcon, LayoutTemplateIcon } from "lucide-react"
 import z from "zod"
@@ -26,6 +24,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "#/components/ui/empty"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import type {
   DatabaseSchemas,
   DatabaseTables,
@@ -42,37 +42,11 @@ import {
 export const Route = createFileRoute("/$schema/template/$template/")({
   params: z.object({
     schema: z.string<DatabaseSchemas>(),
-    template: z.string<
-      DatabaseTables<DatabaseSchemas> | DatabaseViews<DatabaseSchemas>
-    >(),
+    template: z.string<DatabaseTables<DatabaseSchemas>>(),
   }),
-  validateSearch: (
-    search: {
-      sortId?: string
-      sortDesc?: boolean
-      page?: number
-      pageSize?: number
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => ({
-    sortId: search.sortId,
-    sortDesc: search.sortDesc ?? false,
-    page: search.page ?? 1,
-    pageSize: search.pageSize ?? 20,
-    filters: search.filters ?? [],
-  }),
-  loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({
-    sortId,
-    sortDesc,
-    page,
-    pageSize,
-    filters,
-  }),
-  loader: async ({
-    context,
-    params,
-    deps: { sortId, sortDesc, page, pageSize, filters },
-  }) => {
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, params, deps: { search } }) => {
     const [templates, columnsSchema] = await Promise.all([
       context.queryClient.query({
         ...templatesQueryOptions(params.schema),
@@ -91,11 +65,7 @@ export const Route = createFileRoute("/$schema/template/$template/")({
       ...templateDataQueryOptions(
         params.schema,
         params.template,
-        page,
-        pageSize,
-        sortId,
-        sortDesc,
-        filters
+        getTableQuery(search, getFilterVariants(null, columnsSchema))
       ),
       staleTime: "static",
     })
@@ -191,26 +161,19 @@ export const Route = createFileRoute("/$schema/template/$template/")({
 
 function RouteComponent() {
   const params = Route.useParams()
-  const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
+  const search = Route.useSearch()
 
   const { columnsSchema, template } = Route.useLoaderData()
+  const liveTableQuery = useMemo(
+    () => getTableQuery(search, getFilterVariants(null, columnsSchema ?? [])),
+    [search, columnsSchema]
+  )
+  const tableQuery = useDeferredValue(liveTableQuery)
   const { data: templateData } = useSuspenseQuery(
-    templateDataQueryOptions(
-      params.schema,
-      params.template,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters
-    )
+    templateDataQueryOptions(params.schema, params.template, tableQuery)
   )
 
-  const sorting = (
-    sortId ? [{ id: sortId, desc: sortDesc }] : []
-  ) as SortingState
-  const pagination = { pageIndex: page - 1, pageSize }
-  const pageCount = Math.ceil((templateData?.count ?? 0) / pageSize)
+  const pageCount = Math.ceil((templateData?.count ?? 0) / tableQuery.perPage)
 
   return (
     <>
@@ -237,9 +200,6 @@ function RouteComponent() {
           <ReportTable
             data={templateData?.result ?? []}
             columnsSchema={columnsSchema ?? []}
-            sorting={sorting}
-            pagination={pagination}
-            columnFilters={filters}
             pageCount={pageCount}
             filename={params.template}
           />

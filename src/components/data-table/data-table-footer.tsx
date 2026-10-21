@@ -1,6 +1,7 @@
 import { useState } from "react"
 
-import type { Table } from "@tanstack/react-table"
+import { Subscribe } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
 
 import {
   Select,
@@ -16,31 +17,48 @@ import {
   formatAggregateValue,
   getAvailableAggregates,
 } from "#/lib/aggregate"
+import type { DataTableInstance } from "#/lib/data-table-types"
 import type { AggregateFunction } from "#/lib/database-meta.types"
 
-interface DataTableFooterProps<TData> {
-  table: Table<TData>
+interface DataTableFooterProps<TData extends RowData> {
+  table: DataTableInstance<TData>
 }
 
-export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
+/**
+ * Per-column aggregates (sum, avg, ...) for columns that carry Supasheet
+ * column metadata. Renders nothing for tables without it.
+ */
+export function DataTableFooter<TData extends RowData>({
+  table,
+}: DataTableFooterProps<TData>) {
+  if (!table.getAllLeafColumns().some((column) => column.columnDef.meta?.field))
+    return null
+
+  return (
+    <Subscribe source={table.atoms.columnVisibility}>
+      {() => <FooterRow table={table} />}
+    </Subscribe>
+  )
+}
+
+function FooterRow<TData extends RowData>({
+  table,
+}: DataTableFooterProps<TData>) {
   const columns = table
     .getAllLeafColumns()
     .filter((column) => column.getIsVisible())
-  const aggregatableColumns = columns.filter(
-    (column) => !!column.columnDef.meta
-  )
 
   const [selected, setSelected] = useState<Record<string, AggregateFunction>>(
     () =>
       Object.fromEntries(
-        aggregatableColumns.map((column) => [
-          column.id,
-          column.columnDef.meta?.aggregate ?? "none",
-        ])
+        table
+          .getAllLeafColumns()
+          .map((column) => [
+            column.id,
+            column.columnDef.meta?.field?.aggregate ?? "none",
+          ])
       )
   )
-
-  if (!aggregatableColumns.length) return null
 
   const rows = table.getRowModel().rows
 
@@ -48,12 +66,12 @@ export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
     <TableFooter>
       <TableRow className="h-10">
         {columns.map((column) => {
-          const meta = column.columnDef.meta
-          if (!meta) return <TableCell key={column.id} className="h-10" />
+          const field = column.columnDef.meta?.field
+          if (!field) return <TableCell key={column.id} className="h-10" />
 
           const fn = selected[column.id] ?? "none"
           const values = rows.map((row) => row.getValue(column.id))
-          const result = computeAggregate(values, fn, meta.variant)
+          const result = computeAggregate(values, fn, field.variant)
 
           return (
             <TableCell key={column.id} className="h-10">
@@ -74,11 +92,13 @@ export function DataTableFooter<TData>({ table }: DataTableFooterProps<TData>) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAvailableAggregates(meta.variant).map((availableFn) => (
-                      <SelectItem key={availableFn} value={availableFn}>
-                        {AGGREGATE_FUNCTION_LABELS[availableFn]}
-                      </SelectItem>
-                    ))}
+                    {getAvailableAggregates(field.variant).map(
+                      (availableFn) => (
+                        <SelectItem key={availableFn} value={availableFn}>
+                          {AGGREGATE_FUNCTION_LABELS[availableFn]}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 {fn !== "none" && (

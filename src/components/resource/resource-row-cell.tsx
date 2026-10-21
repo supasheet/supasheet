@@ -1,10 +1,9 @@
 import { memo, useMemo } from "react"
 
-import type { Row } from "@tanstack/react-table"
-
 import { ArrowUpRightIcon } from "lucide-react"
 
 import { getColumnMetadata } from "#/lib/columns"
+import type { DataTableRow } from "#/lib/data-table-types"
 import type {
   ColumnSchema,
   Relationship,
@@ -24,7 +23,7 @@ export const ResourceRowCell = memo(function ({
   columnSchema,
   resourceSchema,
 }: {
-  row: Row<ResourceDataSchema>
+  row: DataTableRow<ResourceDataSchema>
   columnSchema: ColumnSchema
   resourceSchema: ResourceSchema
 }) {

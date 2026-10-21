@@ -233,9 +233,9 @@ comment on table demo.clients is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "leads", "name": "Leads", "filters": [{"id": "status", "value": "lead", "operator": "eq"}]},
-        {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "on_hold", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "leads", "name": "Leads", "filters": [{"id": "status", "value": "lead", "operator": "in"}]},
+        {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "on_hold", "operator": "in"}]}
     ],
     "links": [
         {"id": "clients_report", "name": "Clients Report", "url": "/demo/report/clients_report", "icon": "BarChart3", "description": "Revenue and project rollups per client"}
@@ -371,7 +371,7 @@ comment on table demo.team_members is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -599,9 +599,9 @@ comment on table demo.projects is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "high_priority", "name": "High Priority", "filters": [{"id": "priority", "value": ["high", "critical"], "operator": "in"}]},
-        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "eq"}]}
+        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -1002,10 +1002,10 @@ comment on table demo.tasks is '{
         }
     ],
     "filter_presets": [
-        {"id": "todo", "name": "To Do", "filters": [{"id": "status", "value": "todo", "operator": "eq"}]},
-        {"id": "in_progress", "name": "In Progress", "filters": [{"id": "status", "value": "in_progress", "operator": "eq"}]},
-        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "eq"}]},
-        {"id": "done", "name": "Done", "filters": [{"id": "status", "value": "done", "operator": "eq"}]}
+        {"id": "todo", "name": "To Do", "filters": [{"id": "status", "value": "todo", "operator": "in"}]},
+        {"id": "in_progress", "name": "In Progress", "filters": [{"id": "status", "value": "in_progress", "operator": "in"}]},
+        {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "in"}]},
+        {"id": "done", "name": "Done", "filters": [{"id": "status", "value": "done", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["title", "project_id", "assignee_id", "due_date", "priority"],
@@ -1595,8 +1595,8 @@ comment on table demo.invoices is '{
     ],
     "filter_presets": [
         {"id": "unpaid", "name": "Unpaid", "filters": [{"id": "status", "value": ["sent", "overdue"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "eq"}]},
-        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "eq"}]}
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "in"}]},
+        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "in"}]}
     ],
     "fields": {
         "sections": [

@@ -514,7 +514,7 @@ comment on table desk.agents is '{
         }
     ],
     "filter_presets": [
-        {"id": "available", "name": "Available", "filters": [{"id": "availability", "value": "available", "operator": "eq"}]},
+        {"id": "available", "name": "Available", "filters": [{"id": "availability", "value": "available", "operator": "in"}]},
         {"id": "leads", "name": "Leads & Managers", "filters": [{"id": "seniority", "value": ["lead", "manager"], "operator": "in"}]}
     ],
     "links": [
@@ -675,8 +675,8 @@ comment on table desk.customers is '{
     ],
     "filter_presets": [
         {"id": "at_risk", "name": "At Risk", "filters": [{"id": "health", "value": ["at_risk", "churned"], "operator": "in"}]},
-        {"id": "enterprise", "name": "Enterprise", "filters": [{"id": "tier", "value": "enterprise", "operator": "eq"}]},
-        {"id": "healthy", "name": "Healthy", "filters": [{"id": "health", "value": "healthy", "operator": "eq"}]}
+        {"id": "enterprise", "name": "Enterprise", "filters": [{"id": "tier", "value": "enterprise", "operator": "in"}]},
+        {"id": "healthy", "name": "Healthy", "filters": [{"id": "health", "value": "healthy", "operator": "in"}]}
     ],
     "links": [
         {"id": "customers_report", "name": "Account Report", "url": "/desk/report/customers_report", "icon": "BarChart3", "description": "Ticket volume and CSAT per account"}
@@ -1145,7 +1145,7 @@ comment on table desk.problems is '{
         }
     ],
     "filter_presets": [
-        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "resolved", "operator": "neq"}]},
+        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "resolved", "operator": "not.in"}]},
         {"id": "critical", "name": "Critical", "filters": [{"id": "impact", "value": ["major", "critical"], "operator": "in"}]}
     ],
     "fields": {
@@ -1864,8 +1864,8 @@ comment on table desk.satisfaction_surveys is '{
     "display": "block",
     "detail": {"header": {"title": "comment", "badges": ["sentiment"]}},
     "filter_presets": [
-        {"id": "detractors", "name": "Detractors", "filters": [{"id": "sentiment", "value": "detractor", "operator": "eq"}]},
-        {"id": "promoters", "name": "Promoters", "filters": [{"id": "sentiment", "value": "promoter", "operator": "eq"}]}
+        {"id": "detractors", "name": "Detractors", "filters": [{"id": "sentiment", "value": "detractor", "operator": "in"}]},
+        {"id": "promoters", "name": "Promoters", "filters": [{"id": "sentiment", "value": "promoter", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -2004,7 +2004,7 @@ comment on table desk.articles is '{
         }
     ],
     "filter_presets": [
-        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "eq"}]},
+        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "in"}]},
         {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": ["draft", "in_review"], "operator": "in"}]}
     ],
     "fields": {

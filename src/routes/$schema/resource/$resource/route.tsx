@@ -17,9 +17,7 @@ import {
 export const Route = createFileRoute("/$schema/resource/$resource")({
   params: z.object({
     schema: z.string<DatabaseSchemas>(),
-    resource: z.string<
-      DatabaseTables<DatabaseSchemas> | DatabaseViews<DatabaseSchemas>
-    >(),
+    resource: z.string<DatabaseTables<DatabaseSchemas>>(),
   }),
   beforeLoad: async ({ context, params: { schema, resource } }) => {
     const [privileges, tableSchema, columnsSchema] = await Promise.all([

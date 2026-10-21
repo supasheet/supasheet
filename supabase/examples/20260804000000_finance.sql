@@ -350,7 +350,7 @@ comment on table finance.fiscal_periods is '{
         }
     ],
     "filter_presets": [
-        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "eq"}]},
+        {"id": "open", "name": "Open", "filters": [{"id": "status", "value": "open", "operator": "in"}]},
         {"id": "closed", "name": "Closed", "filters": [{"id": "status", "value": ["closed", "locked"], "operator": "in"}]}
     ],
     "fields": {
@@ -987,10 +987,10 @@ comment on table finance.journals is '{
         }
     ],
     "filter_presets": [
-        {"id": "drafts", "name": "Unposted", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]},
+        {"id": "drafts", "name": "Unposted", "filters": [{"id": "status", "value": "draft", "operator": "in"}]},
         {"id": "unbalanced", "name": "Out Of Balance", "filters": [{"id": "is_balanced", "value": "false", "operator": "eq"}]},
-        {"id": "posted", "name": "Posted", "filters": [{"id": "status", "value": "posted", "operator": "eq"}]},
-        {"id": "manual", "name": "Manual Entries", "filters": [{"id": "source", "value": "manual", "operator": "eq"}]}
+        {"id": "posted", "name": "Posted", "filters": [{"id": "status", "value": "posted", "operator": "in"}]},
+        {"id": "manual", "name": "Manual Entries", "filters": [{"id": "source", "value": "manual", "operator": "in"}]}
     ],
     "links": [
         {"id": "trial_balance", "name": "Trial Balance", "url": "/finance/report/trial_balance", "icon": "Scale", "description": "The proof that the ledger agrees with itself"},
@@ -1318,7 +1318,7 @@ comment on table finance.customers is '{
         {"id": "poor_credit", "name": "Weak Credit", "filters": [{"id": "credit_rating", "value": "3", "operator": "lte"}]},
         {"id": "owing", "name": "Owing", "filters": [{"id": "outstanding_total", "value": "0", "operator": "gt"}]},
         {"id": "overdue", "name": "Overdue", "filters": [{"id": "overdue_total", "value": "0", "operator": "gt"}]},
-        {"id": "on_hold", "name": "On Hold", "filters": [{"id": "status", "value": "on_hold", "operator": "eq"}]}
+        {"id": "on_hold", "name": "On Hold", "filters": [{"id": "status", "value": "on_hold", "operator": "in"}]}
     ],
     "links": [
         {"id": "aged_receivables", "name": "Aged Receivables", "url": "/finance/report/aged_receivables", "icon": "Clock", "description": "What is owed, and how late it is"}
@@ -1580,8 +1580,8 @@ comment on table finance.invoices is '{
     ],
     "filter_presets": [
         {"id": "outstanding", "name": "Outstanding", "filters": [{"id": "status", "value": ["sent", "partially_paid", "overdue"], "operator": "in"}]},
-        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "eq"}]},
-        {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]},
+        {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "in"}]},
+        {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "in"}]},
         {"id": "long_overdue", "name": "60 Days+", "filters": [{"id": "days_overdue", "value": "60", "operator": "gte"}]}
     ],
     "links": [
@@ -1847,9 +1847,9 @@ comment on table finance.bills is '{
         {"id": "list", "name": "All Bills", "type": "list", "title": "bill_number", "description": "vendor_reference", "field_1": "status", "field_2": "balance_due"}
     ],
     "filter_presets": [
-        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "awaiting_approval", "operator": "eq"}]},
+        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "awaiting_approval", "operator": "in"}]},
         {"id": "to_pay", "name": "To Pay", "filters": [{"id": "status", "value": ["approved", "partially_paid"], "operator": "in"}]},
-        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "eq"}]}
+        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["vendor_id", "vendor_reference", "issue_date"],
@@ -2096,8 +2096,8 @@ comment on table finance.payments is '{
         {"id": "kanban", "name": "By Method", "type": "kanban", "group": "method", "title": "payment_number", "description": "reference", "date": "payment_date", "badge": "direction"}
     ],
     "filter_presets": [
-        {"id": "receipts", "name": "Receipts", "filters": [{"id": "direction", "value": "inbound", "operator": "eq"}]},
-        {"id": "payments", "name": "Payments Out", "filters": [{"id": "direction", "value": "outbound", "operator": "eq"}]},
+        {"id": "receipts", "name": "Receipts", "filters": [{"id": "direction", "value": "inbound", "operator": "in"}]},
+        {"id": "payments", "name": "Payments Out", "filters": [{"id": "direction", "value": "outbound", "operator": "in"}]},
         {"id": "unallocated", "name": "Unallocated", "filters": [{"id": "unallocated_total", "value": "0", "operator": "gt"}]}
     ],
     "fields": {
@@ -2435,7 +2435,7 @@ comment on table finance.bank_transactions is '{
         {"id": "list", "name": "All Lines", "type": "list", "title": "description", "description": "counterparty", "field_1": "amount", "field_2": "transaction_date"}
     ],
     "filter_presets": [
-        {"id": "unreconciled", "name": "Unreconciled", "filters": [{"id": "status", "value": "unreconciled", "operator": "eq"}]},
+        {"id": "unreconciled", "name": "Unreconciled", "filters": [{"id": "status", "value": "unreconciled", "operator": "in"}]},
         {"id": "money_in", "name": "Money In", "filters": [{"id": "amount", "value": "0", "operator": "gt"}]},
         {"id": "money_out", "name": "Money Out", "filters": [{"id": "amount", "value": "0", "operator": "lt"}]}
     ],
@@ -2574,9 +2574,9 @@ comment on table finance.expense_claims is '{
         {"id": "list", "name": "All Claims", "type": "list", "title": "title", "description": "purpose", "field_1": "status", "field_2": "total_amount"}
     ],
     "filter_presets": [
-        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "submitted", "operator": "eq"}]},
-        {"id": "to_pay", "name": "To Reimburse", "filters": [{"id": "status", "value": "approved", "operator": "eq"}]},
-        {"id": "mine", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]}
+        {"id": "to_approve", "name": "To Approve", "filters": [{"id": "status", "value": "submitted", "operator": "in"}]},
+        {"id": "to_pay", "name": "To Reimburse", "filters": [{"id": "status", "value": "approved", "operator": "in"}]},
+        {"id": "mine", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["title", "purpose", "cost_center_id"],
@@ -2853,7 +2853,7 @@ comment on table finance.budgets is '{
     ],
     "filter_presets": [
         {"id": "over", "name": "Over Budget", "filters": [{"id": "variance_amount", "value": "0", "operator": "lt"}]},
-        {"id": "approved", "name": "Approved", "filters": [{"id": "status", "value": "approved", "operator": "eq"}]}
+        {"id": "approved", "name": "Approved", "filters": [{"id": "status", "value": "approved", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["fiscal_year", "account_id", "budget_amount"],
@@ -2985,7 +2985,7 @@ comment on table finance.fixed_assets is '{
         {"id": "gantt", "name": "Useful Life", "type": "gantt", "title": "name", "start_date": "purchase_date", "end_date": "disposal_date", "group": "status", "badge": "category"}
     ],
     "filter_presets": [
-        {"id": "in_service", "name": "In Service", "filters": [{"id": "status", "value": "in_service", "operator": "eq"}]},
+        {"id": "in_service", "name": "In Service", "filters": [{"id": "status", "value": "in_service", "operator": "in"}]},
         {"id": "fully_depreciated", "name": "Fully Depreciated", "filters": [{"id": "net_book_value", "value": "0", "operator": "lte"}]}
     ],
     "fields": {

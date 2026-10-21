@@ -1,7 +1,6 @@
 import { Fragment, Suspense, useMemo } from "react"
 
 import { Link, useNavigate } from "@tanstack/react-router"
-import type { ColumnFiltersState } from "@tanstack/react-table"
 
 import type { LucideIcon } from "lucide-react"
 import {
@@ -35,13 +34,14 @@ import {
   DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu"
 import { getFormMeta } from "#/hooks/use-custom-form"
-import { encodeFilterValue } from "#/lib/data-table"
 import type {
   DatabaseSchemas,
   DatabaseTables,
+  FilterRule,
   IconName,
   TableMetadata,
 } from "#/lib/database-meta.types"
+import { rulesToSearch } from "#/lib/filter-presets"
 import {
   getAvailableViews,
   getPrimaryViewIcon,
@@ -161,11 +161,11 @@ export function ResourceOverview<S extends DatabaseSchemas>({
     navigate(resolvePrimaryViewTarget(schema, resource, meta))
   }
 
-  function openTableWithFilters(filters: ColumnFiltersState) {
+  function openTableWithFilters(rules: FilterRule[]) {
     navigate({
       to: "/$schema/resource/$resource/table",
       params: { schema, resource },
-      search: { filters, page: 1 },
+      search: { ...rulesToSearch(rules), page: 1 },
     })
   }
 
@@ -185,14 +185,7 @@ export function ResourceOverview<S extends DatabaseSchemas>({
         preset.description,
         friendlyName
       )}
-      onClick={() =>
-        openTableWithFilters(
-          preset.filters.map((f) => ({
-            id: f.id,
-            value: encodeFilterValue(f.operator, f.value),
-          }))
-        )
-      }
+      onClick={() => openTableWithFilters(preset.filters)}
     />
   ))
 
@@ -247,14 +240,14 @@ export function ResourceOverview<S extends DatabaseSchemas>({
           )}
         </div>
         <ButtonGroup>
-          <Button size="sm" variant="outline" onClick={openPrimaryView}>
+          <Button variant="outline" onClick={openPrimaryView}>
             <PrimaryViewIcon className="size-3.5" />
             Open view
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button size="sm" variant="outline" className="px-2">
+                <Button variant="outline" className="px-2">
                   <ChevronDownIcon className="size-3.5" />
                 </Button>
               }

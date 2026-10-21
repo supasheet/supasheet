@@ -451,9 +451,9 @@ comment on table manufacturing.products is '{
         {"id": "kanban", "name": "By Lifecycle", "type": "kanban", "group": "status", "title": "name", "description": "sku", "date": "created_at", "badge": "revision"}
     ],
     "filter_presets": [
-        {"id": "made", "name": "Made Here", "filters": [{"id": "product_type", "value": "make", "operator": "eq"}]},
-        {"id": "bought", "name": "Bought In", "filters": [{"id": "product_type", "value": "buy", "operator": "eq"}]},
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "made", "name": "Made Here", "filters": [{"id": "product_type", "value": "make", "operator": "in"}]},
+        {"id": "bought", "name": "Bought In", "filters": [{"id": "product_type", "value": "buy", "operator": "in"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "orphans", "name": "Not Used Anywhere", "filters": [{"id": "where_used_count", "value": "0", "operator": "eq"}]}
     ],
     "fields": {
@@ -761,7 +761,7 @@ comment on table manufacturing.machines is '{
         {"id": "list", "name": "All Machines", "type": "list", "title": "name", "description": "manufacturer", "field_1": "status", "field_2": "availability"}
     ],
     "filter_presets": [
-        {"id": "down", "name": "Down", "filters": [{"id": "status", "value": "down", "operator": "eq"}]},
+        {"id": "down", "name": "Down", "filters": [{"id": "status", "value": "down", "operator": "in"}]},
         {"id": "service_due", "name": "Service Due", "filters": [{"id": "next_service_due", "value": "today", "operator": "lte"}]},
         {"id": "poor", "name": "Poor Availability", "filters": [{"id": "availability", "value": "85", "operator": "lt"}]}
     ],
@@ -894,8 +894,8 @@ comment on table manufacturing.boms is '{
         {"id": "gantt", "name": "Effectivity", "type": "gantt", "title": "version", "start_date": "effective_from", "end_date": "effective_to", "group": "status", "badge": "status"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "draft", "name": "In Development", "filters": [{"id": "status", "value": "draft", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "draft", "name": "In Development", "filters": [{"id": "status", "value": "draft", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["product_id", "version", "output_quantity"],
@@ -1135,7 +1135,7 @@ comment on table manufacturing.routings is '{
         {"id": "kanban", "name": "By Status", "type": "kanban", "group": "status", "title": "version", "description": "name", "date": "effective_from", "badge": "operation_count"}
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["product_id", "version"],
@@ -1840,7 +1840,7 @@ comment on table manufacturing.production_orders is '{
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["released", "in_progress"], "operator": "in"}]},
         {"id": "late", "name": "Late", "filters": [{"id": "planned_end", "value": "today", "operator": "lt"}]},
-        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "eq"}]},
+        {"id": "urgent", "name": "Urgent", "filters": [{"id": "priority", "value": "urgent", "operator": "in"}]},
         {"id": "scrapped", "name": "With Scrap", "filters": [{"id": "quantity_scrapped", "value": "0", "operator": "gt"}]}
     ],
     "fields": {
@@ -2137,7 +2137,7 @@ comment on table manufacturing.production_order_operations is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["pending", "setup", "running", "paused"], "operator": "in"}]},
-        {"id": "running", "name": "Running Now", "filters": [{"id": "status", "value": "running", "operator": "eq"}]},
+        {"id": "running", "name": "Running Now", "filters": [{"id": "status", "value": "running", "operator": "in"}]},
         {"id": "inspection", "name": "Inspection Points", "filters": [{"id": "is_inspection_point", "value": "true", "operator": "eq"}]}
     ],
     "fields": {
@@ -2435,7 +2435,7 @@ comment on table manufacturing.downtime_events is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Still Down", "filters": [{"id": "is_open", "value": "true", "operator": "eq"}]},
-        {"id": "breakdowns", "name": "Breakdowns", "filters": [{"id": "reason", "value": "breakdown", "operator": "eq"}]}
+        {"id": "breakdowns", "name": "Breakdowns", "filters": [{"id": "reason", "value": "breakdown", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["machine_id", "reason", "description"],
@@ -2561,7 +2561,7 @@ comment on table manufacturing.maintenance_orders is '{
     "filter_presets": [
         {"id": "due", "name": "Due", "filters": [{"id": "status", "value": ["scheduled", "overdue"], "operator": "in"}]},
         {"id": "overdue", "name": "Overdue", "filters": [{"id": "is_overdue", "value": "true", "operator": "eq"}]},
-        {"id": "breakdowns", "name": "Corrective", "filters": [{"id": "maintenance_type", "value": "corrective", "operator": "eq"}]}
+        {"id": "breakdowns", "name": "Corrective", "filters": [{"id": "maintenance_type", "value": "corrective", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["machine_id", "maintenance_type", "description", "scheduled_for"],
@@ -2676,7 +2676,7 @@ comment on table manufacturing.defect_codes is '{
         {"id": "list", "name": "All Codes", "type": "list", "title": "code", "description": "name", "field_1": "severity", "field_2": "occurrence_count"}
     ],
     "filter_presets": [
-        {"id": "critical", "name": "Critical", "filters": [{"id": "severity", "value": "critical", "operator": "eq"}]},
+        {"id": "critical", "name": "Critical", "filters": [{"id": "severity", "value": "critical", "operator": "in"}]},
         {"id": "common", "name": "Most Common", "filters": [{"id": "occurrence_count", "value": "0", "operator": "gt"}]}
     ],
     "fields": {
@@ -2893,8 +2893,8 @@ comment on table manufacturing.inspections is '{
         {"id": "list", "name": "All Inspections", "type": "list", "title": "inspection_number", "description": "inspector_name", "field_1": "result", "field_2": "pass_rate"}
     ],
     "filter_presets": [
-        {"id": "failed", "name": "Failed", "filters": [{"id": "result", "value": "fail", "operator": "eq"}]},
-        {"id": "pending", "name": "Awaiting Result", "filters": [{"id": "result", "value": "pending", "operator": "eq"}]}
+        {"id": "failed", "name": "Failed", "filters": [{"id": "result", "value": "fail", "operator": "in"}]},
+        {"id": "pending", "name": "Awaiting Result", "filters": [{"id": "result", "value": "pending", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["production_order_id", "quantity_inspected"],
@@ -3117,8 +3117,8 @@ comment on table manufacturing.nonconformances is '{
     ],
     "filter_presets": [
         {"id": "open", "name": "Open", "filters": [{"id": "status", "value": ["open", "investigating"], "operator": "in"}]},
-        {"id": "critical", "name": "Critical", "filters": [{"id": "severity", "value": "critical", "operator": "eq"}]},
-        {"id": "awaiting", "name": "Awaiting Disposition", "filters": [{"id": "disposition", "value": "pending", "operator": "eq"}]},
+        {"id": "critical", "name": "Critical", "filters": [{"id": "severity", "value": "critical", "operator": "in"}]},
+        {"id": "awaiting", "name": "Awaiting Disposition", "filters": [{"id": "disposition", "value": "pending", "operator": "in"}]},
         {"id": "stale", "name": "Open Over 14 Days", "filters": [{"id": "age_days", "value": "14", "operator": "gt"}]}
     ],
     "fields": {

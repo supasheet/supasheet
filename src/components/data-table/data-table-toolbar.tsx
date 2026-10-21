@@ -1,93 +1,192 @@
-import type { ReactNode } from "react"
+import * as React from "react"
 
-import type { Table } from "@tanstack/react-table"
-
-import { DownloadIcon } from "lucide-react"
-
-import { Button } from "#/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu"
-import { EXPORT_FORMATS, exportTable } from "#/lib/export"
+  type Column,
+  type ReactTable,
+  type RowData,
+  Subscribe,
+} from "@tanstack/react-table"
 
-import { DataTableColumnVisibility } from "./data-table-column-visibility"
-import { DataTableFilter } from "./data-table-filter"
+import { cn } from "cn"
+import { X } from "lucide-react"
 
-interface DataTableToolbarProps<TData> {
-  table: Table<TData>
-  hideColumnVisibility?: boolean
-  // Rendered immediately to the right of the Filter button on the left side
-  // of the toolbar (e.g. filter templates).
-  children?: ReactNode
+import { DataTableDateFilter } from "#/components/data-table/data-table-date-filter"
+import { DataTableFacetedFilter } from "#/components/data-table/data-table-faceted-filter"
+import { DataTableSliderFilter } from "#/components/data-table/data-table-slider-filter"
+import { DataTableViewOptions } from "#/components/data-table/data-table-view-options"
+import { Button } from "#/components/ui/button"
+import { Input } from "#/components/ui/input"
+import type { DataTableFeatures } from "#/lib/data-table-features"
+
+interface DataTableToolbarProps<
+  TData extends RowData,
+> extends React.ComponentProps<"div"> {
+  table: ReactTable<DataTableFeatures, TData, unknown>
 }
 
-export function DataTableToolbar<TData>({
+export function DataTableToolbar<TData extends RowData>({
   table,
-  hideColumnVisibility,
   children,
+  className,
+  ...props
 }: DataTableToolbarProps<TData>) {
+  const columns = React.useMemo(
+    () => table.getAllColumns().filter((column) => column.getCanFilter()),
+    [table]
+  )
+
+  function onReset() {
+    table.resetColumnFilters(true)
+    table.resetJoinOperator(true)
+  }
+
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <DataTableFilter table={table} />
-        {children}
+    <div
+      data-slot="data-table-toolbar"
+      className={cn(
+        "flex w-full items-start justify-between gap-2 p-1",
+        className
+      )}
+      {...props}
+    >
+      <div className="flex flex-1 flex-wrap items-center gap-2">
+        {columns.map((column) => (
+          <DataTableToolbarFilter key={column.id} column={column} />
+        ))}
+        <Subscribe
+          source={table.atoms.columnFilters}
+          selector={(filters) => filters.length > 0}
+        >
+          {(isFiltered) =>
+            isFiltered && (
+              <Button
+                aria-label="Reset filters"
+                variant="outline"
+                onClick={onReset}
+              >
+                <X />
+                Reset
+              </Button>
+            )
+          }
+        </Subscribe>
       </div>
       <div className="flex items-center gap-2">
-        <DataTableExportButton
-          table={table}
-          excludeColumns={["select"]}
-          filename={table.options.meta?.filename}
-        />
-        {!hideColumnVisibility && (
-          <div className="hidden sm:block">
-            <DataTableColumnVisibility table={table} />
-          </div>
-        )}
+        {children}
+        <DataTableViewOptions table={table} align="end" />
       </div>
     </div>
   )
 }
+interface DataTableToolbarFilterProps<TData extends RowData> {
+  column: Column<DataTableFeatures, TData>
+}
 
-export function DataTableExportButton<TData>({
-  table,
-  filename,
-  excludeColumns,
-}: {
-  table: Table<TData>
-  filename?: string
-  excludeColumns?: (keyof TData | "select" | "actions")[]
-}) {
-  const onlySelected = table.getSelectedRowModel().rows.length > 0
+function DataTableToolbarFilter<TData extends RowData>({
+  column,
+}: DataTableToolbarFilterProps<TData>) {
+  const columnMeta = column.columnDef.meta
+  if (!columnMeta?.variant) return null
+
+  const title = columnMeta.label ?? column.id
+  const placeholder = columnMeta.placeholder ?? columnMeta.label
+
+  switch (columnMeta.variant) {
+    case "text":
+    case "uuid":
+      return (
+        <DataTableFilterInput
+          column={column}
+          placeholder={placeholder}
+          className="w-40 lg:w-56"
+        />
+      )
+
+    case "number":
+      return (
+        <div className="relative">
+          <DataTableFilterInput
+            column={column}
+            type="number"
+            inputMode="numeric"
+            placeholder={placeholder}
+            className={cn("w-30", columnMeta.unit && "pe-8")}
+          />
+          {columnMeta.unit && (
+            <span className="absolute inset-e-0 top-0 bottom-0 flex items-center rounded-e-md bg-accent px-2 text-sm text-muted-foreground">
+              {columnMeta.unit}
+            </span>
+          )}
+        </div>
+      )
+
+    case "range":
+      return <DataTableSliderFilter column={column} title={title} />
+
+    case "date":
+    case "dateRange":
+      return (
+        <DataTableDateFilter
+          column={column}
+          title={title}
+          multiple={columnMeta.variant === "dateRange"}
+        />
+      )
+
+    case "select":
+    case "multiSelect":
+      return (
+        <DataTableFacetedFilter
+          column={column}
+          title={title}
+          options={columnMeta.options ?? []}
+          multiple={columnMeta.variant === "multiSelect"}
+        />
+      )
+
+    default:
+      return null
+  }
+}
+
+function readFilterInputValue(value: unknown) {
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value)
+  }
+
+  if (Array.isArray(value)) {
+    return value.join(",")
+  }
+
+  return ""
+}
+
+interface DataTableFilterInputProps<
+  TData extends RowData,
+> extends React.ComponentProps<"input"> {
+  column: Column<DataTableFeatures, TData>
+}
+
+function DataTableFilterInput<TData extends RowData>({
+  column,
+  type = "text",
+  ...props
+}: DataTableFilterInputProps<TData>) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant="outline" size="sm">
-            <DownloadIcon className="size-4" />
-            Export
-          </Button>
-        }
-      />
-      <DropdownMenuContent align="end">
-        {EXPORT_FORMATS.map(({ format, label }) => (
-          <DropdownMenuItem
-            key={format}
-            onClick={() =>
-              exportTable(table, {
-                format,
-                filename,
-                excludeColumns,
-                onlySelected,
-              })
-            }
-          >
-            Export as {label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Subscribe
+      source={column.table.atoms.columnFilters}
+      selector={() => column.getFilterValue()}
+    >
+      {(filterValue) => (
+        <Input
+          type={type}
+          {...props}
+          value={readFilterInputValue(filterValue)}
+          onChange={(event) =>
+            column.setFilterValue(event.target.value || undefined)
+          }
+        />
+      )}
+    </Subscribe>
   )
 }

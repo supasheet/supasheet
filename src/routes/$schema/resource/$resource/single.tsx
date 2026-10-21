@@ -49,7 +49,10 @@ export const Route = createFileRoute("/$schema/resource/$resource/single")({
   },
   loader: async ({ context, params: { schema, resource } }) => {
     context.queryClient.query({
-      ...resourceDataQueryOptions(schema, resource, undefined, 1, 1),
+      ...resourceDataQueryOptions(schema, resource, undefined, {
+        page: 1,
+        perPage: 1,
+      }),
       staleTime: "static",
     })
     context.queryClient.query({
@@ -195,7 +198,10 @@ function RouteComponent() {
   const primaryKeys = tableSchema?.primary_keys ?? []
 
   const { data } = useSuspenseQuery(
-    resourceDataQueryOptions(schema, resource, undefined, 1, 1)
+    resourceDataQueryOptions(schema, resource, undefined, {
+      page: 1,
+      perPage: 1,
+    })
   )
   const record = data?.result[0]
 

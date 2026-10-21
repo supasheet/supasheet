@@ -1,4 +1,7 @@
-import type { Table } from "@tanstack/react-table"
+import type { RowData } from "@tanstack/react-table"
+
+import type { DataTableInstance } from "#/lib/data-table-types"
+import { getVisibleSelectedRows } from "#/lib/data-table-utils"
 
 export type ExportFormat = "csv" | "tsv" | "json"
 
@@ -8,15 +11,15 @@ export const EXPORT_FORMATS: { format: ExportFormat; label: string }[] = [
   { format: "json", label: "JSON" },
 ]
 
-interface ExportTableOptions<TData> {
+interface ExportTableOptions<TData extends RowData> {
   format?: ExportFormat
   filename?: string
   excludeColumns?: (keyof TData | "select" | "actions")[]
   onlySelected?: boolean
 }
 
-function getExportData<TData>(
-  table: Table<TData>,
+function getExportData<TData extends RowData>(
+  table: DataTableInstance<TData>,
   opts: Pick<ExportTableOptions<TData>, "excludeColumns" | "onlySelected">
 ): { headers: string[]; rows: unknown[][] } {
   const { excludeColumns = [], onlySelected = false } = opts
@@ -32,13 +35,11 @@ function getExportData<TData>(
 
   // Display label for end users; falls back to the column id (name).
   const headers = columns.map(
-    (column) => column.columnDef.meta?.name ?? column.id
+    (column) => column.columnDef.meta?.field?.name ?? column.id
   )
 
   const rows = (
-    onlySelected
-      ? table.getFilteredSelectedRowModel().rows
-      : table.getRowModel().rows
+    onlySelected ? getVisibleSelectedRows(table) : table.getRowModel().rows
   ).map((row) =>
     // Always look up the value by the column id (the data key).
     columns.map((column) => row.getValue(column.id))
@@ -79,8 +80,8 @@ function serializeDelimited(
   ].join("\n")
 }
 
-export function exportTable<TData>(
-  table: Table<TData>,
+export function exportTable<TData extends RowData>(
+  table: DataTableInstance<TData>,
   opts: ExportTableOptions<TData> = {}
 ): void {
   const { format = "csv", filename = "table", ...rest } = opts

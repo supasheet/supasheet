@@ -577,7 +577,7 @@ comment on table blog.authors is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "available", "name": "Taking Assignments", "filters": [{"id": "is_accepting_assignments", "value": "true", "operator": "eq"}]},
         {"id": "editors", "name": "Editors", "filters": [{"id": "level", "value": ["editor", "editor_in_chief"], "operator": "in"}]}
     ],
@@ -838,7 +838,7 @@ comment on table blog.series is '{
         }
     ],
     "filter_presets": [
-        {"id": "ongoing", "name": "Ongoing", "filters": [{"id": "status", "value": "ongoing", "operator": "eq"}]},
+        {"id": "ongoing", "name": "Ongoing", "filters": [{"id": "status", "value": "ongoing", "operator": "in"}]},
         {"id": "featured", "name": "Featured", "filters": [{"id": "is_featured", "value": "true", "operator": "eq"}]}
     ],
     "fields": {
@@ -987,8 +987,8 @@ comment on table blog.content_campaigns is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "eq"}]},
-        {"id": "upcoming", "name": "Upcoming", "filters": [{"id": "status", "value": "planned", "operator": "eq"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
+        {"id": "upcoming", "name": "Upcoming", "filters": [{"id": "status", "value": "planned", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["name", "owner_id", "start_on", "end_on"],
@@ -1203,9 +1203,9 @@ comment on table blog.posts is '{
     ],
     "filter_presets": [
         {"id": "my_drafts", "name": "Drafts", "filters": [{"id": "status", "value": ["idea", "draft"], "operator": "in"}]},
-        {"id": "in_review", "name": "In Review", "filters": [{"id": "status", "value": "in_review", "operator": "eq"}]},
-        {"id": "scheduled", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "eq"}]},
-        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "eq"}]},
+        {"id": "in_review", "name": "In Review", "filters": [{"id": "status", "value": "in_review", "operator": "in"}]},
+        {"id": "scheduled", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "in"}]},
+        {"id": "published", "name": "Published", "filters": [{"id": "status", "value": "published", "operator": "in"}]},
         {"id": "featured", "name": "Featured", "filters": [{"id": "is_featured", "value": "true", "operator": "eq"}]},
         {"id": "unassigned", "name": "No Editor", "filters": [{"id": "editor_id", "value": "null", "operator": "is"}]},
         {"id": "premium", "name": "Members & Paid", "filters": [{"id": "visibility", "value": ["members", "paid"], "operator": "in"}]}
@@ -1692,9 +1692,9 @@ comment on table blog.post_comments is '{
         }
     ],
     "filter_presets": [
-        {"id": "pending", "name": "Awaiting Moderation", "filters": [{"id": "status", "value": "pending", "operator": "eq"}]},
+        {"id": "pending", "name": "Awaiting Moderation", "filters": [{"id": "status", "value": "pending", "operator": "in"}]},
         {"id": "reported", "name": "Reported", "filters": [{"id": "reported_count", "value": "0", "operator": "gt"}]},
-        {"id": "spam", "name": "Spam", "filters": [{"id": "status", "value": "spam", "operator": "eq"}]}
+        {"id": "spam", "name": "Spam", "filters": [{"id": "status", "value": "spam", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["post_id", "author_name", "body"],
@@ -1957,9 +1957,9 @@ comment on table blog.subscribers is '{
         }
     ],
     "filter_presets": [
-        {"id": "subscribed", "name": "Subscribed", "filters": [{"id": "status", "value": "subscribed", "operator": "eq"}]},
+        {"id": "subscribed", "name": "Subscribed", "filters": [{"id": "status", "value": "subscribed", "operator": "in"}]},
         {"id": "paying", "name": "Paying", "filters": [{"id": "plan", "value": ["member", "paid"], "operator": "in"}]},
-        {"id": "bounced", "name": "Bounced", "filters": [{"id": "status", "value": "bounced", "operator": "eq"}]}
+        {"id": "bounced", "name": "Bounced", "filters": [{"id": "status", "value": "bounced", "operator": "in"}]}
     ],
     "fields": {
         "quick_create": ["email", "name", "plan"],
@@ -2121,8 +2121,8 @@ comment on table blog.newsletter_issues is '{
         }
     ],
     "filter_presets": [
-        {"id": "scheduled", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "eq"}]},
-        {"id": "sent", "name": "Sent", "filters": [{"id": "status", "value": "sent", "operator": "eq"}]}
+        {"id": "scheduled", "name": "Scheduled", "filters": [{"id": "status", "value": "scheduled", "operator": "in"}]},
+        {"id": "sent", "name": "Sent", "filters": [{"id": "status", "value": "sent", "operator": "in"}]}
     ],
     "links": [
         {"id": "newsletter_report", "name": "Newsletter Performance", "url": "/blog/report/newsletter_report", "icon": "Activity", "description": "Reach, opens and clicks per issue"}

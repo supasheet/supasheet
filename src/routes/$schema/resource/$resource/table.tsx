@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useDeferredValue, useMemo } from "react"
 
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
@@ -8,11 +8,7 @@ import {
   notFound,
   useRouter,
 } from "@tanstack/react-router"
-import type {
-  ErrorComponentProps,
-  SearchSchemaInput,
-} from "@tanstack/react-router"
-import type { ColumnFiltersState, SortingState } from "@tanstack/react-table"
+import type { ErrorComponentProps } from "@tanstack/react-router"
 
 import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
@@ -33,6 +29,8 @@ import {
   hasResourcePermission,
   useHasPermission,
 } from "#/hooks/use-permissions"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import type { TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
 import { formatTitle } from "#/lib/format"
@@ -55,40 +53,9 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
       : hasPrivilege
     if (!canSelect) throw notFound()
   },
-  validateSearch: (
-    search: {
-      sortId?: string
-      sortDesc?: boolean
-      page?: number
-      pageSize?: number
-      filters?: ColumnFiltersState
-    } & SearchSchemaInput
-  ) => {
-    let filters: ColumnFiltersState = []
-    try {
-      const f = search.filters
-      if (Array.isArray(f)) filters = f
-    } catch {}
-    return {
-      sortId: search.sortId,
-      sortDesc: search.sortDesc ?? false,
-      page: search.page ?? 1,
-      pageSize: search.pageSize ?? 20,
-      filters,
-    }
-  },
-  loaderDeps: ({ search: { sortId, sortDesc, page, pageSize, filters } }) => ({
-    sortId,
-    sortDesc,
-    page,
-    pageSize,
-    filters,
-  }),
-  loader: async ({
-    context,
-    params,
-    deps: { sortId, sortDesc, page, pageSize, filters },
-  }) => {
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, params, deps: { search } }) => {
     const { schema, resource } = params
 
     const metaData = JSON.parse(
@@ -99,11 +66,15 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
         schema,
         resource,
         metaData.query,
-        page,
-        pageSize,
-        sortId,
-        sortDesc,
-        filters
+        getTableQuery(
+          search,
+          getFilterVariants(
+            isTableSchema(context.resourceSchema)
+              ? context.resourceSchema
+              : null,
+            context.columnsSchema
+          )
+        )
       ),
       staleTime: "static",
     })
@@ -195,7 +166,7 @@ export const Route = createFileRoute("/$schema/resource/$resource/table")({
 
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
-  const { sortId, sortDesc, page, pageSize, filters } = Route.useSearch()
+  const search = Route.useSearch()
   const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = useMemo(
@@ -208,24 +179,21 @@ function RouteComponent() {
   const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
+  const liveTableQuery = useMemo(
+    () =>
+      getTableQuery(
+        search,
+        getFilterVariants(isTable ? resourceSchema : null, columnsSchema)
+      ),
+    [search, isTable, resourceSchema, columnsSchema]
+  )
+  const tableQuery = useDeferredValue(liveTableQuery)
+
   const { data: resourceData } = useSuspenseQuery(
-    resourceDataQueryOptions(
-      schema,
-      resource,
-      meta.query,
-      page,
-      pageSize,
-      sortId,
-      sortDesc,
-      filters
-    )
+    resourceDataQueryOptions(schema, resource, meta.query, tableQuery)
   )
 
-  const sorting = (
-    sortId ? [{ id: sortId, desc: sortDesc }] : []
-  ) as SortingState
-  const pagination = { pageIndex: page - 1, pageSize }
-  const pageCount = Math.ceil((resourceData?.count ?? 0) / pageSize)
+  const pageCount = Math.ceil((resourceData?.count ?? 0) / tableQuery.perPage)
 
   return (
     <>
@@ -258,9 +226,6 @@ function RouteComponent() {
           data={resourceData?.result ?? []}
           columnsSchema={columnsSchema ?? []}
           resourceSchema={resourceSchema}
-          sorting={sorting}
-          pagination={pagination}
-          columnFilters={filters}
           pageCount={pageCount}
           filterPresets={meta.filter_presets ?? []}
         />

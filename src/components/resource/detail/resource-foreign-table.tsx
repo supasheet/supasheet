@@ -1,6 +1,4 @@
-"use client"
-
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
 import {
   useMutation,
@@ -8,22 +6,20 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
-import type {
-  ColumnFiltersState,
-  PaginationState,
-  RowSelectionState,
-  SortingState,
-  VisibilityState,
-} from "@tanstack/react-table"
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table"
 
 import { PlusIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { DataTable } from "#/components/data-table/data-table"
-import { DataTableActionBar } from "#/components/data-table/data-table-action-bar"
-import { DataTableToolbar } from "#/components/data-table/data-table-toolbar"
+import { DataTableAdvancedToolbar } from "#/components/data-table/data-table-advanced-toolbar"
+import { DataTableBulkActions } from "#/components/data-table/data-table-bulk-actions"
+import { DataTableFilterMenu } from "#/components/data-table/data-table-filter-menu"
+import { DataTableSortMenu } from "#/components/data-table/data-table-sort-menu"
 import { NewRecordTrigger } from "#/components/resource/sheet/new-record-trigger"
+import {
+  useLocalDataTable,
+  useLocalTableState,
+} from "#/hooks/use-local-data-table"
 import { useHasPermission } from "#/hooks/use-permissions"
 import type {
   ColumnSchema,
@@ -57,18 +53,6 @@ export function ResourceForeignTable({
   selectClause,
 }: ResourceForeignTableProps) {
   const queryClient = useQueryClient()
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 20,
-  })
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-
-  const sortId = sorting[0]?.id
-  const sortDesc = sorting[0]?.desc ?? false
-
   const primaryKeys = isTableSchema(resourceSchema)
     ? (resourceSchema.primary_keys ?? [])
     : []
@@ -103,6 +87,18 @@ export function ResourceForeignTable({
     }
   }, [resourceSchema.comment])
 
+  const columns = useMemo(
+    () =>
+      getResourceForeignTableColumns({
+        columnsSchema,
+        resourceSchema,
+        actions,
+      }),
+    [columnsSchema, resourceSchema, actions]
+  )
+
+  const { query, state } = useLocalTableState(columns)
+
   const { data: queryResult } = useSuspenseQuery(
     foreignTableDataQueryOptions(
       schema,
@@ -112,17 +108,13 @@ export function ResourceForeignTable({
       hasParentValue ? parentValue : "__noop__",
       defaultQuery,
       selectClause,
-      pagination.pageIndex + 1,
-      pagination.pageSize,
-      sortId,
-      sortDesc,
-      columnFilters
+      query
     )
   )
 
   const data = hasParentValue ? (queryResult?.result ?? []) : []
   const totalCount = hasParentValue ? (queryResult?.count ?? 0) : 0
-  const pageCount = Math.max(1, Math.ceil(totalCount / pagination.pageSize))
+  const pageCount = Math.max(1, Math.ceil(totalCount / query.perPage))
 
   const { mutateAsync: deleteRows } = useMutation(
     deleteBulkResourceMutationOptions(schema, table)
@@ -149,39 +141,14 @@ export function ResourceForeignTable({
     }
   }
 
-  const columns = useMemo(
-    () =>
-      getResourceForeignTableColumns({
-        columnsSchema,
-        resourceSchema,
-        actions,
-      }),
-    [data, columnsSchema, resourceSchema, actions]
-  )
-
-  const tableInstance = useReactTable({
+  const { table: tableInstance } = useLocalDataTable({
     data,
     columns,
+    tableState: state,
     pageCount,
-    state: {
-      sorting,
-      pagination,
-      columnFilters,
-      rowSelection,
-      columnVisibility,
-    },
     getRowId: primaryKeys.length
       ? (row) => primaryKeys.map((key) => row[key.name]).join("/")
       : undefined,
-    onSortingChange: setSorting,
-    onPaginationChange: setPagination,
-    onColumnFiltersChange: setColumnFilters,
-    onRowSelectionChange: setRowSelection,
-    onColumnVisibilityChange: setColumnVisibility,
-    manualSorting: true,
-    manualPagination: true,
-    manualFiltering: true,
-    getCoreRowModel: getCoreRowModel(),
   })
 
   const defaults = hasParentValue
@@ -196,8 +163,19 @@ export function ResourceForeignTable({
   })()
 
   return (
-    <DataTable table={tableInstance}>
-      <DataTableToolbar table={tableInstance}>
+    <DataTable
+      table={tableInstance}
+      actionBar={
+        <DataTableBulkActions
+          table={tableInstance}
+          filename={table}
+          onDelete={canDelete && primaryKeys.length ? handleDelete : undefined}
+        />
+      }
+    >
+      <DataTableAdvancedToolbar table={tableInstance}>
+        <DataTableFilterMenu table={tableInstance} />
+        <DataTableSortMenu table={tableInstance} />
         {canInsert && (
           <NewRecordTrigger
             schema={schema}
@@ -210,11 +188,7 @@ export function ResourceForeignTable({
             New record
           </NewRecordTrigger>
         )}
-      </DataTableToolbar>
-      <DataTableActionBar
-        table={tableInstance}
-        onDelete={canDelete && primaryKeys.length ? handleDelete : undefined}
-      />
+      </DataTableAdvancedToolbar>
     </DataTable>
   )
 }

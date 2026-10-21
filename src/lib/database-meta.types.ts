@@ -2,7 +2,6 @@ import type * as LucideIcons from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 import { METADATA_COLUMNS } from "#/config/database.config"
-import type { FilterOperator } from "#/types/data-table"
 
 import type { Database } from "./database.types"
 
@@ -110,6 +109,22 @@ export type Relationship = {
 }
 
 export type FormMode = "create" | "update" | "read"
+
+/** PostgREST-style operators used by comment-JSON filter rules and conditions. */
+export type FilterOperator =
+  | "eq"
+  | "neq"
+  | "lt"
+  | "lte"
+  | "gt"
+  | "gte"
+  | "like"
+  | "ilike"
+  | "is"
+  | "in"
+  | "not.ilike"
+  | "not.is"
+  | "not.in"
 
 export type FieldCondition = {
   id: ColumnName
