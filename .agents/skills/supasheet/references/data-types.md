@@ -18,6 +18,7 @@ create domain supasheet.DURATION as bigint;
 create domain supasheet.COLOR as varchar(16);
 create domain supasheet.AVATAR as supasheet.FILE_OBJECT;
 create domain supasheet.RICH_TEXT as text;
+create domain supasheet.BARCODE as text;
 ```
 
 | Type                   | Underlying            | UI behavior                              |
@@ -26,6 +27,7 @@ create domain supasheet.RICH_TEXT as text;
 | `supasheet.TEL`        | text                  | clickable `tel:`, intl formatting        |
 | `supasheet.URL`        | text                  | clickable link, opens new tab            |
 | `supasheet.RICH_TEXT`  | text                  | WYSIWYG editor (Lexical)                 |
+| `supasheet.BARCODE`    | text                  | text input with barcode icon             |
 | `supasheet.RATING`     | real (0–5)            | interactive star input                   |
 | `supasheet.PERCENTAGE` | real                  | progress bar, rendered "75%"             |
 | `supasheet.DURATION`   | bigint (milliseconds) | human-readable "2h 30m", duration picker |

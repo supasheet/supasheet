@@ -27,6 +27,7 @@ export type ColumnFieldMetadata = {
     | "rating"
     | "percentage"
     | "color"
+    | "barcode"
     | "duration"
     | "array"
   filterVariant: FilterVariant

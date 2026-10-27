@@ -47,6 +47,7 @@ export function AllFields({ columnMetadata }: FieldProps) {
     case "rich_text":
       return <RichTextField columnMetadata={columnMetadata} />
     case "color":
+    case "barcode":
     case "email":
     case "tel":
     case "text":

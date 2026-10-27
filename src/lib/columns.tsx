@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  BarcodeIcon,
   BaselineIcon,
   BinaryIcon,
   CalendarClockIcon,
@@ -315,6 +316,16 @@ export function getColumnMetadata(
         filterVariant: "text",
         icon: baseOptions.icon ?? (
           <PaletteIcon className="size-4 shrink-0 text-muted-foreground" />
+        ),
+      }
+
+    case "barcode":
+      return {
+        ...baseOptions,
+        variant: "barcode",
+        filterVariant: "text",
+        icon: baseOptions.icon ?? (
+          <BarcodeIcon className="size-4 shrink-0 text-muted-foreground" />
         ),
       }
 

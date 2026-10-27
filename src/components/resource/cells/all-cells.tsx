@@ -3,6 +3,7 @@ import { memo } from "react"
 import type { ColumnFieldMetadata, FileObject } from "#/types/fields"
 
 import { AvatarCell } from "./avatar-cell"
+import { BarcodeCell } from "./barcode-cell"
 import { BooleanCell } from "./boolean-cell"
 import { ColorCell } from "./color-cell"
 import { DurationCell } from "./duration-cell"
@@ -21,6 +22,8 @@ export const AllCells = memo(function ({
   switch (columnMetadata.variant) {
     case "boolean":
       return <BooleanCell value={value as string} />
+    case "barcode":
+      return <BarcodeCell value={value as string | null} />
     case "color":
       return <ColorCell value={value as string} />
     case "percentage":

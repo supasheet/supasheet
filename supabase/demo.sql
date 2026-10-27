@@ -10,7 +10,7 @@
 --   - Native-role RBAC (CREATE ROLE + GRANT, no permissions table)
 --   - Row Level Security scoped to native roles via pg_has_role()
 --   - All column data types: URL, TEL, EMAIL, RICH_TEXT, COLOR,
---     PERCENTAGE, DURATION, file, AVATAR, enums, arrays
+--     PERCENTAGE, DURATION, BARCODE, file, AVATAR, enums, arrays
 --   - All view layouts: kanban, calendar, gallery, list, tree
 --   - Field sections, filter presets, quick_create,
 --     conditional field behavior, lookup fill + lookup filter
@@ -1434,6 +1434,7 @@ execute on function demo.publish_portfolio_item (uuid) to "x-admin",
 create table demo.services (
   id uuid primary key default extensions.uuid_generate_v4 (),
   name varchar(255) not null,
+  sku supasheet.BARCODE unique,
   description text,
   category demo.service_category not null default 'development',
   default_rate numeric(10, 2) not null default 0,
@@ -1467,8 +1468,8 @@ comment on table demo.services is '{
             "type": "list",
             "title": "name",
             "description": "category",
-            "field_1": "default_rate",
-            "field_2": "unit"
+            "field_1": "sku",
+            "field_2": "default_rate"
         },
         {
             "id": "kanban",
@@ -1481,7 +1482,7 @@ comment on table demo.services is '{
     ],
     "fields": {
         "sections": [
-            {"id": "details", "title": "Details", "fields": ["name", "description", "category"]},
+            {"id": "details", "title": "Details", "fields": ["name", "sku", "description", "category"]},
             {"id": "pricing", "title": "Pricing", "fields": ["default_rate", "unit", "is_active", "color"]}
         ]
     },
@@ -6915,6 +6916,11 @@ values
     false,
     '#f97316'
   );
+
+-- Catalog SKUs, rendered as scannable barcodes (BARCODE column).
+update demo.services
+set
+  sku = 'SVC-' || lpad(right(id::text, 12)::int::text, 6, '0');
 
 ----------------------------------------------------------------
 -- Invoices (subtotal/tax/total are recalculated by the

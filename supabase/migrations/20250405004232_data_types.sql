@@ -28,3 +28,5 @@ create domain supasheet.COLOR as varchar(16);
 create domain supasheet.AVATAR as supasheet.FILE_OBJECT;
 
 create domain supasheet.RICH_TEXT as text;
+
+create domain supasheet.BARCODE as text;

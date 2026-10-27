@@ -54,7 +54,7 @@ Variants: `default` | `secondary` | `success` | `warning` | `destructive` | `inf
 
 Never redefine these — they ship in the base migrations. Use them for rich UI columns:
 
-`supasheet.EMAIL`, `supasheet.TEL`, `supasheet.URL`, `supasheet.RICH_TEXT`, `supasheet.RATING` (0–5), `supasheet.PERCENTAGE`, `supasheet.DURATION` (bigint ms), `supasheet.COLOR`, `supasheet.FILE` (array), `supasheet.AVATAR` (single).
+`supasheet.EMAIL`, `supasheet.TEL`, `supasheet.URL`, `supasheet.RICH_TEXT`, `supasheet.RATING` (0–5), `supasheet.PERCENTAGE`, `supasheet.DURATION` (bigint ms), `supasheet.COLOR`, `supasheet.BARCODE` (text), `supasheet.FILE` (array), `supasheet.AVATAR` (single).
 
 Full definitions, UI behavior, and file-column comment options: `references/data-types.md`.
 
