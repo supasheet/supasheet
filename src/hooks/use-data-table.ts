@@ -318,6 +318,8 @@ function useDataTable<TData extends RowData>({
     {
       ...props,
       features: dataTableFeatures,
+      enableColumnResizing: true,
+      columnResizeMode: "onChange",
       columns,
       initialState: initialTableState,
       pageCount: isServer ? pageCount : undefined,

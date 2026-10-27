@@ -170,9 +170,39 @@ function DataTableHeadCell<TData extends RowData>({
           style={getColumnPinningStyle(header.column)}
         >
           {header.isPlaceholder ? null : <FlexRender header={header} />}
+          {header.column.getCanResize() ? (
+            <DataTableResizeHandle header={header} />
+          ) : null}
         </TableHead>
       )}
     </Subscribe>
+  )
+}
+
+function DataTableResizeHandle<TData extends RowData>({
+  header,
+}: {
+  header: Header<DataTableFeatures, TData>
+}) {
+  const isResizing = header.column.getIsResizing()
+
+  return (
+    <div
+      role="separator"
+      aria-orientation="vertical"
+      aria-label={`Resize ${header.column.id} column`}
+      onMouseDown={header.getResizeHandler()}
+      onTouchStart={header.getResizeHandler()}
+      onDoubleClick={() => header.column.resetSize()}
+      className="absolute inset-y-0 end-0 z-10 flex w-2 cursor-col-resize touch-none justify-end select-none"
+    >
+      <div
+        className={cn(
+          "my-3 w-px bg-border",
+          isResizing && "my-2 w-0.5 bg-primary"
+        )}
+      />
+    </div>
   )
 }
 

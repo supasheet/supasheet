@@ -22,6 +22,7 @@ export function getDataTableSelectColumn<TData extends RowData>({
   size = 28,
   enableHiding = false,
   enableSorting = false,
+  enableResizing = false,
   debug = false,
   ...props
 }: GetDataTableSelectColumnOptions<TData> = {}): ColumnDef<
@@ -37,6 +38,7 @@ export function getDataTableSelectColumn<TData extends RowData>({
     size,
     enableHiding,
     enableSorting,
+    enableResizing,
     ...props,
   }
 }

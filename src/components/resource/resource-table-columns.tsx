@@ -67,6 +67,7 @@ export function getResourceTableColumns({
         },
         size: UTILITY_COLUMN_SIZE,
         minSize: UTILITY_COLUMN_SIZE,
+        enableResizing: false,
         enableSorting: false,
         enableHiding: false,
       }
@@ -88,6 +89,7 @@ export function getResourceTableColumns({
       ),
       size: UTILITY_COLUMN_SIZE,
       minSize: UTILITY_COLUMN_SIZE,
+      enableResizing: false,
       enableSorting: false,
       enableHiding: false,
       enableColumnFilter: false,
@@ -125,6 +127,7 @@ export function getResourceTableColumns({
         />
       ),
       size: 170,
+      minSize: 80,
       enableSorting: true,
       enableHiding: true,
       enableColumnFilter: true,

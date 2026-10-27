@@ -31,6 +31,7 @@ export function getDataTableActionsColumn<TData extends RowData>({
   size = 48,
   enableHiding = false,
   enableSorting = false,
+  enableResizing = false,
   ...props
 }: GetDataTableActionsColumnOptions<TData>): ColumnDef<
   DataTableFeatures,
@@ -61,6 +62,7 @@ export function getDataTableActionsColumn<TData extends RowData>({
     size,
     enableHiding,
     enableSorting,
+    enableResizing,
     ...props,
   }
 }

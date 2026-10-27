@@ -123,6 +123,8 @@ export function useLocalDataTable<TData extends RowData>({
     {
       ...props,
       features: dataTableFeatures,
+      enableColumnResizing: true,
+      columnResizeMode: "onChange",
       pageCount,
       atoms: tableState,
       manualPagination: true,
