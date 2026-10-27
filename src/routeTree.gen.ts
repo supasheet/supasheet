@@ -9,101 +9,81 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StorageRouteRouteImport } from './routes/storage/route'
-import { Route as CoreRouteRouteImport } from './routes/core/route'
-import { Route as AuthRouteRouteImport } from './routes/auth/route'
-import { Route as AiRouteRouteImport } from './routes/ai/route'
-import { Route as AccountRouteRouteImport } from './routes/account/route'
-import { Route as SchemaRouteRouteImport } from './routes/$schema/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StorageIndexRouteImport } from './routes/storage/index'
-import { Route as CoreIndexRouteImport } from './routes/core/index'
-import { Route as AiIndexRouteImport } from './routes/ai/index'
+import { Route as SchemaRouteRouteImport } from './routes/$schema/route'
+import { Route as AccountRouteRouteImport } from './routes/account/route'
+import { Route as AiRouteRouteImport } from './routes/ai/route'
+import { Route as AuthRouteRouteImport } from './routes/auth/route'
+import { Route as CoreRouteRouteImport } from './routes/core/route'
+import { Route as StorageRouteRouteImport } from './routes/storage/route'
 import { Route as SchemaIndexRouteImport } from './routes/$schema/index'
-import { Route as AuthUpdatePasswordRouteImport } from './routes/auth/update-password'
-import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
-import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
-import { Route as AuthPhoneOtpRouteImport } from './routes/auth/phone-otp'
-import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
-import { Route as AuthMagicLinkRouteImport } from './routes/auth/magic-link'
-import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
-import { Route as AuthEmailOtpRouteImport } from './routes/auth/email-otp'
-import { Route as AccountSecurityRouteImport } from './routes/account/security'
-import { Route as AccountRolesPermissionsRouteImport } from './routes/account/roles-permissions'
-import { Route as AccountProfileRouteImport } from './routes/account/profile'
 import { Route as AccountIdentitiesRouteImport } from './routes/account/identities'
+import { Route as AccountProfileRouteImport } from './routes/account/profile'
+import { Route as AccountRolesPermissionsRouteImport } from './routes/account/roles-permissions'
+import { Route as AccountSecurityRouteImport } from './routes/account/security'
+import { Route as AiIndexRouteImport } from './routes/ai/index'
+import { Route as AuthEmailOtpRouteImport } from './routes/auth/email-otp'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AuthMagicLinkRouteImport } from './routes/auth/magic-link'
+import { Route as AuthMfaRouteImport } from './routes/auth/mfa'
+import { Route as AuthPhoneOtpRouteImport } from './routes/auth/phone-otp'
+import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
+import { Route as AuthUpdatePasswordRouteImport } from './routes/auth/update-password'
+import { Route as CoreIndexRouteImport } from './routes/core/index'
+import { Route as StorageIndexRouteImport } from './routes/storage/index'
 import { Route as StorageBucketIdRouteRouteImport } from './routes/storage/$bucketId/route'
-import { Route as StorageBucketIdIndexRouteImport } from './routes/storage/$bucketId/index'
-import { Route as CoreUsersIndexRouteImport } from './routes/core/users/index'
-import { Route as CoreAudit_logsIndexRouteImport } from './routes/core/audit_logs/index'
-import { Route as SchemaTemplateIndexRouteImport } from './routes/$schema/template/index'
-import { Route as SchemaReportIndexRouteImport } from './routes/$schema/report/index'
-import { Route as SchemaDashboardIndexRouteImport } from './routes/$schema/dashboard/index'
 import { Route as SchemaChartIndexRouteImport } from './routes/$schema/chart/index'
-import { Route as StorageBucketIdSplatRouteImport } from './routes/storage/$bucketId/$'
-import { Route as CoreUsersNewRouteImport } from './routes/core/users/new'
-import { Route as CoreUsersInviteRouteImport } from './routes/core/users/invite'
-import { Route as CoreAudit_logsAuditLogIdRouteImport } from './routes/core/audit_logs/$auditLogId'
-import { Route as CoreUsersUserIdRouteRouteImport } from './routes/core/users/$userId/route'
+import { Route as SchemaDashboardIndexRouteImport } from './routes/$schema/dashboard/index'
+import { Route as SchemaReportIndexRouteImport } from './routes/$schema/report/index'
 import { Route as SchemaResourceResourceRouteRouteImport } from './routes/$schema/resource/$resource/route'
-import { Route as CoreUsersUserIdIndexRouteImport } from './routes/core/users/$userId/index'
-import { Route as SchemaTemplateTemplateIndexRouteImport } from './routes/$schema/template/$template/index'
-import { Route as SchemaResourceResourceIndexRouteImport } from './routes/$schema/resource/$resource/index'
+import { Route as SchemaTemplateIndexRouteImport } from './routes/$schema/template/index'
+import { Route as CoreAudit_logsIndexRouteImport } from './routes/core/audit_logs/index'
+import { Route as CoreAudit_logsAuditLogIdRouteImport } from './routes/core/audit_logs/$auditLogId'
+import { Route as CoreUsersIndexRouteImport } from './routes/core/users/index'
+import { Route as CoreUsersUserIdRouteRouteImport } from './routes/core/users/$userId/route'
+import { Route as CoreUsersInviteRouteImport } from './routes/core/users/invite'
+import { Route as CoreUsersNewRouteImport } from './routes/core/users/new'
+import { Route as StorageBucketIdIndexRouteImport } from './routes/storage/$bucketId/index'
+import { Route as StorageBucketIdSplatRouteImport } from './routes/storage/$bucketId/$'
 import { Route as SchemaReportReportIndexRouteImport } from './routes/$schema/report/$report/index'
-import { Route as CoreUsersUserIdSecurityRouteImport } from './routes/core/users/$userId/security'
-import { Route as CoreUsersUserIdEditRouteImport } from './routes/core/users/$userId/edit'
-import { Route as CoreUsersUserIdDangerRouteImport } from './routes/core/users/$userId/danger'
-import { Route as SchemaResourceResourceTableRouteImport } from './routes/$schema/resource/$resource/table'
-import { Route as SchemaResourceResourceSingleRouteImport } from './routes/$schema/resource/$resource/single'
-import { Route as SchemaResourceResourceNewRouteImport } from './routes/$schema/resource/$resource/new'
-import { Route as SchemaResourceResourceGridRouteImport } from './routes/$schema/resource/$resource/grid'
+import { Route as SchemaResourceResourceIndexRouteImport } from './routes/$schema/resource/$resource/index'
 import { Route as SchemaResourceResourceDefinitionRouteImport } from './routes/$schema/resource/$resource/definition'
-import { Route as SchemaResourceResourceTreeTreeIdRouteImport } from './routes/$schema/resource/$resource/tree/$treeId'
-import { Route as SchemaResourceResourceTableSheetRouteImport } from './routes/$schema/resource/$resource/table.sheet'
-import { Route as SchemaResourceResourceListListIdRouteImport } from './routes/$schema/resource/$resource/list/$listId'
-import { Route as SchemaResourceResourceKanbanKanbanIdRouteImport } from './routes/$schema/resource/$resource/kanban/$kanbanId'
-import { Route as SchemaResourceResourceGridSheetRouteImport } from './routes/$schema/resource/$resource/grid.sheet'
-import { Route as SchemaResourceResourceGanttGanttIdRouteImport } from './routes/$schema/resource/$resource/gantt/$ganttId'
-import { Route as SchemaResourceResourceGalleryGalleryIdRouteImport } from './routes/$schema/resource/$resource/gallery/$galleryId'
-import { Route as SchemaResourceResourceFormFormidRouteImport } from './routes/$schema/resource/$resource/form/$formid'
-import { Route as SchemaResourceResourceCalendarCalendarIdRouteImport } from './routes/$schema/resource/$resource/calendar/$calendarId'
-import { Route as SchemaResourceResourceResourceIdDetailRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail'
-import { Route as SchemaResourceResourceResourceIdCommentRouteImport } from './routes/$schema/resource/$resource/$resourceId/comment'
+import { Route as SchemaResourceResourceGridRouteImport } from './routes/$schema/resource/$resource/grid'
+import { Route as SchemaResourceResourceNewRouteImport } from './routes/$schema/resource/$resource/new'
+import { Route as SchemaResourceResourceSingleRouteImport } from './routes/$schema/resource/$resource/single'
+import { Route as SchemaResourceResourceTableRouteImport } from './routes/$schema/resource/$resource/table'
+import { Route as SchemaTemplateTemplateIndexRouteImport } from './routes/$schema/template/$template/index'
+import { Route as CoreUsersUserIdIndexRouteImport } from './routes/core/users/$userId/index'
+import { Route as CoreUsersUserIdDangerRouteImport } from './routes/core/users/$userId/danger'
+import { Route as CoreUsersUserIdEditRouteImport } from './routes/core/users/$userId/edit'
+import { Route as CoreUsersUserIdSecurityRouteImport } from './routes/core/users/$userId/security'
 import { Route as SchemaResourceResourceResourceIdAuditRouteImport } from './routes/$schema/resource/$resource/$resourceId/audit'
+import { Route as SchemaResourceResourceResourceIdCommentRouteImport } from './routes/$schema/resource/$resource/$resourceId/comment'
+import { Route as SchemaResourceResourceResourceIdDetailRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail'
+import { Route as SchemaResourceResourceCalendarCalendarIdRouteImport } from './routes/$schema/resource/$resource/calendar/$calendarId'
+import { Route as SchemaResourceResourceFormFormidRouteImport } from './routes/$schema/resource/$resource/form/$formid'
+import { Route as SchemaResourceResourceGalleryGalleryIdRouteImport } from './routes/$schema/resource/$resource/gallery/$galleryId'
+import { Route as SchemaResourceResourceGanttGanttIdRouteImport } from './routes/$schema/resource/$resource/gantt/$ganttId'
+import { Route as SchemaResourceResourceGridSheetRouteImport } from './routes/$schema/resource/$resource/grid.sheet'
+import { Route as SchemaResourceResourceKanbanKanbanIdRouteImport } from './routes/$schema/resource/$resource/kanban/$kanbanId'
+import { Route as SchemaResourceResourceListListIdRouteImport } from './routes/$schema/resource/$resource/list/$listId'
+import { Route as SchemaResourceResourceTableSheetRouteImport } from './routes/$schema/resource/$resource/table.sheet'
+import { Route as SchemaResourceResourceTreeTreeIdRouteImport } from './routes/$schema/resource/$resource/tree/$treeId'
 import { Route as SchemaResourceResourceResourceIdDetailIndexRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail.index'
-import { Route as SchemaResourceResourceTreeTreeIdSheetRouteImport } from './routes/$schema/resource/$resource/tree/$treeId.sheet'
-import { Route as SchemaResourceResourceListListIdSheetRouteImport } from './routes/$schema/resource/$resource/list/$listId.sheet'
-import { Route as SchemaResourceResourceKanbanKanbanIdSheetRouteImport } from './routes/$schema/resource/$resource/kanban/$kanbanId.sheet'
-import { Route as SchemaResourceResourceGanttGanttIdSheetRouteImport } from './routes/$schema/resource/$resource/gantt/$ganttId.sheet'
-import { Route as SchemaResourceResourceGalleryGalleryIdSheetRouteImport } from './routes/$schema/resource/$resource/gallery/$galleryId.sheet'
-import { Route as SchemaResourceResourceCalendarCalendarIdSheetRouteImport } from './routes/$schema/resource/$resource/calendar/$calendarId.sheet'
-import { Route as SchemaResourceResourceResourceIdDetailSheetRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail.sheet'
 import { Route as SchemaResourceResourceResourceIdDetailTabRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail.$tab'
+import { Route as SchemaResourceResourceResourceIdDetailSheetRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail.sheet'
+import { Route as SchemaResourceResourceCalendarCalendarIdSheetRouteImport } from './routes/$schema/resource/$resource/calendar/$calendarId.sheet'
+import { Route as SchemaResourceResourceGalleryGalleryIdSheetRouteImport } from './routes/$schema/resource/$resource/gallery/$galleryId.sheet'
+import { Route as SchemaResourceResourceGanttGanttIdSheetRouteImport } from './routes/$schema/resource/$resource/gantt/$ganttId.sheet'
+import { Route as SchemaResourceResourceKanbanKanbanIdSheetRouteImport } from './routes/$schema/resource/$resource/kanban/$kanbanId.sheet'
+import { Route as SchemaResourceResourceListListIdSheetRouteImport } from './routes/$schema/resource/$resource/list/$listId.sheet'
+import { Route as SchemaResourceResourceTreeTreeIdSheetRouteImport } from './routes/$schema/resource/$resource/tree/$treeId.sheet'
 import { Route as SchemaResourceResourceResourceIdDetailTabSheetRouteImport } from './routes/$schema/resource/$resource/$resourceId/detail.$tab.sheet'
 
-const StorageRouteRoute = StorageRouteRouteImport.update({
-  id: '/storage',
-  path: '/storage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoreRouteRoute = CoreRouteRouteImport.update({
-  id: '/core',
-  path: '/core',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRouteRoute = AuthRouteRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AiRouteRoute = AiRouteRouteImport.update({
-  id: '/ai',
-  path: '/ai',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AccountRouteRoute = AccountRouteRouteImport.update({
-  id: '/account',
-  path: '/account',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SchemaRouteRoute = SchemaRouteRouteImport.update({
@@ -111,79 +91,39 @@ const SchemaRouteRoute = SchemaRouteRouteImport.update({
   path: '/$schema',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AccountRouteRoute = AccountRouteRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StorageIndexRoute = StorageIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => StorageRouteRoute,
+const AiRouteRoute = AiRouteRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CoreIndexRoute = CoreIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CoreRouteRoute,
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AiIndexRoute = AiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AiRouteRoute,
+const CoreRouteRoute = CoreRouteRouteImport.update({
+  id: '/core',
+  path: '/core',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StorageRouteRoute = StorageRouteRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SchemaIndexRoute = SchemaIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SchemaRouteRoute,
 } as any)
-const AuthUpdatePasswordRoute = AuthUpdatePasswordRouteImport.update({
-  id: '/update-password',
-  path: '/update-password',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthPhoneOtpRoute = AuthPhoneOtpRouteImport.update({
-  id: '/phone-otp',
-  path: '/phone-otp',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthMfaRoute = AuthMfaRouteImport.update({
-  id: '/mfa',
-  path: '/mfa',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthMagicLinkRoute = AuthMagicLinkRouteImport.update({
-  id: '/magic-link',
-  path: '/magic-link',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthEmailOtpRoute = AuthEmailOtpRouteImport.update({
-  id: '/email-otp',
-  path: '/email-otp',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AccountSecurityRoute = AccountSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => AccountRouteRoute,
-} as any)
-const AccountRolesPermissionsRoute = AccountRolesPermissionsRouteImport.update({
-  id: '/roles-permissions',
-  path: '/roles-permissions',
+const AccountIdentitiesRoute = AccountIdentitiesRouteImport.update({
+  id: '/identities',
+  path: '/identities',
   getParentRoute: () => AccountRouteRoute,
 } as any)
 const AccountProfileRoute = AccountProfileRouteImport.update({
@@ -191,39 +131,79 @@ const AccountProfileRoute = AccountProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AccountRouteRoute,
 } as any)
-const AccountIdentitiesRoute = AccountIdentitiesRouteImport.update({
-  id: '/identities',
-  path: '/identities',
+const AccountRolesPermissionsRoute = AccountRolesPermissionsRouteImport.update({
+  id: '/roles-permissions',
+  path: '/roles-permissions',
   getParentRoute: () => AccountRouteRoute,
+} as any)
+const AccountSecurityRoute = AccountSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AccountRouteRoute,
+} as any)
+const AiIndexRoute = AiIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AiRouteRoute,
+} as any)
+const AuthEmailOtpRoute = AuthEmailOtpRouteImport.update({
+  id: '/email-otp',
+  path: '/email-otp',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthMagicLinkRoute = AuthMagicLinkRouteImport.update({
+  id: '/magic-link',
+  path: '/magic-link',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthMfaRoute = AuthMfaRouteImport.update({
+  id: '/mfa',
+  path: '/mfa',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthPhoneOtpRoute = AuthPhoneOtpRouteImport.update({
+  id: '/phone-otp',
+  path: '/phone-otp',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthUpdatePasswordRoute = AuthUpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const CoreIndexRoute = CoreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CoreRouteRoute,
+} as any)
+const StorageIndexRoute = StorageIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StorageRouteRoute,
 } as any)
 const StorageBucketIdRouteRoute = StorageBucketIdRouteRouteImport.update({
   id: '/$bucketId',
   path: '/$bucketId',
   getParentRoute: () => StorageRouteRoute,
 } as any)
-const StorageBucketIdIndexRoute = StorageBucketIdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => StorageBucketIdRouteRoute,
-} as any)
-const CoreUsersIndexRoute = CoreUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const CoreAudit_logsIndexRoute = CoreAudit_logsIndexRouteImport.update({
-  id: '/audit_logs/',
-  path: '/audit_logs/',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const SchemaTemplateIndexRoute = SchemaTemplateIndexRouteImport.update({
-  id: '/template/',
-  path: '/template/',
-  getParentRoute: () => SchemaRouteRoute,
-} as any)
-const SchemaReportIndexRoute = SchemaReportIndexRouteImport.update({
-  id: '/report/',
-  path: '/report/',
+const SchemaChartIndexRoute = SchemaChartIndexRouteImport.update({
+  id: '/chart/',
+  path: '/chart/',
   getParentRoute: () => SchemaRouteRoute,
 } as any)
 const SchemaDashboardIndexRoute = SchemaDashboardIndexRouteImport.update({
@@ -231,24 +211,25 @@ const SchemaDashboardIndexRoute = SchemaDashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => SchemaRouteRoute,
 } as any)
-const SchemaChartIndexRoute = SchemaChartIndexRouteImport.update({
-  id: '/chart/',
-  path: '/chart/',
+const SchemaReportIndexRoute = SchemaReportIndexRouteImport.update({
+  id: '/report/',
+  path: '/report/',
   getParentRoute: () => SchemaRouteRoute,
 } as any)
-const StorageBucketIdSplatRoute = StorageBucketIdSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => StorageBucketIdRouteRoute,
+const SchemaResourceResourceRouteRoute =
+  SchemaResourceResourceRouteRouteImport.update({
+    id: '/resource/$resource',
+    path: '/resource/$resource',
+    getParentRoute: () => SchemaRouteRoute,
+  } as any)
+const SchemaTemplateIndexRoute = SchemaTemplateIndexRouteImport.update({
+  id: '/template/',
+  path: '/template/',
+  getParentRoute: () => SchemaRouteRoute,
 } as any)
-const CoreUsersNewRoute = CoreUsersNewRouteImport.update({
-  id: '/users/new',
-  path: '/users/new',
-  getParentRoute: () => CoreRouteRoute,
-} as any)
-const CoreUsersInviteRoute = CoreUsersInviteRouteImport.update({
-  id: '/users/invite',
-  path: '/users/invite',
+const CoreAudit_logsIndexRoute = CoreAudit_logsIndexRouteImport.update({
+  id: '/audit_logs/',
+  path: '/audit_logs/',
   getParentRoute: () => CoreRouteRoute,
 } as any)
 const CoreAudit_logsAuditLogIdRoute =
@@ -257,76 +238,45 @@ const CoreAudit_logsAuditLogIdRoute =
     path: '/audit_logs/$auditLogId',
     getParentRoute: () => CoreRouteRoute,
   } as any)
+const CoreUsersIndexRoute = CoreUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => CoreRouteRoute,
+} as any)
 const CoreUsersUserIdRouteRoute = CoreUsersUserIdRouteRouteImport.update({
   id: '/users/$userId',
   path: '/users/$userId',
   getParentRoute: () => CoreRouteRoute,
 } as any)
-const SchemaResourceResourceRouteRoute =
-  SchemaResourceResourceRouteRouteImport.update({
-    id: '/resource/$resource',
-    path: '/resource/$resource',
-    getParentRoute: () => SchemaRouteRoute,
-  } as any)
-const CoreUsersUserIdIndexRoute = CoreUsersUserIdIndexRouteImport.update({
+const CoreUsersInviteRoute = CoreUsersInviteRouteImport.update({
+  id: '/users/invite',
+  path: '/users/invite',
+  getParentRoute: () => CoreRouteRoute,
+} as any)
+const CoreUsersNewRoute = CoreUsersNewRouteImport.update({
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => CoreRouteRoute,
+} as any)
+const StorageBucketIdIndexRoute = StorageBucketIdIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => CoreUsersUserIdRouteRoute,
+  getParentRoute: () => StorageBucketIdRouteRoute,
 } as any)
-const SchemaTemplateTemplateIndexRoute =
-  SchemaTemplateTemplateIndexRouteImport.update({
-    id: '/template/$template/',
-    path: '/template/$template/',
-    getParentRoute: () => SchemaRouteRoute,
-  } as any)
-const SchemaResourceResourceIndexRoute =
-  SchemaResourceResourceIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
+const StorageBucketIdSplatRoute = StorageBucketIdSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => StorageBucketIdRouteRoute,
+} as any)
 const SchemaReportReportIndexRoute = SchemaReportReportIndexRouteImport.update({
   id: '/report/$report/',
   path: '/report/$report/',
   getParentRoute: () => SchemaRouteRoute,
 } as any)
-const CoreUsersUserIdSecurityRoute = CoreUsersUserIdSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => CoreUsersUserIdRouteRoute,
-} as any)
-const CoreUsersUserIdEditRoute = CoreUsersUserIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => CoreUsersUserIdRouteRoute,
-} as any)
-const CoreUsersUserIdDangerRoute = CoreUsersUserIdDangerRouteImport.update({
-  id: '/danger',
-  path: '/danger',
-  getParentRoute: () => CoreUsersUserIdRouteRoute,
-} as any)
-const SchemaResourceResourceTableRoute =
-  SchemaResourceResourceTableRouteImport.update({
-    id: '/table',
-    path: '/table',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
-const SchemaResourceResourceSingleRoute =
-  SchemaResourceResourceSingleRouteImport.update({
-    id: '/single',
-    path: '/single',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
-const SchemaResourceResourceNewRoute =
-  SchemaResourceResourceNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
-const SchemaResourceResourceGridRoute =
-  SchemaResourceResourceGridRouteImport.update({
-    id: '/grid',
-    path: '/grid',
+const SchemaResourceResourceIndexRoute =
+  SchemaResourceResourceIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
 const SchemaResourceResourceDefinitionRoute =
@@ -335,64 +285,60 @@ const SchemaResourceResourceDefinitionRoute =
     path: '/definition',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceTreeTreeIdRoute =
-  SchemaResourceResourceTreeTreeIdRouteImport.update({
-    id: '/tree/$treeId',
-    path: '/tree/$treeId',
+const SchemaResourceResourceGridRoute =
+  SchemaResourceResourceGridRouteImport.update({
+    id: '/grid',
+    path: '/grid',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceTableSheetRoute =
-  SchemaResourceResourceTableSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceTableRoute,
-  } as any)
-const SchemaResourceResourceListListIdRoute =
-  SchemaResourceResourceListListIdRouteImport.update({
-    id: '/list/$listId',
-    path: '/list/$listId',
+const SchemaResourceResourceNewRoute =
+  SchemaResourceResourceNewRouteImport.update({
+    id: '/new',
+    path: '/new',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceKanbanKanbanIdRoute =
-  SchemaResourceResourceKanbanKanbanIdRouteImport.update({
-    id: '/kanban/$kanbanId',
-    path: '/kanban/$kanbanId',
+const SchemaResourceResourceSingleRoute =
+  SchemaResourceResourceSingleRouteImport.update({
+    id: '/single',
+    path: '/single',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceGridSheetRoute =
-  SchemaResourceResourceGridSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceGridRoute,
-  } as any)
-const SchemaResourceResourceGanttGanttIdRoute =
-  SchemaResourceResourceGanttGanttIdRouteImport.update({
-    id: '/gantt/$ganttId',
-    path: '/gantt/$ganttId',
+const SchemaResourceResourceTableRoute =
+  SchemaResourceResourceTableRouteImport.update({
+    id: '/table',
+    path: '/table',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceGalleryGalleryIdRoute =
-  SchemaResourceResourceGalleryGalleryIdRouteImport.update({
-    id: '/gallery/$galleryId',
-    path: '/gallery/$galleryId',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
+const SchemaTemplateTemplateIndexRoute =
+  SchemaTemplateTemplateIndexRouteImport.update({
+    id: '/template/$template/',
+    path: '/template/$template/',
+    getParentRoute: () => SchemaRouteRoute,
   } as any)
-const SchemaResourceResourceFormFormidRoute =
-  SchemaResourceResourceFormFormidRouteImport.update({
-    id: '/form/$formid',
-    path: '/form/$formid',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
-const SchemaResourceResourceCalendarCalendarIdRoute =
-  SchemaResourceResourceCalendarCalendarIdRouteImport.update({
-    id: '/calendar/$calendarId',
-    path: '/calendar/$calendarId',
-    getParentRoute: () => SchemaResourceResourceRouteRoute,
-  } as any)
-const SchemaResourceResourceResourceIdDetailRoute =
-  SchemaResourceResourceResourceIdDetailRouteImport.update({
-    id: '/$resourceId/detail',
-    path: '/$resourceId/detail',
+const CoreUsersUserIdIndexRoute = CoreUsersUserIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CoreUsersUserIdRouteRoute,
+} as any)
+const CoreUsersUserIdDangerRoute = CoreUsersUserIdDangerRouteImport.update({
+  id: '/danger',
+  path: '/danger',
+  getParentRoute: () => CoreUsersUserIdRouteRoute,
+} as any)
+const CoreUsersUserIdEditRoute = CoreUsersUserIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => CoreUsersUserIdRouteRoute,
+} as any)
+const CoreUsersUserIdSecurityRoute = CoreUsersUserIdSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => CoreUsersUserIdRouteRoute,
+} as any)
+const SchemaResourceResourceResourceIdAuditRoute =
+  SchemaResourceResourceResourceIdAuditRouteImport.update({
+    id: '/$resourceId/audit',
+    path: '/$resourceId/audit',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
 const SchemaResourceResourceResourceIdCommentRoute =
@@ -401,10 +347,64 @@ const SchemaResourceResourceResourceIdCommentRoute =
     path: '/$resourceId/comment',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
-const SchemaResourceResourceResourceIdAuditRoute =
-  SchemaResourceResourceResourceIdAuditRouteImport.update({
-    id: '/$resourceId/audit',
-    path: '/$resourceId/audit',
+const SchemaResourceResourceResourceIdDetailRoute =
+  SchemaResourceResourceResourceIdDetailRouteImport.update({
+    id: '/$resourceId/detail',
+    path: '/$resourceId/detail',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceCalendarCalendarIdRoute =
+  SchemaResourceResourceCalendarCalendarIdRouteImport.update({
+    id: '/calendar/$calendarId',
+    path: '/calendar/$calendarId',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceFormFormidRoute =
+  SchemaResourceResourceFormFormidRouteImport.update({
+    id: '/form/$formid',
+    path: '/form/$formid',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceGalleryGalleryIdRoute =
+  SchemaResourceResourceGalleryGalleryIdRouteImport.update({
+    id: '/gallery/$galleryId',
+    path: '/gallery/$galleryId',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceGanttGanttIdRoute =
+  SchemaResourceResourceGanttGanttIdRouteImport.update({
+    id: '/gantt/$ganttId',
+    path: '/gantt/$ganttId',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceGridSheetRoute =
+  SchemaResourceResourceGridSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceGridRoute,
+  } as any)
+const SchemaResourceResourceKanbanKanbanIdRoute =
+  SchemaResourceResourceKanbanKanbanIdRouteImport.update({
+    id: '/kanban/$kanbanId',
+    path: '/kanban/$kanbanId',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceListListIdRoute =
+  SchemaResourceResourceListListIdRouteImport.update({
+    id: '/list/$listId',
+    path: '/list/$listId',
+    getParentRoute: () => SchemaResourceResourceRouteRoute,
+  } as any)
+const SchemaResourceResourceTableSheetRoute =
+  SchemaResourceResourceTableSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceTableRoute,
+  } as any)
+const SchemaResourceResourceTreeTreeIdRoute =
+  SchemaResourceResourceTreeTreeIdRouteImport.update({
+    id: '/tree/$treeId',
+    path: '/tree/$treeId',
     getParentRoute: () => SchemaResourceResourceRouteRoute,
   } as any)
 const SchemaResourceResourceResourceIdDetailIndexRoute =
@@ -413,41 +413,11 @@ const SchemaResourceResourceResourceIdDetailIndexRoute =
     path: '/',
     getParentRoute: () => SchemaResourceResourceResourceIdDetailRoute,
   } as any)
-const SchemaResourceResourceTreeTreeIdSheetRoute =
-  SchemaResourceResourceTreeTreeIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceTreeTreeIdRoute,
-  } as any)
-const SchemaResourceResourceListListIdSheetRoute =
-  SchemaResourceResourceListListIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceListListIdRoute,
-  } as any)
-const SchemaResourceResourceKanbanKanbanIdSheetRoute =
-  SchemaResourceResourceKanbanKanbanIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceKanbanKanbanIdRoute,
-  } as any)
-const SchemaResourceResourceGanttGanttIdSheetRoute =
-  SchemaResourceResourceGanttGanttIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceGanttGanttIdRoute,
-  } as any)
-const SchemaResourceResourceGalleryGalleryIdSheetRoute =
-  SchemaResourceResourceGalleryGalleryIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceGalleryGalleryIdRoute,
-  } as any)
-const SchemaResourceResourceCalendarCalendarIdSheetRoute =
-  SchemaResourceResourceCalendarCalendarIdSheetRouteImport.update({
-    id: '/sheet',
-    path: '/sheet',
-    getParentRoute: () => SchemaResourceResourceCalendarCalendarIdRoute,
+const SchemaResourceResourceResourceIdDetailTabRoute =
+  SchemaResourceResourceResourceIdDetailTabRouteImport.update({
+    id: '/$tab',
+    path: '/$tab',
+    getParentRoute: () => SchemaResourceResourceResourceIdDetailRoute,
   } as any)
 const SchemaResourceResourceResourceIdDetailSheetRoute =
   SchemaResourceResourceResourceIdDetailSheetRouteImport.update({
@@ -455,11 +425,41 @@ const SchemaResourceResourceResourceIdDetailSheetRoute =
     path: '/sheet',
     getParentRoute: () => SchemaResourceResourceResourceIdDetailRoute,
   } as any)
-const SchemaResourceResourceResourceIdDetailTabRoute =
-  SchemaResourceResourceResourceIdDetailTabRouteImport.update({
-    id: '/$tab',
-    path: '/$tab',
-    getParentRoute: () => SchemaResourceResourceResourceIdDetailRoute,
+const SchemaResourceResourceCalendarCalendarIdSheetRoute =
+  SchemaResourceResourceCalendarCalendarIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceCalendarCalendarIdRoute,
+  } as any)
+const SchemaResourceResourceGalleryGalleryIdSheetRoute =
+  SchemaResourceResourceGalleryGalleryIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceGalleryGalleryIdRoute,
+  } as any)
+const SchemaResourceResourceGanttGanttIdSheetRoute =
+  SchemaResourceResourceGanttGanttIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceGanttGanttIdRoute,
+  } as any)
+const SchemaResourceResourceKanbanKanbanIdSheetRoute =
+  SchemaResourceResourceKanbanKanbanIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceKanbanKanbanIdRoute,
+  } as any)
+const SchemaResourceResourceListListIdSheetRoute =
+  SchemaResourceResourceListListIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceListListIdRoute,
+  } as any)
+const SchemaResourceResourceTreeTreeIdSheetRoute =
+  SchemaResourceResourceTreeTreeIdSheetRouteImport.update({
+    id: '/sheet',
+    path: '/sheet',
+    getParentRoute: () => SchemaResourceResourceTreeTreeIdRoute,
   } as any)
 const SchemaResourceResourceResourceIdDetailTabSheetRoute =
   SchemaResourceResourceResourceIdDetailTabSheetRouteImport.update({
@@ -906,39 +906,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/storage': {
-      id: '/storage'
-      path: '/storage'
-      fullPath: '/storage'
-      preLoaderRoute: typeof StorageRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/core': {
-      id: '/core'
-      path: '/core'
-      fullPath: '/core'
-      preLoaderRoute: typeof CoreRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ai': {
-      id: '/ai'
-      path: '/ai'
-      fullPath: '/ai'
-      preLoaderRoute: typeof AiRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account': {
-      id: '/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountRouteRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$schema': {
@@ -948,33 +920,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/storage/': {
-      id: '/storage/'
-      path: '/'
-      fullPath: '/storage/'
-      preLoaderRoute: typeof StorageIndexRouteImport
-      parentRoute: typeof StorageRouteRoute
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/core/': {
-      id: '/core/'
-      path: '/'
-      fullPath: '/core/'
-      preLoaderRoute: typeof CoreIndexRouteImport
-      parentRoute: typeof CoreRouteRoute
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/ai/': {
-      id: '/ai/'
-      path: '/'
-      fullPath: '/ai/'
-      preLoaderRoute: typeof AiIndexRouteImport
-      parentRoute: typeof AiRouteRoute
+    '/core': {
+      id: '/core'
+      path: '/core'
+      fullPath: '/core'
+      preLoaderRoute: typeof CoreRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/storage': {
+      id: '/storage'
+      path: '/storage'
+      fullPath: '/storage'
+      preLoaderRoute: typeof StorageRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/$schema/': {
       id: '/$schema/'
@@ -983,74 +962,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaIndexRouteImport
       parentRoute: typeof SchemaRouteRoute
     }
-    '/auth/update-password': {
-      id: '/auth/update-password'
-      path: '/update-password'
-      fullPath: '/auth/update-password'
-      preLoaderRoute: typeof AuthUpdatePasswordRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/sign-up': {
-      id: '/auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/auth/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/sign-in': {
-      id: '/auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/auth/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/phone-otp': {
-      id: '/auth/phone-otp'
-      path: '/phone-otp'
-      fullPath: '/auth/phone-otp'
-      preLoaderRoute: typeof AuthPhoneOtpRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/mfa': {
-      id: '/auth/mfa'
-      path: '/mfa'
-      fullPath: '/auth/mfa'
-      preLoaderRoute: typeof AuthMfaRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/magic-link': {
-      id: '/auth/magic-link'
-      path: '/magic-link'
-      fullPath: '/auth/magic-link'
-      preLoaderRoute: typeof AuthMagicLinkRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/forgot-password': {
-      id: '/auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/auth/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/email-otp': {
-      id: '/auth/email-otp'
-      path: '/email-otp'
-      fullPath: '/auth/email-otp'
-      preLoaderRoute: typeof AuthEmailOtpRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/account/security': {
-      id: '/account/security'
-      path: '/security'
-      fullPath: '/account/security'
-      preLoaderRoute: typeof AccountSecurityRouteImport
-      parentRoute: typeof AccountRouteRoute
-    }
-    '/account/roles-permissions': {
-      id: '/account/roles-permissions'
-      path: '/roles-permissions'
-      fullPath: '/account/roles-permissions'
-      preLoaderRoute: typeof AccountRolesPermissionsRouteImport
+    '/account/identities': {
+      id: '/account/identities'
+      path: '/identities'
+      fullPath: '/account/identities'
+      preLoaderRoute: typeof AccountIdentitiesRouteImport
       parentRoute: typeof AccountRouteRoute
     }
     '/account/profile': {
@@ -1060,12 +976,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountProfileRouteImport
       parentRoute: typeof AccountRouteRoute
     }
-    '/account/identities': {
-      id: '/account/identities'
-      path: '/identities'
-      fullPath: '/account/identities'
-      preLoaderRoute: typeof AccountIdentitiesRouteImport
+    '/account/roles-permissions': {
+      id: '/account/roles-permissions'
+      path: '/roles-permissions'
+      fullPath: '/account/roles-permissions'
+      preLoaderRoute: typeof AccountRolesPermissionsRouteImport
       parentRoute: typeof AccountRouteRoute
+    }
+    '/account/security': {
+      id: '/account/security'
+      path: '/security'
+      fullPath: '/account/security'
+      preLoaderRoute: typeof AccountSecurityRouteImport
+      parentRoute: typeof AccountRouteRoute
+    }
+    '/ai/': {
+      id: '/ai/'
+      path: '/'
+      fullPath: '/ai/'
+      preLoaderRoute: typeof AiIndexRouteImport
+      parentRoute: typeof AiRouteRoute
+    }
+    '/auth/email-otp': {
+      id: '/auth/email-otp'
+      path: '/email-otp'
+      fullPath: '/auth/email-otp'
+      preLoaderRoute: typeof AuthEmailOtpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/magic-link': {
+      id: '/auth/magic-link'
+      path: '/magic-link'
+      fullPath: '/auth/magic-link'
+      preLoaderRoute: typeof AuthMagicLinkRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/mfa': {
+      id: '/auth/mfa'
+      path: '/mfa'
+      fullPath: '/auth/mfa'
+      preLoaderRoute: typeof AuthMfaRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/phone-otp': {
+      id: '/auth/phone-otp'
+      path: '/phone-otp'
+      fullPath: '/auth/phone-otp'
+      preLoaderRoute: typeof AuthPhoneOtpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/auth/update-password': {
+      id: '/auth/update-password'
+      path: '/update-password'
+      fullPath: '/auth/update-password'
+      preLoaderRoute: typeof AuthUpdatePasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/core/': {
+      id: '/core/'
+      path: '/'
+      fullPath: '/core/'
+      preLoaderRoute: typeof CoreIndexRouteImport
+      parentRoute: typeof CoreRouteRoute
+    }
+    '/storage/': {
+      id: '/storage/'
+      path: '/'
+      fullPath: '/storage/'
+      preLoaderRoute: typeof StorageIndexRouteImport
+      parentRoute: typeof StorageRouteRoute
     }
     '/storage/$bucketId': {
       id: '/storage/$bucketId'
@@ -1074,39 +1074,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StorageBucketIdRouteRouteImport
       parentRoute: typeof StorageRouteRoute
     }
-    '/storage/$bucketId/': {
-      id: '/storage/$bucketId/'
-      path: '/'
-      fullPath: '/storage/$bucketId/'
-      preLoaderRoute: typeof StorageBucketIdIndexRouteImport
-      parentRoute: typeof StorageBucketIdRouteRoute
-    }
-    '/core/users/': {
-      id: '/core/users/'
-      path: '/users'
-      fullPath: '/core/users/'
-      preLoaderRoute: typeof CoreUsersIndexRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
-    '/core/audit_logs/': {
-      id: '/core/audit_logs/'
-      path: '/audit_logs'
-      fullPath: '/core/audit_logs/'
-      preLoaderRoute: typeof CoreAudit_logsIndexRouteImport
-      parentRoute: typeof CoreRouteRoute
-    }
-    '/$schema/template/': {
-      id: '/$schema/template/'
-      path: '/template'
-      fullPath: '/$schema/template/'
-      preLoaderRoute: typeof SchemaTemplateIndexRouteImport
-      parentRoute: typeof SchemaRouteRoute
-    }
-    '/$schema/report/': {
-      id: '/$schema/report/'
-      path: '/report'
-      fullPath: '/$schema/report/'
-      preLoaderRoute: typeof SchemaReportIndexRouteImport
+    '/$schema/chart/': {
+      id: '/$schema/chart/'
+      path: '/chart'
+      fullPath: '/$schema/chart/'
+      preLoaderRoute: typeof SchemaChartIndexRouteImport
       parentRoute: typeof SchemaRouteRoute
     }
     '/$schema/dashboard/': {
@@ -1116,32 +1088,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaDashboardIndexRouteImport
       parentRoute: typeof SchemaRouteRoute
     }
-    '/$schema/chart/': {
-      id: '/$schema/chart/'
-      path: '/chart'
-      fullPath: '/$schema/chart/'
-      preLoaderRoute: typeof SchemaChartIndexRouteImport
+    '/$schema/report/': {
+      id: '/$schema/report/'
+      path: '/report'
+      fullPath: '/$schema/report/'
+      preLoaderRoute: typeof SchemaReportIndexRouteImport
       parentRoute: typeof SchemaRouteRoute
     }
-    '/storage/$bucketId/$': {
-      id: '/storage/$bucketId/$'
-      path: '/$'
-      fullPath: '/storage/$bucketId/$'
-      preLoaderRoute: typeof StorageBucketIdSplatRouteImport
-      parentRoute: typeof StorageBucketIdRouteRoute
+    '/$schema/resource/$resource': {
+      id: '/$schema/resource/$resource'
+      path: '/resource/$resource'
+      fullPath: '/$schema/resource/$resource'
+      preLoaderRoute: typeof SchemaResourceResourceRouteRouteImport
+      parentRoute: typeof SchemaRouteRoute
     }
-    '/core/users/new': {
-      id: '/core/users/new'
-      path: '/users/new'
-      fullPath: '/core/users/new'
-      preLoaderRoute: typeof CoreUsersNewRouteImport
-      parentRoute: typeof CoreRouteRoute
+    '/$schema/template/': {
+      id: '/$schema/template/'
+      path: '/template'
+      fullPath: '/$schema/template/'
+      preLoaderRoute: typeof SchemaTemplateIndexRouteImport
+      parentRoute: typeof SchemaRouteRoute
     }
-    '/core/users/invite': {
-      id: '/core/users/invite'
-      path: '/users/invite'
-      fullPath: '/core/users/invite'
-      preLoaderRoute: typeof CoreUsersInviteRouteImport
+    '/core/audit_logs/': {
+      id: '/core/audit_logs/'
+      path: '/audit_logs'
+      fullPath: '/core/audit_logs/'
+      preLoaderRoute: typeof CoreAudit_logsIndexRouteImport
       parentRoute: typeof CoreRouteRoute
     }
     '/core/audit_logs/$auditLogId': {
@@ -1151,6 +1123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoreAudit_logsAuditLogIdRouteImport
       parentRoute: typeof CoreRouteRoute
     }
+    '/core/users/': {
+      id: '/core/users/'
+      path: '/users'
+      fullPath: '/core/users/'
+      preLoaderRoute: typeof CoreUsersIndexRouteImport
+      parentRoute: typeof CoreRouteRoute
+    }
     '/core/users/$userId': {
       id: '/core/users/$userId'
       path: '/users/$userId'
@@ -1158,25 +1137,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoreUsersUserIdRouteRouteImport
       parentRoute: typeof CoreRouteRoute
     }
-    '/$schema/resource/$resource': {
-      id: '/$schema/resource/$resource'
-      path: '/resource/$resource'
-      fullPath: '/$schema/resource/$resource'
-      preLoaderRoute: typeof SchemaResourceResourceRouteRouteImport
-      parentRoute: typeof SchemaRouteRoute
+    '/core/users/invite': {
+      id: '/core/users/invite'
+      path: '/users/invite'
+      fullPath: '/core/users/invite'
+      preLoaderRoute: typeof CoreUsersInviteRouteImport
+      parentRoute: typeof CoreRouteRoute
     }
-    '/core/users/$userId/': {
-      id: '/core/users/$userId/'
+    '/core/users/new': {
+      id: '/core/users/new'
+      path: '/users/new'
+      fullPath: '/core/users/new'
+      preLoaderRoute: typeof CoreUsersNewRouteImport
+      parentRoute: typeof CoreRouteRoute
+    }
+    '/storage/$bucketId/': {
+      id: '/storage/$bucketId/'
       path: '/'
-      fullPath: '/core/users/$userId/'
-      preLoaderRoute: typeof CoreUsersUserIdIndexRouteImport
-      parentRoute: typeof CoreUsersUserIdRouteRoute
+      fullPath: '/storage/$bucketId/'
+      preLoaderRoute: typeof StorageBucketIdIndexRouteImport
+      parentRoute: typeof StorageBucketIdRouteRoute
     }
-    '/$schema/template/$template/': {
-      id: '/$schema/template/$template/'
-      path: '/template/$template'
-      fullPath: '/$schema/template/$template/'
-      preLoaderRoute: typeof SchemaTemplateTemplateIndexRouteImport
+    '/storage/$bucketId/$': {
+      id: '/storage/$bucketId/$'
+      path: '/$'
+      fullPath: '/storage/$bucketId/$'
+      preLoaderRoute: typeof StorageBucketIdSplatRouteImport
+      parentRoute: typeof StorageBucketIdRouteRoute
+    }
+    '/$schema/report/$report/': {
+      id: '/$schema/report/$report/'
+      path: '/report/$report'
+      fullPath: '/$schema/report/$report/'
+      preLoaderRoute: typeof SchemaReportReportIndexRouteImport
       parentRoute: typeof SchemaRouteRoute
     }
     '/$schema/resource/$resource/': {
@@ -1186,53 +1179,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaResourceResourceIndexRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/report/$report/': {
-      id: '/$schema/report/$report/'
-      path: '/report/$report'
-      fullPath: '/$schema/report/$report/'
-      preLoaderRoute: typeof SchemaReportReportIndexRouteImport
-      parentRoute: typeof SchemaRouteRoute
-    }
-    '/core/users/$userId/security': {
-      id: '/core/users/$userId/security'
-      path: '/security'
-      fullPath: '/core/users/$userId/security'
-      preLoaderRoute: typeof CoreUsersUserIdSecurityRouteImport
-      parentRoute: typeof CoreUsersUserIdRouteRoute
-    }
-    '/core/users/$userId/edit': {
-      id: '/core/users/$userId/edit'
-      path: '/edit'
-      fullPath: '/core/users/$userId/edit'
-      preLoaderRoute: typeof CoreUsersUserIdEditRouteImport
-      parentRoute: typeof CoreUsersUserIdRouteRoute
-    }
-    '/core/users/$userId/danger': {
-      id: '/core/users/$userId/danger'
-      path: '/danger'
-      fullPath: '/core/users/$userId/danger'
-      preLoaderRoute: typeof CoreUsersUserIdDangerRouteImport
-      parentRoute: typeof CoreUsersUserIdRouteRoute
-    }
-    '/$schema/resource/$resource/table': {
-      id: '/$schema/resource/$resource/table'
-      path: '/table'
-      fullPath: '/$schema/resource/$resource/table'
-      preLoaderRoute: typeof SchemaResourceResourceTableRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
-    }
-    '/$schema/resource/$resource/single': {
-      id: '/$schema/resource/$resource/single'
-      path: '/single'
-      fullPath: '/$schema/resource/$resource/single'
-      preLoaderRoute: typeof SchemaResourceResourceSingleRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
-    }
-    '/$schema/resource/$resource/new': {
-      id: '/$schema/resource/$resource/new'
-      path: '/new'
-      fullPath: '/$schema/resource/$resource/new'
-      preLoaderRoute: typeof SchemaResourceResourceNewRouteImport
+    '/$schema/resource/$resource/definition': {
+      id: '/$schema/resource/$resource/definition'
+      path: '/definition'
+      fullPath: '/$schema/resource/$resource/definition'
+      preLoaderRoute: typeof SchemaResourceResourceDefinitionRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
     '/$schema/resource/$resource/grid': {
@@ -1242,81 +1193,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaResourceResourceGridRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/resource/$resource/definition': {
-      id: '/$schema/resource/$resource/definition'
-      path: '/definition'
-      fullPath: '/$schema/resource/$resource/definition'
-      preLoaderRoute: typeof SchemaResourceResourceDefinitionRouteImport
+    '/$schema/resource/$resource/new': {
+      id: '/$schema/resource/$resource/new'
+      path: '/new'
+      fullPath: '/$schema/resource/$resource/new'
+      preLoaderRoute: typeof SchemaResourceResourceNewRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/resource/$resource/tree/$treeId': {
-      id: '/$schema/resource/$resource/tree/$treeId'
-      path: '/tree/$treeId'
-      fullPath: '/$schema/resource/$resource/tree/$treeId'
-      preLoaderRoute: typeof SchemaResourceResourceTreeTreeIdRouteImport
+    '/$schema/resource/$resource/single': {
+      id: '/$schema/resource/$resource/single'
+      path: '/single'
+      fullPath: '/$schema/resource/$resource/single'
+      preLoaderRoute: typeof SchemaResourceResourceSingleRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/resource/$resource/table/sheet': {
-      id: '/$schema/resource/$resource/table/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/table/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceTableSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceTableRoute
-    }
-    '/$schema/resource/$resource/list/$listId': {
-      id: '/$schema/resource/$resource/list/$listId'
-      path: '/list/$listId'
-      fullPath: '/$schema/resource/$resource/list/$listId'
-      preLoaderRoute: typeof SchemaResourceResourceListListIdRouteImport
+    '/$schema/resource/$resource/table': {
+      id: '/$schema/resource/$resource/table'
+      path: '/table'
+      fullPath: '/$schema/resource/$resource/table'
+      preLoaderRoute: typeof SchemaResourceResourceTableRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/resource/$resource/kanban/$kanbanId': {
-      id: '/$schema/resource/$resource/kanban/$kanbanId'
-      path: '/kanban/$kanbanId'
-      fullPath: '/$schema/resource/$resource/kanban/$kanbanId'
-      preLoaderRoute: typeof SchemaResourceResourceKanbanKanbanIdRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
+    '/$schema/template/$template/': {
+      id: '/$schema/template/$template/'
+      path: '/template/$template'
+      fullPath: '/$schema/template/$template/'
+      preLoaderRoute: typeof SchemaTemplateTemplateIndexRouteImport
+      parentRoute: typeof SchemaRouteRoute
     }
-    '/$schema/resource/$resource/grid/sheet': {
-      id: '/$schema/resource/$resource/grid/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/grid/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceGridSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceGridRoute
+    '/core/users/$userId/': {
+      id: '/core/users/$userId/'
+      path: '/'
+      fullPath: '/core/users/$userId/'
+      preLoaderRoute: typeof CoreUsersUserIdIndexRouteImport
+      parentRoute: typeof CoreUsersUserIdRouteRoute
     }
-    '/$schema/resource/$resource/gantt/$ganttId': {
-      id: '/$schema/resource/$resource/gantt/$ganttId'
-      path: '/gantt/$ganttId'
-      fullPath: '/$schema/resource/$resource/gantt/$ganttId'
-      preLoaderRoute: typeof SchemaResourceResourceGanttGanttIdRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
+    '/core/users/$userId/danger': {
+      id: '/core/users/$userId/danger'
+      path: '/danger'
+      fullPath: '/core/users/$userId/danger'
+      preLoaderRoute: typeof CoreUsersUserIdDangerRouteImport
+      parentRoute: typeof CoreUsersUserIdRouteRoute
     }
-    '/$schema/resource/$resource/gallery/$galleryId': {
-      id: '/$schema/resource/$resource/gallery/$galleryId'
-      path: '/gallery/$galleryId'
-      fullPath: '/$schema/resource/$resource/gallery/$galleryId'
-      preLoaderRoute: typeof SchemaResourceResourceGalleryGalleryIdRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
+    '/core/users/$userId/edit': {
+      id: '/core/users/$userId/edit'
+      path: '/edit'
+      fullPath: '/core/users/$userId/edit'
+      preLoaderRoute: typeof CoreUsersUserIdEditRouteImport
+      parentRoute: typeof CoreUsersUserIdRouteRoute
     }
-    '/$schema/resource/$resource/form/$formid': {
-      id: '/$schema/resource/$resource/form/$formid'
-      path: '/form/$formid'
-      fullPath: '/$schema/resource/$resource/form/$formid'
-      preLoaderRoute: typeof SchemaResourceResourceFormFormidRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
+    '/core/users/$userId/security': {
+      id: '/core/users/$userId/security'
+      path: '/security'
+      fullPath: '/core/users/$userId/security'
+      preLoaderRoute: typeof CoreUsersUserIdSecurityRouteImport
+      parentRoute: typeof CoreUsersUserIdRouteRoute
     }
-    '/$schema/resource/$resource/calendar/$calendarId': {
-      id: '/$schema/resource/$resource/calendar/$calendarId'
-      path: '/calendar/$calendarId'
-      fullPath: '/$schema/resource/$resource/calendar/$calendarId'
-      preLoaderRoute: typeof SchemaResourceResourceCalendarCalendarIdRouteImport
-      parentRoute: typeof SchemaResourceResourceRouteRoute
-    }
-    '/$schema/resource/$resource/$resourceId/detail': {
-      id: '/$schema/resource/$resource/$resourceId/detail'
-      path: '/$resourceId/detail'
-      fullPath: '/$schema/resource/$resource/$resourceId/detail'
-      preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailRouteImport
+    '/$schema/resource/$resource/$resourceId/audit': {
+      id: '/$schema/resource/$resource/$resourceId/audit'
+      path: '/$resourceId/audit'
+      fullPath: '/$schema/resource/$resource/$resourceId/audit'
+      preLoaderRoute: typeof SchemaResourceResourceResourceIdAuditRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
     '/$schema/resource/$resource/$resourceId/comment': {
@@ -1326,11 +1263,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaResourceResourceResourceIdCommentRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
-    '/$schema/resource/$resource/$resourceId/audit': {
-      id: '/$schema/resource/$resource/$resourceId/audit'
-      path: '/$resourceId/audit'
-      fullPath: '/$schema/resource/$resource/$resourceId/audit'
-      preLoaderRoute: typeof SchemaResourceResourceResourceIdAuditRouteImport
+    '/$schema/resource/$resource/$resourceId/detail': {
+      id: '/$schema/resource/$resource/$resourceId/detail'
+      path: '/$resourceId/detail'
+      fullPath: '/$schema/resource/$resource/$resourceId/detail'
+      preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/calendar/$calendarId': {
+      id: '/$schema/resource/$resource/calendar/$calendarId'
+      path: '/calendar/$calendarId'
+      fullPath: '/$schema/resource/$resource/calendar/$calendarId'
+      preLoaderRoute: typeof SchemaResourceResourceCalendarCalendarIdRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/form/$formid': {
+      id: '/$schema/resource/$resource/form/$formid'
+      path: '/form/$formid'
+      fullPath: '/$schema/resource/$resource/form/$formid'
+      preLoaderRoute: typeof SchemaResourceResourceFormFormidRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/gallery/$galleryId': {
+      id: '/$schema/resource/$resource/gallery/$galleryId'
+      path: '/gallery/$galleryId'
+      fullPath: '/$schema/resource/$resource/gallery/$galleryId'
+      preLoaderRoute: typeof SchemaResourceResourceGalleryGalleryIdRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/gantt/$ganttId': {
+      id: '/$schema/resource/$resource/gantt/$ganttId'
+      path: '/gantt/$ganttId'
+      fullPath: '/$schema/resource/$resource/gantt/$ganttId'
+      preLoaderRoute: typeof SchemaResourceResourceGanttGanttIdRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/grid/sheet': {
+      id: '/$schema/resource/$resource/grid/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/grid/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceGridSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceGridRoute
+    }
+    '/$schema/resource/$resource/kanban/$kanbanId': {
+      id: '/$schema/resource/$resource/kanban/$kanbanId'
+      path: '/kanban/$kanbanId'
+      fullPath: '/$schema/resource/$resource/kanban/$kanbanId'
+      preLoaderRoute: typeof SchemaResourceResourceKanbanKanbanIdRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/list/$listId': {
+      id: '/$schema/resource/$resource/list/$listId'
+      path: '/list/$listId'
+      fullPath: '/$schema/resource/$resource/list/$listId'
+      preLoaderRoute: typeof SchemaResourceResourceListListIdRouteImport
+      parentRoute: typeof SchemaResourceResourceRouteRoute
+    }
+    '/$schema/resource/$resource/table/sheet': {
+      id: '/$schema/resource/$resource/table/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/table/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceTableSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceTableRoute
+    }
+    '/$schema/resource/$resource/tree/$treeId': {
+      id: '/$schema/resource/$resource/tree/$treeId'
+      path: '/tree/$treeId'
+      fullPath: '/$schema/resource/$resource/tree/$treeId'
+      preLoaderRoute: typeof SchemaResourceResourceTreeTreeIdRouteImport
       parentRoute: typeof SchemaResourceResourceRouteRoute
     }
     '/$schema/resource/$resource/$resourceId/detail/': {
@@ -1340,47 +1340,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailIndexRouteImport
       parentRoute: typeof SchemaResourceResourceResourceIdDetailRoute
     }
-    '/$schema/resource/$resource/tree/$treeId/sheet': {
-      id: '/$schema/resource/$resource/tree/$treeId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/tree/$treeId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceTreeTreeIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceTreeTreeIdRoute
-    }
-    '/$schema/resource/$resource/list/$listId/sheet': {
-      id: '/$schema/resource/$resource/list/$listId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/list/$listId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceListListIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceListListIdRoute
-    }
-    '/$schema/resource/$resource/kanban/$kanbanId/sheet': {
-      id: '/$schema/resource/$resource/kanban/$kanbanId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/kanban/$kanbanId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceKanbanKanbanIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceKanbanKanbanIdRoute
-    }
-    '/$schema/resource/$resource/gantt/$ganttId/sheet': {
-      id: '/$schema/resource/$resource/gantt/$ganttId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/gantt/$ganttId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceGanttGanttIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceGanttGanttIdRoute
-    }
-    '/$schema/resource/$resource/gallery/$galleryId/sheet': {
-      id: '/$schema/resource/$resource/gallery/$galleryId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/gallery/$galleryId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceGalleryGalleryIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceGalleryGalleryIdRoute
-    }
-    '/$schema/resource/$resource/calendar/$calendarId/sheet': {
-      id: '/$schema/resource/$resource/calendar/$calendarId/sheet'
-      path: '/sheet'
-      fullPath: '/$schema/resource/$resource/calendar/$calendarId/sheet'
-      preLoaderRoute: typeof SchemaResourceResourceCalendarCalendarIdSheetRouteImport
-      parentRoute: typeof SchemaResourceResourceCalendarCalendarIdRoute
+    '/$schema/resource/$resource/$resourceId/detail/$tab': {
+      id: '/$schema/resource/$resource/$resourceId/detail/$tab'
+      path: '/$tab'
+      fullPath: '/$schema/resource/$resource/$resourceId/detail/$tab'
+      preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailTabRouteImport
+      parentRoute: typeof SchemaResourceResourceResourceIdDetailRoute
     }
     '/$schema/resource/$resource/$resourceId/detail/sheet': {
       id: '/$schema/resource/$resource/$resourceId/detail/sheet'
@@ -1389,12 +1354,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailSheetRouteImport
       parentRoute: typeof SchemaResourceResourceResourceIdDetailRoute
     }
-    '/$schema/resource/$resource/$resourceId/detail/$tab': {
-      id: '/$schema/resource/$resource/$resourceId/detail/$tab'
-      path: '/$tab'
-      fullPath: '/$schema/resource/$resource/$resourceId/detail/$tab'
-      preLoaderRoute: typeof SchemaResourceResourceResourceIdDetailTabRouteImport
-      parentRoute: typeof SchemaResourceResourceResourceIdDetailRoute
+    '/$schema/resource/$resource/calendar/$calendarId/sheet': {
+      id: '/$schema/resource/$resource/calendar/$calendarId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/calendar/$calendarId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceCalendarCalendarIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceCalendarCalendarIdRoute
+    }
+    '/$schema/resource/$resource/gallery/$galleryId/sheet': {
+      id: '/$schema/resource/$resource/gallery/$galleryId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/gallery/$galleryId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceGalleryGalleryIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceGalleryGalleryIdRoute
+    }
+    '/$schema/resource/$resource/gantt/$ganttId/sheet': {
+      id: '/$schema/resource/$resource/gantt/$ganttId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/gantt/$ganttId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceGanttGanttIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceGanttGanttIdRoute
+    }
+    '/$schema/resource/$resource/kanban/$kanbanId/sheet': {
+      id: '/$schema/resource/$resource/kanban/$kanbanId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/kanban/$kanbanId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceKanbanKanbanIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceKanbanKanbanIdRoute
+    }
+    '/$schema/resource/$resource/list/$listId/sheet': {
+      id: '/$schema/resource/$resource/list/$listId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/list/$listId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceListListIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceListListIdRoute
+    }
+    '/$schema/resource/$resource/tree/$treeId/sheet': {
+      id: '/$schema/resource/$resource/tree/$treeId/sheet'
+      path: '/sheet'
+      fullPath: '/$schema/resource/$resource/tree/$treeId/sheet'
+      preLoaderRoute: typeof SchemaResourceResourceTreeTreeIdSheetRouteImport
+      parentRoute: typeof SchemaResourceResourceTreeTreeIdRoute
     }
     '/$schema/resource/$resource/$resourceId/detail/$tab/sheet': {
       id: '/$schema/resource/$resource/$resourceId/detail/$tab/sheet'

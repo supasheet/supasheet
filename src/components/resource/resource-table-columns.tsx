@@ -21,6 +21,8 @@ import { ResourceColumnHeader } from "./resource-column-header"
 import { ResourceRowActions } from "./resource-row-actions"
 import { ResourceRowCell } from "./resource-row-cell"
 
+const UTILITY_COLUMN_SIZE = 28
+
 export function getResourceTableColumns({
   columnsSchema,
   resourceSchema,
@@ -39,29 +41,36 @@ export function getResourceTableColumns({
   if (tableSchema?.primary_keys) {
     const primaryKeys = tableSchema.primary_keys ?? []
     const primaryKeyNames = primaryKeys.map((k) => k.name)
-    cols.push(getDataTableSelectColumn<ResourceDataSchema>(), {
-      id: "detail",
-      header: () => null,
-      cell: ({ row }) => {
-        const pk = Object.fromEntries(
-          primaryKeys.map((k) => [k.name, row.original[k.name]])
-        )
-        return (
-          <DetailRecordTrigger
-            pk={pk}
-            primaryKeyNames={primaryKeyNames}
-            size="icon-xs"
-            variant="outline"
-            className="size-5 opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 [&_svg]:size-3"
-          >
-            <ArrowUpRightIcon />
-          </DetailRecordTrigger>
-        )
-      },
-      size: 40,
-      enableSorting: false,
-      enableHiding: false,
-    })
+    cols.push(
+      getDataTableSelectColumn<ResourceDataSchema>({
+        size: UTILITY_COLUMN_SIZE,
+        minSize: UTILITY_COLUMN_SIZE,
+      }),
+      {
+        id: "detail",
+        header: () => null,
+        cell: ({ row }) => {
+          const pk = Object.fromEntries(
+            primaryKeys.map((k) => [k.name, row.original[k.name]])
+          )
+          return (
+            <DetailRecordTrigger
+              pk={pk}
+              primaryKeyNames={primaryKeyNames}
+              size="icon-xs"
+              variant="outline"
+              className="size-5 opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 [&_svg]:size-3"
+            >
+              <ArrowUpRightIcon />
+            </DetailRecordTrigger>
+          )
+        },
+        size: UTILITY_COLUMN_SIZE,
+        minSize: UTILITY_COLUMN_SIZE,
+        enableSorting: false,
+        enableHiding: false,
+      }
+    )
   }
 
   if (actions.length > 0) {
@@ -77,7 +86,8 @@ export function getResourceTableColumns({
           columnsSchema={columnsSchema}
         />
       ),
-      size: 40,
+      size: UTILITY_COLUMN_SIZE,
+      minSize: UTILITY_COLUMN_SIZE,
       enableSorting: false,
       enableHiding: false,
       enableColumnFilter: false,

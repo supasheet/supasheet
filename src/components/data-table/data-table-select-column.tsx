@@ -19,7 +19,7 @@ interface GetDataTableSelectColumnOptions<TData extends RowData> extends Omit<
 }
 
 export function getDataTableSelectColumn<TData extends RowData>({
-  size = 40,
+  size = 28,
   enableHiding = false,
   enableSorting = false,
   debug = false,

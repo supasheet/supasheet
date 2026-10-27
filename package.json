@@ -15,8 +15,8 @@
     "check": "vp check --fix",
     "deploy": "vp build && wrangler deploy",
     "supabase": "supabase",
-    "examples": "bash ./supabase/examples/apply.sh",
-    "examples:reset": "supabase db reset && bash ./supabase/examples/apply.sh"
+    "demo": "psql \"${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:54322/postgres}\" -v ON_ERROR_STOP=1 -f supabase/demo.sql",
+    "demo:reset": "supabase db reset && npm run demo"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

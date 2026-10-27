@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 
 import ReactDOM from "react-dom/client"
@@ -7,9 +7,8 @@ import {
   RouteErrorComponent,
   RouteNotFoundComponent,
 } from "./components/layouts/route-error"
+import { queryClient } from "./lib/query-client"
 import { routeTree } from "./routeTree.gen"
-
-export const queryClient = new QueryClient()
 
 const router = createRouter({
   routeTree,
