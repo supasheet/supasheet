@@ -124,7 +124,11 @@ export function ResourceTree({
   }
 
   return (
-    <Tree indent={indent} tree={tree} className="rounded-md border bg-card p-1">
+    <Tree
+      indent={indent}
+      tree={tree}
+      className="min-h-0 flex-1 overflow-auto rounded-md border bg-card p-1"
+    >
       {tree.getItems().map((item) => {
         const id = item.getId()
         if (id === ROOT_KEY) return null

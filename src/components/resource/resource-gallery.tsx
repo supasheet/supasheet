@@ -59,7 +59,7 @@ export function ResourceGallery({
   const isTable = isTableSchema(resourceSchema)
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto">
       {data.length === 0 ? (
         <Empty className="min-h-[400px] border">
           <EmptyHeader>

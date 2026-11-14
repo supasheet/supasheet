@@ -248,7 +248,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col p-2" style={{ minHeight: 0 }}>
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <ResourceGantt
           scale={scale}
           resources={resources}

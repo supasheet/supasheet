@@ -13,7 +13,6 @@ import {
 
 import { cn } from "cn"
 
-import { DataTableFooter } from "#/components/data-table/data-table-footer"
 import { DataTablePagination } from "#/components/data-table/data-table-pagination"
 import { useDirection } from "#/components/ui/direction"
 import {
@@ -66,7 +65,6 @@ export function DataTable<TData extends RowData>({
         >
           <DataTableHeader table={table} />
           <DataTableBody table={table} />
-          <DataTableFooter table={table} />
         </DataTableLayout>
       </div>
       <div className="flex flex-col gap-2.5">

@@ -236,7 +236,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="p-2">
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <ResourceList
           data={resourceData?.result ?? []}
           columnsSchema={columnsSchema ?? []}

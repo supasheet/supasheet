@@ -40,9 +40,6 @@
 --     no inserts — returning setof rows via an explicit `table(...)`
 --     column list, listed on "projects") — all with foreign-key-style
 --     combobox fields declared via `relations`
---   - Column footer aggregates (sum/avg/min/max/count) via the
---     `aggregate` column comment key (projects.budget,
---     tasks.estimated_hours, invoices.total, time_entries.duration)
 --
 -- Apply directly against a local Supabase Postgres instance, e.g.:
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/demo.sql
@@ -632,8 +629,6 @@ comment on table demo.projects is '{
 
 comment on column demo.projects.cover is '{"accept":"image/*"}';
 
-comment on column demo.projects.budget is '{"aggregate": "sum"}';
-
 revoke all on table demo.projects
 from
   authenticated,
@@ -1048,8 +1043,6 @@ comment on table demo.tasks is '{
 }';
 
 comment on column demo.tasks.attachments is '{"accept":"*", "max_files": 20}';
-
-comment on column demo.tasks.estimated_hours is '{"aggregate": "sum"}';
 
 revoke all on table demo.tasks
 from
@@ -1638,8 +1631,6 @@ comment on table demo.invoices is '{
     }
 }';
 
-comment on column demo.invoices.total is '{"aggregate": "sum"}';
-
 revoke all on table demo.invoices
 from
   authenticated,
@@ -1831,8 +1822,6 @@ comment on table demo.time_entries is '{
         ]
     }
 }';
-
-comment on column demo.time_entries.duration is '{"aggregate": "sum"}';
 
 revoke all on table demo.time_entries
 from

@@ -230,7 +230,7 @@ function RouteComponent() {
           />
         )}
       </DefaultHeader>
-      <div className="flex flex-1 flex-col p-2">
+      <div className="flex min-h-0 flex-1 flex-col p-2">
         <ResourceTree
           rows={resourceData?.result ?? []}
           resourceSchema={resourceSchema}

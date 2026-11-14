@@ -96,7 +96,7 @@ export function ResourceList({
   const rows = table.getRowModel().rows
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex min-h-0 w-full flex-1 flex-col gap-2">
       <DataTableAdvancedToolbar table={table} hideViewOptions>
         <ResourceFilterPresets table={table} filterPresets={filterPresets} />
         <DataTableFilterMenu table={table} />
@@ -113,7 +113,7 @@ export function ResourceList({
       ) : (
         <Subscribe source={table.atoms.rowSelection}>
           {() => (
-            <div className="divide-y overflow-hidden rounded-md border bg-card">
+            <div className="min-h-0 flex-1 divide-y overflow-auto rounded-md border bg-card">
               {rows.map((row) => (
                 <ResourceListRow
                   key={row.id}
