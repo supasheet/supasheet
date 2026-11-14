@@ -26,7 +26,7 @@ import { storageBucketsQueryOptions } from "#/lib/supabase/data/storage"
 
 export const Route = createFileRoute("/storage")({
   loader: async ({ context }) => {
-    context.queryClient.prefetchQuery(storageBucketsQueryOptions)
+    context.queryClient.query(storageBucketsQueryOptions).catch(() => {})
   },
   component: RouteComponent,
 })

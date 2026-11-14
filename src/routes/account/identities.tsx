@@ -10,7 +10,7 @@ import { identitiesQueryOptions } from "#/lib/supabase/data/identities"
 export const Route = createFileRoute("/account/identities")({
   head: () => ({ meta: [{ title: pageTitle("Identities") }] }),
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(identitiesQueryOptions)
+    context.queryClient.query(identitiesQueryOptions).catch(() => {})
   },
   component: IdentitiesPage,
 })

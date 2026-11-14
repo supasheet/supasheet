@@ -10,7 +10,7 @@ import { mfaFactorsQueryOptions } from "#/lib/supabase/data/security"
 export const Route = createFileRoute("/account/security")({
   head: () => ({ meta: [{ title: pageTitle("Security") }] }),
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(mfaFactorsQueryOptions)
+    context.queryClient.query(mfaFactorsQueryOptions).catch(() => {})
   },
   component: SecurityPage,
 })

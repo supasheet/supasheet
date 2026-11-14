@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth/mfa")({
     }
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(mfaFactorsQueryOptions)
+    context.queryClient.query(mfaFactorsQueryOptions).catch(() => {})
   },
   component: MfaForm,
 })

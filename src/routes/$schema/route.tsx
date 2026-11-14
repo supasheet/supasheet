@@ -67,9 +67,9 @@ export const Route = createFileRoute("/$schema")({
     return { permissions }
   },
   loader: async ({ context, params }) => {
-    context.queryClient.prefetchQuery(schemasQueryOptions)
-    context.queryClient.prefetchQuery(resourcesQueryOptions(params.schema))
-    context.queryClient.prefetchQuery(navItemsQueryOptions(params.schema))
+    context.queryClient.query(schemasQueryOptions).catch(() => {})
+    context.queryClient.query(resourcesQueryOptions(params.schema)).catch(() => {})
+    context.queryClient.query(navItemsQueryOptions(params.schema)).catch(() => {})
   },
   component: RouteComponent,
   errorComponent: ({ error }: ErrorComponentProps) => {

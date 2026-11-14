@@ -12,8 +12,8 @@ import {
 export const Route = createFileRoute("/account/roles-permissions")({
   head: () => ({ meta: [{ title: pageTitle("Roles & Permissions") }] }),
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(whoamiQueryOptions)
-    context.queryClient.prefetchQuery(userPermissionsQueryOptions())
+    context.queryClient.query(whoamiQueryOptions).catch(() => {})
+    context.queryClient.query(userPermissionsQueryOptions()).catch(() => {})
   },
   component: RolesPermissionsPage,
 })
