@@ -12,8 +12,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarInset,
   SidebarProvider,
@@ -44,9 +42,9 @@ export const Route = createFileRoute("/core")({
   beforeLoad: async ({ context }) => {
     const permissions = context.authUser
       ? await context.queryClient.query({
-          ...userPermissionsQueryOptions("supasheet"),
-          staleTime: "static",
-        })
+        ...userPermissionsQueryOptions("supasheet"),
+        staleTime: "static",
+      })
       : null
     return { permissions }
   },
@@ -92,23 +90,19 @@ function RouteComponent() {
           <NavResources schema="core" items={resources} />
         </SidebarContent>
         <SidebarFooter>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <QuickSearch
-                schema="core"
-                items={[]}
-                resourceItems={resources.map((r) => ({
-                  ...r,
-                  url: `/core/${r.id}`,
-                }))}
-              />
-              <NavSecondary
-                items={[
-                  { title: "Storage", url: "/storage", icon: <FolderIcon /> },
-                ]}
-              />
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <QuickSearch
+            schema="core"
+            items={[]}
+            resourceItems={resources.map((r) => ({
+              ...r,
+              url: `/core/${r.id}`,
+            }))}
+          />
+          <NavSecondary
+            items={[
+              { title: "Storage", url: "/storage", icon: <FolderIcon /> },
+            ]}
+          />
           <NavUser />
         </SidebarFooter>
       </Sidebar>

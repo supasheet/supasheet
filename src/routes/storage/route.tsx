@@ -13,7 +13,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
@@ -83,27 +82,23 @@ function RouteComponent() {
           )}
         </SidebarContent>
         <SidebarFooter>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <QuickSearch
-                schema="storage"
-                items={[]}
-                resourceItems={buckets
-                  .filter(
-                    (b) => b.id !== "uploads" && b.id !== "report-templates"
-                  )
-                  .map((b) => ({
-                    ...b,
-                    url: `/storage/${b.id}`,
-                  }))}
-              />
-              <NavSecondary
-                items={[
-                  { title: "Back to Main", url: "/", icon: <ArrowLeftIcon /> },
-                ]}
-              />
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <QuickSearch
+            schema="storage"
+            items={[]}
+            resourceItems={buckets
+              .filter(
+                (b) => b.id !== "uploads" && b.id !== "report-templates"
+              )
+              .map((b) => ({
+                ...b,
+                url: `/storage/${b.id}`,
+              }))}
+          />
+          <NavSecondary
+            items={[
+              { title: "Back to Main", url: "/", icon: <ArrowLeftIcon /> },
+            ]}
+          />
           <NavUser />
         </SidebarFooter>
       </Sidebar>
