@@ -154,7 +154,7 @@ export function ResourceCalendar({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-md border bg-card">
+    <div className="flex h-full min-h-0 flex-col rounded-md border bg-background">
       <EventCalendar
         className="h-full min-h-0"
         events={events}

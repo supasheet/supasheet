@@ -132,9 +132,9 @@
 .rdg {
   --rdg-font-size: 0.875rem;
   font-family: var(--font-sans);
-  --rdg-color: var(--card-foreground);
-  --rdg-background-color: var(--card);
-  --rdg-header-background-color: var(--card);
+  --rdg-color: var(--foreground);
+  --rdg-background-color: var(--background);
+  --rdg-header-background-color: var(--background);
   --rdg-header-draggable-background-color: var(--accent);
   --rdg-row-hover-background-color: var(--accent);
   --rdg-row-selected-background-color: color-mix(

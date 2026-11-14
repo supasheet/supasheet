@@ -186,7 +186,7 @@ export function ResourceGantt({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-md border bg-card">
+    <div className="flex h-full min-h-0 flex-col rounded-md border bg-background">
       <Gantt
         className="h-full min-h-0"
         events={events}

@@ -113,7 +113,7 @@ export function ResourceList({
       ) : (
         <Subscribe source={table.atoms.rowSelection}>
           {() => (
-            <div className="min-h-0 flex-1 divide-y overflow-auto rounded-md border bg-card">
+            <div className="min-h-0 flex-1 divide-y overflow-auto rounded-md border bg-background">
               {rows.map((row) => (
                 <ResourceListRow
                   key={row.id}

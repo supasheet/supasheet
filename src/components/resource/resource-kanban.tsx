@@ -169,7 +169,7 @@ export function ResourceKanban({
                   key={columnValue}
                   value={columnValue}
                   className={cn(
-                    "flex flex-col gap-2 rounded-lg border bg-card p-2.5",
+                    "flex flex-col gap-2 rounded-lg border bg-background p-2.5",
                     collapsed
                       ? "w-14 shrink-0 items-center"
                       : "max-w-2xl min-w-sm"
@@ -218,7 +218,7 @@ export function ResourceKanban({
                           disabled={readOnly}
                         >
                           <KanbanItemHandle
-                            className="block cursor-pointer rounded-lg bg-card p-3 shadow-xs ring-1 ring-foreground/10"
+                            className="block cursor-pointer rounded-lg bg-background p-3 shadow-xs ring-1 ring-foreground/10"
                             onClick={() =>
                               navigate({
                                 to: "/$schema/resource/$resource/$resourceId/detail",
