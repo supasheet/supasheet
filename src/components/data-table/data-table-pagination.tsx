@@ -32,7 +32,7 @@ interface DataTablePaginationProps<
 
 export function DataTablePagination<TData extends RowData>({
   table,
-  pageSizeOptions = [10, 20, 30, 40, 50],
+  pageSizeOptions = [25, 50, 100],
   className,
   ...props
 }: DataTablePaginationProps<TData>) {

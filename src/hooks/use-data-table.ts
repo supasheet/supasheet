@@ -49,7 +49,7 @@ const SORT_KEY = "sort"
 const JOIN_OPERATOR_KEY = "joinOperator"
 const DEBOUNCE_MS = 300
 const THROTTLE_MS = 50
-const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_PAGE_SIZE = 25
 const EMPTY_SORTING: SortingState = []
 
 interface FiltersDraft {

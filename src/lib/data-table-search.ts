@@ -10,7 +10,7 @@ import type {
 } from "#/lib/data-table-types"
 import { getIsActiveFilter, JOIN_OPERATORS } from "#/lib/data-table-utils"
 
-export const DEFAULT_PAGE_SIZE = 20
+export const DEFAULT_PAGE_SIZE = 25
 export const DEFAULT_PAGINATION = { pageIndex: 0, pageSize: DEFAULT_PAGE_SIZE }
 
 export type TableQuery = {
