@@ -35,7 +35,7 @@ function PostList({ posts }: { posts: Post[] }) {
   const queryClient = useQueryClient()
 
   const handlePrefetch = (postId: number) => {
-    queryClient.prefetchQuery({
+    queryClient.query({
       ...postQueries.detail(postId),
       staleTime: 60 * 1000, // Consider fresh for 1 minute
     })
@@ -101,7 +101,7 @@ function PostLink({ post }: { post: Post }) {
   const handleMouseEnter = () => {
     // Delay prefetch to avoid unnecessary requests on quick mouse movements
     timeoutRef.current = setTimeout(() => {
-      queryClient.prefetchQuery(postQueries.detail(post.id))
+      queryClient.query(postQueries.detail(post.id)).catch(() => {})
     }, 100)
   }
 

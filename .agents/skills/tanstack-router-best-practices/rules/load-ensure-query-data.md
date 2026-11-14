@@ -4,16 +4,16 @@
 
 ## Explanation
 
-When integrating TanStack Router with TanStack Query, use `queryClient.ensureQueryData()` in loaders instead of `prefetchQuery()`. This respects the cache, awaits data if missing, and returns the data for potential use.
+When integrating TanStack Router with TanStack Query, use `queryClient.ensureQueryData()` in loaders instead of a bare un-awaited `query()`/`fetchQuery()` call (`prefetchQuery` is deprecated; use `queryClient.query()`). This respects the cache, awaits data if missing, and returns the data for potential use.
 
 ## Bad Example
 
 ```tsx
-// Using prefetchQuery - doesn't return data, can't await stale check
+// Un-awaited query() - result is discarded, can't guard on it
 export const Route = createFileRoute("/posts/$postId")({
   loader: async ({ params, context: { queryClient } }) => {
-    // prefetchQuery never throws, swallows errors
-    queryClient.prefetchQuery({
+    // not awaited: errors are unhandled and data may not be ready
+    queryClient.query({
       queryKey: ["posts", params.postId],
       queryFn: () => fetchPost(params.postId),
     })
@@ -131,12 +131,12 @@ export const router = createRouter({
 })
 ```
 
-## ensureQueryData vs prefetchQuery vs fetchQuery
+## ensureQueryData vs query vs fetchQuery
 
 | Method            | Returns | Throws | Awaits | Use Case                       |
 | ----------------- | ------- | ------ | ------ | ------------------------------ |
 | `ensureQueryData` | Data    | Yes    | Yes    | Route loaders (recommended)    |
-| `prefetchQuery`   | void    | No     | Yes    | Background prefetching         |
+| `query`           | Data    | Yes    | Yes    | Replaces deprecated `prefetchQuery`; add `.catch(() => {})` for fire-and-forget |
 | `fetchQuery`      | Data    | Yes    | Yes    | When you need data immediately |
 
 ## Context

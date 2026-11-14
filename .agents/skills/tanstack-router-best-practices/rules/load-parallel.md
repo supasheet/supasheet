@@ -133,8 +133,8 @@ export const Route = createFileRoute("/posts/$postId")({
     )
 
     // Non-critical - start but don't await (stream in later)
-    queryClient.prefetchQuery(commentQueries.forPost(params.postId))
-    queryClient.prefetchQuery(relatedQueries.forPost(params.postId))
+    queryClient.query(commentQueries.forPost(params.postId)).catch(() => {})
+    queryClient.query(relatedQueries.forPost(params.postId)).catch(() => {})
 
     return { post }
   },

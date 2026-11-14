@@ -44,7 +44,7 @@ import { postQueries } from "@/lib/queries"
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery(postQueries.list())
+  await queryClient.query(postQueries.list())
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -113,7 +113,7 @@ export async function render(url: string) {
   })
 
   // Prefetch required data
-  await queryClient.prefetchQuery({
+  await queryClient.query({
     queryKey: ["posts"],
     queryFn: fetchPosts,
   })

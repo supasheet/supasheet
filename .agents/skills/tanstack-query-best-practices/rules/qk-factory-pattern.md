@@ -92,7 +92,7 @@ export const todoQueries = {
 
 // Usage
 const { data } = useQuery(todoQueries.detail(5))
-await queryClient.prefetchQuery(todoQueries.detail(5))
+await queryClient.query(todoQueries.detail(5))
 ```
 
 ## Context
