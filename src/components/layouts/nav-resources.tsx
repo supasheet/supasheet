@@ -7,7 +7,6 @@ import {
 } from "#/components/ui/sidebar"
 import { Skeleton } from "#/components/ui/skeleton"
 
-import { ResourceGroupMenuItem } from "./nav-resource-group-item"
 import type { ResourceItem } from "./nav-resource-item"
 import { ResourceMenuItem } from "./nav-resource-item"
 
@@ -66,21 +65,30 @@ export function NavResources({
   const namedGroups = Object.entries(grouped).filter(([key]) => key !== "")
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Resources</SidebarGroupLabel>
-      <SidebarMenu className="flex flex-col gap-1">
-        {namedGroups.map(([group, groupItems]) => (
-          <ResourceGroupMenuItem
-            key={group}
-            group={group}
-            items={groupItems}
-            schema={schema}
-          />
-        ))}
-        {ungrouped.map((item) => (
-          <ResourceMenuItem key={item.id} item={item} schema={schema} />
-        ))}
-      </SidebarMenu>
-    </SidebarGroup>
+    <>
+      {ungrouped.length > 0 && (
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Resources</SidebarGroupLabel>
+          <SidebarMenu className="flex flex-col gap-1">
+            {ungrouped.map((item) => (
+              <ResourceMenuItem key={item.id} item={item} schema={schema} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      )}
+      {namedGroups.map(([group, groupItems]) => (
+        <SidebarGroup
+          key={group}
+          className="group-data-[collapsible=icon]:hidden"
+        >
+          <SidebarGroupLabel>{group}</SidebarGroupLabel>
+          <SidebarMenu className="flex flex-col gap-1">
+            {groupItems.map((item) => (
+              <ResourceMenuItem key={item.id} item={item} schema={schema} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      ))}
+    </>
   )
 }
