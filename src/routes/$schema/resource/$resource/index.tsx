@@ -13,7 +13,10 @@ import { AlertCircleIcon, FileXIcon } from "lucide-react"
 
 import { DefaultHeader } from "#/components/layouts/default-header"
 import { ResourceActions } from "#/components/resource/resource-actions"
-import { ResourceOverview } from "#/components/resource/resource-overview"
+import {
+  ResourceOpenView,
+  ResourceOverview,
+} from "#/components/resource/resource-overview"
 import { Button } from "#/components/ui/button"
 import {
   Empty,
@@ -78,9 +81,10 @@ export const Route = createFileRoute("/$schema/resource/$resource/")({
     const meta = JSON.parse(
       context.resourceSchema?.comment ?? "{}"
     ) as TableMetadata
-    const presets = meta.filter_presets ?? []
+    // Filter presets are reachable from the table view itself, so they alone
+    // don't justify an overview page — only links, forms, widgets or charts do.
     const urls = meta.links ?? []
-    if ([...presets, ...urls, ...widgets, ...charts, ...forms].length === 0) {
+    if ([...urls, ...widgets, ...charts, ...forms].length === 0) {
       throw redirect(resolvePrimaryViewTarget(schema, resource, meta))
     }
 
@@ -190,6 +194,7 @@ function RouteComponent() {
   return (
     <>
       <DefaultHeader breadcrumbs={[{ title: friendlyName }]}>
+        <ResourceOpenView schema={schema} resource={resource} meta={meta} />
         {isTable && canInsert && (
           <ResourceActions
             schema={schema}

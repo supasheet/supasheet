@@ -1,10 +1,9 @@
 import { Fragment, Suspense, useMemo } from "react"
 
-import { Link, useNavigate } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 
 import type { LucideIcon } from "lucide-react"
 import {
-  ArrowRightIcon,
   ChevronDownIcon,
   ExternalLinkIcon,
   FileTextIcon,
@@ -55,80 +54,148 @@ function isExternalHref(href: string) {
   return /^[a-z][a-z0-9+.-]*:\/\//i.test(href)
 }
 
-function getCardDescription(
-  name: string,
-  description: string | undefined,
-  resourceName: string
-) {
-  return description ?? `${name} for ${resourceName}`
-}
+const OVERVIEW_CARD_GRID = "grid grid-cols-1 gap-2.5 md:grid-cols-3"
 
-const OVERVIEW_CARD_GRID =
-  "grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-3"
-
-function OverviewCard({
-  icon,
-  fallbackIcon: FallbackIcon,
-  name,
-  description,
-  href,
-  onClick,
-}: {
-  icon?: IconName
-  fallbackIcon: LucideIcon
+type MenuEntry = {
+  key: string
   name: string
   description?: string
-  href?: string
-  onClick?: () => void
-}) {
-  const external = href ? isExternalHref(href) : false
-  const TrailingIcon = href
-    ? external
-      ? ExternalLinkIcon
-      : ArrowRightIcon
-    : ArrowRightIcon
+  icon?: IconName
+  fallbackIcon: LucideIcon
+  external?: boolean
+  onSelect: () => void
+}
 
-  const card = (
-    <Card
-      size="sm"
-      className={
-        "h-full transition-colors hover:bg-muted/50" +
-        (onClick || href ? " cursor-pointer" : "")
-      }
-      onClick={onClick}
-    >
-      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-        <div className="flex min-w-0 items-center gap-2">
-          {icon ? (
-            <DynamicIcon
-              iconName={icon}
-              className="size-4 shrink-0 text-muted-foreground"
-            />
-          ) : (
-            <FallbackIcon className="size-4 shrink-0 text-muted-foreground" />
-          )}
-          <CardTitle className="truncate">{name}</CardTitle>
-        </div>
-        <TrailingIcon className="size-3.5 shrink-0 text-muted-foreground" />
+function OverviewMenuCard({
+  icon: Icon,
+  title,
+  description,
+  triggerLabel,
+  emptyMessage,
+  entries,
+}: {
+  icon: LucideIcon
+  title: string
+  description: string
+  triggerLabel: string
+  emptyMessage: string
+  entries: MenuEntry[]
+}) {
+  const isEmpty = entries.length === 0
+
+  return (
+    <Card size="sm" className="h-full">
+      <CardHeader className="flex flex-row items-center gap-2 space-y-0">
+        <Icon className="size-4 shrink-0 text-muted-foreground" />
+        <CardTitle className="truncate">{title}</CardTitle>
+        {!isEmpty && (
+          <span className="ml-auto text-xs text-muted-foreground tabular-nums">
+            {entries.length}
+          </span>
+        )}
       </CardHeader>
-      {description && (
-        <CardContent>
-          <CardDescription>{description}</CardDescription>
-        </CardContent>
-      )}
+      <CardContent className="flex flex-1 flex-col justify-between gap-3">
+        <CardDescription>{isEmpty ? emptyMessage : description}</CardDescription>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            disabled={isEmpty}
+            render={
+              <Button
+                variant="outline"
+                className="w-full justify-between"
+                disabled={isEmpty}
+              >
+                {triggerLabel}
+                <ChevronDownIcon className="size-3.5 opacity-50" />
+              </Button>
+            }
+          />
+          <DropdownMenuContent
+            align="start"
+            className="w-(--anchor-width) min-w-56 rounded-lg"
+          >
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>{title}</DropdownMenuLabel>
+              {entries.map((entry) => (
+                <DropdownMenuItem key={entry.key} onClick={entry.onSelect}>
+                  {entry.icon ? (
+                    <DynamicIcon iconName={entry.icon} className="size-3.5" />
+                  ) : (
+                    <entry.fallbackIcon className="size-3.5" />
+                  )}
+                  <div className="flex min-w-0 flex-col">
+                    <span className="truncate">{entry.name}</span>
+                    {entry.description && (
+                      <span className="truncate text-xs text-muted-foreground">
+                        {entry.description}
+                      </span>
+                    )}
+                  </div>
+                  {entry.external && (
+                    <ExternalLinkIcon className="ml-auto size-3 text-muted-foreground" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardContent>
     </Card>
   )
+}
 
-  if (!href) return card
+export function ResourceOpenView<S extends DatabaseSchemas>({
+  schema,
+  resource,
+  meta,
+}: {
+  schema: S
+  resource: DatabaseTables<S>
+  meta: TableMetadata
+}) {
+  const navigate = useNavigate()
+  const PrimaryViewIcon = useMemo(() => getPrimaryViewIcon(meta), [meta])
+  const availableViews = useMemo(
+    () => getAvailableViews(schema, resource, meta),
+    [schema, resource, meta]
+  )
 
-  return external ? (
-    <a href={href} target="_blank" rel="noreferrer" className="block h-full">
-      {card}
-    </a>
-  ) : (
-    <Link to={href as never} className="block h-full">
-      {card}
-    </Link>
+  return (
+    <ButtonGroup>
+      <Button
+        variant="outline"
+        onClick={() => navigate(resolvePrimaryViewTarget(schema, resource, meta))}
+      >
+        <PrimaryViewIcon className="size-3.5" />
+        Open view
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="outline" className="px-2" aria-label="Views">
+              <ChevronDownIcon className="size-3.5" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end" className="w-fit rounded-lg">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Views</DropdownMenuLabel>
+            {availableViews.map((view, index) => (
+              <Fragment key={view.id}>
+                {index > 0 &&
+                  view.builtIn !== availableViews[index - 1].builtIn && (
+                    <DropdownMenuSeparator />
+                  )}
+                <DropdownMenuItem onClick={() => navigate(view.target)}>
+                  <view.icon className="size-3.5" />
+                  {view.label}
+                </DropdownMenuItem>
+              </Fragment>
+            ))}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </ButtonGroup>
   )
 }
 
@@ -151,16 +218,6 @@ export function ResourceOverview<S extends DatabaseSchemas>({
 }) {
   const navigate = useNavigate()
 
-  const PrimaryViewIcon = useMemo(() => getPrimaryViewIcon(meta), [meta])
-  const availableViews = useMemo(
-    () => getAvailableViews(schema, resource, meta),
-    [schema, resource, meta]
-  )
-
-  function openPrimaryView() {
-    navigate(resolvePrimaryViewTarget(schema, resource, meta))
-  }
-
   function openTableWithFilters(rules: FilterRule[]) {
     navigate({
       to: "/$schema/resource/$resource/table",
@@ -169,113 +226,81 @@ export function ResourceOverview<S extends DatabaseSchemas>({
     })
   }
 
+  function openLink(href: string) {
+    if (isExternalHref(href)) {
+      window.open(href, "_blank", "noreferrer")
+      return
+    }
+    navigate({ to: href as never })
+  }
+
   const cardWidgets = widgets.filter((w) => w.widget_type.startsWith("card_"))
   const tableWidgets = widgets.filter((w) => w.widget_type.startsWith("table_"))
-  const filterPresets = meta.filter_presets ?? []
-  const links = meta.links ?? []
 
-  const presetCards = filterPresets.map((preset) => (
-    <OverviewCard
-      key={`preset-${preset.id}`}
-      icon={preset.icon}
-      fallbackIcon={FilterIcon}
-      name={preset.name}
-      description={getCardDescription(
-        preset.name,
-        preset.description,
-        friendlyName
-      )}
-      onClick={() => openTableWithFilters(preset.filters)}
-    />
-  ))
+  const presetEntries: MenuEntry[] = (meta.filter_presets ?? []).map(
+    (preset) => ({
+      key: preset.id,
+      name: preset.name,
+      description: preset.description,
+      icon: preset.icon,
+      fallbackIcon: FilterIcon,
+      onSelect: () => openTableWithFilters(preset.filters),
+    })
+  )
 
-  const linkCards = links.map((link) => (
-    <OverviewCard
-      key={`link-${link.id}`}
-      icon={link.icon}
-      fallbackIcon={LinkIcon}
-      name={link.name}
-      description={getCardDescription(
-        link.name,
-        link.description,
-        friendlyName
-      )}
-      href={link.url}
-    />
-  ))
+  const linkEntries: MenuEntry[] = (meta.links ?? []).map((link) => ({
+    key: link.id,
+    name: link.name,
+    description: link.description,
+    icon: link.icon,
+    fallbackIcon: LinkIcon,
+    external: isExternalHref(link.url),
+    onSelect: () => openLink(link.url),
+  }))
 
-  const formCards = forms.map((form) => {
+  const formEntries: MenuEntry[] = forms.map((form) => {
     const formMeta = getFormMeta(form)
-    return (
-      <OverviewCard
-        key={`form-${form.name}`}
-        icon={formMeta.icon}
-        fallbackIcon={FileTextIcon}
-        name={formMeta.name}
-        description={getCardDescription(
-          formMeta.name,
-          formMeta.description,
-          friendlyName
-        )}
-        href={`/${schema}/resource/${resource}/form/${form.name}`}
-      />
-    )
+    return {
+      key: form.name,
+      name: formMeta.name,
+      description: formMeta.description,
+      icon: formMeta.icon,
+      fallbackIcon: FileTextIcon,
+      onSelect: () =>
+        navigate({
+          to: `/${schema}/resource/${resource}/form/${form.name}` as never,
+        }),
+    }
   })
-
-  const overviewCards = [...presetCards, ...linkCards, ...formCards]
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 p-4">
-      <section className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center gap-2">
-            <DynamicIcon
-              iconName={meta.icon}
-              className="size-5 shrink-0 text-muted-foreground"
-            />
-            <h2 className="text-base font-medium">{friendlyName}</h2>
-          </div>
-          {meta.description && (
-            <p className="text-sm text-muted-foreground">{meta.description}</p>
-          )}
-        </div>
-        <ButtonGroup>
-          <Button variant="outline" onClick={openPrimaryView}>
-            <PrimaryViewIcon className="size-3.5" />
-            Open view
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="outline" className="px-2">
-                  <ChevronDownIcon className="size-3.5" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end" className="w-fit rounded-lg">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Views</DropdownMenuLabel>
-                {availableViews.map((view, index) => (
-                  <Fragment key={view.id}>
-                    {index > 0 &&
-                      view.builtIn !== availableViews[index - 1].builtIn && (
-                        <DropdownMenuSeparator />
-                      )}
-                    <DropdownMenuItem onClick={() => navigate(view.target)}>
-                      <view.icon className="size-3.5" />
-                      {view.label}
-                    </DropdownMenuItem>
-                  </Fragment>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </ButtonGroup>
-      </section>
-
-      {overviewCards.length > 0 && (
-        <div className={OVERVIEW_CARD_GRID}>{overviewCards}</div>
-      )}
+      <div className={OVERVIEW_CARD_GRID}>
+        <OverviewMenuCard
+          icon={FilterIcon}
+          title="Filters"
+          description={`Jump to ${friendlyName} filtered by a saved preset.`}
+          triggerLabel="Choose a filter"
+          emptyMessage={`No filter presets are configured for ${friendlyName}.`}
+          entries={presetEntries}
+        />
+        <OverviewMenuCard
+          icon={LinkIcon}
+          title="Links"
+          description={`Reports and shortcuts related to ${friendlyName}.`}
+          triggerLabel="Open a link"
+          emptyMessage={`No links are configured for ${friendlyName}.`}
+          entries={linkEntries}
+        />
+        <OverviewMenuCard
+          icon={FileTextIcon}
+          title="Forms"
+          description={`Guided forms that create or update ${friendlyName}.`}
+          triggerLabel="Start a form"
+          emptyMessage={`No custom forms are available for ${friendlyName}.`}
+          entries={formEntries}
+        />
+      </div>
 
       {cardWidgets.length > 0 && (
         <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 lg:grid-cols-4">

@@ -238,7 +238,8 @@ comment on table demo.clients is '{
         {"id": "at_risk", "name": "At Risk", "filters": [{"id": "status", "value": "on_hold", "operator": "in"}]}
     ],
     "links": [
-        {"id": "clients_report", "name": "Clients Report", "url": "/demo/report/clients_report", "icon": "BarChart3", "description": "Revenue and project rollups per client"}
+        {"id": "clients_report", "name": "Clients Report", "url": "/demo/report/clients_report", "icon": "BarChart3", "description": "Revenue and project rollups per client"},
+        {"id": "client_invoices", "name": "Client Invoices", "url": "/demo/resource/invoices", "icon": "Receipt", "description": "Billing history across all clients"}
     ],
     "fields": {
         "sections": [
@@ -371,7 +372,9 @@ comment on table demo.team_members is '{
         }
     ],
     "filter_presets": [
-        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "in"}]}
+        {"id": "active", "name": "Active", "filters": [{"id": "employment_status", "value": "active", "operator": "in"}]},
+        {"id": "on_leave", "name": "On Leave", "filters": [{"id": "employment_status", "value": "on_leave", "operator": "in"}]},
+        {"id": "engineering", "name": "Engineering", "filters": [{"id": "department", "value": "engineering", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -601,7 +604,11 @@ comment on table demo.projects is '{
     "filter_presets": [
         {"id": "active", "name": "Active", "filters": [{"id": "status", "value": "active", "operator": "in"}]},
         {"id": "high_priority", "name": "High Priority", "filters": [{"id": "priority", "value": ["high", "critical"], "operator": "in"}]},
-        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "in"}]}
+        {"id": "completed", "name": "Completed", "filters": [{"id": "status", "value": "completed", "operator": "in"}]},
+        {"id": "on_hold", "name": "On Hold", "filters": [{"id": "status", "value": "on_hold", "operator": "in"}]}
+    ],
+    "links": [
+        {"id": "projects_report", "name": "Projects Report", "url": "/demo/report/projects_report", "icon": "BarChart3", "description": "Projects with client, owner, task, and logged-time rollups"}
     ],
     "fields": {
         "sections": [
@@ -1007,6 +1014,9 @@ comment on table demo.tasks is '{
         {"id": "blocked", "name": "Blocked", "filters": [{"id": "status", "value": "blocked", "operator": "in"}]},
         {"id": "done", "name": "Done", "filters": [{"id": "status", "value": "done", "operator": "in"}]}
     ],
+    "links": [
+        {"id": "team_utilization_report", "name": "Team Utilization", "url": "/demo/report/team_utilization_report", "icon": "BarChart3", "description": "Task load and logged hours per team member"}
+    ],
     "fields": {
         "quick_create": ["title", "project_id", "assignee_id", "due_date", "priority"],
         "sections": [
@@ -1324,7 +1334,8 @@ comment on table demo.portfolio_items is '{
     ],
     "filter_presets": [
         {"id": "published", "name": "Published", "filters": [{"id": "is_published", "value": "true", "operator": "eq"}]},
-        {"id": "draft", "name": "Drafts", "filters": [{"id": "is_published", "value": "false", "operator": "eq"}]}
+        {"id": "draft", "name": "Drafts", "filters": [{"id": "is_published", "value": "false", "operator": "eq"}]},
+        {"id": "web", "name": "Web", "filters": [{"id": "category", "value": "web", "operator": "in"}]}
     ],
     "fields": {
         "sections": [
@@ -1597,7 +1608,11 @@ comment on table demo.invoices is '{
     "filter_presets": [
         {"id": "unpaid", "name": "Unpaid", "filters": [{"id": "status", "value": ["sent", "overdue"], "operator": "in"}]},
         {"id": "overdue", "name": "Overdue", "filters": [{"id": "status", "value": "overdue", "operator": "in"}]},
-        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "in"}]}
+        {"id": "paid", "name": "Paid", "filters": [{"id": "status", "value": "paid", "operator": "in"}]},
+        {"id": "drafts", "name": "Drafts", "filters": [{"id": "status", "value": "draft", "operator": "in"}]}
+    ],
+    "links": [
+        {"id": "invoices_report", "name": "Invoices Report", "url": "/demo/report/invoices_report", "icon": "BarChart3", "description": "Invoices with client, project, and line item counts"}
     ],
     "fields": {
         "sections": [
@@ -2550,7 +2565,7 @@ select
   on demo.recent_tasks to "x-admin",
   "user";
 
--- table_1: upcoming milestones (pairs with Recent Tasks to fill the row)
+-- table_1: upcoming milestones (pairs with the list_* widgets to fill the row)
 create or replace view demo.upcoming_milestones
 with
   (security_invoker = true) as
@@ -2981,21 +2996,19 @@ select
   on demo.task_velocity to "x-admin",
   "user";
 
--- card_2: client pipeline (active vs lead) — shown on the clients resource page
+-- card_6: client pipeline by lifecycle stage — shown on the clients resource page
+drop view if exists demo.client_pipeline;
+
 create or replace view demo.client_pipeline
 with
   (security_invoker = true) as
 select
-  count(*) filter (
-    where
-      status = 'active'
-  ) as primary,
-  count(*) filter (
-    where
-      status = 'lead'
-  ) as secondary,
-  'Active' as primary_label,
-  'Leads' as secondary_label
+  json_build_array(
+    json_build_object('label', 'Active', 'value', count(*) filter (where status = 'active'), 'icon', 'badge-check'),
+    json_build_object('label', 'Leads', 'value', count(*) filter (where status = 'lead'), 'icon', 'sprout'),
+    json_build_object('label', 'On Hold', 'value', count(*) filter (where status = 'on_hold'), 'icon', 'circle-pause'),
+    json_build_object('label', 'Churned', 'value', count(*) filter (where status = 'churned'), 'icon', 'user-minus')
+  ) as metrics
 from
   demo.clients;
 
@@ -3009,27 +3022,15 @@ select
   on demo.client_pipeline to "x-admin",
   "user";
 
--- card_3: project progress (active count + average completion) — shown on the projects resource page
+-- card_3: active projects + average completion — projects resource page
+drop view if exists demo.project_progress;
+
 create or replace view demo.project_progress
 with
   (security_invoker = true) as
 select
-  count(*) filter (
-    where
-      status = 'active'
-  ) as value,
-  coalesce(
-    round(
-      (
-        avg(progress) filter (
-          where
-            status = 'active'
-        )
-      )::numeric,
-      1
-    ),
-    0
-  ) as percent
+  count(*) filter (where status = 'active') as value,
+  coalesce(round((avg(progress) filter (where status = 'active'))::numeric, 1), 0) as percent
 from
   demo.projects;
 
@@ -3043,19 +3044,115 @@ select
   on demo.project_progress to "x-admin",
   "user";
 
--- card_1: outstanding invoice balance — shown on the invoices resource page
+-- card_1: total budget under management — projects resource page
+drop view if exists demo.projects_budget;
+
+create or replace view demo.projects_budget
+with
+  (security_invoker = true) as
+select
+  coalesce(sum(budget) filter (where status not in ('completed', 'cancelled')), 0) as value,
+  'wallet' as icon,
+  'open project budget' as label
+from
+  demo.projects;
+
+revoke all on demo.projects_budget
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.projects_budget to "x-admin",
+  "user";
+
+-- card_2: completed vs. in-flight projects — projects resource page
+drop view if exists demo.projects_delivery;
+
+create or replace view demo.projects_delivery
+with
+  (security_invoker = true) as
+select
+  count(*) filter (where status = 'completed') as primary,
+  count(*) filter (where status = 'active') as secondary,
+  'Completed' as primary_label,
+  'Active' as secondary_label
+from
+  demo.projects;
+
+revoke all on demo.projects_delivery
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.projects_delivery to "x-admin",
+  "user";
+
+-- card_4: open projects past their due date — projects resource page
+drop view if exists demo.projects_overdue;
+
+create or replace view demo.projects_overdue
+with
+  (security_invoker = true) as
+select
+  count(*) filter (where status not in ('completed', 'cancelled') and due_date < current_date) as current,
+  greatest(count(*) filter (where status not in ('completed', 'cancelled')), 1) as total
+from
+  demo.projects;
+
+revoke all on demo.projects_overdue
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.projects_overdue to "x-admin",
+  "user";
+
+-- card_5: open invoices by stage — invoices resource page
+drop view if exists demo.invoice_pipeline;
+
+create or replace view demo.invoice_pipeline
+with
+  (security_invoker = true) as
+select
+  count(*) filter (where status in ('draft', 'sent', 'overdue')) as value,
+  'Open Invoices' as label,
+  'receipt' as icon,
+  json_build_array(
+    json_build_object('label', 'Draft', 'value', count(*) filter (where status = 'draft'),
+      'variant', 'secondary'),
+    json_build_object('label', 'Sent', 'value', count(*) filter (where status = 'sent'),
+      'variant', 'info'),
+    json_build_object('label', 'Overdue', 'value', count(*) filter (where status = 'overdue'),
+      'variant', 'destructive')
+  ) as breakdown
+from
+  demo.invoices;
+
+revoke all on demo.invoice_pipeline
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.invoice_pipeline to "x-admin",
+  "user";
+
+-- card_1: unpaid invoice total — invoices resource page
+drop view if exists demo.outstanding_balance;
+
 create or replace view demo.outstanding_balance
 with
   (security_invoker = true) as
 select
-  coalesce(
-    sum(total) filter (
-      where
-        status in ('sent', 'overdue')
-    ),
-    0
-  ) as value,
-  'receipt' as icon,
+  coalesce(sum(total) filter (where status in ('sent', 'overdue')), 0) as value,
+  'banknote' as icon,
   'outstanding balance' as label
 from
   demo.invoices;
@@ -3070,29 +3167,113 @@ select
   on demo.outstanding_balance to "x-admin",
   "user";
 
--- card_1: active team member count — shown on the team_members resource page
-create or replace view demo.active_team_members_count
+-- card_4: overdue share of unpaid invoices — invoices resource page
+drop view if exists demo.invoices_overdue;
+
+create or replace view demo.invoices_overdue
 with
   (security_invoker = true) as
 select
-  count(*) filter (
-    where
-      employment_status = 'active'
-  ) as value,
-  'users' as icon,
-  'active team members' as label
+  count(*) filter (where status = 'overdue') as current,
+  greatest(count(*) filter (where status in ('sent', 'overdue')), 1) as total
 from
-  demo.team_members;
+  demo.invoices;
 
-revoke all on demo.active_team_members_count
+revoke all on demo.invoices_overdue
 from
   authenticated,
   service_role;
 
 grant
 select
-  on demo.active_team_members_count to "x-admin",
+  on demo.invoices_overdue to "x-admin",
   "user";
+
+-- card_5: active staff by department — team_members resource page
+drop view if exists demo.team_overview;
+
+create or replace view demo.team_overview
+with
+  (security_invoker = true) as
+select
+  count(*) filter (where employment_status = 'active') as value,
+  'Active Staff' as label,
+  'users' as icon,
+  json_build_array(
+    json_build_object('label', 'Design', 'value', count(*) filter (where employment_status = 'active' and department = 'design'),
+      'variant', 'secondary'),
+    json_build_object('label', 'Engineering', 'value', count(*) filter (where employment_status = 'active' and department = 'engineering'),
+      'variant', 'info'),
+    json_build_object('label', 'Product', 'value', count(*) filter (where employment_status = 'active' and department = 'product'),
+      'variant', 'default'),
+    json_build_object('label', 'Marketing', 'value', count(*) filter (where employment_status = 'active' and department = 'marketing'),
+      'variant', 'warning'),
+    json_build_object('label', 'Sales', 'value', count(*) filter (where employment_status = 'active' and department = 'sales'),
+      'variant', 'success'),
+    json_build_object('label', 'Operations', 'value', count(*) filter (where employment_status = 'active' and department = 'operations'),
+      'variant', 'outline')
+  ) as breakdown
+from
+  demo.team_members;
+
+revoke all on demo.team_overview
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.team_overview to "x-admin",
+  "user";
+
+-- card_1: average hourly rate of active staff — team_members resource page
+drop view if exists demo.team_avg_rate;
+
+create or replace view demo.team_avg_rate
+with
+  (security_invoker = true) as
+select
+  coalesce(round(avg(hourly_rate) filter (where employment_status = 'active'), 0), 0) as value,
+  'banknote' as icon,
+  'avg hourly rate' as label
+from
+  demo.team_members;
+
+revoke all on demo.team_avg_rate
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.team_avg_rate to "x-admin",
+  "user";
+
+-- card_2: active vs. on-leave staff — team_members resource page
+drop view if exists demo.team_availability;
+
+create or replace view demo.team_availability
+with
+  (security_invoker = true) as
+select
+  count(*) filter (where employment_status = 'active') as primary,
+  count(*) filter (where employment_status = 'on_leave') as secondary,
+  'Active' as primary_label,
+  'On Leave' as secondary_label
+from
+  demo.team_members;
+
+revoke all on demo.team_availability
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.team_availability to "x-admin",
+  "user";
+
+drop view if exists demo.team_snapshot;
 
 comment on view demo.active_projects_count is '{"type": "dashboard_widget", "name": "Active Projects", "description": "Count of projects currently active", "widget_type": "card_1"}';
 
@@ -3102,7 +3283,7 @@ comment on view demo.revenue_summary is '{"type": "dashboard_widget", "name": "R
 
 comment on view demo.project_health is '{"type": "dashboard_widget", "name": "Project Health", "description": "At-risk open projects breakdown", "widget_type": "card_4"}';
 
-comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_1", "resource": "tasks", "url": "/demo/resource/tasks"}';
+comment on view demo.recent_tasks is '{"type": "dashboard_widget", "name": "Recent Tasks", "description": "Latest 10 tasks", "widget_type": "table_2", "resource": "tasks", "url": "/demo/resource/tasks"}';
 
 comment on view demo.upcoming_milestones is '{"type": "dashboard_widget", "name": "Upcoming Milestones", "description": "Next 10 milestones due across active projects", "widget_type": "table_1"}';
 
@@ -3122,13 +3303,27 @@ comment on view demo.client_snapshot is '{"type": "dashboard_widget", "name": "C
 
 comment on view demo.task_velocity is '{"type": "dashboard_widget", "name": "Task Velocity", "description": "Tasks by workflow stage", "widget_type": "card_6"}';
 
-comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Active clients vs. new leads", "widget_type": "card_2", "resource": "clients"}';
+comment on view demo.client_pipeline is '{"type": "dashboard_widget", "name": "Client Pipeline", "description": "Clients across lifecycle stages", "widget_type": "card_6", "resource": "clients"}';
 
 comment on view demo.project_progress is '{"type": "dashboard_widget", "name": "Project Progress", "description": "Active projects and their average completion", "widget_type": "card_3", "resource": "projects"}';
 
+comment on view demo.projects_budget is '{"type": "dashboard_widget", "name": "Open Budget", "description": "Budget across open projects", "widget_type": "card_1", "resource": "projects"}';
+
+comment on view demo.projects_delivery is '{"type": "dashboard_widget", "name": "Delivery", "description": "Completed vs. active projects", "widget_type": "card_2", "resource": "projects"}';
+
+comment on view demo.projects_overdue is '{"type": "dashboard_widget", "name": "Overdue Projects", "description": "of open projects are past due", "widget_type": "card_4", "resource": "projects"}';
+
+comment on view demo.invoice_pipeline is '{"type": "dashboard_widget", "name": "Invoice Pipeline", "description": "Open invoices by stage", "widget_type": "card_5", "resource": "invoices"}';
+
 comment on view demo.outstanding_balance is '{"type": "dashboard_widget", "name": "Outstanding Balance", "description": "Unpaid total across sent and overdue invoices", "widget_type": "card_1", "resource": "invoices"}';
 
-comment on view demo.active_team_members_count is '{"type": "dashboard_widget", "name": "Active Team Members", "description": "Count of staff currently active", "widget_type": "card_1", "resource": "team_members"}';
+comment on view demo.invoices_overdue is '{"type": "dashboard_widget", "name": "Overdue Invoices", "description": "of unpaid invoices are overdue", "widget_type": "card_4", "resource": "invoices"}';
+
+comment on view demo.team_overview is '{"type": "dashboard_widget", "name": "Team Overview", "description": "Active staff by department", "widget_type": "card_5", "resource": "team_members"}';
+
+comment on view demo.team_avg_rate is '{"type": "dashboard_widget", "name": "Average Rate", "description": "Average hourly rate of active staff", "widget_type": "card_1", "resource": "team_members"}';
+
+comment on view demo.team_availability is '{"type": "dashboard_widget", "name": "Availability", "description": "Active vs. on-leave staff", "widget_type": "card_2", "resource": "team_members"}';
 
 ----------------------------------------------------------------
 -- Charts
@@ -3355,6 +3550,104 @@ select
   on demo.team_by_department_pie to "x-admin",
   "user";
 
+-- Bar: tasks by priority — shown on the tasks resource page
+create or replace view demo.tasks_by_priority_bar
+with
+  (security_invoker = true) as
+select
+  priority::text as label,
+  count(*) as total,
+  count(*) filter (where status = 'done') as done
+from
+  demo.tasks
+group by
+  priority
+order by
+  case priority when 'critical' then 1 when 'high' then 2 when 'medium' then 3 when 'low' then 4 end;
+
+-- Bar: clients by country — shown on the clients resource page
+create or replace view demo.clients_by_country_bar
+with
+  (security_invoker = true) as
+select
+  coalesce(country, 'Unknown') as label,
+  count(*) as total,
+  count(*) filter (where status = 'active') as active
+from
+  demo.clients
+group by
+  coalesce(country, 'Unknown')
+order by
+  count(*) desc
+limit
+  6;
+
+-- Pie: projects by status — shown on the projects resource page
+create or replace view demo.projects_by_status_pie
+with
+  (security_invoker = true) as
+select
+  status::text as label,
+  count(*) as value
+from
+  demo.projects
+group by
+  status;
+
+-- Bar: invoiced amount by status — shown on the invoices resource page
+create or replace view demo.invoices_amount_by_status_bar
+with
+  (security_invoker = true) as
+select
+  status::text as label,
+  coalesce(sum(total), 0)::bigint as amount
+from
+  demo.invoices
+group by
+  status;
+
+-- Bar: average hourly rate by department — shown on the team_members resource page
+create or replace view demo.team_rate_by_department_bar
+with
+  (security_invoker = true) as
+select
+  department::text as label,
+  round(coalesce(avg(hourly_rate), 0), 0)::bigint as avg_rate,
+  count(*) as headcount
+from
+  demo.team_members
+group by
+  department;
+
+-- Area: weekly task creation vs. completion (last 8 weeks)
+create or replace view demo.task_flow_area
+with
+  (security_invoker = true) as
+select
+  to_char(date_trunc('week', created_at), 'Mon DD') as date,
+  count(*) as created,
+  count(*) filter (where status = 'done') as completed
+from
+  demo.tasks
+where
+  created_at >= current_date - interval '8 weeks'
+group by
+  date_trunc('week', created_at)
+order by
+  date_trunc('week', created_at);
+
+revoke all on demo.tasks_by_priority_bar, demo.clients_by_country_bar, demo.projects_by_status_pie,
+  demo.invoices_amount_by_status_bar, demo.team_rate_by_department_bar, demo.task_flow_area
+from
+  authenticated,
+  service_role;
+
+grant
+select
+  on demo.tasks_by_priority_bar, demo.clients_by_country_bar, demo.projects_by_status_pie,
+  demo.invoices_amount_by_status_bar, demo.team_rate_by_department_bar, demo.task_flow_area to "x-admin",
+  "user";
+
 comment on view demo.tasks_by_status_pie is '{"type": "chart", "name": "Tasks By Status", "description": "Task count grouped by workflow status", "chart_type": "pie", "resource": "tasks"}';
 
 comment on view demo.projects_by_client_bar is '{"type": "chart", "name": "Projects By Client", "description": "Top 10 clients by project count", "chart_type": "bar"}';
@@ -3370,6 +3663,18 @@ comment on view demo.projects_by_priority_bar is '{"type": "chart", "name": "Pro
 comment on view demo.invoices_by_status_pie is '{"type": "chart", "name": "Invoices By Status", "description": "Invoice count across lifecycle statuses", "chart_type": "pie", "resource": "invoices"}';
 
 comment on view demo.team_by_department_pie is '{"type": "chart", "name": "Team By Department", "description": "Headcount distribution across departments", "chart_type": "pie", "resource": "team_members"}';
+
+comment on view demo.tasks_by_priority_bar is '{"type": "chart", "name": "Tasks By Priority", "description": "Task counts and completions across priority levels", "chart_type": "bar", "resource": "tasks"}';
+
+comment on view demo.clients_by_country_bar is '{"type": "chart", "name": "Clients By Country", "description": "Top 6 countries by client count", "chart_type": "bar", "resource": "clients"}';
+
+comment on view demo.projects_by_status_pie is '{"type": "chart", "name": "Projects By Status", "description": "Distribution of projects across delivery stages", "chart_type": "pie", "resource": "projects"}';
+
+comment on view demo.invoices_amount_by_status_bar is '{"type": "chart", "name": "Invoiced Amount By Status", "description": "Invoice totals grouped by lifecycle status", "chart_type": "bar", "resource": "invoices"}';
+
+comment on view demo.team_rate_by_department_bar is '{"type": "chart", "name": "Rate By Department", "description": "Average hourly rate and headcount per department", "chart_type": "bar", "resource": "team_members"}';
+
+comment on view demo.task_flow_area is '{"type": "chart", "name": "Task Flow", "description": "Weekly tasks created vs. completed over 8 weeks", "chart_type": "area"}';
 
 ----------------------------------------------------------------
 -- Audit triggers
