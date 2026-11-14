@@ -1,3 +1,5 @@
+import { useDeferredValue, useMemo } from "react"
+
 import { useSuspenseQuery } from "@tanstack/react-query"
 import {
   Link,
@@ -30,6 +32,8 @@ import {
 } from "#/hooks/use-permissions"
 import type { GalleryLayout, TableMetadata } from "#/lib/database-meta.types"
 import { isTableSchema } from "#/lib/database-meta.types"
+import { getFilterVariants } from "#/lib/columns"
+import { getTableQuery, validateTableSearch } from "#/lib/data-table-search"
 import { getEnumBadgeMetaMap } from "#/lib/fields"
 import { formatTitle } from "#/lib/format"
 import { pageTitle } from "#/lib/page-title"
@@ -50,7 +54,9 @@ export const Route = createFileRoute(
       : hasPrivilege
     if (!canSelect) throw notFound()
   },
-  loader: async ({ context, params }) => {
+  validateSearch: validateTableSearch,
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context, params, deps: { search } }) => {
     const { schema, resource, galleryId } = params
 
     const meta = JSON.parse(
@@ -63,7 +69,20 @@ export const Route = createFileRoute(
     if (!galleryView) throw notFound()
 
     context.queryClient.query({
-      ...resourceDataQueryOptions(schema, resource, meta.query),
+      ...resourceDataQueryOptions(
+        schema,
+        resource,
+        meta.query,
+        getTableQuery(
+          search,
+          getFilterVariants(
+            isTableSchema(context.resourceSchema)
+              ? context.resourceSchema
+              : null,
+            context.columnsSchema
+          )
+        )
+      ),
       staleTime: "static",
     })
 
@@ -190,12 +209,26 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { schema, resource } = Route.useParams()
   const { galleryView } = Route.useLoaderData()
+  const search = Route.useSearch()
   const { resourceSchema, columnsSchema } = Route.useRouteContext()
 
   const meta = JSON.parse(resourceSchema.comment ?? "{}") as TableMetadata
-  const { data: resourceData } = useSuspenseQuery(
-    resourceDataQueryOptions(schema, resource, meta.query)
+  const isTable = isTableSchema(resourceSchema)
+
+  const liveTableQuery = useMemo(
+    () =>
+      getTableQuery(
+        search,
+        getFilterVariants(isTable ? resourceSchema : null, columnsSchema)
+      ),
+    [search, isTable, resourceSchema, columnsSchema]
   )
+  const tableQuery = useDeferredValue(liveTableQuery)
+
+  const { data: resourceData } = useSuspenseQuery(
+    resourceDataQueryOptions(schema, resource, meta.query, tableQuery)
+  )
+  const pageCount = Math.ceil((resourceData?.count ?? 0) / tableQuery.perPage)
 
   const titleField = galleryView.title
   const coverField = galleryView.cover
@@ -225,7 +258,6 @@ function RouteComponent() {
     }
   })
 
-  const isTable = isTableSchema(resourceSchema)
   const canInsert = useHasPermission({ schema, resource, action: "insert" })
 
   return (
@@ -254,7 +286,13 @@ function RouteComponent() {
         )}
       </DefaultHeader>
       <div className="flex min-h-0 flex-1 flex-col p-2">
-        <ResourceGallery data={data} resourceSchema={resourceSchema} />
+        <ResourceGallery
+          data={data}
+          resourceSchema={resourceSchema}
+          columnsSchema={columnsSchema ?? []}
+          pageCount={pageCount}
+          filterPresets={meta.filter_presets ?? []}
+        />
       </div>
       <Outlet />
     </>
