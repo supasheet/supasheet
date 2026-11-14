@@ -60,9 +60,9 @@ export const Route = createFileRoute("/$schema")({
   beforeLoad: async ({ context, params }) => {
     const permissions = context.authUser
       ? await context.queryClient.query({
-          ...userPermissionsQueryOptions(params.schema),
-          staleTime: "static",
-        })
+        ...userPermissionsQueryOptions(params.schema),
+        staleTime: "static",
+      })
       : null
     if (context.authUser && !Object.keys(permissions ?? {}).length)
       throw notFound()
@@ -196,23 +196,19 @@ function RouteComponent() {
             />
           </SidebarContent>
           <SidebarFooter>
-            <SidebarGroup>
-              <SidebarGroupContent>
-                <QuickSearch
-                  schema={params.schema}
-                  items={navMain}
-                  resourceItems={resources.map((r) => ({
-                    ...r,
-                    url: `/${params.schema}/resource/${r.id}`,
-                  }))}
-                />
-                <NavSecondary
-                  items={[
-                    { title: "Storage", url: "/storage", icon: <FolderIcon /> },
-                  ]}
-                />
-              </SidebarGroupContent>
-            </SidebarGroup>
+            <QuickSearch
+              schema={params.schema}
+              items={navMain}
+              resourceItems={resources.map((r) => ({
+                ...r,
+                url: `/${params.schema}/resource/${r.id}`,
+              }))}
+            />
+            <NavSecondary
+              items={[
+                { title: "Storage", url: "/storage", icon: <FolderIcon /> },
+              ]}
+            />
             <NavUser />
           </SidebarFooter>
         </Sidebar>
