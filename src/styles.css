@@ -169,3 +169,43 @@
 .rdg-cell {
   line-height: 1.5;
 }
+
+/*
+ * Inset sheets — left/right sheets float with a gap around them, matching the
+ * inset sidebar. Driven by a single variable so no component code changes:
+ *   --sheet-inset: gap to the viewport edges (set to 0px on a SheetContent via
+ *                  `style` to opt out and get a flush, square-cornered sheet).
+ * Unlayered on purpose: it must win over the Tailwind utilities on
+ * ui/sheet.tsx (inset-y-0, right-0, h-full, border-l, ...). The mobile sidebar
+ * drawer overrides data-slot ("sidebar"), so it keeps the flush style.
+ */
+:root {
+  --sheet-inset: 0.5rem;
+}
+
+[data-slot="sheet-content"][data-side="left"],
+[data-slot="sheet-content"][data-side="right"] {
+  top: var(--sheet-inset);
+  bottom: var(--sheet-inset);
+  height: auto;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: min(var(--radius-xl), calc(var(--sheet-inset) * 100));
+  overflow: hidden;
+}
+
+[data-slot="sheet-content"][data-side="left"] {
+  left: var(--sheet-inset);
+}
+
+[data-slot="sheet-content"][data-side="right"] {
+  right: var(--sheet-inset);
+}
+
+/* Small screens: keep full-width sheets inside the gap (sm+ keeps each sheet's own max-width). */
+@media (max-width: 639.98px) {
+  [data-slot="sheet-content"][data-side="left"],
+  [data-slot="sheet-content"][data-side="right"] {
+    max-width: calc(100% - var(--sheet-inset) * 2);
+  }
+}
