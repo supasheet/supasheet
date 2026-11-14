@@ -240,7 +240,7 @@ function GalleryCard<S extends DatabaseSchemas>({
 
   return (
     <>
-      <Card className={cn("h-full bg-background", selected && "ring-2 ring-primary")}>
+      <Card className={cn("h-full", selected && "ring-2 ring-primary")}>
         <CardContent className="flex flex-col gap-4">
           <div className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-muted">
             {item.cover ? (

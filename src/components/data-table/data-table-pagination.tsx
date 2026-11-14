@@ -87,26 +87,33 @@ function DataTablePaginationContent<TData extends RowData>({
   const canPreviousPage = table.getCanPreviousPage()
   const canNextPage = table.getCanNextPage()
   const dir = useDirection()
+  // Only tables that render a selection column have anything to report.
+  const hasSelection = table
+    .getAllLeafColumns()
+    .some((column) => column.id === "select")
 
   return (
     <div
       data-slot="data-table-pagination"
       className={cn(
         "flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8",
+        !hasSelection && "sm:justify-end",
         className
       )}
       {...props}
     >
-      <div
-        role="status"
-        className="flex-1 text-sm whitespace-nowrap text-muted-foreground"
-      >
-        {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected
-        {selectedRowCount > visibleSelectedRowCount
-          ? ` (${selectedRowCount - visibleSelectedRowCount} not shown)`
-          : ""}
-        .
-      </div>
+      {hasSelection ? (
+        <div
+          role="status"
+          className="flex-1 text-sm whitespace-nowrap text-muted-foreground"
+        >
+          {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected
+          {selectedRowCount > visibleSelectedRowCount
+            ? ` (${selectedRowCount - visibleSelectedRowCount} not shown)`
+            : ""}
+          .
+        </div>
+      ) : null}
       <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
         <div className="flex items-center gap-2">
           <p
@@ -138,7 +145,7 @@ function DataTablePaginationContent<TData extends RowData>({
         </div>
         <div
           role="status"
-          className="flex items-center justify-center text-sm font-medium"
+          className="flex items-center justify-center text-sm font-medium whitespace-nowrap"
         >
           Page {pageIndex + 1} of {pageCount}
         </div>

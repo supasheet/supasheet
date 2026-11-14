@@ -137,7 +137,7 @@ export function ForeignTableSheet({
           <div className="flex min-h-0 flex-1 flex-col gap-2 p-4">
             <DataTable
               table={table}
-              className="min-h-0 flex-1 [&>div:nth-child(2)]:min-h-0 [&>div:nth-child(2)]:flex-1 [&>div:nth-child(2)]:overflow-auto"
+              className="min-h-0 flex-1 [--background:var(--popover)] [&>div:nth-child(2)]:min-h-0 [&>div:nth-child(2)]:flex-1 [&>div:nth-child(2)]:overflow-auto"
             >
               <DataTableAdvancedToolbar table={table}>
                 <DataTableFilterMenu table={table} />
