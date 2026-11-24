@@ -96,8 +96,8 @@ function DataTablePaginationContent<TData extends RowData>({
     <div
       data-slot="data-table-pagination"
       className={cn(
-        "flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8",
-        !hasSelection && "sm:justify-end",
+        "flex w-full items-center justify-between gap-2 overflow-auto p-1 sm:gap-8",
+        !hasSelection && "justify-end",
         className
       )}
       {...props}
@@ -107,18 +107,22 @@ function DataTablePaginationContent<TData extends RowData>({
           role="status"
           className="flex-1 text-sm whitespace-nowrap text-muted-foreground"
         >
-          {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected
+          {selectedRowCount}{" "}
+          <span className="hidden sm:inline">
+            {selectedRowCount === 1 ? "row" : "rows"}{" "}
+          </span>
+          selected
           {selectedRowCount > visibleSelectedRowCount
             ? ` (${selectedRowCount - visibleSelectedRowCount} not shown)`
             : ""}
-          .
+          <span className="hidden sm:inline">.</span>
         </div>
       ) : null}
-      <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
+      <div className="flex items-center gap-2 sm:gap-6 lg:gap-8">
         <div className="flex items-center gap-2">
           <p
             id={pageSizeLabelId}
-            className="text-sm font-medium whitespace-nowrap"
+            className="hidden text-sm font-medium whitespace-nowrap sm:block"
           >
             Rows per page
           </p>
@@ -147,7 +151,8 @@ function DataTablePaginationContent<TData extends RowData>({
           role="status"
           className="flex items-center justify-center text-sm font-medium whitespace-nowrap"
         >
-          Page {pageIndex + 1} of {pageCount}
+          <span className="hidden sm:inline">Page&nbsp;</span>
+          {pageIndex + 1} of {pageCount}
         </div>
         <div className="flex items-center gap-2">
           <Button
