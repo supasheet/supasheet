@@ -18,3 +18,8 @@ id = "bffdded5b35c42af895742fc973e7612"
 [[routes]]
 pattern = "*.supasheet.app/*"
 zone_name = "supasheet.app"
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = true

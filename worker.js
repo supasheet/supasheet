@@ -1,3 +1,5 @@
+import indexHtml from "./dist/index.html"
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url)
@@ -17,7 +19,7 @@ export default {
     const isSupasheetDomain = url.hostname.endsWith(".supasheet.app")
 
     if (!isSupasheetDomain) {
-      return env.ASSETS.fetch(new Request(`${url.origin}/`, request))
+      return htmlResponse(indexHtml)
     }
 
     const projectRef = url.hostname.split(".")[0]
@@ -30,33 +32,35 @@ export default {
     const cached = await cache.match(cacheKey)
     if (cached) return cached
 
-    const [publishableKey, indexResponse] = await Promise.all([
-      env.CONFIGS.get(projectRef, { cacheTtl: 86400 }),
-      env.ASSETS.fetch(new Request(`${url.origin}/`, request)),
-    ])
+    const publishableKey = await env.CONFIGS.get(projectRef, {
+      cacheTtl: 86400,
+    })
 
     if (!publishableKey) {
-      return indexResponse
+      return htmlResponse(indexHtml)
     }
 
     const config = JSON.stringify({
       supabaseUrl: `https://${projectRef}.supabase.co`,
       publishableKey,
     })
-    const html = (await indexResponse.text()).replace(
+    const html = indexHtml.replace(
       "<head>",
       `<head><script>window.__CONFIG__=${config};</script>`
     )
 
-    const response = new Response(html, {
-      status: 200,
-      headers: {
-        "content-type": "text/html;charset=UTF-8",
-        "cache-control": "public, max-age=3600",
-      },
-    })
-
+    const response = htmlResponse(html, "public, max-age=3600")
     await cache.put(cacheKey, response.clone())
     return response
   },
+}
+
+function htmlResponse(body, cacheControl = "no-cache") {
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "content-type": "text/html;charset=UTF-8",
+      "cache-control": cacheControl,
+    },
+  })
 }
