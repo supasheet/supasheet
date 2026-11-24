@@ -193,13 +193,14 @@ function DataTableSortMenuContent<TData extends RowData>({
           render={
             <Button
               variant="outline"
+              aria-label="Sort"
               onKeyDown={onTriggerKeyDown}
               disabled={disabled}
             />
           }
         >
           <ArrowDownUp className="text-muted-foreground" />
-          Sort
+          <span className="hidden sm:inline">Sort</span>
           {sorting.length > 0 && (
             <Badge
               variant="secondary"

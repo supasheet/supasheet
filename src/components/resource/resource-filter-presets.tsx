@@ -75,8 +75,12 @@ export function ResourceFilterPresets<TData extends RowData>({
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="outline" />}>
-              <FilterIcon className="size-3" />
+            <DropdownMenuTrigger
+              render={
+                <Button variant="outline" className="max-w-40 sm:max-w-none" />
+              }
+            >
+              <FilterIcon className="size-3 shrink-0" />
               <span className="truncate font-medium">{triggerLabel}</span>
               <ChevronDownIcon className="size-3.5 opacity-50" />
             </DropdownMenuTrigger>

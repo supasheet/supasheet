@@ -86,8 +86,8 @@ export function ResourceActions({
   return (
     <ButtonGroup>
       <NewRecordTrigger>
-        <PlusIcon className="mr-1.5 size-3.5" />
-        New record
+        <PlusIcon className="size-3.5" />
+        <span className="hidden sm:inline">New record</span>
       </NewRecordTrigger>
       <DropdownMenu>
         <DropdownMenuTrigger

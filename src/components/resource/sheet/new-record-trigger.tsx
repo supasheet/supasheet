@@ -54,6 +54,7 @@ export function NewRecordTrigger({
         size={size}
         variant={variant}
         className={className}
+        aria-label="New record"
         nativeButton={false}
         render={
           <Link to={sheetLink.to as never} search={sheetLink.search as never} />
@@ -76,6 +77,7 @@ export function NewRecordTrigger({
       size={size}
       variant={variant}
       className={className}
+      aria-label="New record"
       nativeButton={false}
       render={<Link to={href as never} />}
     >

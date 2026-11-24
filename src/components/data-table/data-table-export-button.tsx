@@ -26,9 +26,9 @@ export function DataTableExportButton<TData extends RowData>({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="outline">
+          <Button variant="outline" aria-label="Export">
             <DownloadIcon className="size-4" />
-            Export
+            <span className="hidden sm:inline">Export</span>
           </Button>
         }
       />

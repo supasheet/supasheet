@@ -195,13 +195,14 @@ function DataTableFilterMenuContent<TData extends RowData>({
           render={
             <Button
               variant="outline"
+              aria-label="Filter"
               onKeyDown={onTriggerKeyDown}
               disabled={disabled}
             />
           }
         >
           <ListFilter className="text-muted-foreground" />
-          Filter
+          <span className="hidden sm:inline">Filter</span>
           {hasFilters && (
             <Badge
               variant="secondary"

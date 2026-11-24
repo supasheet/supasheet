@@ -59,13 +59,13 @@ export function DataTableViewOptions<TData extends RowData>({
               <Button
                 aria-label="View columns"
                 variant="outline"
-                className="ms-auto hidden lg:flex"
+                className="ms-auto"
                 disabled={disabled}
               />
             }
           >
             <Settings2 className="text-muted-foreground" />
-            View
+            <span className="hidden sm:inline">View</span>
           </FacetedTrigger>
           <FacetedContent
             aria-label="Columns"
